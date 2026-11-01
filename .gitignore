@@ -1,0 +1,36 @@
+# Secretos y entorno
+.env
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# Datos regenerables (incluye las respuestas de explore_usgs.py)
+data/raw/
+
+# Volúmenes de bases de datos
+pgdata/
+postgres-data/
+kafka-data/
+
+# ngrok (el authtoken nunca va al repo)
+ngrok.yml
+.ngrok/
+
+# Claude Code: configuración personal
+.claude/settings.local.json
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.idea/
