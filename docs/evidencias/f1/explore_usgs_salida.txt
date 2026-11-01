@@ -1,0 +1,156 @@
+﻿Respuesta original guardada en: data\raw\explore\all_day_20261101T143324Z_86304f0d5f55.geojson
+== Origen: https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+HTTP 200 | latencia 223 ms | 150724 bytes
+  Content-Type: application/json; charset=utf-8
+  Content-Length: None
+  Cache-Control: public, max-age=60
+  Last-Modified: Sun, 01 Nov 2026 14:33:01 GMT
+  Expires: Sun, 01 Nov 2026 14:34:01 GMT
+  Age: 23
+
+== Estructura de primer nivel
+Claves: ['type', 'metadata', 'features', 'bbox']
+metadata: {'generated': 1793543581000, 'url': 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson', 'title': 'USGS All Earthquakes, Past Day', 'status': 200, 'api': '2.8.2', 'count': 210}
+metadata.generated = 1793543581000 ms -> 2026-11-01T14:33:01+00:00
+
+== Tipos de evento (210 features)
+  'earthquake': 210
+
+== Campos de properties (no nulos / total, tipos observados)
+  alert          4/210   ['str']
+  cdi           14/210   ['float', 'int']
+  code         210/210   ['str']
+  detail       210/210   ['str']
+  dmin         210/210   ['float', 'int']
+  felt          14/210   ['int']
+  gap          210/210   ['float', 'int']
+  ids          210/210   ['str']
+  mag          210/210   ['float', 'int']
+  magType      210/210   ['str']
+  mmi           10/210   ['float']
+  net          210/210   ['str']
+  nst          210/210   ['int']
+  place        210/210   ['str']
+  rms          210/210   ['float', 'int']
+  sig          210/210   ['int']
+  sources      210/210   ['str']
+  status       210/210   ['str']
+  time         210/210   ['int']
+  title        210/210   ['str']
+  tsunami      210/210   ['int']
+  type         210/210   ['str']
+  types        210/210   ['str']
+  tz             0/210   []
+  updated      210/210   ['int']
+  url          210/210   ['str']
+
+== Rangos numéricos
+  mag: min -0.06 | max 6 | nulos 0 | negativos 1
+  nst: min 3 | max 275 | nulos 0 | negativos 0
+  gap: min 15 | max 304 | nulos 0 | negativos 0
+  dmin: min 0 | max 7.614 | nulos 0 | negativos 0
+  rms: min 0.01 | max 1.3 | nulos 0 | negativos 0
+  sig: min 0 | max 563 | nulos 0 | negativos 0
+  depth (coordinates[2]): min -0.180000007152557 | max 377.883 | nulos 0 | negativos 2
+  magType: {'ml': 119, 'md': 68, 'mb': 17, 'mww': 5, 'mwr': 1}
+
+== Geometría
+  geometry nula: 0
+  tipos: {'Point': 210}
+  longitudes de coordinates: {3: 210}
+  lon/lat fuera de rango: 0
+
+== Tiempos (ms Unix UTC)
+  time: 2026-10-31T14:37:00.950000+00:00 -> 2026-11-01T13:52:16.085000+00:00
+  updated - time (min): min 0.6 | mediana 3.5 | max 1125.1
+  updated < time: 0
+
+== Identificadores
+  ids nulos: 0 | ids duplicados: 0
+  ejemplos: ['aka2026vqokjx', 'pr71538263', 'aka2026vqnhsg']
+
+== Ejemplos de casos raros
+-- mag nula: no aparece en esta respuesta
+-- mag negativa: 
+{
+  "type": "Feature",
+  "properties": {
+    "mag": -0.06,
+    "place": "3 km WSW of Anza, CA",
+    "time": 1793528210440,
+    "updated": 1793528420510,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/ci41570768",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/ci41570768.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 0,
+    "net": "ci",
+    "code": "41570768",
+    "ids": ",ci41570768,",
+    "sources": ",ci,",
+    "types": ",nearby-cities,origin,phase-data,",
+    "nst": 16,
+    "dmin": 0.03898,
+    "rms": 0.13,
+    "gap": 54,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M -0.1 - 3 km WSW of Anza, CA"
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      -116.701666666667,
+      33.5401666666667,
+      6.39
+    ]
+  },
+  "id": "ci41570768"
+}
+-- profundidad negativa: 
+{
+  "type": "Feature",
+  "properties": {
+    "mag": 2.64,
+    "place": "7 km SSW of Santa Barbara Is., CA",
+    "time": 1793536750750,
+    "updated": 1793536964214,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/ci41570832",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/ci41570832.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "automatic",
+    "tsunami": 0,
+    "sig": 107,
+    "net": "ci",
+    "code": "41570832",
+    "ids": ",ci41570832,",
+    "sources": ",ci,",
+    "types": ",nearby-cities,origin,phase-data,scitech-link,",
+    "nst": 26,
+    "dmin": 0.4024,
+    "rms": 0.36,
+    "gap": 113,
+    "magType": "ml",
+    "type": "earthquake",
+    "title": "M 2.6 - 7 km SSW of Santa Barbara Is., CA"
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      -119.087833333333,
+      33.4166666666667,
+      -0.01
+    ]
+  },
+  "id": "ci41570832"
+}
+-- no es earthquake: no aparece en esta respuesta

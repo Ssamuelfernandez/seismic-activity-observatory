@@ -5,6 +5,7 @@ Estado: andamiaje inicial. Las rutas de la tabla son las **previstas**; se confi
 ## Dónde está cada cosa
 | Quiero entender… | Mira… | Requisito |
 |---|---|---|
+| Cómo se explora el feed de USGS | scripts/explore_usgs.py | B2 |
 | Cómo se decide qué se publica | producer/ingest_state.py, producer/main.py | B6 |
 | Qué versión gana | common/processing.py::is_newer_version | C4 |
 | Cómo se asigna el país | common/geo.py | C9–C12 |
