@@ -8,6 +8,16 @@
 
 **Input**: User description: "Feature: contratos-y-modelo. Dejar fijados y documentados los tres contratos del sistema (mensaje Kafka productor→consumidor, esquema de base de datos consumidor→API y API→panel) y el modelo de datos, para que las demás features los referencien sin redefinirlos. Cubre E1–E5, E7, contrato Kafka, esquema de BD (`sql/001_schema.sql`), `api.md` y reglas de versiones (C4)."
 
+## Clarifications
+
+### Session 2026-11-01
+
+- Q: Si llegan dos versiones del mismo evento con el mismo `updated` pero contenido distinto, ¿qué hace el sistema con la segunda? → A: Se conserva la primera recibida; la segunda se ignora y se anota en el log con el `event_id`.
+- Q: Cuando una consulta de eventos devuelve más puntos de los permitidos, ¿cómo pide el cliente el resto? → A: Cursor: la respuesta incluye un cursor opaco para pedir la página siguiente, con orden estable por tiempo del evento e `id`.
+- Q: ¿Cómo se elige si el panel ve datos en vivo o de reproducción? → A: Parámetro de consulta `mode=live|replay` en `/api/eventos` y `/api/estadisticas`; por defecto `live`; otro valor es error de parámetro; `metadata.mode` devuelve el modo servido.
+- Q: ¿Qué valores llevan `country_id` y `country_name` cuando un evento no tiene país asignado? → A: Ambos son `null`; el panel traduce `null` a "Sin país asignado".
+- Q: ¿Qué forma tiene el cuerpo de respuesta cuando un endpoint devuelve un error? → A: Cuerpo JSON propio y común a todos los endpoints, `{"error": {"code": "...", "message": "..."}}`; HTTP 400 para parámetros inválidos y 503 si falla la base.
+
 ## User Scenarios & Testing *(mandatory)*
 
 Los "usuarios" de esta feature son quienes construyen y evalúan el resto del sistema: la persona que implementa productor, consumidor, API y panel (el alumno, con su agente), y el profesor que evalúa el modelo de datos. Esta feature no entrega comportamiento ejecutable: entrega documentos y un DDL que las demás features obedecen.
@@ -88,7 +98,7 @@ La persona que redacta la memoria dispone de un borrador de los tres niveles del
 - Evento sin identificador, sin instante, sin geometría o con coordenadas fuera de rango: dato inválido, va a cuarentena con motivo y referencia al original.
 - Tipo de evento distinto de terremoto: los eventos con `properties.type` distinto de `"earthquake"` se excluyen antes de publicar y se registran en la tabla de exclusiones con su motivo (B3, obligatorio).
 - Mensaje de reproducción: conserva el instante original del evento y añade el de reproducción; nunca se mezcla con los datos en vivo.
-- Dos versiones de un mismo evento con el mismo `updated` y contenido distinto: el contrato debe indicar cómo se trata.
+- Dos versiones de un mismo evento con el mismo `updated` y contenido distinto: se conserva la primera recibida; la segunda se ignora y se anota en el log con el `event_id`.
 
 ## Requirements *(mandatory)*
 
@@ -106,17 +116,17 @@ La persona que redacta la memoria dispone de un borrador de los tres niveles del
 - **FR-005**: El esquema MUST conservar el instante completo del evento con precisión suficiente para agrupar por hora UTC, y el valor original en milisegundos Unix (E7).
 - **FR-006**: El esquema MUST permitir valores nulos de magnitud, profundidad y país sin sustituirlos por 0, y MUST aceptar magnitud y profundidad negativas.
 - **FR-007**: El esquema MUST marcar los datos sintéticos de forma que queden separados de los reales.
-- **FR-008**: El contrato MUST fijar las reglas de versiones: una versión con `updated` menor o igual nunca sustituye a una mayor; cada evento tiene una única fila actual; toda versión con un valor de `updated` no visto antes para ese evento se conserva sin pisar una posterior; un reenvío con el mismo `updated` no se duplica (C4). El contrato MUST indicar cómo se trata el caso de dos versiones con el mismo `updated` y contenido distinto.
+- **FR-008**: El contrato MUST fijar las reglas de versiones: una versión con `updated` menor o igual nunca sustituye a una mayor; cada evento tiene una única fila actual; toda versión con un valor de `updated` no visto antes para ese evento se conserva sin pisar una posterior; un reenvío con el mismo `updated` no se duplica (C4). Si llegan dos versiones con el mismo `updated` y contenido distinto, se conserva la primera recibida; la segunda se ignora y se anota en el log con el `event_id`.
 
 **Contrato de la API (`api.md`)**
 
 - **FR-009**: `api.md` MUST partir del contrato mínimo del profesor sin contradecirlo y MUST resolver y justificar los seis puntos que ese contrato deja abiertos (según `docs/planificacion/decisiones-abiertas-contrato.md`):
   1. Forma exacta de `GET /api/salud` y `GET /api/estadisticas` (campos, tipos, formato de fecha, estados posibles, periodo, filtros, unidad, registros sin valor, comparación histórica, error explícito si falla la base).
-  2. Mecanismo de paginación, límite máximo de puntos por respuesta, ubicación del total completo, significado de `count` y orden estable de los eventos.
-  3. Parámetro de modo (en vivo / reproducción): valores permitidos, si lo elige el cliente o lo fija el servidor, y su efecto en los metadatos.
-  4. `country_name` y campos adicionales: lista cerrada de campos, representación de un evento sin país y si `magType` puede ser nulo.
+  2. Paginación: el mecanismo es por cursor opaco, con orden estable por tiempo del evento e `id` (decidido en la aclaración). Queda por resolver el límite máximo de puntos por respuesta, la ubicación del total completo, el significado de `count` y el nombre y forma del cursor y del límite.
+  3. Modo (en vivo / reproducción): lo elige el cliente con el parámetro de consulta `mode=live|replay` en `/api/eventos` y `/api/estadisticas`, por defecto `live`, y `metadata.mode` devuelve el modo servido (decidido en la aclaración). Queda por resolver el efecto en `generated` y `last_ingestion` en modo `replay`, y si `/api/salud` informa del modo.
+  4. `country_name` y campos adicionales: un evento sin país lleva `country_id` y `country_name` a `null`, y el panel lo muestra como "Sin país asignado" (decidido en la aclaración). Queda por resolver la lista cerrada de campos de `properties` y si `magType` puede ser nulo.
   5. Filtros: dónde se informa de las magnitudes nulas excluidas por magnitud mínima, interpretación de fechas sin zona horaria y respuesta ante parámetros inválidos.
-  6. Formato de error común a todos los endpoints.
+  6. Formato de error común a todos los endpoints: cuerpo `{"error": {"code": "...", "message": "..."}}`, HTTP 400 para parámetros inválidos y 503 si falla la base (decidido en la aclaración). Queda por resolver la lista de códigos de error.
 - **FR-010**: Las decisiones del punto anterior las toma el alumno en la fase de aclaración; esta especificación no las da por resueltas.
 - **FR-011**: Ningún campo, tipo o rango de los contratos MUST contradecir los valores observados en el feed real (`docs/evidencias/f1/explore_usgs_salida.txt`) ni el contrato mínimo del profesor.
 
