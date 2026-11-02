@@ -50,7 +50,7 @@ description: "Lista de tareas de la feature contratos-y-modelo"
 - [x] T005 [P] [US1] Escribir `specs/001-contratos-y-modelo/contracts/kafka-message.md`: topics `earthquakes.live` y `earthquakes.replay` (1 partición, factor de replicación 1, retención 7 días), clave `event.id` (nula si falta, con motivo `missing_id`), campos `source`, `mode`, `ingested_at`, `replay_at`, `is_synthetic`, `event`, y aislamiento del replay (J3).
 - [x] T006 [US1] Documentar en `kafka-message.md` §5 las reglas de versiones (los cinco casos: evento nuevo, reenvío, versión más reciente, versión antigua tardía, mismo `updated` con contenido distinto) y en §6 los motivos de cuarentena con su orden de prevalencia (C4, C8).
 - [x] T007 [US1] Incluir en `kafka-message.md` §4 un mensaje de ejemplo con el evento real `ci41570768` del feed.
-- [ ] T008 [US1] Ejecutar la comprobación de `quickstart.md` §1 (parsear todos los bloques JSON de `contracts/kafka-message.md` y `contracts/api.md`) y guardar la salida en `docs/evidencias/contratos-y-modelo/ejemplos_json_salida.txt`.
+- [x] T008 [US1] Ejecutar la comprobación de `quickstart.md` §1 (parsear todos los bloques JSON de `contracts/kafka-message.md` y `contracts/api.md`) y guardar la salida en `docs/evidencias/contratos-y-modelo/ejemplos_json_salida.txt`.
 
 **Checkpoint**: US1 verificable por revisión y por T008.
 
@@ -80,7 +80,7 @@ description: "Lista de tareas de la feature contratos-y-modelo"
 
 - [x] T014 [P] [US3] Escribir `specs/001-contratos-y-modelo/contracts/api.md`: `/api/eventos` (parámetros, `metadata`, orden y cursor, once campos de `properties`), `/api/salud`, `/api/estadisticas`, errores y tabla de conformidad con `CONTRATO-API.md`; todas las decisiones en estado DECIDIDO.
 - [x] T015 [US3] Validar los ejemplos de `api.md` contra `docs/evidencias/f1/explore_usgs_salida.txt` y el feed guardado (sumas de `by_hour`, `by_country` e histogramas = `total`; `n_2025` marcado como ilustrativo); tabla en `api.md` §8.
-- [ ] T016 [US3] Revisar a mano la tabla de conformidad de `api.md` §7 línea a línea contra `docs/enunciado/CONTRATO-API.md` (SC-005) y guardar el resultado en `docs/evidencias/contratos-y-modelo/revision_api_vs_contrato.md`.
+- [x] T016 [US3] Revisar a mano la tabla de conformidad de `api.md` §7 línea a línea contra `docs/enunciado/CONTRATO-API.md` (SC-005) y guardar el resultado en `docs/evidencias/contratos-y-modelo/revision_api_vs_contrato.md`.
 
 **Checkpoint**: US3 verificable por T016.
 
@@ -93,7 +93,7 @@ description: "Lista de tareas de la feature contratos-y-modelo"
 **Independent Test**: los tres niveles describen la misma base de datos y la tabla de equivalencias cubre las 5 tablas orientativas del enunciado.
 
 - [x] T017 [P] [US4] Escribir `specs/001-contratos-y-modelo/data-model.md` con los tres niveles, la equivalencia de nombres (E3) y la trazabilidad.
-- [ ] T018 [US4] Reescribir el contenido de `specs/001-contratos-y-modelo/data-model.md` en `docs/memoria.md` §5 (modelo conceptual, lógico y físico, equivalencia de nombres y enlace a `sql/001_schema.sql`, E5), adaptado a la memoria y sin copiar `specs/` tal cual (constitución §18).
+- [x] T018 [US4] Reescribir el contenido de `specs/001-contratos-y-modelo/data-model.md` en `docs/memoria.md` §5 (modelo conceptual, lógico y físico, equivalencia de nombres y enlace a `sql/001_schema.sql`, E5), adaptado a la memoria y sin copiar `specs/` tal cual (constitución §18).
 
 **Checkpoint**: US4 completo con T018.
 
@@ -105,12 +105,12 @@ description: "Lista de tareas de la feature contratos-y-modelo"
 
 - [x] T019 [P] Añadir a `specs/001-contratos-y-modelo/spec.md` la sección «Criterios de aceptación» con los IDs E1–E5, E7 y C4 y la evidencia de cada uno.
 - [x] T020 [P] Actualizar `specs/001-contratos-y-modelo/checklists/requirements.md`: notas obsoletas corregidas (tipos de evento y decisiones de `api.md` ya resueltos).
-- [ ] T021 [P] Actualizar `CODEMAP.md`: filas en «Dónde está cada cosa» para `specs/001-contratos-y-modelo/contracts/` (mensaje Kafka, esquema de base de datos y API), `sql/001_schema.sql` (esquema de base de datos), `specs/001-contratos-y-modelo/data-model.md` (modelos conceptual, lógico y físico) y `docs/evidencias/contratos-y-modelo/` (pruebas del esquema en PostgreSQL 16), con sus requisitos (E1–E5, E7, C4).
-- [ ] T022 [P] Actualizar `README.md` (hoy solo tiene el título) con una sección que indique dónde están los contratos y el DDL y cómo repetir la validación de `quickstart.md`.
+- [x] T021 [P] Actualizar `CODEMAP.md`: filas en «Dónde está cada cosa» para `specs/001-contratos-y-modelo/contracts/` (mensaje Kafka, esquema de base de datos y API), `sql/001_schema.sql` (esquema de base de datos), `specs/001-contratos-y-modelo/data-model.md` (modelos conceptual, lógico y físico) y `docs/evidencias/contratos-y-modelo/` (pruebas del esquema en PostgreSQL 16), con sus requisitos (E1–E5, E7, C4).
+- [x] T022 [P] Actualizar `README.md` (hoy solo tiene el título) con una sección que indique dónde están los contratos y el DDL y cómo repetir la validación de `quickstart.md`.
 - [x] T023 Aplicar las decisiones del alumno (P14, motivos de cuarentena con validación previa del consumidor, campos de estadísticas en inglés, `truncated`, normalización de `country_id`, `ingest.*` compartido) y las correcciones del informe `plan-reviewer` (`docs/evidencias/subagentes/plan-reviewer-001-contratos-y-modelo.md`) en spec, plan, research, data-model, quickstart, checklist de calidad, contratos y DDL.
-- [ ] T024 Ejecutar `/speckit-analyze` sobre spec, plan y tareas (después de T023) y corregir las incoherencias que señale.
-- [ ] T025 Volver a pasar el agente `plan-reviewer` tras T024 y resolver sus hallazgos bloqueantes; guardar el informe en `docs/evidencias/subagentes/`.
-- [ ] T026 Al cerrar la feature, añadir su fila a «Historial de features cerradas» de `CODEMAP.md`, detenerse y esperar la revisión del alumno. No hacer commits ni merges sin su aprobación (constitución §19).
+- [x] T024 Ejecutar `/speckit-analyze` sobre spec, plan y tareas (después de T023) y corregir las incoherencias que señale.
+- [x] T025 Volver a pasar el agente `plan-reviewer` tras T024 y resolver sus hallazgos bloqueantes; informe en `docs/evidencias/subagentes/plan-reviewer-001-contratos-y-modelo-final.md`.
+- [x] T026 Al cerrar la feature, añadir su fila a «Historial de features cerradas» de `CODEMAP.md`, detenerse y esperar la revisión del alumno. No hacer commits ni merges sin su aprobación (constitución §19).
 
 ---
 
@@ -120,19 +120,19 @@ description: "Lista de tareas de la feature contratos-y-modelo"
 - **US1 y US2 (P1)**: independientes entre sí; T008 depende de T005–T007 y de T014; T013 (hecha) dependía de T010.
 - **US3 (P2)**: T016 depende de T014.
 - **US4 (P3)**: T018 depende de T010 y T017.
-- **Polish**: T019, T020 y T023 hechas; T021 y T022 en paralelo entre sí tras T009–T010; T024 (`/speckit-analyze`) después de T023; T025 después de T024; T026 al final y siempre tras la aprobación del alumno.
+- **Polish**: T019–T026 hechas, en este orden: T021 y T022 en paralelo tras T009–T010; T023; T024 (`/speckit-analyze`) después de T023; T025 (`plan-reviewer`) después de T024; T026 al final. La revisión del alumno y cualquier commit quedan a su criterio (constitución §19).
 
 ### Parallel Opportunities
 
 ```text
-T008, T016, T018                # pendientes de historias, archivos distintos
-T021, T022                      # cierre, archivos distintos
+T008, T016, T018                # historias, archivos distintos (hechas)
+T021, T022                      # cierre, archivos distintos (hechas)
 ```
 
 ## Implementation Strategy
 
-- **MVP**: US1 + US2 (las dos P1). Ya están escritas y verificadas, salvo T008.
-- **Para cerrar**: T008, T016, T018, T021, T022 y T024–T026.
+- **MVP**: US1 + US2 (las dos P1). Escritas y verificadas (T008 incluida).
+- **Cierre**: todas las tareas (T001–T026) están hechas; queda la revisión del alumno.
 - Tras cada tarea que cambie el DDL o un contrato, repetir T011 y T012 y revisar la coherencia entre `db-schema.md`, `sql/001_schema.sql` y `spec.md`.
 
 ## Notes

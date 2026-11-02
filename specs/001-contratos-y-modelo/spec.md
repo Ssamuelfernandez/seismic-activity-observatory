@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-01
 
-**Status**: Clarified
+**Status**: Implemented
 
 **Input**: User description: "Feature: contratos-y-modelo. Dejar fijados y documentados los tres contratos del sistema (mensaje Kafka productor→consumidor, esquema de base de datos consumidor→API y API→panel) y el modelo de datos, para que las demás features los referencien sin redefinirlos. Cubre E1–E5, E7, contrato Kafka, esquema de BD (`sql/001_schema.sql`), `api.md` y reglas de versiones (C4)."
 
@@ -48,7 +48,7 @@ El alumno aprobó todas las propuestas de `contracts/api.md` (sin excepciones); 
 - Q: ¿Cómo se trata un `country_id` en minúsculas? → A: Se normaliza a mayúsculas (`esp` pasa a `ESP`); se sigue rechazando todo valor que no sean tres letras ni `none`.
 - Q: ¿Tiene el replay estado de ingesta propio? → A: No: las tablas `ingest.*` son compartidas y el replay no usa estado de ingesta propio.
 - Q: ¿Qué pasa con los valores que desbordan los tipos de la base y con los rechazos imprevistos de la base? → A: Se añaden `value_out_of_range` (`sig` fuera del rango de `integer`, o `time`/`updated` que desbordan `timestamptz`) y el motivo de último recurso `db_constraint_violation`: si la base rechaza el `INSERT`, el consumidor hace `rollback` de ese mensaje, lo lleva a `quarantine` con ese motivo y confirma el offset, sin bloquear la cola.
-- Q: ¿Qué motivo se registra si un mensaje incumple varias validaciones? → A: Un mensaje genera una sola fila de cuarentena, con el primer motivo que falle en el orden de prevalencia de `kafka-message.md` §6 (de `invalid_json` a `db_constraint_violation`).
+- Q: ¿Qué motivo se registra si un mensaje incumple varias validaciones? → A: Un mensaje genera una sola fila de cuarentena, con el primer motivo que falle en el orden de prevalencia de `kafka-message.md` §6 (14 motivos, de `invalid_json` a `db_constraint_violation`; `replay_at_missing` va justo después de `mode_topic_mismatch`).
 - Q: ¿Qué se aclara sobre las versiones de un evento en el escenario 2 de la historia 1 y en SC-004? → A: Con `updated` igual no se duplica y, si el contenido es distinto, se ignora la segunda; con `updated` menor y no visto, se conserva en el historial. Son cinco casos de versiones.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -129,7 +129,7 @@ La persona que redacta la memoria dispone de un borrador de los tres niveles del
 - Magnitud o profundidad negativas (el feed real trae ambas, p. ej. −0,06 y −0,18 km): válidas; no se rechazan ni se corrigen.
 - Evento sin país (punto en el mar o fuera de cobertura): el país queda nulo y se muestra como "Sin país asignado".
 - Evento sin identificador, sin instante, sin geometría o con coordenadas fuera de rango: dato inválido, va a cuarentena con motivo y referencia al original.
-- Valores fuera de los límites de cordura (`mag` fuera de −10…15, `depth_km` fuera de −100…1000), campos de tipo incorrecto (p. ej. `sig` o `status`) o `mode = replay` sin `replay_at`: el consumidor los valida antes de insertar y los lleva a cuarentena con motivo (`mag_out_of_range`, `depth_out_of_range`, `invalid_field_type`, `value_out_of_range`, `replay_at_missing`); se valida antes de insertar y, si aun así la base rechaza el `INSERT`, se aplica el motivo de último recurso `db_constraint_violation` (rollback del mensaje, cuarentena y confirmación del offset, sin bloquear la cola).
+- Valores fuera de los límites de cordura (`mag` fuera de −10…15, `depth_km` fuera de −100…1000), campos de tipo incorrecto (p. ej. `sig` o `status`) o `mode = replay` sin `replay_at`: el consumidor los valida antes de insertar y los lleva a cuarentena con motivo (`mag_out_of_range`, `depth_out_of_range`, `invalid_field_type`, `value_out_of_range`, `replay_at_missing`); si aun así la base rechaza el `INSERT`, se aplica el motivo de último recurso `db_constraint_violation` (rollback del mensaje, cuarentena y confirmación del offset, sin bloquear la cola).
 - Tipo de evento distinto de terremoto: los eventos con `properties.type` distinto de `"earthquake"` se excluyen antes de publicar y se registran en la tabla de exclusiones con su motivo (B3, obligatorio).
 - Mensaje de reproducción: conserva el instante original del evento y añade el de reproducción; nunca se mezcla con los datos en vivo.
 - Dos versiones de un mismo evento con el mismo `updated` y contenido distinto: se conserva la primera recibida; la segunda se ignora y se anota en el log con el `event_id`.
@@ -148,7 +148,7 @@ La persona que redacta la memoria dispone de un borrador de los tres niveles del
 - **FR-003**: El esquema MUST describir, para cada tabla, el grano (qué representa una fila), la clave, las relaciones y los índices, y cada índice MUST citar la consulta concreta que lo justifica (E2).
 - **FR-004**: El esquema MUST cubrir estado actual (una única fila por evento), historial de versiones (una fila por evento y valor de `updated`), cuarentena (motivo y referencia al original), exclusiones, estado de ingesta, catálogo de países y fechas, y MUST separar espacios de datos en vivo y de reproducción con las mismas tablas (E1, E3, E4).
 - **FR-005**: El esquema MUST conservar el instante completo del evento con precisión suficiente para agrupar por hora UTC, y el valor original en milisegundos Unix (E7).
-- **FR-006**: El esquema MUST permitir valores nulos de magnitud, profundidad y país sin sustituirlos por 0, y MUST aceptar magnitud y profundidad negativas. El consumidor valida los límites de cordura antes de insertar y manda a cuarentena lo que no los cumpla, de modo que ninguna restricción de la base aborte la transacción (ver Edge Cases).
+- **FR-006**: El esquema MUST permitir valores nulos de magnitud, profundidad y país sin sustituirlos por 0, y MUST aceptar magnitud y profundidad negativas. El consumidor valida antes de insertar y, si aun así la base rechaza el mensaje, se aplica el motivo de último recurso `db_constraint_violation` (ver Edge Cases).
 - **FR-007**: El esquema MUST marcar los datos sintéticos de forma que queden separados de los reales.
 - **FR-007b**: El esquema MUST guardar, además, el estado de revisión (`status`), el enlace al evento (`url`) y la significancia (`sig`) de cada evento, porque la API los expone en `properties`.
 - **FR-008**: El contrato MUST fijar las reglas de versiones: una versión con `updated` menor o igual nunca sustituye a una mayor; cada evento tiene una única fila actual; toda versión con un valor de `updated` no visto antes para ese evento se conserva sin pisar una posterior; un reenvío con el mismo `updated` no se duplica (C4). Si llegan dos versiones con el mismo `updated` y contenido distinto, se conserva la primera recibida; la segunda se ignora, se anota en el log con el `event_id` y se cuenta en los contadores de transformaciones del consumidor (C8).
@@ -195,7 +195,7 @@ La persona que redacta la memoria dispone de un borrador de los tres niveles del
 - **SC-001**: Los tres contratos existen en `specs/001-contratos-y-modelo/contracts/` y el 100 % de sus campos y tablas tienen definidos tipo, obligatoriedad y significado.
 - **SC-002**: Las seis decisiones de `api.md` están resueltas y justificadas (6 de 6), todas registradas como decididas en Clarifications.
 - **SC-003**: El 100 % de las tablas del esquema indica su grano, clave y relaciones, y el 100 % de los índices cita la consulta que lo motiva.
-- **SC-004**: Las reglas de versiones resuelven sin ambigüedad los cinco casos de la prueba de versiones: evento nuevo, reenvío con mismo `updated`, versión más reciente, versión antigua tardía y mismo `updated` con contenido distinto.
+- **SC-004**: Las reglas de versiones resuelven sin ambigüedad los cinco casos de la prueba de versiones: evento nuevo, reenvío con mismo `updated`, versión más reciente, versión antigua tardía y mismo `updated` con contenido distinto. De este último caso, la evidencia de esta feature demuestra la parte SQL (`ON CONFLICT DO NOTHING` conserva la primera versión; pruebas T17 y T18); ignorar la segunda versión, anotarla en el log y contarla lo prueba la feature `consumidor-idempotente`.
 - **SC-005**: Ningún campo de los contratos contradice los valores del feed real de la muestra (210 eventos) ni el contrato mínimo del profesor: 0 discrepancias detectadas en la revisión.
 - **SC-006**: Las features siguientes (productor, consumidor, API, panel) pueden referenciar los contratos sin redefinir ni duplicar ninguno de sus campos.
 - **SC-007**: El borrador de modelos cubre los tres niveles (conceptual, lógico, físico) y la equivalencia de nombres incluye las 5 tablas orientativas del enunciado.
@@ -221,4 +221,4 @@ Cada criterio parte de un ID del checklist (`docs/planificacion/01-checklist-req
 - **E4**: el modelo integra cada evento con atributos del catálogo de países (`public.country`, `current_event.country_id`).
 - **E5**: `sql/001_schema.sql` existe, crea tablas e índices y es coherente con `db-schema.md` (FR-014); se aplicó dos veces sin errores en PostgreSQL 16 y se probaron sus restricciones (evidencia en `docs/evidencias/contratos-y-modelo/`).
 - **E7**: se conserva el timestamp completo del evento (`timestamptz` con precisión de microsegundo) junto con el valor original en milisegundos Unix, con `CHECK` de coherencia.
-- **C4**: el contrato fija que solo gana una versión con `updated` estrictamente mayor y que toda versión recibida se conserva (`contracts/kafka-message.md` §5, `contracts/db-schema.md` §5); las reglas se probaron en PostgreSQL 16 (prueba T11 de la evidencia).
+- **C4**: el contrato fija que solo gana una versión con `updated` estrictamente mayor y que toda versión recibida se conserva (`contracts/kafka-message.md` §5, `contracts/db-schema.md` §5); las reglas SQL se probaron en PostgreSQL 16 (pruebas T11, T17 y T18 de la evidencia: `ON CONFLICT DO NOTHING` conserva la primera versión); ignorar la segunda versión, registrarla en el log y contarla lo prueba `consumidor-idempotente`.

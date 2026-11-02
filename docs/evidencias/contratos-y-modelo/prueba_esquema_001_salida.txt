@@ -16,27 +16,27 @@ CREATE FUNCTION
 (1 row)
 
 === T3 lat 145 (esperado: ERROR current_event_lat_range)
-=== T4 mag NaN (esperado: ERROR current_event_mag_range)
 ERROR:  new row for relation "current_event" violates check constraint "current_event_lat_range"
-DETAIL:  Failing row contains (bad_lat, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, 2.0, null, 5.0, -116.7, 145, null, null, null, null, USA, 2026-11-01, usgs_feed, f, 2026-11-02 13:40:25.136313+00, null).
+DETAIL:  Failing row contains (bad_lat, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, 2.0, null, 5.0, -116.7, 145, null, null, null, null, USA, 2026-11-01, usgs_feed, f, 2026-11-02 21:50:00.082418+00, null).
 CONTEXT:  SQL function "ev" statement 1
+=== T4 mag NaN (esperado: ERROR current_event_mag_range)
 ERROR:  new row for relation "current_event" violates check constraint "current_event_mag_range"
-DETAIL:  Failing row contains (bad_nan, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, NaN, null, 5.0, -116.7, 33.54, null, null, null, null, USA, 2026-11-01, usgs_feed, f, 2026-11-02 13:40:25.136567+00, null).
+DETAIL:  Failing row contains (bad_nan, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, NaN, null, 5.0, -116.7, 33.54, null, null, null, null, USA, 2026-11-01, usgs_feed, f, 2026-11-02 21:50:00.082843+00, null).
 CONTEXT:  SQL function "ev" statement 1
 === T5 source invalido (esperado: ERROR current_event_source_values)
-ERROR:  new row for relation "current_event" violates check constraint "current_event_source_values"
-DETAIL:  Failing row contains (bad_src, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, 2.0, null, 5.0, -116.7, 33.54, null, null, null, null, USA, 2026-11-01, foo, f, 2026-11-02 13:40:25.136852+00, null).
-CONTEXT:  SQL function "ev" statement 1
 === T6 pais inexistente (esperado: ERROR FK country)
+ERROR:  new row for relation "current_event" violates check constraint "current_event_source_values"
+DETAIL:  Failing row contains (bad_src, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, 2.0, null, 5.0, -116.7, 33.54, null, null, null, null, USA, 2026-11-01, foo, f, 2026-11-02 21:50:00.083108+00, null).
+CONTEXT:  SQL function "ev" statement 1
 ERROR:  insert or update on table "current_event" violates foreign key constraint "current_event_country_id_fkey"
 DETAIL:  Key (country_id)=(ZZZ) is not present in table "country".
 CONTEXT:  SQL function "ev" statement 1
 === T7 ms no coincide con el timestamptz (esperado: ERROR current_event_time_matches_ms)
-ERROR:  new row for relation "current_event" violates check constraint "current_event_time_matches_ms"
-DETAIL:  Failing row contains (bad_ms, 2026-11-01 10:16:50.441+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, null, null, null, 0, 0, null, null, null, null, null, 2026-11-01, usgs_feed, f, 2026-11-02 13:40:25.137597+00, null).
 === T8 date_id incoherente (esperado: ERROR current_event_date_matches_time)
+ERROR:  new row for relation "current_event" violates check constraint "current_event_time_matches_ms"
+DETAIL:  Failing row contains (bad_ms, 2026-11-01 10:16:50.441+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, null, null, null, 0, 0, null, null, null, null, null, 2026-11-01, usgs_feed, f, 2026-11-02 21:50:00.084228+00, null).
 ERROR:  new row for relation "current_event" violates check constraint "current_event_date_matches_time"
-DETAIL:  Failing row contains (bad_date, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, null, null, null, 0, 0, null, null, null, null, null, 2026-10-30, usgs_feed, f, 2026-11-02 13:40:25.137866+00, null).
+DETAIL:  Failing row contains (bad_date, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, null, null, null, 0, 0, null, null, null, null, null, 2026-10-30, usgs_feed, f, 2026-11-02 21:50:00.084542+00, null).
 === T9 version antes que el estado actual en la misma transaccion (esperado: OK, FK diferida)
 BEGIN
 INSERT 0 1
@@ -114,9 +114,9 @@ INSERT 0 0
 --- sin original ni raw_text (esperado: ERROR quarantine_has_original)
 ERROR:  duplicate key value violates unique constraint "quarantine_original_reason_key"
 DETAIL:  Key (original_sha256, reason)=(aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, invalid_json) already exists.
-ERROR:  new row for relation "quarantine" violates check constraint "quarantine_has_original"
-DETAIL:  Failing row contains (4, null, invalid_json, null, null, bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, null, null, null, null, 2026-11-02 13:40:25.147348+00, f).
 === T13 exclusion unica (esperado: 2o insert ERROR)
+ERROR:  new row for relation "quarantine" violates check constraint "quarantine_has_original"
+DETAIL:  Failing row contains (4, null, invalid_json, null, null, bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, null, null, null, null, 2026-11-02 21:50:00.094386+00, f).
 INSERT 0 1
 ERROR:  duplicate key value violates unique constraint "exclusion_event_kind_key"
 DETAIL:  Key (event_id, updated_ms, kind)=(q1, 1793528420510, non_earthquake_type) already exists.
@@ -132,7 +132,7 @@ INSERT 0 1
 INSERT 0 1
 --- latencia negativa (esperado: ERROR)
 ERROR:  new row for relation "ingest_run" violates check constraint "ingest_run_latency_ms_check"
-DETAIL:  Failing row contains (3, 2026-11-02 13:40:25.151713+00, u, 200, -5, null, null, null).
+DETAIL:  Failing row contains (3, 2026-11-02 21:50:00.098981+00, u, 200, -5, null, null, null).
                caso               | ok 
 ----------------------------------+----
  last_ingestion (ultima correcta) | t
@@ -148,6 +148,31 @@ DETAIL:  Failing row contains (3, 2026-11-02 13:40:25.151713+00, u, 200, -5, nul
       hora_utc       | count 
 ---------------------+-------
  2026-11-01 10:00:00 |     3
+(1 row)
+
+=== T17 evento nuevo: una fila en current_event y una en event_version (esperado: 1 y 1)
+BEGIN
+INSERT 0 1
+ ev 
+----
+ 
+(1 row)
+
+COMMIT
+ filas_current_event | filas_event_version 
+---------------------+---------------------
+                   1 |                   1
+(1 row)
+
+=== T18 mismo (event_id, updated_ms) con original distinto: ON CONFLICT DO NOTHING conserva la primera (esperado: 0 filas insertadas y original = primera)
+ updated_ms 
+------------
+(0 rows)
+
+INSERT 0 0
+ versiones | original_conservado | mag_conservada 
+-----------+---------------------+----------------
+         1 | primera             |            2.5
 (1 row)
 
 === Inventario: tablas por esquema e indices

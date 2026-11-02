@@ -22,7 +22,7 @@ Enfoque técnico: se parte de las propuestas del roadmap §1, se respetan todas 
 
 ## Technical Context
 
-**Language/Version**: Python 3.12 (fijada aquí; ver `research.md` R1). Se concreta en `.python-version`, lock e imagen Docker en `infra-compose`.
+**Language/Version**: Python 3.12 (elegida; fijación exacta en `infra-compose`: `.python-version`, lock e imagen Docker; ver `research.md` R1).
 
 **Primary Dependencies**: aiokafka (productor y consumidor), FastAPI (API), PostgreSQL 16, Apache Kafka en modo KRaft, Docker Compose. Versiones exactas: se fijan en `infra-compose` y en cada feature que las use (constitución §11). Frontend fuera de esta feature: no se fijan librerías de mapas ni de gráficos (se deciden en `panel-base-mock`).
 
@@ -100,7 +100,7 @@ sql/
 
 **Structure Decision:** se respeta la estructura de `CODEMAP.md` y `docs/planificacion/03-procedimiento-ejecucion.md` §3. El resto de carpetas (`common/`, `producer/`, `consumer/`, `api/`, `frontend/`, `scripts/`, `tests/`) nacen con sus features. `data/catalogo/paises.geojson` se lee, no se modifica.
 
-## Cierre de la feature (tareas T018–T026 de `tasks.md`)
+## Cierre de la feature (tareas T019–T026 de `tasks.md`)
 
 Constitución §16 y `CLAUDE.md`: al cerrar, tests ejecutados (aquí, `quickstart.md`), evidencia en `docs/evidencias/contratos-y-modelo/`, `CODEMAP.md` y `README.md` actualizados (fila de `sql/001_schema.sql` y de los contratos en «Dónde está cada cosa»), y tarea de reescribir `data-model.md` en `docs/memoria.md` §5.
 
@@ -110,7 +110,7 @@ Sin violaciones de la constitución: no se rellena.
 
 ## Decisiones aprobadas por el alumno
 
-Valores concretos que el plan propuso para lo que la spec dejaba sin decidir. **Todas (P1–P14) fueron aprobadas por el alumno el 2026-11-02** y están registradas en `spec.md` (Clarifications, sesión 2026-11-02). P15–P19 son decisiones del alumno tras el informe del `plan-reviewer`.
+Valores concretos que el plan propuso para lo que la spec dejaba sin decidir. **Todas (P1–P14) fueron aprobadas por el alumno el 2026-11-02** y están registradas en `spec.md` (Clarifications, sesión 2026-11-02). P15–P21 son decisiones del alumno tras el informe del `plan-reviewer`.
 
 | # | Propuesta | Dónde |
 |---|---|---|
@@ -134,4 +134,4 @@ Valores concretos que el plan propuso para lo que la spec dejaba sin decidir. **
 | P18 | `country_id` se normaliza a mayúsculas; se rechaza lo que no sean tres letras ni `none` | `api.md` §3.1 |
 | P19 | `ingest.*` es compartido; el replay no usa estado de ingesta propio | `db-schema.md` §1 |
 | P20 | Motivos `value_out_of_range` y `db_constraint_violation` (último recurso: rollback del mensaje, cuarentena y offset confirmado) | `kafka-message.md` §6, `db-schema.md` §2 |
-| P21 | Un mensaje genera una sola fila de cuarentena, con el primer motivo según el orden de prevalencia | `kafka-message.md` §6 |
+| P21 | Un mensaje genera una sola fila de cuarentena, con el primer motivo según el orden de prevalencia de los 14 motivos (`replay_at_missing` justo después de `mode_topic_mismatch`) | `kafka-message.md` §6 |

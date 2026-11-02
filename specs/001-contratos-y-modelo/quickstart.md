@@ -58,7 +58,7 @@ Resultado esperado: 13 tablas (2 en `public`, 4 en `live`, 4 en `replay`, 3 en `
 
 ## 5. El esquema acepta los casos del feed real
 
-Ejecutar el script `docs/evidencias/contratos-y-modelo/prueba_esquema_001.sql` (T1–T16) y contrastar con la salida guardada en `prueba_esquema_001_salida.txt`:
+Ejecutar el script `docs/evidencias/contratos-y-modelo/prueba_esquema_001.sql` (T1–T18) y contrastar con la salida guardada en `prueba_esquema_001_salida.txt`:
 
 ```bash
 docker exec -i pg-schema-check psql -U postgres -d check < docs/evidencias/contratos-y-modelo/prueba_esquema_001.sql

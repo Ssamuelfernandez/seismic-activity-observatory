@@ -113,6 +113,23 @@ WHERE event_time >= '2026-10-29' AND event_time < '2026-11-05'
 ORDER BY event_time DESC, event_id DESC LIMIT 2;
 SELECT date_trunc('hour', event_time AT TIME ZONE 'UTC') AS hora_utc, count(*) FROM live.current_event GROUP BY 1 ORDER BY 1;
 
+\echo '=== T17 evento nuevo: una fila en current_event y una en event_version (esperado: 1 y 1)'
+BEGIN;
+INSERT INTO live.event_version (event_id,updated_ms,updated_at,event_time,mag,original,source,received_at)
+VALUES ('ci_new', :u, timestamptz 'epoch' + :u*interval '1 millisecond', timestamptz 'epoch' + :t*interval '1 millisecond', 2.5, '{"id":"ci_new","v":"primera"}', 'usgs_feed', now())
+ON CONFLICT (event_id, updated_ms) DO NOTHING;
+SELECT pg_temp.ev('ci_new', :t, :u, 2.5, 5.0);
+COMMIT;
+SELECT (SELECT count(*) FROM live.current_event WHERE event_id = 'ci_new') AS filas_current_event,
+       (SELECT count(*) FROM live.event_version WHERE event_id = 'ci_new') AS filas_event_version;
+
+\echo '=== T18 mismo (event_id, updated_ms) con original distinto: ON CONFLICT DO NOTHING conserva la primera (esperado: 0 filas insertadas y original = primera)'
+INSERT INTO live.event_version (event_id,updated_ms,updated_at,event_time,mag,original,source,received_at)
+VALUES ('ci_new', :u, timestamptz 'epoch' + :u*interval '1 millisecond', timestamptz 'epoch' + :t*interval '1 millisecond', 9.9, '{"id":"ci_new","v":"segunda"}', 'usgs_feed', now())
+ON CONFLICT (event_id, updated_ms) DO NOTHING RETURNING updated_ms;
+SELECT count(*) AS versiones, min(original->>'v') AS original_conservado, min(mag) AS mag_conservada
+FROM live.event_version WHERE event_id = 'ci_new' AND updated_ms = :u;
+
 \echo '=== Inventario: tablas por esquema e indices'
 SELECT table_schema, count(*) AS tablas FROM information_schema.tables
 WHERE table_schema IN ('public','live','replay','ingest') AND table_type='BASE TABLE' GROUP BY 1 ORDER BY 1;
