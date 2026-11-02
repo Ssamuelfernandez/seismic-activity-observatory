@@ -5,6 +5,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 **Registro de cambios**
 - 31-oct-2026 (rev. 2): el frontend se construye desde cero; F1 pasa a ser exploración de USGS; F8 se divide en F8a–F8e; mock del contrato.
 - 1-nov-2026 (rev. 3): **reconciliación con `03-procedimiento-ejecucion.md`.** Cada fase indica su feature de Spec Kit (la tabla única vive en 03 §4; las "semillas de spec" se movieron allí). Se añade **F1b** (feature `contratos-y-modelo`, antes de la infraestructura). Identificadores de BD, topics, scripts y módulos en inglés. Estructura del repo alineada con 03 §3. Panel: la parte de replay pasa a F9; F8d queda en estado y fallos. Calendario orientativo hasta el 19-nov (§5).
+- 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet; se decide en el plan de `panel-base-mock` tras un prototipo corto. Afecta a §0, §1 (Frontend: mapa), F8a y riesgos (§4).
 
 ---
 
@@ -14,7 +15,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 
 **Objetivo.** Sistema que ingiere terremotos de USGS (feed reciente + histórico 2025 M≥4) y los integra con un catálogo de países, y responde: *¿dónde hay actividad sísmica y cómo se compara con un periodo histórico equivalente?*
 
-**Arquitectura obligatoria (Docker Compose, 5 servicios):** `producer` (Python+aiokafka) · `kafka` · `consumer` (Python+aiokafka) · `postgres` · `api` (FastAPI). Fuera de Compose: ngrok (HTTPS a la API) y el panel **Angular+Leaflet, construido desde cero**, en Netlify. El `paises.geojson` y el `CONTRATO-API.md` (contrato mínimo) del profesor son la única base entregada; el frontend de ejemplo del paquete es solo referencia.
+**Arquitectura obligatoria (Docker Compose, 5 servicios):** `producer` (Python+aiokafka) · `kafka` · `consumer` (Python+aiokafka) · `postgres` · `api` (FastAPI). Fuera de Compose: ngrok (HTTPS a la API) y el panel **Angular + librería de mapa a decidir, construido desde cero**, en Netlify. El `paises.geojson` y el `CONTRATO-API.md` (contrato mínimo) del profesor son la única base entregada; el frontend de ejemplo del paquete es solo referencia.
 
 **Reglas no negociables:** la fuente de verdad es la **constitución** (borrador en 03 §5; si difiere de esta lista, manda la constitución). Las más críticas:
 1. Procesamiento *al menos una vez* + escritura **idempotente**; offset de Kafka confirmado **después** del commit en PostgreSQL.
@@ -49,7 +50,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 | Originales | Tabla `ingest.raw_response(id, fetched_at, sha256, body jsonb)` insertando solo si el hash difiere del anterior; purga por antigüedad | Cumple B4–B5 (retención definida) |
 | Estadísticas | Todas calculadas en SQL sobre `current_event` | Reflejan revisiones sin contadores incrementales (FAQ 22) |
 | Frontend: base | Proyecto Angular nuevo (`ng new`, standalone components, versión estable vigente fijada en el plan de `panel-base-mock`) en `frontend/`, build de producción para Netlify | Se construye desde cero; el ejemplo del paquete solo se consulta |
-| Frontend: mapa | Leaflet 1.9.x; decidir en el plan si directo (servicio/directiva propia) o con `ngx-leaflet`. Fronteras desde `paises.geojson` copiado a los assets (material reutilizado, G14). Cuidado con lon/lat (GeoJSON) vs `[lat, lon]` (Leaflet) | Menos dependencias = menos riesgo de incompatibilidad con la versión de Angular |
+| Frontend: mapa | Librería libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; prototipo corto con unos 5.000 eventos del mock antes de fijarla (clic, leyenda, nulos como ND). Mapa en un componente aislado que recibe eventos y emite el seleccionado. Ocultar la Antártida (`ADM0_A3 = ATA`) en el globo. Plan B: Leaflet o MapLibre. Fronteras desde `paises.geojson` copiado a los assets (material reutilizado, G14). Se decide en el plan de `panel-base-mock` | Menos dependencias = menos riesgo de incompatibilidad con la versión de Angular; el componente aislado permite cambiar de librería |
 | Frontend: estado | Un servicio único de filtros (signals o RxJS) del que leen mapa, tabla, gráficos y panel lateral | Garantiza coherencia entre vistas (G6) |
 | Frontend: datos | `ApiService` con timeout, refresco ~60 s sin solapar peticiones, conservación de la última lectura y fuente seleccionable por `config.json` (`mock` \| `api`) | Permite desarrollar sin backend (G15) y probar fallos (G9) |
 | Gráficos Angular | Chart.js (versión fijada); empezar por el gráfico de dos barras del panel lateral y reutilizar el componente para el resto | Primer gráfico simple para calibrar; el resto reutiliza el componente |
@@ -190,7 +191,7 @@ El panel se construye en cinco bloques. Primero se trabaja contra el **mock del 
 - Crear el proyecto Angular en `frontend/` (versión estable fijada en el plan, lock, `npm ci && npm start` y `npm run build` funcionando). Estructura: `core/` (api.service, config.service, filters.service), `features/` (map, events-table, charts, filters, system-status, historical-panel), `shared/`.
 - `public/config.json` con `mode: mock|api`, `apiBaseUrl`, `refreshSeconds`, `timeoutMs`; se lee en tiempo de ejecución.
 - Mock en `frontend/mock/` conforme a `CONTRATO-API.md` (casos: mag nula, sin país, truncado, modo replay, intervalo vacío), **marcado como sintético**.
-- Mapa Leaflet: fondo OSM con atribución, capa de fronteras (`paises.geojson` desde `data/catalogo/`), círculos (tamaño ∝ magnitud, color ∝ profundidad, ND para nulos), popup con ficha (incluye `magType`), leyenda.
+- Mapa o globo con la librería elegida: fondo con atribución de su fuente, capa de fronteras (`paises.geojson` desde `data/catalogo/`), círculos (tamaño ∝ magnitud, color ∝ profundidad, ND para nulos), popup con ficha (incluye `magType`), leyenda.
 - **Verificación:** ver el mapa con los casos del mock en el navegador; captura. **Cubre:** G0, G2, G11, G14, G15, G12 (`magType`).
 
 **F8b — Filtros, tabla y estado único (feature `009-panel-filtros-tabla`)**
@@ -260,13 +261,14 @@ Reparto de la documentación entre herramientas: la **constitución** recoge los
 | Replay "no muestra nada" | Consultar el intervalo 2025 y el esquema `replay`, no "últimas 24 h" |
 | CORS falla aunque la URL abre | Origen exacto de Netlify, preflight OPTIONS, cabecera ngrok |
 | Angular recibe HTML | Página de aviso de ngrok o URL con `/api` duplicado |
-| Puntos en sitios raros | Orden lon/lat en GeoJSON vs `[lat, lon]` en `L.circleMarker` |
+| Puntos en sitios raros | Orden lon/lat en GeoJSON vs el orden que exija la librería de mapa elegida; comprobarlo con un evento conocido |
 | Mes >20.000 resultados | Detectar `count` y subdividir; nunca truncar en silencio |
 | Sobrecarga de alcance | Prioridad: pipeline correcto → pruebas → memoria; ignorar "opcionales" |
 | URL ngrok cambia | Dominio estático o recompilar Netlify; documentarlo en H2 |
 | Frontend desde cero consume demasiado tiempo | Empezar por el mock del contrato (F8a) en paralelo al backend; priorizar solo los G marcados [OBL]; no pulir estilos hasta tener F8e |
 | Mock y API real divergen | El contrato manda; contrastar en F8e y corregir mock o API, no el contrato |
-| Versiones de Angular/Leaflet incompatibles | Fijar versiones en el plan de `008`; si `ngx-leaflet` da problemas, usar Leaflet directo |
+| Versiones de Angular y de la librería de mapa incompatibles | Fijar versiones en el plan de `008`; si hay problemas con un envoltorio de Angular, usar la librería directamente o el plan B (Leaflet o MapLibre) |
+| Globo 3D: rendimiento con miles de puntos y la Antártida | Prototipo corto con ~5.000 eventos antes de fijar la librería; límite de anillos animados; ocultar ATA |
 | Spec Kit cambia comandos entre versiones | Confirmar con `specify --help`; fijar la versión de la CLI usada en el README (03 §2) |
 | Atribución de IA en commits por defecto | Constitución + `.claude/settings.json` + hook `commit-msg`; revisar cada commit antes de `git push` |
 | Documentos que se contradicen | Aplicar la tabla de fuente de verdad (03 §0) y corregir el derivado el mismo día |
