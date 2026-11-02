@@ -1,0 +1,100 @@
+### PostgreSQL
+PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+### 1.ª aplicación de sql/001_schema.sql
+BEGIN
+CREATE SCHEMA
+CREATE SCHEMA
+CREATE SCHEMA
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+COMMIT
+exit=0
+### 2.ª aplicación (idempotencia)
+BEGIN
+CREATE SCHEMA
+NOTICE:  schema "live" already exists, skipping
+NOTICE:  schema "replay" already exists, skipping
+CREATE SCHEMA
+NOTICE:  schema "ingest" already exists, skipping
+CREATE SCHEMA
+NOTICE:  relation "country" already exists, skipping
+CREATE TABLE
+CREATE TABLE
+NOTICE:  relation "date_dim" already exists, skipping
+CREATE TABLE
+NOTICE:  relation "current_event" already exists, skipping
+NOTICE:  relation "ix_current_event_time" already exists, skipping
+CREATE INDEX
+CREATE INDEX
+NOTICE:  relation "ix_current_event_country_time" already exists, skipping
+CREATE INDEX
+NOTICE:  relation "ix_current_event_mag" already exists, skipping
+CREATE TABLE
+NOTICE:  relation "event_version" already exists, skipping
+NOTICE:  relation "quarantine" already exists, skipping
+CREATE TABLE
+CREATE INDEX
+NOTICE:  relation "ix_quarantine_event_id" already exists, skipping
+NOTICE:  relation "exclusion" already exists, skipping
+CREATE TABLE
+NOTICE:  relation "current_event" already exists, skipping
+CREATE TABLE
+NOTICE:  relation "ix_current_event_time" already exists, skipping
+CREATE INDEX
+CREATE INDEX
+NOTICE:  relation "ix_current_event_country_time" already exists, skipping
+CREATE INDEX
+NOTICE:  relation "ix_current_event_mag" already exists, skipping
+CREATE TABLE
+NOTICE:  relation "event_version" already exists, skipping
+CREATE TABLE
+NOTICE:  relation "quarantine" already exists, skipping
+NOTICE:  relation "ix_quarantine_event_id" already exists, skipping
+CREATE INDEX
+NOTICE:  relation "exclusion" already exists, skipping
+CREATE TABLE
+CREATE TABLE
+NOTICE:  relation "ingest_state" already exists, skipping
+CREATE TABLE
+NOTICE:  relation "ingest_run" already exists, skipping
+NOTICE:  relation "ix_ingest_run_last_ok" already exists, skipping
+CREATE INDEX
+NOTICE:  relation "raw_response" already exists, skipping
+CREATE TABLE
+NOTICE:  relation "ix_raw_response_fetched_at" already exists, skipping
+CREATE INDEX
+NOTICE:  relation "ix_raw_response_sha256" already exists, skipping
+CREATE INDEX
+COMMIT
+exit=0
+### live == replay (columnas); esperado 0 y 0
+0
+0
+### live == replay (restricciones); esperado 0 y 0
+0
+0
+### Tablas e índices: 13 tablas esperadas
+13
+11 indices ix_*

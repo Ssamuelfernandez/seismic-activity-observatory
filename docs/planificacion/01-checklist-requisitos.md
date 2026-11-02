@@ -8,12 +8,13 @@ Convención: **[OBL]** obligatorio · **[EVAL]** puntúa en rúbrica · **[OPC]*
 **Registro de cambios**
 - 31-oct-2026 (rev. 2): el frontend se construye desde cero (el proyecto Angular del paquete era un ejemplo, no una base entregada).
 - 1-nov-2026 (rev. 3): reconciliación con 02 y 03. Añadidos `country_name` y detalles del contrato (F1–F5, F12), nota de identificadores en inglés (C5, E3), columna "Feature" en la tabla de pruebas (I), requisitos M7–M9, puntos por confirmar nuevos (§5) y **§7 de trazabilidad ID → feature de Spec Kit**.
+- 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet. Se decide en el plan de `panel-base-mock`. Afecta a §0, G0, G2, G11, G16, M2, §5 y la introducción del bloque G (frontend).
 
 ---
 
 ## 0. Qué es esto, en 6 líneas
 
-1. Pipeline en Docker Compose: USGS → **productor** (Python/aiokafka) → **Kafka** → **consumidor** (Python/aiokafka) → **PostgreSQL** → **API FastAPI** → ngrok (HTTPS) → **panel Angular+Leaflet en Netlify (a construir desde cero)**.
+1. Pipeline en Docker Compose: USGS → **productor** (Python/aiokafka) → **Kafka** → **consumidor** (Python/aiokafka) → **PostgreSQL** → **API FastAPI** → ngrok (HTTPS) → **panel Angular + librería de mapa a decidir (candidata: Globe.gl) en Netlify (a construir desde cero)**.
 2. Tres fuentes de datos: feed reciente (`all_day.geojson`), histórico 2025 (M≥4, por meses) y catálogo de países (Natural Earth, ya entregado).
 3. El núcleo técnico es: **no duplicar** (id + updated), **revisiones** (la versión antigua nunca pisa a la nueva), **idempotencia** (al menos una vez + upsert) y **país por punto-en-polígono**.
 4. La nota sale de 5 criterios: Extracción, Calidad, Modelado, Análisis, Reflexión. Más infraestructura **no** da más nota.
@@ -117,13 +118,13 @@ Reglas de redacción: indicar siempre **conjunto** (mensajes / versiones distint
 
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
-| E1 | **[OBL, EVAL]** Modelo conceptual, lógico y físico (3 vistas de la misma BD) | Diagramas/tablas en memoria | Enunc. §7 | ☐ |
+| E1 | **[OBL, EVAL]** Modelo conceptual, lógico y físico (3 vistas de la misma BD) | Diagramas/tablas en memoria | Enunc. §7 | [x] |
 | E2 | **[OBL]** Explicar grano (qué es una fila), claves, relaciones e índices | Por tabla | Enunc. §7 | ☐ |
 | E3 | Estructura orientativa del enunciado: `evento_actual` (hecho, única por `event_id`), `fecha`, `pais`, `evento_version` (única `(event_id, updated)`), estado de ingesta/cuarentena. **Identificadores del proyecto en inglés:** `current_event`, `date_dim`, `country`, `event_version`, `quarantine`, `ingest.*`. No es obligatorio copiar la estructura, sí justificar y **documentar la equivalencia** de nombres en la memoria | Equivalencia escrita | Enunc. §7 · FAQ 20 | ☐ |
 | E4 | **[OBL]** Integrar terremotos con atributos del catálogo (histórico y feed no cuentan como segunda fuente) | Join país | Enunc. §7 | ☐ |
-| E5 | **[OBL]** SQL de creación de tablas e índices en el repo (`sql/`) enlazado desde la memoria | Carpeta `sql/` | Guía 2.5 | ☐ |
+| E5 | **[OBL]** SQL de creación de tablas e índices en el repo (`sql/`) enlazado desde la memoria | Carpeta `sql/` | Guía 2.5 | [x] |
 | E6 | **[OBL]** Índices justificados **por consulta concreta** y con medición antes/después | `EXPLAIN ANALYZE` / tiempos | FAQ 20 | ☐ |
-| E7 | Timestamps completos conservados (para ventanas horarias) | Campo `event_time` timestamptz | FAQ 20 | ☐ |
+| E7 | Timestamps completos conservados (para ventanas horarias) | Campo `event_time` timestamptz | FAQ 20 | [x] |
 
 ### F. API (FastAPI)
 
@@ -146,13 +147,13 @@ El contrato del profesor es **mínimo**: define el contenido de las respuestas (
 
 ### G. Panel Angular (**construido desde cero**; el ejemplo del paquete solo sirve de referencia)
 
-El frontend no viene hecho: hay que crear el proyecto Angular, integrar Leaflet y desarrollar todas las vistas. Se puede avanzar **contra datos simulados (mock) que cumplan `CONTRATO-API.md`** sin esperar a la API real, y cambiar a la API en cuanto exista (G15).
+El frontend no viene hecho: hay que crear el proyecto Angular, integrar la librería de mapa elegida y desarrollar todas las vistas. Se puede avanzar **contra datos simulados (mock) que cumplan `CONTRATO-API.md`** sin esperar a la API real, y cambiar a la API en cuanto exista (G15).
 
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
-| G0 | **Crear el proyecto Angular** (versión estable fijada, `package-lock.json`), con Leaflet (directo o ngx-leaflet; decidirlo en el plan), estructura por componentes/servicios y build de producción funcionando | `npm ci && npm start` y `npm run build` OK desde clon limpio | Decisión propia | ☐ |
+| G0 | **Crear el proyecto Angular** (versión estable fijada, `package-lock.json`), con la librería de mapa elegida (candidata: Globe.gl; alternativas Leaflet o MapLibre; se decide en el plan de panel-base-mock), estructura por componentes/servicios y build de producción funcionando | `npm ci && npm start` y `npm run build` OK desde clon limpio | Decisión propia | ☐ |
 | G1 | **[OBL]** Consulta **vuestra API**, no USGS | `config.json` en modo `api` | Enunc. §8 | ☐ |
-| G2 | **[OBL]** Mapa: fondo, fronteras, círculos, ficha; tamaño ∝ magnitud, color ∝ profundidad, **leyenda**, nulos visibles como **ND** | Implementado y comprobado visualmente con datos del mock y reales | Enunc. §8 | ☐ |
+| G2 | **[OBL]** Mapa o globo: fondo, fronteras, círculos, ficha; tamaño ∝ magnitud, color ∝ profundidad, **leyenda**, nulos visibles como **ND** | Implementado y comprobado visualmente con datos del mock y reales | Enunc. §8 | ☐ |
 | G3 | **[OBL]** Recuentos por país/subregión (incl. "Sin país asignado") y por **hora UTC fija según tiempo del evento** | Gráfico/tabla | Enunc. §8 | ☐ |
 | G4 | **[OBL]** Distribuciones de magnitud y profundidad indicando registros sin valor | — | Enunc. §8 | ☐ |
 | G5 | **[OBL]** Comparación histórica: últimas 24 h M≥4 vs media diaria 2025 con **mismos filtros**, denominador con **días a cero**; aviso de periodo reciente incompleto; si media=0 → ND | Cifras + fórmula | Enunc. §8 · FAQ 23 | ☐ |
@@ -162,12 +163,12 @@ El frontend no viene hecho: hay que crear el proyecto Angular, integrar Leaflet 
 | G8 | **[OBL]** Tabla consultable de eventos (alternativa accesible al mapa y al color) | — | Enunc. §8 | ☐ |
 | G9 | **[OBL]** Si falla la API: aviso claro, conservar/identificar la última lectura, no presentar datos viejos como recién obtenidos | Implementado y probado (pruebas 9–10) | FAQ 35 | ☐ |
 | G10 | **[OBL]** Modo "REPRODUCCIÓN" claramente etiquetado | Banner visible (feature `replay`) | Enunc. §11 | ☐ |
-| G11 | Refresco ~60 s sin solapar peticiones; timeout (p. ej. 15 s); **atribución OSM** y leyenda visibles | Implementado | README | ☐ |
+| G11 | Refresco ~60 s sin solapar peticiones; timeout (p. ej. 15 s); **atribución de la fuente del mapa base o de la textura (OSM u otra)** y leyenda visibles | Implementado | README | ☐ |
 | G12 | Usar en el panel los campos del contrato: `magType` (ficha), `country_id` y `country_name` (filtros, tabla, ficha), `truncated` (aviso), `last_ingestion` (estado), `metadata.mode` (modo) | Cada campo se muestra o condiciona la vista | CONTRATO | ☐ |
 | G13 | **[OBL]** Netlify: `config.json` con la URL HTTPS de ngrok **antes de compilar**; no secretos en config | Build y deploy OK | Enunc. §9 | ☐ |
 | G14 | Fronteras de países en el mapa a partir de `paises.geojson` (catálogo entregado, copiado a los assets del frontend); documentarlo como material reutilizado | Capa visible; origen indicado en README/memoria | FUENTES | ☐ |
 | G15 | **Mock del contrato**: JSON de ejemplo conforme a `CONTRATO-API.md` (con nulos, sin país, truncado y modo replay), partiendo del ejemplo del propio contrato, y selector en `config.json` (`mock` / `api`); **datos del mock marcados como sintéticos** | Se puede desarrollar el panel sin backend | Decisión propia | ☐ |
-| G16 | Accesibilidad mínima: tabla como alternativa, no depender solo del color, foco de teclado en el panel lateral | Revisado | Enunc. §8 | ☐ |
+| G16 | Accesibilidad mínima: tabla como alternativa, no depender solo del color, foco de teclado en el panel lateral; la vista de globo no sustituye a la tabla accesible | Revisado | Enunc. §8 | ☐ |
 
 ### H. Despliegue y defensa
 
@@ -249,7 +250,7 @@ Reglas de las conclusiones: interpretar, no solo mostrar; con cifras; **sin leng
 | ID | Requisito | ☐ |
 |---|---|---|
 | M1 | **[OBL]** Código: productor, consumidor, API, frontend, carga histórica y replay | ☐ |
-| M2 | **[OBL]** Distinguir material reutilizado de lo desarrollado/modificado. Reutilizado: `paises.geojson` (catálogo entregado), teselas OSM, librerías (Leaflet, Chart.js…). El frontend de ejemplo del paquete **no** es base del trabajo: si se toma alguna idea o fragmento, indicarlo | ☐ |
+| M2 | **[OBL]** Distinguir material reutilizado de lo desarrollado/modificado. Reutilizado: `paises.geojson` (catálogo entregado), teselas OSM, librerías (Chart.js…), la librería de mapa elegida y la textura o teselas usadas. El frontend de ejemplo del paquete **no** es base del trabajo: si se toma alguna idea o fragmento, indicarlo | ☐ |
 | M3 | **[OBL]** README reproducible (requisitos y versiones, `.env`, build/up, tablas y carga histórica, estado/logs, frontend dev y publicación, ngrok y URL, pruebas y replay, parar y qué datos persisten, dónde está cada evidencia) | ☐ |
 | M4 | **[OBL]** El profesor tiene acceso al repo | ☐ |
 | M5 | **[OBL]** NO subir `node_modules`, secretos, authtoken ngrok, volúmenes de BD ni descargas grandes regenerables (`data/raw/`); documentar dónde van los originales y cómo regenerarlos | ☐ |
@@ -296,7 +297,7 @@ Límites del material de ejemplo (de `VALIDACION.md`): nunca se probó visualmen
 6. **Tamaño máximo de puntos por respuesta** (truncado/paginación): lo fijas tú, pero debe estar documentado.
 7. **Inconsistencia menor**: la FAQ menciona `ENUNCIADO.md` y `README.md` del paquete; tu carpeta ya los tiene todos. La guía de entregables no está en la carpeta (solo la subiste al chat): guárdala como `Guia-entregables.md` en `docs/enunciado/`.
 8. **Uso del frontend de ejemplo**: se asume que hay que desarrollar el panel desde cero y que el ejemplo es solo referencia. Si el profesor permite partir de él, G0 y parte de G2/G11 se simplifican; en ese caso indicarlo en M2.
-9. **Versión de Angular y Leaflet**: no vienen impuestas más allá de "Angular + Leaflet"; fijar la versión estable vigente en el plan de la feature `panel-base-mock` y documentarla.
+9. **Versión de Angular y de la librería de mapa**: ~~librería del mapa~~ **Resuelto:** es libre (confirmación del profesor por correo, 2-nov-2026; Leaflet era una guía, no una obligación). La versión de Angular no viene impuesta más allá de "Angular y la librería de mapa"; fijar la versión estable vigente en el plan de la feature `panel-base-mock` y documentarla.
 10. **Identificadores en inglés** (tablas, columnas, topics, código) frente a los nombres en español de la estructura orientativa del enunciado (E3): se asume válido si se justifica y se documenta la equivalencia. Confirmar si importa.
 11. **Decisiones propias que el contrato mínimo deja abiertas**: forma de `/api/salud` y `/api/estadisticas`, paginación, límite de puntos y parámetro `mode`. Se documentan en `specs/001-contratos-y-modelo/contracts/api.md`; confirmar con el profesor solo si hay duda sobre alguna.
 12. **Spec Kit**: los comandos y flags cambian entre versiones; la fuente de verdad es `specify --help` (03 §2). Anotar la versión usada en el README.
