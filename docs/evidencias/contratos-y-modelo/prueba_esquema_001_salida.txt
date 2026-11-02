@@ -1,0 +1,176 @@
+Pager usage is off.
+=== Catalogo y fechas (precarga)
+INSERT 0 2
+INSERT 0 7
+CREATE FUNCTION
+=== T1 valido con mag -0.06 y profundidad -0.18 (esperado: OK)
+ ev 
+----
+ 
+(1 row)
+
+=== T2 magnitud nula y profundidad nula (esperado: OK)
+ ev 
+----
+ 
+(1 row)
+
+=== T3 lat 145 (esperado: ERROR current_event_lat_range)
+=== T4 mag NaN (esperado: ERROR current_event_mag_range)
+ERROR:  new row for relation "current_event" violates check constraint "current_event_lat_range"
+DETAIL:  Failing row contains (bad_lat, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, 2.0, null, 5.0, -116.7, 145, null, null, null, null, USA, 2026-11-01, usgs_feed, f, 2026-11-02 13:40:25.136313+00, null).
+CONTEXT:  SQL function "ev" statement 1
+ERROR:  new row for relation "current_event" violates check constraint "current_event_mag_range"
+DETAIL:  Failing row contains (bad_nan, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, NaN, null, 5.0, -116.7, 33.54, null, null, null, null, USA, 2026-11-01, usgs_feed, f, 2026-11-02 13:40:25.136567+00, null).
+CONTEXT:  SQL function "ev" statement 1
+=== T5 source invalido (esperado: ERROR current_event_source_values)
+ERROR:  new row for relation "current_event" violates check constraint "current_event_source_values"
+DETAIL:  Failing row contains (bad_src, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, 2.0, null, 5.0, -116.7, 33.54, null, null, null, null, USA, 2026-11-01, foo, f, 2026-11-02 13:40:25.136852+00, null).
+CONTEXT:  SQL function "ev" statement 1
+=== T6 pais inexistente (esperado: ERROR FK country)
+ERROR:  insert or update on table "current_event" violates foreign key constraint "current_event_country_id_fkey"
+DETAIL:  Key (country_id)=(ZZZ) is not present in table "country".
+CONTEXT:  SQL function "ev" statement 1
+=== T7 ms no coincide con el timestamptz (esperado: ERROR current_event_time_matches_ms)
+ERROR:  new row for relation "current_event" violates check constraint "current_event_time_matches_ms"
+DETAIL:  Failing row contains (bad_ms, 2026-11-01 10:16:50.441+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, null, null, null, 0, 0, null, null, null, null, null, 2026-11-01, usgs_feed, f, 2026-11-02 13:40:25.137597+00, null).
+=== T8 date_id incoherente (esperado: ERROR current_event_date_matches_time)
+ERROR:  new row for relation "current_event" violates check constraint "current_event_date_matches_time"
+DETAIL:  Failing row contains (bad_date, 2026-11-01 10:16:50.44+00, 1793528210440, 2026-11-01 10:20:20.51+00, 1793528420510, null, null, null, 0, 0, null, null, null, null, null, 2026-10-30, usgs_feed, f, 2026-11-02 13:40:25.137866+00, null).
+=== T9 version antes que el estado actual en la misma transaccion (esperado: OK, FK diferida)
+BEGIN
+INSERT 0 1
+ ev 
+----
+ 
+(1 row)
+
+COMMIT
+=== T10 version sin estado actual (esperado: ERROR FK al hacer COMMIT)
+BEGIN
+INSERT 0 1
+ERROR:  insert or update on table "event_version" violates foreign key constraint "event_version_event_fk"
+DETAIL:  Key (event_id)=(ghost) is not present in table "current_event".
+=== T11 reglas de versiones sobre ci1 (updated inicial = 1793528420510, mag -0.06)
+CREATE FUNCTION
+BEGIN
+ upsert 
+--------
+ 
+(1 row)
+
+COMMIT
+               caso                |  mag  |  updated_ms   
+-----------------------------------+-------+---------------
+ igual -> mag debe seguir en -0.06 | -0.06 | 1793528420510
+(1 row)
+
+BEGIN
+ upsert 
+--------
+ 
+(1 row)
+
+COMMIT
+             caso              | mag |  updated_ms   
+-------------------------------+-----+---------------
+ mayor -> mag debe pasar a 1.5 | 1.5 | 1793528520510
+(1 row)
+
+BEGIN
+ upsert 
+--------
+ 
+(1 row)
+
+COMMIT
+                caso                | mag |  updated_ms   
+------------------------------------+-----+---------------
+ antigua tardia -> mag sigue en 1.5 | 1.5 | 1793528520510
+(1 row)
+
+                                       caso                                       |  updated_ms   | mag 
+----------------------------------------------------------------------------------+---------------+-----
+ versiones de ci1 (esperado 3: inicial no existe, 420510 reenvio, 520510, 320510) | 1793528320510 | 7.0
+ versiones de ci1 (esperado 3: inicial no existe, 420510 reenvio, 520510, 320510) | 1793528420510 | 9.0
+ versiones de ci1 (esperado 3: inicial no existe, 420510 reenvio, 520510, 320510) | 1793528520510 | 1.5
+(3 rows)
+
+--- reenvio idempotente: insertar de nuevo la misma version devuelve 0 filas
+ updated_ms 
+------------
+(0 rows)
+
+INSERT 0 0
+=== T12 cuarentena
+INSERT 0 1
+--- mismo original y motivo con ON CONFLICT DO NOTHING (0 filas)
+ id 
+----
+(0 rows)
+
+INSERT 0 0
+--- mismo original y motivo sin ON CONFLICT (esperado: ERROR unique)
+--- sin original ni raw_text (esperado: ERROR quarantine_has_original)
+ERROR:  duplicate key value violates unique constraint "quarantine_original_reason_key"
+DETAIL:  Key (original_sha256, reason)=(aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, invalid_json) already exists.
+ERROR:  new row for relation "quarantine" violates check constraint "quarantine_has_original"
+DETAIL:  Failing row contains (4, null, invalid_json, null, null, bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, null, null, null, null, 2026-11-02 13:40:25.147348+00, f).
+=== T13 exclusion unica (esperado: 2o insert ERROR)
+INSERT 0 1
+ERROR:  duplicate key value violates unique constraint "exclusion_event_kind_key"
+DETAIL:  Key (event_id, updated_ms, kind)=(q1, 1793528420510, non_earthquake_type) already exists.
+=== T14 aislamiento: replay independiente de live
+INSERT 0 1
+ live_events | replay_events 
+-------------+---------------
+           3 |             1
+(1 row)
+
+=== T15 ingest
+INSERT 0 1
+INSERT 0 1
+--- latencia negativa (esperado: ERROR)
+ERROR:  new row for relation "ingest_run" violates check constraint "ingest_run_latency_ms_check"
+DETAIL:  Failing row contains (3, 2026-11-02 13:40:25.151713+00, u, 200, -5, null, null, null).
+               caso               | ok 
+----------------------------------+----
+ last_ingestion (ultima correcta) | t
+(1 row)
+
+=== T16 consulta Q1 (paginacion por cursor) y Q4 (conteo por hora UTC)
+ event_id |        event_time         
+----------+---------------------------
+ ci_null  | 2026-11-01 10:16:50.44+00
+ ci2      | 2026-11-01 10:16:50.44+00
+(2 rows)
+
+      hora_utc       | count 
+---------------------+-------
+ 2026-11-01 10:00:00 |     3
+(1 row)
+
+=== Inventario: tablas por esquema e indices
+ table_schema | tablas 
+--------------+--------
+ ingest       |      3
+ live         |      4
+ public       |      2
+ replay       |      4
+(4 rows)
+
+ schemaname |           indexname           
+------------+-------------------------------
+ ingest     | ix_ingest_run_last_ok
+ ingest     | ix_raw_response_fetched_at
+ ingest     | ix_raw_response_sha256
+ live       | ix_current_event_country_time
+ live       | ix_current_event_mag
+ live       | ix_current_event_time
+ live       | ix_quarantine_event_id
+ replay     | ix_current_event_country_time
+ replay     | ix_current_event_mag
+ replay     | ix_current_event_time
+ replay     | ix_quarantine_event_id
+(11 rows)
+
