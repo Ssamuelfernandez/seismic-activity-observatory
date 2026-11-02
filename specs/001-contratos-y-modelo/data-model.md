@@ -1,6 +1,6 @@
 # Modelo de datos — borrador conceptual, lógico y físico
 
-Borrador para `docs/memoria.md` §5 (E1). Describe **la misma base de datos** en tres niveles. Las definiciones exactas viven en `contracts/db-schema.md` y `sql/001_schema.sql`; este documento no las duplica en detalle: las explica. En tasks se añadirá una tarea para **reescribirlo** en `docs/memoria.md` §5 (no se copia `specs/` a `docs/`, constitución §18).
+Borrador para `docs/memoria.md` §5 (E1). Describe **la misma base de datos** en tres niveles. Las definiciones exactas viven en `contracts/db-schema.md` y `sql/001_schema.sql`; este documento no las duplica en detalle: las explica. La tarea T018 de `tasks.md` lo **reescribe** en `docs/memoria.md` §5 (no se copia `specs/` a `docs/`, constitución §18).
 
 ## 1. Nivel conceptual
 

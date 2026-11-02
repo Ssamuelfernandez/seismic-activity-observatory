@@ -1,6 +1,6 @@
 # Investigación y decisiones técnicas (Fase 0)
 
-No quedan marcadores `NEEDS CLARIFICATION`. Las decisiones de la sección Clarifications de `spec.md` se respetan y no se reabren. Esta tabla recoge las decisiones **del plan**; las que no estaban decididas en la spec figuran como **PROPUESTA — pendiente de aprobación**.
+No quedan marcadores `NEEDS CLARIFICATION`. Las decisiones de la sección Clarifications de `spec.md` se respetan y no se reabren. Esta tabla recoge las decisiones **del plan**; las que la spec dejaba sin decidir fueron aprobadas por el alumno el 2026-11-02 y figuran como **DECIDIDO**.
 
 ## R1. Versión de Python
 
@@ -26,7 +26,7 @@ No quedan marcadores `NEEDS CLARIFICATION`. Las decisiones de la sección Clarif
 - **Decisión:** la columna `source` de la base usa los mismos tres valores que el mensaje Kafka (`usgs_feed`, `usgs_historical`, `replay_demo`).
 - **Justificación:** el roadmap proponía dos vocabularios (`feed | historical | replay` en BD y `usgs_feed | usgs_historical | replay_demo` en el mensaje); uno solo evita una tabla de traducción.
 
-## R5. Marca de sintético en el mensaje — PROPUESTA
+## R5. Marca de sintético en el mensaje — DECIDIDO
 
 - **Decisión:** el mensaje Kafka lleva `is_synthetic` (booleano obligatorio).
 - **Justificación:** sin ese campo, un evento sintético y uno real tendrían el mismo mensaje y el consumidor no podría cumplir la constitución §7. Es un campo añadido respecto al roadmap §1.
@@ -47,6 +47,7 @@ No quedan marcadores `NEEDS CLARIFICATION`. Las decisiones de la sección Clarif
 
 - **Decisión:** `mag` entre −10 y 15, `depth_km` entre −100 y 1000, `lon`/`lat` en su rango geográfico — **DECIDIDO** (aprobado por el alumno el 2026-11-02).
 - **Justificación:** `numeric` y `double precision` aceptan `NaN` e infinitos, que el contrato de la API prohíbe. Un `BETWEEN` los rechaza sin descartar negativos (constitución §5). Los valores observados (mag −0,06…6; profundidad −0,18…377,9) caben con holgura.
+- **Validación previa:** el consumidor valida estos límites antes de insertar y manda a cuarentena lo que no los cumpla (`mag_out_of_range`, `depth_out_of_range`, `invalid_field_type`, `value_out_of_range`, `replay_at_missing`); el `CHECK` es la última barrera: si aun así la base rechaza el `INSERT`, se aplica el motivo de último recurso `db_constraint_violation` (rollback del mensaje, cuarentena y offset confirmado, sin bloquear la cola). Un mensaje genera una sola fila, con el primer motivo según el orden de prevalencia de `kafka-message.md` §6.
 - **Alternativa:** sin `CHECK` y validar solo en el consumidor: más flexible, pero la base no se protege.
 
 ## R9. Conversión de tiempos comprobada en la base
@@ -62,14 +63,14 @@ No quedan marcadores `NEEDS CLARIFICATION`. Las decisiones de la sección Clarif
 
 ## R11. Paginación por cursor tipo «keyset»
 
-- **Decisión:** el cursor codifica `(event_time_ms, id)` del último evento devuelto y se resuelve con `(event_time, event_id) < (:t, :id)` en orden descendente, apoyado en `ix_current_event_time`. Sentido descendente y nombres (`limit`, `cursor`, `total`, `next_cursor`) — **PROPUESTA**.
+- **Decisión:** el cursor codifica `(event_time_ms, id)` del último evento devuelto y se resuelve con `(event_time, event_id) < (:t, :id)` en orden descendente, apoyado en `ix_current_event_time`. Sentido descendente y nombres (`limit`, `cursor`, `total`, `next_cursor`) — **DECIDIDO**.
 - **Justificación:** coste constante por página y orden estable aunque lleguen revisiones; el desplazamiento (`OFFSET`) se degrada con páginas profundas y no es estable si cambian los datos.
 
-## R12. Comparación histórica con M ≥ 4 — PROPUESTA
+## R12. Comparación histórica con M ≥ 4 — DECIDIDO
 
 - **Decisión:** la comparación usa `max(min_mag solicitado, 4.0)` en las últimas 24 h y en 2025, y lo declara en `comparison.min_mag_applied`.
 - **Justificación:** el histórico cargado es de M ≥ 4 (roadmap F6) y el enunciado §8 compara «magnitud ≥ 4». Sin ese umbral la variación compararía poblaciones distintas.
-- **Relación con la aclaración:** concreta «con los filtros pedidos» añadiendo el mínimo de 4; si el alumno no lo aprueba, se elimina el campo y la regla.
+- **Relación con la aclaración:** concreta «con los filtros pedidos» añadiendo el mínimo de 4; aprobado por el alumno el 2026-11-02.
 
 ## R13. Comprobación del DDL en esta feature
 

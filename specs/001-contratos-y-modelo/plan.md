@@ -18,7 +18,7 @@ Esta feature es **documental**: fija los tres contratos del sistema (mensaje Kaf
 | Decisiones técnicas | [research.md](research.md) |
 | Guía de validación | [quickstart.md](quickstart.md) |
 
-Enfoque técnico: se parte de las propuestas del roadmap §1, se respetan todas las decisiones de la sección Clarifications de la spec, y lo que la spec deja abierto se propone con un valor concreto etiquetado **PROPUESTA — pendiente de aprobación** (ver la lista al final de este documento).
+Enfoque técnico: se parte de las propuestas del roadmap §1, se respetan todas las decisiones de la sección Clarifications de la spec, y lo que la spec dejaba abierto se resolvió con propuestas concretas que el alumno aprobó (ver la lista al final de este documento).
 
 ## Technical Context
 
@@ -51,14 +51,14 @@ Enfoque técnico: se parte de las propuestas del roadmap §1, se respetan todas 
 | §3 Tiempos de USGS | `timestamptz` + ms originales, con `CHECK` de coherencia |
 | §4 País por geometría | `country_id` = `ADM0_A3`; nulo = «Sin país asignado»; `place` no se usa |
 | §5 Nulos y negativos | Columnas nulables sin relleno; `CHECK` de rango que admite negativos y rechaza `NaN` |
-| §6 Cuarentena | `quarantine` con motivo, original (`jsonb`/`raw_text`) y referencia Kafka |
+| §6 Cuarentena | `quarantine` con motivo, original (`jsonb`/`raw_text`) y referencia Kafka; el consumidor valida los límites antes de insertar (motivos `mag_out_of_range`, `depth_out_of_range`, `invalid_field_type`, `value_out_of_range`, `replay_at_missing`); si aun así la base rechaza el `INSERT`, se aplica el motivo de último recurso `db_constraint_violation` (rollback, cuarentena y offset confirmado) |
 | §7 Sintéticos separados | `is_synthetic` en mensaje y en las cuatro tablas; esquema `replay` aparte |
 | §8 Agregaciones desde estado actual | `api.md` §5: todo calculado desde `current_event` |
 | §9 Nombres de servicio | No aplica (sin Compose en esta feature) |
 | §10 Exposición y secretos | Sin secretos en los entregables; solo la API se expone (`api.md` no incluye credenciales) |
-| §11 Versiones fijadas | Python 3.12 fijada; resto como línea mayor, versión exacta en `infra-compose` (justificado en `research.md` R2) |
+| §11 Versiones fijadas | Aplazado a `infra-compose` (versiones exactas y lockfiles); solo Python 3.12 está fijado (justificado en `research.md` R2) |
 | §12 Alcance cerrado | Sin Spark/Flink/Kubernetes/ML/informes de calidad/panel de calidad |
-| §13 Idioma | Identificadores (tablas, columnas, topics, campos nuevos) en inglés; documentación en español. Excepciones del contrato: `country_id`, `country_name`, `n_reciente`, `media_diaria_2025`, `variacion_pct`, `sin_valor` y rutas `/api/...` |
+| §13 Idioma | Identificadores (tablas, columnas, topics, campos nuevos) en inglés; documentación en español. Excepciones del contrato: `country_id`, `country_name` y rutas `/api/...`; los campos propios de las estadísticas van en inglés (`n_recent`, `daily_mean_2025`, `variation_pct`, `no_value`; `n_2025` se mantiene) |
 | §14 Una responsabilidad por función | No aplica (sin código) |
 | §15 Contratos únicos | Los tres contratos solo viven en `contracts/`; `docs/enunciado/` no se toca |
 | §16 Cierre de feature | Ver «Cierre» más abajo |
@@ -86,7 +86,7 @@ specs/001-contratos-y-modelo/
 │   └── api.md
 ├── checklists/
 │   └── requirements.md
-└── tasks.md             # Fase 2 (/speckit-tasks; no existe aún)
+└── tasks.md             # Fase 2 (/speckit-tasks)
 ```
 
 ### Source Code (repository root)
@@ -100,17 +100,17 @@ sql/
 
 **Structure Decision:** se respeta la estructura de `CODEMAP.md` y `docs/planificacion/03-procedimiento-ejecucion.md` §3. El resto de carpetas (`common/`, `producer/`, `consumer/`, `api/`, `frontend/`, `scripts/`, `tests/`) nacen con sus features. `data/catalogo/paises.geojson` se lee, no se modifica.
 
-## Cierre de la feature (pendiente para tasks)
+## Cierre de la feature (tareas T018–T026 de `tasks.md`)
 
-Constitución §16 y `CLAUDE.md`: al cerrar, tests ejecutados (aquí, `quickstart.md`), evidencia en `docs/evidencias/001-contratos-y-modelo/`, `CODEMAP.md` y `README.md` actualizados (fila de `sql/001_schema.sql` y de los contratos en «Dónde está cada cosa»), y tarea de reescribir `data-model.md` en `docs/memoria.md` §5.
+Constitución §16 y `CLAUDE.md`: al cerrar, tests ejecutados (aquí, `quickstart.md`), evidencia en `docs/evidencias/contratos-y-modelo/`, `CODEMAP.md` y `README.md` actualizados (fila de `sql/001_schema.sql` y de los contratos en «Dónde está cada cosa»), y tarea de reescribir `data-model.md` en `docs/memoria.md` §5.
 
 ## Complexity Tracking
 
 Sin violaciones de la constitución: no se rellena.
 
-## Decisiones pendientes de aprobación
+## Decisiones aprobadas por el alumno
 
-Valores concretos propuestos por este plan para lo que la spec deja sin decidir. **P1–P10 (`api.md`) fueron aprobadas por el alumno el 2026-11-02**, sin excepciones, y están registradas en `spec.md` (Clarifications, sesión 2026-11-02). **P13 (límites de cordura de los `CHECK`) también está aprobada. P11 y P12 (`kafka-message.md`) también están aprobadas. Solo P14 (`db-schema.md`) sigue pendiente de aprobación.**
+Valores concretos que el plan propuso para lo que la spec dejaba sin decidir. **Todas (P1–P14) fueron aprobadas por el alumno el 2026-11-02** y están registradas en `spec.md` (Clarifications, sesión 2026-11-02). P15–P19 son decisiones del alumno tras el informe del `plan-reviewer`.
 
 | # | Propuesta | Dónde |
 |---|---|---|
@@ -121,10 +121,17 @@ Valores concretos propuestos por este plan para lo que la spec deja sin decidir.
 | P5 | `status`, `url`, `sig` y `place` nulables | `api.md` §3.4 |
 | P6 | Lista de códigos de error (`invalid_parameter`, `invalid_cursor`, `not_found`, `method_not_allowed`, `database_unavailable`, `internal_error`) | `api.md` §6 |
 | P7 | `/api/salud` no informa del modo | `api.md` §4 |
-| P8 | Forma completa de `/api/estadisticas` (`period`, `filters`, `total`, `by_hour`, `by_country`, `unit`, `sin_valor`, `diff_abs`, `recent_incomplete`, `recent_period`, `reference_period`) | `api.md` §5 |
-| P9 | País nulo en estadísticas: elemento propio con `country_id`, `country_name`, `subregion` a `null`; `sin_valor` informativo | `api.md` §5.1 |
+| P8 | Forma completa de `/api/estadisticas` (`period`, `filters`, `total`, `by_hour`, `by_country`, `unit`, `no_value`, `diff_abs`, `recent_incomplete`, `recent_period`, `reference_period`) | `api.md` §5 |
+| P9 | País nulo en estadísticas: elemento propio con `country_id`, `country_name`, `subregion` a `null`; `no_value` informativo | `api.md` §5.1 |
 | P10 | La comparación usa `max(min_mag, 4.0)` y lo declara (`min_mag_applied`); en `replay`, `comparison: null` | `api.md` §5.1 |
-| P11 (aprobada) | `is_synthetic` obligatorio en el mensaje Kafka | `kafka-message.md` §3 |
-| P12 (aprobada) | Lista inicial de motivos de cuarentena | `kafka-message.md` §6 |
-| P13 (aprobada) | `CHECK` de rango de cordura en `mag`, `depth_km`, `lon`, `lat` | `db-schema.md` §2 |
+| P11 | `is_synthetic` obligatorio en el mensaje Kafka | `kafka-message.md` §3 |
+| P12 | Lista inicial de motivos de cuarentena | `kafka-message.md` §6 |
+| P13 | `CHECK` de rango de cordura en `mag`, `depth_km`, `lon`, `lat` | `db-schema.md` §2 |
 | P14 | Unicidad de cuarentena `(original_sha256, reason)` y de exclusión `(event_id, updated_ms, kind)` | `db-schema.md` §3.5–3.6 |
+| P15 | Motivos de cuarentena añadidos: `mag_out_of_range`, `depth_out_of_range`, `invalid_field_type`, `replay_at_missing`; el consumidor valida los límites antes de insertar | `kafka-message.md` §6, `db-schema.md` §2 |
+| P16 | Campos propios de estadísticas en inglés: `n_recent`, `daily_mean_2025`, `variation_pct`, `no_value` | `api.md` §5 |
+| P17 | `truncated = true` en cada página con `count < total`; el final lo marca `next_cursor` `null` | `api.md` §3.2 |
+| P18 | `country_id` se normaliza a mayúsculas; se rechaza lo que no sean tres letras ni `none` | `api.md` §3.1 |
+| P19 | `ingest.*` es compartido; el replay no usa estado de ingesta propio | `db-schema.md` §1 |
+| P20 | Motivos `value_out_of_range` y `db_constraint_violation` (último recurso: rollback del mensaje, cuarentena y offset confirmado) | `kafka-message.md` §6, `db-schema.md` §2 |
+| P21 | Un mensaje genera una sola fila de cuarentena, con el primer motivo según el orden de prevalencia | `kafka-message.md` §6 |

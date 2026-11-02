@@ -80,7 +80,8 @@ CREATE TABLE IF NOT EXISTS live.current_event (
     ingested_at    timestamptz NOT NULL,
     replay_at      timestamptz,
     -- Rangos de cordura (DECIDIDOS, db-schema.md §2): descartan NaN/Infinity y valores
-    -- imposibles, no los negativos.
+    -- imposibles, no los negativos. El consumidor los valida antes de insertar
+    -- (kafka-message.md §6): este CHECK es la última barrera, no la validación.
     CONSTRAINT current_event_mag_range   CHECK (mag BETWEEN -10 AND 15),
     CONSTRAINT current_event_depth_range CHECK (depth_km BETWEEN -100 AND 1000),
     CONSTRAINT current_event_lon_range   CHECK (lon BETWEEN -180 AND 180),

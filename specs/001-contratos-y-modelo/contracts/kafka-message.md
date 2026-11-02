@@ -36,7 +36,7 @@ El campo `is_synthetic` y la lista de motivos de cuarentena (§6) están **DECID
 | `source` | cadena | sí | `usgs_feed` \| `usgs_historical` \| `replay_demo` | Origen del evento. `usgs_feed`: consulta al feed reciente. `usgs_historical`: archivos del histórico 2025 (reservado, ver §1). `replay_demo`: evento reproducido o fabricado para la demostración. |
 | `mode` | cadena | sí | `live` \| `replay` | Modo de procesamiento. `live` solo viaja por `earthquakes.live`; `replay`, solo por `earthquakes.replay`. |
 | `ingested_at` | cadena | sí | ISO 8601 UTC con sufijo `Z`, p. ej. `2026-11-01T14:33:24Z` (se admiten fracciones de segundo) | Instante en que el productor obtuvo el evento de su origen (respuesta del feed o archivo). Es tiempo de procesamiento, no del evento. |
-| `replay_at` | cadena o `null` | sí | ISO 8601 UTC con `Z`, o `null` | Instante en que el replay publicó el mensaje. `null` si `mode = live`; obligatorio (no nulo) si `mode = replay`. |
+| `replay_at` | cadena o `null` | sí | ISO 8601 UTC con `Z`, o `null` | Instante en que el replay publicó el mensaje. `null` si `mode = live`; obligatorio (no nulo) si `mode = replay`. Si falta, el consumidor lo lleva a `quarantine` con motivo `replay_at_missing`. |
 | `is_synthetic` | booleano | sí | `true` \| `false` | **DECIDIDO.** Marca el evento como sintético o de prueba (constitución §7). El consumidor la copia a `is_synthetic` de las tablas. Sin este campo el consumidor no podría distinguir un evento sintético de uno real. Es un campo añadido respecto al roadmap §1. |
 | `event` | objeto | sí | Feature GeoJSON **tal como lo entrega USGS, sin modificar** | Evento original: `id`, `geometry`, `properties` completos. Se conserva íntegro en `event_version.original`. |
 
@@ -133,6 +133,16 @@ Se aplican en el consumidor, sobre `(event_id, updated_ms)`. El detalle de SQL e
 | `missing_updated` | `event.properties.updated` ausente o no entero. |
 | `invalid_geometry` | Geometría ausente, no `Point` o con menos de 2 coordenadas. |
 | `coordinates_out_of_range` | Longitud fuera de [-180, 180] o latitud fuera de [-90, 90], o no finitas. |
+| `mag_out_of_range` | `mag` fuera de −10…15 (incluye `NaN` e infinitos). |
+| `depth_out_of_range` | Profundidad (`coordinates[2]`) fuera de −100…1000 (incluye `NaN` e infinitos). |
+| `invalid_field_type` | Campo con tipo incorrecto (p. ej. `sig` no entero, `status` no texto, `mag` no numérico). |
+| `replay_at_missing` | `mode = replay` sin `replay_at`. |
+| `value_out_of_range` | `sig` fuera del rango de `integer`, o `time`/`updated` que desbordan `timestamptz`. |
+| `db_constraint_violation` | Motivo de último recurso: la base rechaza el `INSERT` aunque el mensaje pasó todas las validaciones anteriores. |
+
+**Un mensaje, una fila de cuarentena.** Si un mensaje incumple varias validaciones, se registra una sola fila con el **primer** motivo que falle en este orden de prevalencia: `invalid_json`, `invalid_envelope`, `mode_topic_mismatch`, `missing_id`, `missing_time`, `missing_updated`, `invalid_geometry`, `coordinates_out_of_range`, `mag_out_of_range`, `depth_out_of_range`, `invalid_field_type`, `value_out_of_range`, `db_constraint_violation`.
+
+**Validación previa a la base:** el consumidor valida estos límites y tipos **antes** de insertar y lleva a cuarentena lo que no los cumpla. Los `CHECK` de la base son la última barrera (ver `db-schema.md` §2). Si aun así la base rechaza el `INSERT`, se aplica el motivo de último recurso `db_constraint_violation`: el consumidor hace `rollback` de ese mensaje, lo lleva a `quarantine` con ese motivo y confirma el offset, sin bloquear la cola.
 
 ## 7. Cambios respecto al roadmap §1
 

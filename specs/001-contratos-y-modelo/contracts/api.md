@@ -4,7 +4,7 @@ Fuente de verdad de la API del proyecto. Parte del contrato mínimo del profesor
 
 Todas las decisiones están **DECIDIDAS** y registradas en `spec.md`, sección Clarifications. Se fijaron en dos pasos: en `/speckit-clarify` y, el 2026-11-02, con la aprobación por el alumno de todas las propuestas del plan para lo que la spec dejaba sin decidir. Ninguna se reabre sin avisar.
 
-Convención de nombres: los campos fijados por el profesor o por una aclaración se respetan tal cual (`country_id`, `n_reciente`, `media_diaria_2025`, `variacion_pct`, `sin_valor`…). Los campos nuevos que propone este documento van en inglés (constitución §13).
+Convención de nombres: los campos fijados por el profesor se respetan tal cual (`country_id`, `country_name`, rutas `/api/...`). Los campos propios de las estadísticas van en inglés (`n_recent`, `daily_mean_2025`, `variation_pct`, `no_value`, `diff_abs`); `n_2025` se mantiene (constitución §13).
 
 ## 1. Reglas generales
 
@@ -45,7 +45,7 @@ Devuelve un GeoJSON `FeatureCollection` con la versión actual de cada evento (u
 | `start` | ISO 8601 | no | Inicio inclusivo. Sin zona horaria = UTC; solo fecha = 00:00 UTC de ese día | contrato + DECIDIDO |
 | `end` | ISO 8601 | no | Fin exclusivo. Misma interpretación | contrato + DECIDIDO |
 | `min_mag` | número | no | Magnitud mínima (inclusive). La magnitud nula **no** la cumple y se cuenta aparte | contrato |
-| `country_id` | texto | no | Un único `ADM0_A3` (p. ej. `ESP`). Se admite un solo valor; el valor reservado `none` selecciona los eventos «Sin país asignado» | DECIDIDO |
+| `country_id` | texto | no | Un único `ADM0_A3` (p. ej. `ESP`). Se normaliza a mayúsculas (`esp` pasa a `ESP`). Se admite un solo valor; el valor reservado `none` selecciona los eventos «Sin país asignado» | DECIDIDO |
 | `mode` | `live` \| `replay` | no | Por defecto `live`. Otro valor → error 400 | DECIDIDO |
 | `limit` | entero ≥ 1 | no | Máximo de eventos en la respuesta. Por defecto y máximo: 5 000 (constante configurable). Un valor mayor → error 400 | DECIDIDO |
 | `cursor` | texto opaco | no | Valor de `metadata.next_cursor` de la respuesta anterior; se repiten los mismos filtros | DECIDIDO |
@@ -59,7 +59,7 @@ Rango por defecto cuando faltan `start` o `end` (**DECIDIDO**; usa la hora del s
 | Solo `end` | `end` − 24 h | `end` |
 | Ambos | `start` | `end` |
 
-Si `start >= end`, error 400 `invalid_parameter`. `min_mag` no numérico, `country_id` que no cumple `^[A-Za-z]{3}$|^none$`, fecha no ISO 8601, `limit` fuera de rango o `mode` desconocido → error 400 `invalid_parameter`. Un `country_id` con forma válida que no exista en el catálogo no es un error: devuelve `features: []`.
+Si `start >= end`, error 400 `invalid_parameter`. `min_mag` no numérico, `country_id` que no sean tres letras ni `none` (se normaliza a mayúsculas antes de validar), fecha no ISO 8601, `limit` fuera de rango o `mode` desconocido → error 400 `invalid_parameter`. Un `country_id` con forma válida que no exista en el catálogo no es un error: devuelve `features: []`.
 
 ### 3.2 `metadata`
 
@@ -70,7 +70,7 @@ Si `start >= end`, error 400 `invalid_parameter`. `min_mag` no numérico, `count
 | `mode` | `"live"` \| `"replay"` | Modo servido | contrato + DECIDIDO |
 | `count` | entero | Número de eventos **de esta respuesta** | DECIDIDO |
 | `total` | entero | Número de eventos que cumplen los filtros (en todas las páginas) | DECIDIDO |
-| `truncated` | booleano | `true` si esta respuesta no contiene todos los eventos que cumplen los filtros (`count < total`). En la última página de una consulta paginada sigue siendo `true`; `next_cursor` indica si hay más | contrato + DECIDIDO |
+| `truncated` | booleano | `true` en cada página cuya respuesta no contiene todos los eventos que cumplen los filtros (`count < total`), también en la última; el final de la paginación lo marca `next_cursor` a `null` | contrato + DECIDIDO |
 | `next_cursor` | texto o `null` | Cursor de la página siguiente; `null` en la última | DECIDIDO |
 | `null_mag_excluded` | entero | Eventos con magnitud nula que cumplen el resto de filtros y se excluyen por `min_mag`. `0` si no se envía `min_mag` | DECIDIDO |
 
@@ -87,7 +87,7 @@ Si `start >= end`, error 400 `invalid_parameter`. `min_mag` no numérico, `count
 |---|---|---|---|
 | `mag` | número | sí | `null` si desconocida; −0,06 es válido |
 | `magType` | texto | sí | `ml`, `md`, `mb`, `mww`, `mwr`… |
-| `place` | texto | no\* | Descripción de USGS; no se usa para el país |
+| `place` | texto | sí\* | Descripción de USGS; no se usa para el país |
 | `time` | entero (ms) | no | Instante del terremoto |
 | `updated` | entero (ms) | no | Última actualización |
 | `country_id` | texto | sí | `ADM0_A3`; `null` = sin país |
@@ -97,7 +97,7 @@ Si `start >= end`, error 400 `invalid_parameter`. `min_mag` no numérico, `count
 | `url` | texto | sí\*\* | Página del evento en USGS |
 | `sig` | entero | sí\*\* | Significancia de USGS |
 
-\* `place` es texto en los 210 eventos de la muestra; si faltara, se serializa `null`. \*\* **DECIDIDO:** nulable (el feed de la muestra los trae siempre, pero el contrato no lo garantiza).
+\* `place` es texto en los 210 eventos de la muestra; **DECIDIDO:** puede ser `null` si USGS no lo da. \*\* **DECIDIDO:** nulable (el feed de la muestra los trae siempre, pero el contrato no lo garantiza).
 
 `id` de la Feature = `id` del evento en USGS. La geometría es siempre un `Point` válido.
 
@@ -208,30 +208,30 @@ Mismos filtros que `/api/eventos`: `start`, `end`, `min_mag`, `country_id`, `mod
 | `histograms.magnitude` / `histograms.depth` | Distribuciones (DECIDIDO: tramos y «sin valor») |
 | `comparison` | Últimas 24 h frente a la media diaria de 2025 (DECIDIDO: campos principales) |
 
-Cada bloque con resultados lleva `unit` (unidad) y `sin_valor` (registros sin valor), como exige el contrato del profesor.
+Cada bloque con resultados lleva `unit` (unidad) y `no_value` (registros sin valor), como exige el contrato del profesor.
 
-**`by_hour`** — `unit: "events"`. `buckets`: lista de `{"hour_start": <ms>, "count": <entero>}`. Una entrada por cada hora UTC fija `[h, h+1)` que se solape con `period`; el recuento solo incluye eventos dentro de `period`. `sin_valor`: `0` (`event_time` no admite nulo).
+**`by_hour`** — `unit: "events"`. `buckets`: lista de `{"hour_start": <ms>, "count": <entero>}`. Una entrada por cada hora UTC fija `[h, h+1)` que se solape con `period`; el recuento solo incluye eventos dentro de `period`. `no_value`: `0` (`event_time` no admite nulo).
 
-**`by_country`** — `unit: "events"`. `items`: lista de `{"country_id", "country_name", "subregion", "count"}` ordenada por `count` descendente y `country_id` ascendente. Los eventos sin país forman **un elemento propio** con `country_id`, `country_name` y `subregion` a `null` (el panel lo muestra como «Sin país asignado»). `sin_valor` = recuento de ese elemento (informativo; **no se suma** a `items`). **DECIDIDO** para el país nulo.
+**`by_country`** — `unit: "events"`. `items`: lista de `{"country_id", "country_name", "subregion", "count"}` ordenada por `count` descendente y `country_id` ascendente. Los eventos sin país forman **un elemento propio** con `country_id`, `country_name` y `subregion` a `null` (el panel lo muestra como «Sin país asignado»). `no_value` = recuento de ese elemento (informativo; **no se suma** a `items`). **DECIDIDO** para el país nulo.
 
-**`histograms.magnitude`** — `unit: "dimensionless"` (la escala depende de `magType`). `bins`: lista de `{"lower", "upper", "count"}` con límite inferior inclusivo y superior exclusivo; **DECIDIDO:** ocho tramos `<1` (`lower: null`, incluye negativos), `1–2`, `2–3`, `3–4`, `4–5`, `5–6`, `6–7` y `≥7` (`upper: null`). `sin_valor`: eventos con magnitud nula que cumplen los demás filtros **sin contar `min_mag`**; con `min_mag` enviado coincide con `null_mag_excluded` de `/api/eventos` (**DECIDIDO** el concepto).
+**`histograms.magnitude`** — `unit: "dimensionless"` (la escala depende de `magType`). `bins`: lista de `{"lower", "upper", "count"}` con límite inferior inclusivo y superior exclusivo; **DECIDIDO:** ocho tramos `<1` (`lower: null`, incluye negativos), `1–2`, `2–3`, `3–4`, `4–5`, `5–6`, `6–7` y `≥7` (`upper: null`). `no_value`: eventos con magnitud nula que cumplen los demás filtros **sin contar `min_mag`**; con `min_mag` enviado coincide con `null_mag_excluded` de `/api/eventos` (**DECIDIDO** el concepto).
 
-**`histograms.depth`** — `unit: "km"`. **DECIDIDO:** cinco tramos `<10` (`lower: null`, incluye profundidades negativas), `10–35`, `35–70`, `70–300` y `≥300` (`upper: null`). `sin_valor`: eventos con profundidad nula.
+**`histograms.depth`** — `unit: "km"`. **DECIDIDO:** cinco tramos `<10` (`lower: null`, incluye profundidades negativas), `10–35`, `35–70`, `70–300` y `≥300` (`upper: null`). `no_value`: eventos con profundidad nula.
 
 **`comparison`** — **DECIDIDO:** compara las **últimas 24 horas** con la **media diaria de 2025**.
 
 | Campo | Tipo | Descripción | Estado |
 |---|---|---|---|
-| `n_reciente` | entero | Eventos de las últimas 24 h con los filtros pedidos, salvo las fechas | DECIDIDO |
+| `n_recent` | entero | Eventos de las últimas 24 h con los filtros pedidos, salvo las fechas | DECIDIDO |
 | `n_2025` | entero | Eventos de 2025 con los mismos filtros, salvo las fechas | DECIDIDO |
-| `media_diaria_2025` | número | `n_2025 / 365` (incluye los días con cero eventos) | DECIDIDO |
-| `diff_abs` | número | `n_reciente − media_diaria_2025` (con signo) | DECIDIDO |
-| `variacion_pct` | número o `null` | `diff_abs / media_diaria_2025 × 100`, 2 decimales; `null` si no hay base de comparación (media 0) | DECIDIDO |
+| `daily_mean_2025` | número | `n_2025 / 365` (incluye los días con cero eventos) | DECIDIDO |
+| `diff_abs` | número | `n_recent − daily_mean_2025` (con signo) | DECIDIDO |
+| `variation_pct` | número o `null` | `diff_abs / daily_mean_2025 × 100`, 2 decimales; `null` si no hay base de comparación (media 0) | DECIDIDO |
 | `recent_incomplete` | booleano | `true` siempre: el periodo reciente puede estar incompleto por retrasos de USGS (`updated − time` llegó a 1 125 min en la muestra) | DECIDIDO |
 | `min_mag_applied` | número | Magnitud mínima efectiva de la comparación: `max(min_mag solicitado, 4.0)` | DECIDIDO |
 | `recent_period` | `{"start","end"}` (ms) | Últimas 24 h hasta `generated` | DECIDIDO |
 | `reference_period` | `{"start","end"}` (ms) | `2025-01-01T00:00Z` (incl.) – `2026-01-01T00:00Z` (excl.) | DECIDIDO |
-| `unit` | texto | `"events"` (`media_diaria_2025` y `diff_abs` en eventos por día) | DECIDIDO |
+| `unit` | texto | `"events"` (`daily_mean_2025` y `diff_abs` en eventos por día) | DECIDIDO |
 
 - **`min_mag_applied`:** el histórico cargado solo contiene M ≥ 4 (roadmap F6). Comparar sin límite inferior las últimas 24 h (todas las magnitudes) con un 2025 de M ≥ 4 daría una variación sin sentido, y el enunciado §8 compara «magnitud ≥ 4». Por eso ambos lados usan al menos M ≥ 4 y `min_mag_applied` lo declara. Esta decisión **concreta** la aclaración «con los filtros pedidos» (aprobada el 2026-11-02).
 - **DECIDIDO:** en `mode=replay`, `comparison` es `null` (la reproducción no tiene «últimas 24 horas» ni histórico propio).
@@ -252,7 +252,7 @@ Calculado sobre los 210 eventos reales de la muestra del feed (`docs/evidencias/
   "total": 210,
   "by_hour": {
     "unit": "events",
-    "sin_valor": 0,
+    "no_value": 0,
     "buckets": [
       {"hour_start": 1793455200000, "count": 3},
       {"hour_start": 1793458800000, "count": 9},
@@ -283,7 +283,7 @@ Calculado sobre los 210 eventos reales de la muestra del feed (`docs/evidencias/
   },
   "by_country": {
     "unit": "events",
-    "sin_valor": 47,
+    "no_value": 47,
     "items": [
       {"country_id": "USA", "country_name": "Estados Unidos", "subregion": "Northern America", "count": 151},
       {"country_id": null, "country_name": null, "subregion": null, "count": 47},
@@ -300,7 +300,7 @@ Calculado sobre los 210 eventos reales de la muestra del feed (`docs/evidencias/
   "histograms": {
     "magnitude": {
       "unit": "dimensionless",
-      "sin_valor": 0,
+      "no_value": 0,
       "bins": [
         {"lower": null, "upper": 1, "count": 65},
         {"lower": 1, "upper": 2, "count": 64},
@@ -314,7 +314,7 @@ Calculado sobre los 210 eventos reales de la muestra del feed (`docs/evidencias/
     },
     "depth": {
       "unit": "km",
-      "sin_valor": 0,
+      "no_value": 0,
       "bins": [
         {"lower": null, "upper": 10, "count": 103},
         {"lower": 10, "upper": 35, "count": 65},
@@ -329,11 +329,11 @@ Calculado sobre los 210 eventos reales de la muestra del feed (`docs/evidencias/
     "min_mag_applied": 4.0,
     "recent_period": {"start": 1793457240000, "end": 1793543640000},
     "reference_period": {"start": 1735689600000, "end": 1767225600000},
-    "n_reciente": 24,
+    "n_recent": 24,
     "n_2025": 12410,
-    "media_diaria_2025": 34.0,
+    "daily_mean_2025": 34.0,
     "diff_abs": -10.0,
-    "variacion_pct": -29.41,
+    "variation_pct": -29.41,
     "recent_incomplete": true
   }
 }
@@ -392,10 +392,10 @@ Valores comprobados contra `docs/evidencias/f1/explore_usgs_salida.txt` y `data/
 | `ci41570832`: `mag 2.64`, profundidad `−0.01`, `time 1793536750750`, `updated 1793536964214`, `sig 107` | Idéntico a la evidencia |
 | `updated ≥ time` en ambos eventos | Sí (el feed tiene 0 casos de `updated < time`) |
 | Suma de `by_hour`, `by_country` y de cada histograma = `total` (210) | Sí |
-| Suma de los tramos de magnitud con ≥ 4 (17 + 5 + 2) = `n_reciente` (24) | Sí |
+| Suma de los tramos de magnitud con ≥ 4 (17 + 5 + 2) = `n_recent` (24) | Sí |
 | Magnitud negativa (−0,06) en el primer tramo; profundidad negativa (−0,18) en el primero | Sí |
 | `time` mínimo y máximo de la muestra dentro de `period` | Sí (2026-10-31T14:37 – 2026-11-01T13:52 UTC) |
-| Países asignados por punto en polígono sobre `paises.geojson` (10 valores distintos; 47 eventos sin país) | Calculado con el catálogo real |
+| Países asignados por punto en polígono sobre `paises.geojson` (9 países más `null`; 47 eventos sin país) | Calculado con el catálogo real |
 | Eventos con `type` ≠ `earthquake` | 0 en la muestra (no hay ejemplo real; ver `exclusion`) |
 | Magnitud nula | 0 en la muestra; el contrato del profesor y el esquema la admiten (`null`) |
 | `n_2025 = 12 410` | **Ilustrativo** (no hay histórico cargado) |

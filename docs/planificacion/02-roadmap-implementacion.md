@@ -42,7 +42,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 |---|---|---|
 | Topics | `earthquakes.live` y `earthquakes.replay`, 1 partición (orden por clave garantizado), retención 7 días (`log.retention.hours=168`) | Simple y justificable; el orden por clave no sustituye la comparación de `updated` |
 | Aislamiento replay | Esquemas PostgreSQL `live` y `replay` con las **mismas tablas**; el consumidor enruta por `mode` del mensaje | Cumple "topic y esquema separados"; `country` y `date_dim` compartidas en `public` |
-| Histórico 2025 | Se carga en el esquema `live` con columna `source ∈ {feed, historical}`; datos sintéticos con `is_synthetic = true` | Necesario para comparar con las últimas 24 h; el replay lo toma de los **archivos** descargados y va a `replay` |
+| Histórico 2025 | Se carga en el esquema `live` con columna `source ∈ {usgs_feed, usgs_historical, replay_demo}`; datos sintéticos con `is_synthetic = true` | Necesario para comparar con las últimas 24 h; el replay lo toma de los **archivos** descargados y va a `replay` |
 | Carga del histórico | Proceso batch que importa `common.processing.process_event()` (misma lógica del consumidor) | Más rápido que Kafka para ~miles de eventos; **documentar la elección** (FAQ 21) |
 | Lógica compartida | Paquete `common/` (validación, conversión de tiempos, asignación de país, SQL de upsert) usado por consumidor, carga histórica y tests (estructura en 03 §7.1) | Garantiza "mismas reglas" (B16) y "replay reutiliza el procesamiento" (J5) |
 | País | Cargar `paises.geojson` en GeoPandas al arrancar, índice espacial (`STRtree`); `covers` para fronteras; si hay varias coincidencias, elegir `ADM0_A3` menor y contarlo en log | Regla documentada (C11) |
@@ -78,7 +78,7 @@ CREATE TABLE current_event (
   mag numeric, mag_type text, depth_km numeric,
   lon double precision NOT NULL, lat double precision NOT NULL,
   place text, country_id text REFERENCES public.country, date_id date REFERENCES public.date_dim,
-  source text NOT NULL,            -- feed | historical | replay
+  source text NOT NULL,            -- usgs_feed | usgs_historical | replay_demo
   is_synthetic boolean NOT NULL DEFAULT false,
   ingested_at timestamptz NOT NULL, replay_at timestamptz
 );
@@ -173,13 +173,13 @@ Dependencias de frontend: `F8a` (esqueleto + mapa contra mock) solo necesita el 
 ### F6 — Histórico 2025 (feature `006-historico-2025`; puede ir en paralelo desde F1)
 - Script `scripts/download_historical.py`: 12 meses, `minmagnitude=4`, `eventtype=earthquake`, `orderby=time-asc`; si `count>20000`, dividir; guardar cada archivo con nombre `usgs_2025-MM.geojson`, `manifest.json` (URL, fecha de extracción, nº registros, sha256).
 - Deduplicar por `id` entre intervalos; contrastar el total contra la consulta `count` de USGS si procede.
-- Cargador `scripts/load_historical.py` que usa `common.processing.process_event()` y escribe en `live` con `source='historical'`. Documentar la elección (batch vs Kafka).
+- Cargador `scripts/load_historical.py` que usa `common.processing.process_event()` y escribe en `live` con `source='usgs_historical'`. Documentar la elección (batch vs Kafka).
 - Documentar el procedimiento para recuperar un hueco de >24 h con este mismo mecanismo (B12).
 - **Verificación:** nº de eventos en BD = nº únicos de archivos − cuarentena; recarga repetida no duplica. **Cubre:** B13–B18.
 
 ### F7 — API FastAPI (feature `007-api`)
 - `/api/eventos` (filtros `start`, `end`, `min_mag`, `country_id`, `mode`, `limit`, `cursor`; default últimas 24 h; `metadata` completo; `truncated` con total y paginación; `properties` con `mag`, `magType`, `place`, `time`, `updated`, `country_id`, `country_name`), `/api/salud`, `/api/estadisticas` (mismos filtros). Forma de respuesta según `api.md` (F1b).
-- `/api/estadisticas` devuelve: conteos por hora UTC (ventana `[h, h+1)`, tiempo del evento), por país (incluyendo `null`), histogramas de magnitud y profundidad con `sin_valor`, comparación histórica (`n_reciente`, `media_diaria_2025 = n_2025/365`, `variacion_pct` o `null`), periodo, filtros, unidades.
+- `/api/estadisticas` devuelve: conteos por hora UTC (ventana `[h, h+1)`, tiempo del evento), por país (incluyendo `null`), histogramas de magnitud y profundidad con `no_value`, comparación histórica (`n_recent`, `daily_mean_2025 = n_2025/365`, `variation_pct` o `null`), periodo, filtros, unidades.
 - CORS exacto + `localhost:4200` + cabecera ngrok; BD caída → 503 con mensaje (no `[]`).
 - **Verificación:** tests con `httpx`; `curl` de cada endpoint; parar PG y comprobar el 503; evento con mag nula excluido por `min_mag` pero contado aparte. **Cubre:** F1–F11.
 

@@ -13,7 +13,7 @@ Los límites de cordura de los `CHECK` están **DECIDIDOS** (aprobados por el al
 | `replay` | Reproducción histórica; **mismas tablas que `live`** | `current_event`, `event_version`, `quarantine`, `exclusion` |
 | `ingest` | Estado del productor | `ingest_state`, `ingest_run`, `raw_response` |
 
-**Aislamiento del replay (J3):** el consumidor escribe en `replay` solo mensajes de `earthquakes.replay`, y en `live` solo los de `earthquakes.live` (ver `kafka-message.md` §1). El replay no escribe en `live`, ni a la inversa. `country` y `date_dim` son catálogos compartidos: `date_dim` puede recibir días nuevos desde ambos modos (solo inserciones de referencia) y ningún otro dato cruza entre `live` y `replay`. La API elige el esquema según `mode` con una lista cerrada (`live`, `replay`), nunca con texto del cliente.
+**Aislamiento del replay (J3):** el consumidor escribe en `replay` solo mensajes de `earthquakes.replay`, y en `live` solo los de `earthquakes.live` (ver `kafka-message.md` §1). El replay no escribe en `live`, ni a la inversa. `country` y `date_dim` son catálogos compartidos: `date_dim` puede recibir días nuevos desde ambos modos (solo inserciones de referencia) y ningún otro dato cruza entre `live` y `replay`. Las tablas `ingest.*` son compartidas: el replay no usa estado de ingesta propio. La API elige el esquema según `mode` con una lista cerrada (`live`, `replay`), nunca con texto del cliente.
 
 ### 1.1 Quién escribe y quién lee
 
@@ -43,6 +43,7 @@ Los límites de cordura de los `CHECK` están **DECIDIDOS** (aprobados por el al
 - **Hora UTC:** las ventanas horarias usan `date_trunc('hour', event_time AT TIME ZONE 'UTC')` sobre `event_time` (tiempo del evento, no de procesamiento).
 - **Nulos (constitución §5):** `mag`, `depth_km`, `country_id`, `mag_type`, `place`, `status`, `url` y `sig` admiten `NULL`. Nunca se sustituyen por 0.
 - **Negativos:** `mag` y `depth_km` aceptan valores negativos (el feed real trae `mag = -0.06` y profundidad `-0.18`). Los `CHECK` de rango (`mag` entre −10 y 15; `depth_km` entre −100 y 1000; `lon`, `lat` en rango geográfico) excluyen `NaN`, infinitos y valores físicamente imposibles; **no** rechazan negativos. Son límites de cordura (**DECIDIDO**); los valores observados (`mag` −0,06…6; profundidad −0,18…377,9) caben con holgura.
+- **Validación previa:** el consumidor valida los límites de cordura y los tipos antes de insertar y lleva a cuarentena lo que no los cumpla (`mag_out_of_range`, `depth_out_of_range`, `invalid_field_type`, `value_out_of_range`, `replay_at_missing`; ver `kafka-message.md` §6). Los `CHECK` son la última barrera: se valida antes de insertar y, si aun así la base rechaza el `INSERT`, se aplica el motivo de último recurso `db_constraint_violation` (rollback del mensaje, cuarentena y confirmación del offset, sin bloquear la cola). Un mensaje genera una sola fila de cuarentena, con el primer motivo que falle según el orden de prevalencia de `kafka-message.md` §6.
 - **Datos sintéticos (constitución §7):** `is_synthetic boolean NOT NULL DEFAULT false` en `current_event`, `event_version`, `quarantine` y `exclusion`.
 - **Origen:** `source` toma los mismos tres valores que el mensaje Kafka (`usgs_feed`, `usgs_historical`, `replay_demo`). Ajuste respecto al roadmap §1 (que proponía `feed | historical | replay`) para tener un solo vocabulario.
 - **País:** `country_id` nulo = «Sin país asignado». No se infiere del texto `place`.
@@ -64,7 +65,7 @@ Los límites de cordura de los `CHECK` están **DECIDIDOS** (aprobados por el al
 | `subregion` | text | no | `SUBREGION` | Usada en recuentos por país |
 
 - **Relaciones:** referenciada por `current_event.country_id` (1 país : N eventos).
-- **Índices:** solo la PK. Consulta Q2 y la unión con `current_event` la usan; la tabla tiene 177 filas y no necesita más.
+- **Índices:** solo la PK, que sirve a la unión con `current_event` (nombre y subregión en los recuentos por país, Q2) y a la comprobación de la clave foránea; la tabla tiene 177 filas y no necesita más.
 - La carga del catálogo no es parte de esta feature (`consumidor-idempotente`); el archivo no se modifica.
 
 ### 3.2 `public.date_dim`

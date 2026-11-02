@@ -1,6 +1,6 @@
 # Guía de validación — contratos-y-modelo
 
-Cómo comprobar que los entregables de esta feature son coherentes. Esta feature no arranca servicios; la validación completa del DDL en la base real corresponde a `consumidor-idempotente`. Detalles de campos y tablas: `contracts/` y `data-model.md` (no se repiten aquí).
+Cómo comprobar que los entregables de esta feature son coherentes. Esta feature no arranca servicios; el DDL ya se probó en PostgreSQL 16 el 2-nov-2026 (evidencia en `docs/evidencias/contratos-y-modelo/`); la comprobación posterior en `consumidor-idempotente` es una prueba de integración. Detalles de campos y tablas: `contracts/` y `data-model.md` (no se repiten aquí).
 
 ## 1. Los ejemplos JSON son válidos y coherentes con el feed real
 
@@ -58,12 +58,13 @@ Resultado esperado: 13 tablas (2 en `public`, 4 en `live`, 4 en `replay`, 3 en `
 
 ## 5. El esquema acepta los casos del feed real
 
-Con un evento real (negativo y sin país), insertado en `live.current_event` en una transacción que se revierte, comprobar:
+Ejecutar el script `docs/evidencias/contratos-y-modelo/prueba_esquema_001.sql` (T1–T16) y contrastar con la salida guardada en `prueba_esquema_001_salida.txt`:
 
-- `mag = -0.06` y `depth_km = -0.01` se aceptan.
-- `mag = NULL` y `country_id = NULL` se aceptan.
-- `mag = 'NaN'` se rechaza.
-- `event_time` distinto de `event_time_ms` se rechaza.
+```bash
+docker exec -i pg-schema-check psql -U postgres -d check < docs/evidencias/contratos-y-modelo/prueba_esquema_001.sql
+```
+
+Cubre: valores del feed (magnitud −0,06, profundidad negativa, nulos), rechazo de latitud 145, `NaN`, `source` inválido, país inexistente, ms que no coinciden con el `timestamptz` y `date_id` incoherente; clave foránea diferida; reglas de versiones (igual, mayor, antigua tardía, reenvío); cuarentena y exclusión únicas; aislamiento `live`/`replay`; ingesta; y las consultas Q1 y Q4. La salida de las dos aplicaciones del DDL está en `prueba_esquema_001_ddl_salida.txt`.
 
 Limpieza: `docker rm -f pg-schema-check`.
 
