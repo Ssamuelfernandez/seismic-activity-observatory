@@ -8,6 +8,13 @@
 
 **Input**: User description: "Feature: infra-compose. Poder levantar el sistema completo con un solo comando en Docker Compose y comprobar de punta a punta que los cinco servicios se comunican: un productor mínimo publica un evento ficticio marcado como sintético, un consumidor mínimo lo recibe, PostgreSQL conserva los datos tras reiniciar los contenedores y la API responde. Cubre A1–A12 (M7–M9 solo se verifican)."
 
+## Clarifications
+
+### Session 2026-11-03
+
+- Q: ¿Cómo se comporta el productor mínimo tras publicar su primer evento ficticio? → A: Publica un evento sintético nuevo cada intervalo configurable por entorno mientras esté en marcha, con un `event.id` distinto en cada ciclo y con el prefijo `synthetic`.
+- Q: ¿Qué ruta de la API responde la comprobación de salud? → A: `GET /api/salud` en su versión mínima, tal como la define `contracts/api.md`, también usada como healthcheck de Compose; el resto de endpoints sigue fuera de alcance.
+
 ## User Scenarios & Testing *(mandatory)*
 
 Los "usuarios" de esta feature son quienes construyen y evalúan el sistema: la persona que implementa las demás features (el alumno, con su agente) y el profesor que levanta la entrega en su equipo. Esta feature entrega la base de ejecución sobre la que se apoyan las demás: un entorno que arranca con un solo comando y un recorrido mínimo de punta a punta con un evento ficticio. No entrega lógica de negocio.
@@ -24,7 +31,7 @@ Quien clona el repositorio por primera vez ejecuta un único comando de arranque
 
 1. **Given** un clon limpio del repositorio con el archivo de entorno creado a partir de `.env.example`, **When** se ejecuta `docker compose up --build -d`, **Then** los cinco servicios llegan al estado saludable sin intervención manual.
 2. **Given** que la base de datos o el broker tardan más que los servicios Python en estar listos, **When** el productor, el consumidor o la API arrancan antes, **Then** reintentan la conexión hasta que el servicio esté disponible y no terminan con error de forma definitiva.
-3. **Given** el sistema en marcha, **When** se consulta la API desde el equipo anfitrión en `127.0.0.1:8000`, **Then** responde correctamente.
+3. **Given** el sistema en marcha, **When** se consulta `GET /api/salud` desde el equipo anfitrión en `127.0.0.1:8000`, **Then** responde `status = "ok"` (con `last_ingestion` a `null` si aún no hay ingesta).
 
 ---
 
@@ -38,7 +45,8 @@ Quien verifica el sistema comprueba que los servicios realmente se comunican: el
 
 **Acceptance Scenarios**:
 
-1. **Given** el sistema recién levantado, **When** el productor mínimo publica su evento ficticio, **Then** el registro del consumidor muestra ese evento, identificable como sintético.
+1. **Given** el sistema recién levantado, **When** el productor mínimo publica su evento ficticio, **Then** el registro del consumidor muestra ese evento, identificable como sintético (marca `is_synthetic` e identificador con prefijo `synthetic`).
+   1. **Given** el sistema en marcha, **When** transcurre el intervalo configurado, **Then** el consumidor muestra un nuevo evento sintético con un identificador distinto.
 2. **Given** el evento publicado, **When** se inspecciona su contenido, **Then** cumple la estructura del mensaje definida en `specs/001-contratos-y-modelo/contracts/kafka-message.md` (incluido `is_synthetic = true`) y viaja por el tema correspondiente de ese contrato.
 3. **Given** que el consumidor aún no estaba listo cuando el productor publicó, **When** el consumidor termina de arrancar, **Then** recibe igualmente el evento, porque el broker lo conserva.
 
@@ -117,7 +125,7 @@ Quien evalúa la operación comprueba que el broker no acumula mensajes indefini
 - **Eliminación de volúmenes** (`docker compose down -v`): es el único caso en que se pierden los datos; debe quedar documentado que es deliberado.
 - **Archivo de entorno ausente o incompleto**: el sistema debe fallar de forma clara y temprana indicando qué variable falta, no arrancar con valores por defecto sensibles.
 - **Puerto 8000 ocupado en el equipo anfitrión**: el arranque de la API falla con un error comprensible; se documenta cómo diagnosticarlo.
-- **Productor mínimo reiniciado**: puede volver a publicar su evento ficticio; no es un comportamiento de producción y no se exige idempotencia (queda para `productor-live` y `consumidor-idempotente`).
+- **Productor mínimo reiniciado**: vuelve a publicar eventos ficticios y puede repetir identificadores ya usados; no es un comportamiento de producción y no se exige idempotencia (queda para `productor-live` y `consumidor-idempotente`).
 - **Evento sintético en datos reales**: el evento ficticio debe ir siempre marcado como sintético y no mezclarse con datos reales (constitución §7).
 
 ## Requirements *(mandatory)*
@@ -141,11 +149,12 @@ Quien evalúa la operación comprueba que el broker no acumula mensajes indefini
 
 **Recorrido de punta a punta**
 
-- **FR-010**: El productor mínimo MUST publicar un evento ficticio con la estructura de `kafka-message.md` §3, con `is_synthetic = true`, `mode = live` y `source = replay_demo`, en el tema `earthquakes.live`, y con clave igual a `event.id`.
+- **FR-010**: El productor mínimo MUST publicar un evento ficticio con la estructura de `kafka-message.md` §3, con `is_synthetic = true`, `mode = live` y `source = replay_demo`, en el tema `earthquakes.live`, y con clave igual a `event.id`. Lo MUST repetir cada intervalo configurable mientras esté en marcha, con un `event.id` distinto en cada ciclo que empiece por `synthetic` (por ejemplo `synthetic-1`), de modo que ningún identificador sintético pueda confundirse con uno real de USGS. El proceso MUST seguir vivo entre publicaciones para poder estar saludable.
 - **FR-011**: El consumidor mínimo MUST recibir los mensajes de `earthquakes.live` y mostrar en su registro el evento, de modo que se distinga que es sintético.
 - **FR-012**: El productor mínimo MUST ser configurable por entorno en, al menos, la dirección del broker, el tema y la frecuencia de publicación (A10).
 - **FR-013**: El consumidor mínimo MUST NOT validar con reglas de negocio, transformar ni escribir en tablas de eventos; esa lógica pertenece a `consumidor-idempotente`.
-- **FR-014**: La API MUST responder a una petición de comprobación de estado indicando si la API y la base de datos responden, sin implementar los endpoints de datos (fuera de alcance).
+- **FR-014**: La API MUST implementar únicamente `GET /api/salud`, con la forma y los errores definidos en `specs/001-contratos-y-modelo/contracts/api.md` (sin redefinirlos): `status` `"ok"` si la API y la base de datos responden, `last_ingestion` (`null` mientras no haya ingesta) y `generated`; y 503 con el formato de error común si la base falla. Esa consulta MUST hacerse con el rol de solo lectura. Los endpoints de datos quedan fuera de alcance.
+- **FR-014a**: La comprobación de salud de la API en Compose MUST usar `GET /api/salud`, de modo que «saludable» implique que la API alcanza la base de datos.
 - **FR-015**: Los datos de prueba sintéticos MUST estar etiquetados como tales y mantenerse separados de los reales (constitución §7).
 
 **Contratos (no se redefinen)**
