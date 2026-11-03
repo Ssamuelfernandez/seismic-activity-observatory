@@ -56,9 +56,9 @@ Quien verifica el sistema comprueba que los servicios realmente se comunican: el
 **Acceptance Scenarios**:
 
 1. **Given** el sistema recién levantado, **When** el productor mínimo publica su evento ficticio, **Then** el registro del consumidor muestra ese evento, identificable como sintético (marca `is_synthetic` e identificador con prefijo `synthetic`).
-   1. **Given** el sistema en marcha, **When** transcurre el intervalo configurado, **Then** el consumidor muestra un nuevo evento sintético con un identificador distinto.
 2. **Given** el evento publicado, **When** se inspecciona su contenido, **Then** cumple la estructura del mensaje definida en `specs/001-contratos-y-modelo/contracts/kafka-message.md` (incluido `is_synthetic = true`) y viaja por el tema correspondiente de ese contrato.
 3. **Given** que el consumidor aún no estaba listo cuando el productor publicó, **When** el consumidor termina de arrancar, **Then** recibe igualmente el evento, porque el broker lo conserva.
+4. **Given** el sistema en marcha, **When** transcurre el intervalo configurado, **Then** el consumidor muestra un nuevo evento sintético con un identificador distinto.
 
 ---
 
@@ -163,8 +163,7 @@ Quien evalúa la operación comprueba que el broker no acumula mensajes indefini
 - **FR-011**: El consumidor mínimo MUST recibir los mensajes de `earthquakes.live` y mostrar en su registro el evento, de modo que se distinga que es sintético.
 - **FR-012**: El productor mínimo MUST ser configurable por entorno en, al menos, la dirección del broker, el tema y la frecuencia de publicación (A10).
 - **FR-013**: El consumidor mínimo MUST NOT validar con reglas de negocio, transformar ni escribir en tablas de eventos; esa lógica pertenece a `consumidor-idempotente`.
-- **FR-014**: La API MUST implementar únicamente `GET /api/salud`, con la forma y los errores definidos en `specs/001-contratos-y-modelo/contracts/api.md` (sin redefinirlos): `status` `"ok"` si la API y la base de datos responden, `last_ingestion` (`null` mientras no haya ingesta) y `generated`; y 503 con el formato de error común si la base falla. Esa consulta MUST hacerse con el rol de solo lectura. Los endpoints de datos quedan fuera de alcance.
-- **FR-014a**: La comprobación de salud de la API en Compose MUST usar `GET /api/salud`, de modo que «saludable» implique que la API alcanza la base de datos.
+- **FR-014**: La API MUST implementar únicamente `GET /api/salud`, con la forma y los errores definidos en `specs/001-contratos-y-modelo/contracts/api.md` (sin redefinirlos): `status` `"ok"` si la API y la base de datos responden, `last_ingestion` (`null` mientras no haya ingesta) y `generated`; y 503 con el formato de error común si la base falla. Esa consulta MUST hacerse con el rol de solo lectura. Los endpoints de datos quedan fuera de alcance. Criterio: la comprobación de salud de la API en Compose MUST usar `GET /api/salud`, de modo que «saludable» implique que la API alcanza la base de datos.
 - **FR-015**: Los datos de prueba sintéticos MUST estar etiquetados como tales y mantenerse separados de los reales (constitución §7).
 
 **Contratos (no se redefinen)**
@@ -230,10 +229,10 @@ Lógica real del productor (consulta a USGS), validación y escritura idempotent
 ### Measurable Outcomes
 
 - **SC-001**: Desde un clon limpio, un único comando de arranque deja los 5 de 5 servicios en estado saludable en menos de 5 minutos (sin contar la descarga inicial de imágenes), sin ninguna intervención manual.
-- **SC-002**: En el 100 % de los arranques de prueba, incluidos los que arrancan los servicios Python antes que el broker o la base de datos, el sistema alcanza el estado saludable sin reinicios manuales.
+- **SC-002**: En los arranques de prueba documentados, incluidos los que arrancan los servicios Python antes que el broker o la base de datos, el sistema alcanza el estado saludable sin reinicios manuales.
 - **SC-003**: Tras el arranque, el registro del consumidor muestra el evento sintético del productor en menos de 60 segundos, identificado como sintético.
 - **SC-004**: Tras detener y volver a arrancar los contenedores sin borrar volúmenes, el 100 % de los datos de prueba guardados en la base de datos siguen presentes y los 5 servicios vuelven a estado saludable.
-- **SC-005**: Desde el equipo anfitrión, 0 de los servicios distintos de la API aceptan conexiones, y exactamente 1 puerto queda publicado, ligado únicamente a la dirección local.
+- **SC-005**: Docker no enlaza ningún puerto de Kafka ni PostgreSQL al equipo anfitrión, y exactamente un puerto queda publicado, ligado solo a la dirección local.
 - **SC-006**: La cuenta de la API consigue 0 escrituras exitosas en la base de datos en las pruebas de escritura y sí consigue las lecturas que fija el contrato.
 - **SC-007**: Una búsqueda de secretos sobre el repositorio devuelve 0 credenciales reales, y la comparación entre `.env.example` y las variables usadas arroja 0 diferencias.
 - **SC-008**: El 100 % de las versiones de runtime y de dependencias de Python están fijadas con valor exacto; una reconstrucción en otro equipo produce el mismo resultado.
@@ -249,5 +248,5 @@ Lógica real del productor (consulta a USGS), validación y escritura idempotent
 - El consumidor mínimo no escribe en tablas de eventos: la prueba de persistencia se hace con un dato de prueba escrito por el procedimiento de verificación, no por la lógica del consumidor.
 - Los roles de productor y consumidor se definen ahora porque la tabla de `db-schema.md` §1.1 ya fija sus permisos; las features posteriores no deben ampliarlos sin actualizar esa tabla.
 - La retención de 7 días se aplica a los dos temas del contrato; el replay se usa más adelante, pero su tema existe desde el principio para evitar reconfigurar el broker.
-- La versión exacta de Python, del broker y de las dependencias se decide en el plan de esta feature (`/speckit-plan`), no en esta spec.
+- La versión exacta de Python (3.12.16), del broker (`apache/kafka` 4.1.2), de PostgreSQL (16.15) y de las dependencias ya está decidida (ver Clarifications y `plan.md`).
 - ngrok se ejecuta en el equipo anfitrión con `ngrok http 8000`; su authtoken nunca entra en el repositorio.

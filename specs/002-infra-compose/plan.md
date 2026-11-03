@@ -8,7 +8,7 @@
 
 Un único `docker compose up --build -d` levanta cinco servicios (Kafka en modo KRaft, PostgreSQL 16, productor, consumidor y API) en una red interna de Compose. Solo la API se publica, en `127.0.0.1:8000`. El productor mínimo publica un evento sintético cada intervalo configurable en `earthquakes.live`; el consumidor mínimo lo escribe en su registro; la API responde `GET /api/salud` leyendo la base con un rol de solo lectura. PostgreSQL y Kafka usan volúmenes con nombre. El esquema (`sql/001_schema.sql`, sin cambios) y los roles (`sql/002_roles.sql`, nuevo) se aplican en la primera inicialización con contraseñas de variables de entorno. Productor, consumidor y API comparten una imagen Python con versión exacta y dependencias bloqueadas con `uv.lock`. El detalle de las decisiones está en [research.md](research.md); las variables, en [contracts/config.md](contracts/config.md); el procedimiento de verificación, en [quickstart.md](quickstart.md).
 
-**Estado**: las seis propuestas están aprobadas (DECIDIDO). Los archivos de la feature ya están escritos y se ejecutaron contra Docker (ver «Verificación realizada»). Faltan `tasks.md`, la revisión y el cierre (README, CODEMAP).
+**Estado**: las seis propuestas están aprobadas (DECIDIDO). Los archivos de la feature ya están escritos y se ejecutaron contra Docker (ver «Verificación realizada»). `tasks.md` ya existe (33 tareas, 14 hechas). Quedan las verificaciones pendientes de `tasks.md` (arranque adverso, clon limpio con descarga en frío, checkout con LF, reaplicar el esquema, 503 de `/api/salud`, caducidad del latido y otras), la revisión del alumno y el cierre (README, CODEMAP).
 
 ## Technical Context
 
@@ -45,7 +45,7 @@ Un único `docker compose up --build -d` levanta cinco servicios (Kafka en modo 
 | 13 | Idioma | Identificadores en inglés; docstrings y comentarios en español. |
 | 14 | Una responsabilidad por función; lógica pura separada del I/O | `main.py` solo arranca; `common/health.py::is_heartbeat_fresh`, `common/retry.py::next_delay` y `common/synthetic_event.py` son puros. |
 | 15 | Contratos únicos | No se duplica ni se modifica ningún contrato. Constantes de temas en `common/kafka_topics.py` (valores de `kafka-message.md` §1). |
-| 16 | Cierre de feature | **Pendiente**: prueba ejecutada y evidencia hechas; faltan `README` y `CODEMAP.md`. |
+| 16 | Cierre de feature | **Pendiente**: hay pruebas y evidencia parciales (borrador); faltan las verificaciones pendientes de `tasks.md` y el cierre con `README.md` y `CODEMAP.md` (T028 y T030). |
 | 19 | Una feature cada vez; sin implementar sin spec, plan y tareas revisados | **Desviación de la constitución §19, validada por el alumno**: el código se escribió antes de `tasks.md` y de la revisión de las tareas (borrador adelantado, commit `33e1fc7`), porque el alumno pidió escribir los archivos reales junto con el plan. El alumno ha validado esa desviación. Las tareas (`tasks.md`) se limitan a completar y verificar; no hay merge. |
 | 20 | Commits | Ninguno hecho. |
 
@@ -136,7 +136,7 @@ Cada requisito del checklist con su criterio de la spec, la tarea de `tasks.md` 
 | A7 | Nombres de servicio en vez de `localhost`; listeners documentados | FR-022, FR-026, FR-031 | T022 (hecha) | `check_env_example.txt`, `reintentos_y_configuracion.txt` (`DB_HOST=postgres`, `KAFKA_BOOTSTRAP_SERVERS=kafka:9092`); listeners en `research.md` §3 |
 | A8 | Solo la API se expone (`127.0.0.1:8000`) | FR-023; SC-005 | T020 (hecha); T013 (repite en el clon, pendiente) | `verificacion_completa.txt`; `clon_limpio_verify.txt` (pendiente) |
 | A9 | Uvicorn en `0.0.0.0:8000` dentro del contenedor | FR-024; US1 escenario 3 | T020 (hecha, indirecta: si escuchara solo en `127.0.0.1` el puerto publicado no respondería) | `verificacion_completa.txt` (`GET /api/salud` desde el equipo); comando en `compose.yaml` |
-| A10 | `.env.example` sin credenciales; variables coinciden con el código; productor configurable por entorno | FR-012, FR-031, FR-032, FR-033, FR-036; SC-007 | T022 (hecha); T023 (pendiente) | `check_env_example.txt`; `busqueda_secretos.txt` (pendiente) |
+| A10 | `.env.example` sin credenciales; variables coinciden con el código; productor configurable por entorno | FR-012, FR-031, FR-032, FR-033, FR-036; SC-007 | T022 (hecha); T023, T033 (pendientes) | `check_env_example.txt`; `busqueda_secretos.txt`, `config_por_entorno.txt` (pendientes) |
 | A11 | Dependencias fijadas (`requirements`/lock) | FR-034, FR-035; SC-008 | T001 (hecha); T012 (pendiente) | `pyproject.toml`, `uv.lock`; `clon_limpio.txt` (pendiente) |
 | A12 | Sin contenedor Angular; ngrok en el equipo | FR-005 | T029 (pendiente) | `a12.txt` (pendiente) |
 

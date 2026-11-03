@@ -19,7 +19,7 @@ import uuid
 
 SERVICES = ("kafka", "postgres", "producer", "consumer", "api")
 HEALTHY_TIMEOUT_SECONDS = 240
-EVENT_TIMEOUT_SECONDS = 90
+EVENT_TIMEOUT_SECONDS = 60  # SC-003: el evento debe verse en menos de 60 s
 HOST_PORTS_THAT_MUST_BE_CLOSED = {"kafka": 9092, "postgres": 5432}
 EXPECTED_TOPICS = ("earthquakes.live", "earthquakes.replay")
 EXPECTED_RETENTION_MS = "604800000"
