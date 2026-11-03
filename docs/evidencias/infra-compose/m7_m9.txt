@@ -1,0 +1,48 @@
+# T024 — Verificación de M7–M9 (solo verificar; FR-037)
+Fecha: 2026-11-03T23:28:02Z
+Rama: 002-infra-compose   Commit: bd0fb57ff010259cea2f3e5c77b1a56c37829c59
+Esta verificación no crea ni modifica nada fuera de este archivo.
+
+## M7 — Historial sin trailers de coautoría ni líneas de «generado por»; configuración que lo impide
+Commits examinados (todas las ramas): 23
+PASS  Sin trailers Co-Authored-By en el historial — 0 coincidencias
+PASS  Sin líneas «generado por» / «generated with» en el historial — 0 coincidencias
+FAIL  .claude/settings.json existe — NO EXISTE (el checklist M7 lo menciona)
+    contenido de .claude/: ['agents', 'skills']
+    .gitignore excluye .claude/settings.local.json (configuración personal); no sustituye a settings.json.
+core.hooksPath configurado: (no, se usa .git/hooks)
+Ruta que Git usaría para el hook: .git/hooks/commit-msg
+FAIL  Hook commit-msg existe — NO EXISTE
+    hooks activos en c:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\.git/hooks: ninguno (solo archivos .sample)
+    hook o plantilla versionados en el repositorio: ninguno
+
+## M8 — CLAUDE.md, CODEMAP.md y constitución versionados y al día; docs/ separado de specs/
+PASS  CLAUDE.md está versionado
+PASS  CODEMAP.md está versionado
+PASS  .specify/memory/constitution.md está versionado
+FAIL  CODEMAP.md recoge los archivos de infra-compose — faltan 5 de 9: ['compose.yaml', 'Dockerfile', '.env.example', 'sql/002_roles.sql', 'docs/evidencias/infra-compose']
+FAIL  README.md recoge los archivos de infra-compose — faltan 9 de 9: ['compose.yaml', 'Dockerfile', '.env.example', 'common/', 'producer/', 'consumer/', 'api/', 'sql/002_roles.sql', 'docs/evidencias/infra-compose']
+    (Es esperado hoy: README y CODEMAP se actualizan en T028 y T030, al cerrar la feature.)
+PASS  Ningún archivo de specs/ está copiado tal cual en docs/ — 18 archivos de specs/ y 28 de docs/ sin duplicados
+    carpetas de primer nivel de docs/: ['borradores', 'enunciado', 'evidencias', 'memoria.md', 'planificacion']
+    carpetas de primer nivel de specs/: ['001-contratos-y-modelo', '002-infra-compose']
+
+## M9 — docs/enunciado/ intacto; README del paquete renombrado; paises.geojson con su SHA-256
+PASS  git diff origin/main -- docs/enunciado está vacío — sin diferencias
+PASS  Ningún commit de la rama toca docs/enunciado — 0 commits
+PASS  docs/enunciado sin cambios sin confirmar — limpio
+    historial de docs/enunciado en todas las ramas:
+        79c04f7 Añade enunciado, planificación y catálogo de países
+PASS  Existe docs/enunciado/README-paquete.md
+PASS  No existe docs/enunciado/README.md (renombrado)
+SHA-256 declarado en FUENTES-Y-LICENCIAS.md: 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f
+PASS  La copia que Git guarda (HEAD:data/catalogo/paises.geojson) tiene el hash declarado — 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f
+PASS  La copia de origin/main tiene el hash declarado — 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f
+INFO  copia de trabajo en este equipo: 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f (coincide)
+    git ls-files --eol: i/lf    w/lf    attr/-text            	data/catalogo/paises.geojson
+    git status de data/: limpio
+    historial de paises.geojson: 79c04f7 Añade enunciado, planificación y catálogo de países
+
+## Resumen
+13/17 comprobaciones superadas.
+No superadas: .claude/settings.json existe; Hook commit-msg existe; CODEMAP.md recoge los archivos de infra-compose; README.md recoge los archivos de infra-compose
