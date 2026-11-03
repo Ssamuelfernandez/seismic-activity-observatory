@@ -46,7 +46,7 @@ Un único `docker compose up --build -d` levanta cinco servicios (Kafka en modo 
 | 14 | Una responsabilidad por función; lógica pura separada del I/O | `main.py` solo arranca; `common/health.py::is_heartbeat_fresh`, `common/retry.py::next_delay` y `common/synthetic_event.py` son puros. |
 | 15 | Contratos únicos | No se duplica ni se modifica ningún contrato. Constantes de temas en `common/kafka_topics.py` (valores de `kafka-message.md` §1). |
 | 16 | Cierre de feature | **Pendiente**: prueba ejecutada y evidencia hechas; faltan `README` y `CODEMAP.md`. |
-| 19 | Una feature cada vez; sin implementar sin spec, plan y tareas revisados | **Desviación consciente**: por indicación expresa del alumno, los archivos reales se escribieron junto con el plan, antes de `tasks.md`. No hay commit ni merge. La revisión del alumno decide si se conservan, se ajustan o se rehacen. |
+| 19 | Una feature cada vez; sin implementar sin spec, plan y tareas revisados | **Desviación de la constitución §19, validada por el alumno**: el código se escribió antes de `tasks.md` y de la revisión de las tareas (borrador adelantado, commit `33e1fc7`), porque el alumno pidió escribir los archivos reales junto con el plan. El alumno ha validado esa desviación. Las tareas (`tasks.md`) se limitan a completar y verificar; no hay merge. |
 | 20 | Commits | Ninguno hecho. |
 
 **Resultado**: sin violaciones sin justificar. Reevaluado tras el diseño: igual.
@@ -121,6 +121,36 @@ docs/evidencias/infra-compose/
 
 Las decisiones constan en la sección Clarifications de [spec.md](spec.md). Los permisos de los roles siguen exactamente la tabla §1.1 de `db-schema.md` (ver [data-model.md](data-model.md)).
 
+## Trazabilidad A1–A12
+
+Cada requisito del checklist con su criterio de la spec, la tarea de `tasks.md` que lo verifica y la evidencia en `docs/evidencias/infra-compose/`. «(pendiente)» = evidencia aún por generar; el resto ya existe.
+
+| ID | Requisito (resumen) | Criterio de la spec | Tarea que lo verifica | Evidencia |
+|---|---|---|---|---|
+| A1 | 5 servicios separados, `docker compose ps` los muestra healthy | FR-001, FR-006; US1 escenario 1; SC-001 | T007 (hecha); T013 (pendiente, en clon limpio) | `arranque_desde_cero.txt`, `verificacion_completa.txt`; `clon_limpio_verify.txt` (pendiente) |
+| A2 | `docker compose up --build -d` lo levanta todo desde un clon limpio | FR-002; SC-001; SC-002; SC-010 | T010, T011, T012 (pendientes) | `clon_limpio.txt`, `checkout_lf.txt` (pendientes) |
+| A3 | Imagen reproducible por servicio Python, dependencias fijadas | FR-003, FR-004, FR-034, FR-035; SC-008 | T001 (hecha); T012 (construcción en frío, pendiente) | `uv.lock`, `Dockerfile`; `clon_limpio.txt` (pendiente) |
+| A4 | Healthchecks y reintentos en el código | FR-006, FR-007, FR-008, FR-009; SC-002 | T008 (hecha); T009, T014, T015 (pendientes) | `reintentos_y_configuracion.txt`; `arranque_sin_postgres.txt`, `latido_caduca.txt`, `salud_503.txt` (pendientes) |
+| A5 | Volúmenes persistentes: reiniciar no pierde datos | FR-018, FR-019, FR-020; SC-004 | T018 (hecha); T019 (pendiente) | `verificacion_completa.txt`; `reaplicar_esquema.txt` (pendiente) |
+| A6 | Retención limitada de Kafka, configurada y documentada | FR-016, FR-021; SC-009 | T025 (hecha); T028 (documentación en README, pendiente) | `verificacion_completa.txt`; `README.md` (pendiente) |
+| A7 | Nombres de servicio en vez de `localhost`; listeners documentados | FR-022, FR-026, FR-031 | T022 (hecha) | `check_env_example.txt`, `reintentos_y_configuracion.txt` (`DB_HOST=postgres`, `KAFKA_BOOTSTRAP_SERVERS=kafka:9092`); listeners en `research.md` §3 |
+| A8 | Solo la API se expone (`127.0.0.1:8000`) | FR-023; SC-005 | T020 (hecha); T013 (repite en el clon, pendiente) | `verificacion_completa.txt`; `clon_limpio_verify.txt` (pendiente) |
+| A9 | Uvicorn en `0.0.0.0:8000` dentro del contenedor | FR-024; US1 escenario 3 | T020 (hecha, indirecta: si escuchara solo en `127.0.0.1` el puerto publicado no respondería) | `verificacion_completa.txt` (`GET /api/salud` desde el equipo); comando en `compose.yaml` |
+| A10 | `.env.example` sin credenciales; variables coinciden con el código; productor configurable por entorno | FR-012, FR-031, FR-032, FR-033, FR-036; SC-007 | T022 (hecha); T023 (pendiente) | `check_env_example.txt`; `busqueda_secretos.txt` (pendiente) |
+| A11 | Dependencias fijadas (`requirements`/lock) | FR-034, FR-035; SC-008 | T001 (hecha); T012 (pendiente) | `pyproject.toml`, `uv.lock`; `clon_limpio.txt` (pendiente) |
+| A12 | Sin contenedor Angular; ngrok en el equipo | FR-005 | T029 (pendiente) | `a12.txt` (pendiente) |
+
+M7–M9 solo se verifican (FR-037): T024, evidencia `m7_m9.txt` (pendiente).
+
+## Pendientes trasladados a otras features
+
+| Pendiente | Feature | Dónde se anota |
+|---|---|---|
+| Los 404 (`not_found`) y 405 (`method_not_allowed`) deben devolver el cuerpo de error común `{"error": {"code", "message"}}` de `contracts/api.md` §6; hoy FastAPI usa su cuerpo por defecto (`{"detail": …}`). Añadir manejadores globales en `api/main.py`. | `007-api` | T027 → `docs/planificacion/02-roadmap-implementacion.md`, sección F7 |
+| Permisos de lectura de `raw_response`, purga (`DELETE`) y lecturas de `exclusion` y `quarantine`: se añaden al rol que corresponda actualizando la tabla §1.1 de `db-schema.md`. | `productor-live`, `consumidor-idempotente` | `data-model.md` |
+| Aplicar migraciones sobre un volumen ya inicializado (`postgres_init.sh` solo corre con el volumen vacío). | primera feature que añada una migración | `research.md` §4 |
+| Rol de la carga histórica (¿reutiliza `observatory_consumer` o uno propio?). | `historico-2025` | `data-model.md` |
+
 ## Verificación realizada (2026-11-03)
 
 Evidencia en [docs/evidencias/infra-compose/](../../docs/evidencias/infra-compose/):
@@ -133,7 +163,7 @@ Evidencia en [docs/evidencias/infra-compose/](../../docs/evidencias/infra-compos
 
 ## Hallazgos para la revisión
 
-1. **M7 incompleto**: el historial no tiene trailers de coautoría ni líneas de «generado por» (0 coincidencias), pero **no existen** `.claude/settings.json` ni el hook `commit-msg` que el checklist M7 menciona. Solo se verifica, no se rehace (spec FR-037); decide si se abre un arreglo aparte.
+1. **M7 incompleto**: el historial no tiene trailers de coautoría ni líneas de «generado por» (0 coincidencias), pero **no existen** `.claude/settings.json` ni el hook `commit-msg` que el checklist M7 menciona. Solo se verifica, no se rehace (spec FR-037): **el alumno lo resuelve a mano** y la tarea T024 solo comprueba que ambos existen y registra el resultado. El hook `commit-msg` no se versiona (vive en `.git/hooks/`), así que debe instalarse en cada clon; el README lo avisará (T028).
 2. **M9 correcto en el repositorio**: el SHA-256 de `paises.geojson` en Git coincide con `FUENTES-Y-LICENCIAS.md`. La copia de trabajo en Windows tiene saltos CRLF (por `autocrlf`) y su hash local difiere. `.gitattributes` fija ahora `data/catalogo/paises.geojson -text` para que Git no convierta sus saltos de línea en futuras descargas; la copia de trabajo actual no se ha tocado.
 3. **PostgreSQL local en el 5432 del equipo**: la sonda TCP desde el anfitrión responde, pero lo atiende un servicio local, no Compose. La comprobación de aislamiento se basa en que Docker no enlaza ningún puerto de Kafka ni de PostgreSQL.
 4. **Dos fallos encontrados y corregidos durante la verificación**: construir la imagen en tres servicios con la misma etiqueta provoca un conflicto (se construye solo en `producer`); un contenedor reiniciado conservaba su latido anterior y parecía sano (se borra al arrancar).

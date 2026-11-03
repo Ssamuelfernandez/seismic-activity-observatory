@@ -56,3 +56,22 @@ Son constantes de diseño, no configuración del usuario. Las lee el código; el
 | `consumer.main` | `KAFKA_GROUP_ID` |
 
 El código lee 14 nombres distintos; los 14 están definidos en `compose.yaml` (A: 11 con `${…}`; B: `DB_USER`, `HEALTH_FILE`, `HEALTH_MAX_AGE_SECONDS`).
+
+
+## E. Umbrales de salud (latido y healthchecks)
+
+Valores fijados en `compose.yaml`; los verifican las tareas T014 (latido) y T015 (API) de `tasks.md`. El razonamiento está en `research.md` §6.
+
+| Servicio | Sano cuando… | Antigüedad máxima del latido (`HEALTH_MAX_AGE_SECONDS`) | `interval` | `timeout` | `retries` | `start_period` |
+|---|---|---|---|---|---|---|
+| `producer` | el archivo de latido se renovó hace menos del máximo | **120 s** | 15 s | 5 s | 3 | 90 s |
+| `consumer` | ídem | **60 s** | 15 s | 5 s | 3 | 90 s |
+| `api` | `GET /api/salud` responde 2xx | — | 10 s | 5 s | 5 | 20 s |
+| `postgres` | `pg_isready` por TCP (tras aplicar esquema y roles) | — | 5 s | 5 s | 20 | 20 s |
+| `kafka` | `kafka-broker-api-versions.sh` responde | — | 15 s | 10 s | 10 | 40 s |
+
+Reglas y tiempos esperados:
+
+- **Coherencia**: `PRODUCER_INTERVAL_SECONDS` ≤ `HEALTH_MAX_AGE_SECONDS` / 2 del productor (hoy ≤ 60 s). El productor lo valida al arrancar.
+- **Latido**: el servicio lo borra al arrancar y lo renueva solo tras una vuelta correcta del bucle (productor: evento publicado y confirmado; consumidor: consulta al broker, cada segundo).
+- **Detección tras parar Kafka**: el latido caduca a los 60 s (consumidor) o 120 s (productor); `unhealthy` llega tras 3 comprobaciones fallidas consecutivas, cada 15 s. Esperado: consumidor `unhealthy` a los 90–120 s y productor a los 150–180 s de haber parado el broker. Un valor fuera de estos rangos se trata como fallo en T014 (o se corrige esta tabla si el cálculo era erróneo).
