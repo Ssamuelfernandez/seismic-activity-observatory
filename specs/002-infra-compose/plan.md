@@ -169,6 +169,11 @@ Evidencia en [docs/evidencias/infra-compose/](../../docs/evidencias/infra-compos
 4. **Dos fallos encontrados y corregidos durante la verificación**: construir la imagen en tres servicios con la misma etiqueta provoca un conflicto (se construye solo en `producer`); un contenedor reiniciado conservaba su latido anterior y parecía sano (se borra al arrancar).
 5. **Supuestos de la spec que el plan afina**: el consumidor mínimo también crea los temas y comprueba su rol de base de datos al arrancar (necesario para FR-016 y FR-030); no escribe en ninguna tabla.
 
+6. **Primera tanda de verificaciones con Docker (T010–T013, 2026-11-03): superada.** Clon limpio del commit `d35ff2c`, checkout con LF (0 bytes CR en `postgres_init.sh`, `*.sql`, `compose.yaml` y `Dockerfile`, y SHA-256 de `paises.geojson` correcto), cinco servicios `healthy` en 22 s sin contar la descarga de imágenes (27 s; total 49 s) y `verify_stack.py` 16/16. Evidencias: `clon_limpio.txt`, `checkout_lf.txt`, `clon_limpio_verify.txt`.
+   - **Corrección de método en T011**: el recuento de CR con `grep -c $'\r'` devolvió el número de líneas de cada archivo (el patrón llegaba vacío); se sustituyó por un recuento binario con Python, que da 0. `tasks.md` T011 quedó corregida y `checkout_lf.txt` conserva la nota.
+   - **Corrección de método en T012**: tras eliminar las imágenes la caché de BuildKit seguía caliente y `up --build -d` no habría medido una construcción en frío; se añadió `docker compose build --no-cache` (8 s) y se suma al tiempo de `up`.
+   - **Límite de SC-010**: el quickstart lo siguió el propio agente, no una persona ajena al desarrollo; funcionó sin cambios, pero SC-010 se confirmará con una persona externa.
+
 ## Complexity Tracking
 
 Sin violaciones de la constitución que justificar; la única desviación (§19) está declarada arriba.

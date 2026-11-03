@@ -1,0 +1,31 @@
+# T011 — Checkout nuevo en Windows con LF (2026-11-03T23:38:33Z)
+Clon: C:/Users/Samuel/AppData/Local/Temp/clon-limpio-seismic   commit: d35ff2c0e4bf418b5df4ae9a9a90385f65c75bf9   core.autocrlf: true
+
+## git ls-files --eol (esperado: w/lf en todos)
+i/lf    w/lf    attr/text eol=lf      	Dockerfile
+i/lf    w/lf    attr/text eol=lf      	compose.yaml
+i/lf    w/lf    attr/-text            	data/catalogo/paises.geojson
+i/lf    w/lf    attr/text eol=lf      	scripts/postgres_init.sh
+i/lf    w/lf    attr/text eol=lf      	sql/001_schema.sql
+i/lf    w/lf    attr/text eol=lf      	sql/002_roles.sql
+
+## Archivos de texto con CRLF en la copia de trabajo (solo los gestionados por .gitattributes con eol=lf)
+(fin; vacío = ninguno)
+
+## Bytes CR (0x0D) en los archivos que se montan en Linux (esperado 0)
+Método: lectura binaria con Python (`count(b"\r")`).
+scripts/postgres_init.sh: CR=0 LF=23
+sql/001_schema.sql: CR=0 LF=341
+sql/002_roles.sql: CR=0 LF=64
+compose.yaml: CR=0 LF=170
+Dockerfile: CR=0 LF=30
+data/catalogo/paises.geojson: CR=0 LF=1
+RESULTADO: sin CR en ningún archivo (PASS)
+
+Nota sobre un error de método (corregido): la primera pasada usó `grep -c $'\r'` y devolvió 23, 341, 64, 170 y 30,
+es decir, el número de líneas de cada archivo. El patrón `$'\r'` llegó vacío a grep y coincidió con todas las líneas;
+no eran retornos de carro. La lectura binaria confirma 0 CR y `git ls-files --eol` confirma `w/lf`.
+
+## SHA-256 de paises.geojson en la copia de trabajo del clon
+6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f *data/catalogo/paises.geojson
+Esperado (FUENTES-Y-LICENCIAS.md): 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f
