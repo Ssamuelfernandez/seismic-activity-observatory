@@ -1,0 +1,7 @@
+# Los archivos que se montan en contenedores Linux deben conservar saltos de línea LF.
+*.sh text eol=lf
+*.sql text eol=lf
+Dockerfile text eol=lf
+*.yaml text eol=lf
+*.py text eol=lf
+data/catalogo/paises.geojson -text
