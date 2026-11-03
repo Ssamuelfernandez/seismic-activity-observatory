@@ -15,6 +15,16 @@
 - Q: ¿Cómo se comporta el productor mínimo tras publicar su primer evento ficticio? → A: Publica un evento sintético nuevo cada intervalo configurable por entorno mientras esté en marcha, con un `event.id` distinto en cada ciclo y con el prefijo `synthetic`.
 - Q: ¿Qué ruta de la API responde la comprobación de salud? → A: `GET /api/salud` en su versión mínima, tal como la define `contracts/api.md`, también usada como healthcheck de Compose; el resto de endpoints sigue fuera de alcance.
 
+El alumno aprobó el 2026-11-03 las seis propuestas del plan; pasan a decididas (detalle en `plan.md` y `research.md`):
+
+- Q: ¿Qué herramienta bloquea las dependencias? → A: `uv` con `pyproject.toml` en versiones exactas y `uv.lock`; el `Dockerfile` usa `uv sync --frozen`.
+- Q: ¿Qué imágenes y versiones exactas se usan? → A: `python:3.12.16-slim-bookworm`, `apache/kafka:4.1.2` y `postgres:16.15-bookworm`.
+- Q: ¿Cómo se crean los temas con 1 partición, factor 1 y retención de 7 días? → A: `ensure_topics()` (`common/kafka_topics.py`), llamada por productor y consumidor al arrancar; creación automática del broker desactivada.
+- Q: ¿Cómo se aplican el esquema y los roles en la primera inicialización? → A: `scripts/postgres_init.sh` aplica `sql/001_schema.sql` y `sql/002_roles.sql`, con las contraseñas leídas de variables de entorno.
+- Q: ¿Qué dato usa la prueba de persistencia? → A: la tabla temporal `public.zz_infra_check`, que el procedimiento de verificación crea y elimina.
+- Q: ¿Cómo se calcula la salud de productor y consumidor? → A: un archivo de latido que cada servicio renueva tras cada vuelta correcta de su bucle; el healthcheck comprueba su antigüedad.
+- Q: ¿Qué permisos tienen los roles de productor y consumidor? → A: exactamente los de la tabla «Quién escribe y quién lee» de `db-schema.md` §1.1; los permisos que falten los añadirá la feature que los necesite, actualizando esa tabla.
+
 ## User Scenarios & Testing *(mandatory)*
 
 Los "usuarios" de esta feature son quienes construyen y evalúan el sistema: la persona que implementa las demás features (el alumno, con su agente) y el profesor que levanta la entrega en su equipo. Esta feature entrega la base de ejecución sobre la que se apoyan las demás: un entorno que arranca con un solo comando y un recorrido mínimo de punta a punta con un evento ficticio. No entrega lógica de negocio.
