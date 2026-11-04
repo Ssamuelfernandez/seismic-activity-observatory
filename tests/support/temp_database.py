@@ -17,6 +17,18 @@ class TempDatabase:
     admin_password: str
     consumer_user: str
     consumer_password: str
+    producer_user: str = "observatory_producer"
+    producer_password: str = ""
+
+    async def producer(self) -> asyncpg.Connection:
+        """Conexión con el rol real `observatory_producer` (productor-live)."""
+        return await self._connect(self.producer_user, self.producer_password)
+
+    async def producer_pool(self) -> asyncpg.Pool:
+        """Pool con el rol real `observatory_producer` (lo que usa el almacén de ingesta)."""
+        return await asyncpg.create_pool(host=self.host, port=self.port, database=self.name,
+                                         user=self.producer_user, password=self.producer_password,
+                                         min_size=1, max_size=2, timeout=CONNECT_TIMEOUT_SECONDS)
 
     async def admin(self) -> asyncpg.Connection:
         """Conexión del administrador a la base temporal (lectura de cuarentena y comprobaciones)."""

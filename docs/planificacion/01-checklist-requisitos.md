@@ -60,18 +60,18 @@ Ponderación de la asignatura (de la sesión 8, sin cambios): test 30 % · prác
 
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
-| B1 | **[OBL]** Productor consulta el feed cada ~60 s (GET) | Log con cada ciclo | Enunc. §4.1 | ☐ |
-| B2 | **[OBL]** Documentar respuesta, tipos, unidades, opcionales, frecuencia, errores y latencia | Sección en memoria | Enunc. §4.1 | ☐ |
-| B3 | **[OBL]** Filtrar `properties.type == "earthquake"` y **guardar el motivo de exclusión** | Tabla/log de exclusiones | Enunc. §4.1 | ☐ |
-| B4 | **[OBL]** Guardar el GeoJSON original + metadatos de extracción (fecha, status, latencia, nº) **antes** de transformar | Existe en PG o disco | Enunc. §5 | ☐ |
-| B5 | **[OBL]** Evitar guardar indefinidamente copias idénticas: **definir retención** y registrar consultas | Política escrita + implementada (p. ej. hash) | Enunc. §5 | ☐ |
-| B6 | **[OBL]** Comparar `id` + `updated` con **estado persistente** (no solo RAM): publicar nuevos y revisiones posteriores; omitir iguales y atrasadas | Tabla `ingest_state` sobrevive a reinicio | Enunc. §5 · FAQ 10 | ☐ |
-| B7 | **[OBL]** Clave Kafka = id del evento | Verificado | Enunc. §5 | ☐ |
-| B8 | **[OBL]** Mensaje con `source`, `ingested_at`, `mode` (live/replay) y evento original | Esquema documentado | Enunc. §5 | ☐ |
-| B9 | **[OBL]** Esperar confirmación (ack) de Kafka **antes** de marcar publicado | Orden en el código | Enunc. §5 | ☐ |
-| B10 | **[OBL]** Timeout, HTTP 429/5xx, backoff progresivo, errores de JSON; registrar error **sin borrar el estado válido anterior** | Pruebas con fallo simulado | Enunc. §5 | ☐ |
-| B11 | **[OBL]** Explicar la limitación: evento que sale de la ventana ≠ eliminado por USGS; reconciliación exhaustiva es ampliación | Párrafo en memoria | Enunc. §5 | ☐ |
-| B12 | **[OBL]** Explicar cómo recuperar el hueco tras una parada >24 h con el catálogo histórico | Procedimiento documentado (no tiene por qué automatizarse) | Enunc. §5 | ☐ |
+| B1 | **[OBL]** Productor consulta el feed cada ~60 s (GET) | Log con cada ciclo | Enunc. §4.1 | [x] |
+| B2 | **[OBL]** Documentar respuesta, tipos, unidades, opcionales, frecuencia, errores y latencia | Sección en memoria | Enunc. §4.1 | ☐ (pendiente: pasar docs/borradores/productor-live.md a la memoria) |
+| B3 | **[OBL]** Filtrar `properties.type == "earthquake"` y **guardar el motivo de exclusión** | Tabla/log de exclusiones | Enunc. §4.1 | [x] |
+| B4 | **[OBL]** Guardar el GeoJSON original + metadatos de extracción (fecha, status, latencia, nº) **antes** de transformar | Existe en PG o disco | Enunc. §5 | [x] |
+| B5 | **[OBL]** Evitar guardar indefinidamente copias idénticas: **definir retención** y registrar consultas | Política escrita + implementada (p. ej. hash) | Enunc. §5 | [x] |
+| B6 | **[OBL]** Comparar `id` + `updated` con **estado persistente** (no solo RAM): publicar nuevos y revisiones posteriores; omitir iguales y atrasadas | Tabla `ingest_state` sobrevive a reinicio | Enunc. §5 · FAQ 10 | [x] |
+| B7 | **[OBL]** Clave Kafka = id del evento | Verificado | Enunc. §5 | [x] |
+| B8 | **[OBL]** Mensaje con `source`, `ingested_at`, `mode` (live/replay) y evento original | Esquema documentado | Enunc. §5 | [x] |
+| B9 | **[OBL]** Esperar confirmación (ack) de Kafka **antes** de marcar publicado | Orden en el código | Enunc. §5 | [x] |
+| B10 | **[OBL]** Timeout, HTTP 429/5xx, backoff progresivo, errores de JSON; registrar error **sin borrar el estado válido anterior** | Pruebas con fallo simulado | Enunc. §5 | [x] |
+| B11 | **[OBL]** Explicar la limitación: evento que sale de la ventana ≠ eliminado por USGS; reconciliación exhaustiva es ampliación | Párrafo en memoria | Enunc. §5 | ☐ (pendiente: pasar docs/borradores/productor-live.md a la memoria) |
+| B12 | **[OBL]** Explicar cómo recuperar el hueco tras una parada >24 h con el catálogo histórico | Procedimiento documentado (no tiene por qué automatizarse) | Enunc. §5 | ☐ (pendiente: pasar docs/borradores/productor-live.md a la memoria) |
 | B13 | **[OBL]** Histórico: 2025, mundial, M≥4, `eventtype=earthquake`, **por meses**; si un mes >20.000, subdividir **sin truncar en silencio** | Archivos + log de nº de registros por consulta | Enunc. §4.2 | ☐ |
 | B14 | **[OBL]** Deduplicar eventos compartidos entre intervalos (los extremos pueden incluirse en ambos) | Unicidad de `event_id` comprobada | Enunc. §4.2 | ☐ |
 | B15 | **[OBL]** Guardar consultas (URLs/parámetros), fecha de extracción y nº de registros; descargar una vez y reutilizar | Registro de procedencia | Enunc. §4.2 · Guía 2.3 | ☐ |
@@ -186,7 +186,7 @@ La columna "Feature" indica dónde se prueba por primera vez; la feature `prueba
 
 | # | Prueba | Resultado esperado | Evidencia | Feature | ☐ |
 |---|---|---|---|---|---|
-| 1 | Evento nuevo | 1 fila actual visible en API, mapa y análisis | SQL + captura | `productor-live` (real) + `pruebas-aceptacion` | ☐ |
+| 1 | Evento nuevo | 1 fila actual visible en API, mapa y análisis | SQL + captura | `productor-live` (real; parte productor hasta PostgreSQL hecha, ver `docs/evidencias/productor-live/prueba1_evento_nuevo.out`) + `pruebas-aceptacion` | ☐ |
 | 2 | Reenviar la misma versión | No aumenta el recuento | SQL antes/después | `productor-live`, `consumidor-idempotente` | [x] |
 | 3 | Versión posterior | Cambian datos actuales y agregaciones afectadas | SQL + captura | `consumidor-idempotente` | [x] |
 | 4 | Versión antigua tardía | No sustituye a la reciente | Actual + historial | `consumidor-idempotente` | [x] |

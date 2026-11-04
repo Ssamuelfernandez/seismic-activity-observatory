@@ -8,8 +8,13 @@ from dataclasses import dataclass
 DEFAULT_LOG_LEVEL = "INFO"
 DEFAULT_RETRY_INITIAL_SECONDS = 1
 DEFAULT_RETRY_MAX_SECONDS = 30
-MIN_PRODUCER_INTERVAL_SECONDS = 1
-MAX_PRODUCER_INTERVAL_SECONDS = 60
+DEFAULT_POLL_SECONDS = 60
+DEFAULT_USGS_FEED_URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
+DEFAULT_HTTP_TIMEOUT_SECONDS = 10
+MAX_HTTP_TIMEOUT_SECONDS = 60
+DEFAULT_RAW_RETENTION_DAYS = 7
+ALLOWED_URL_SCHEMES = ("https://", "http://")
+HEARTBEAT_MARGIN_FACTOR = 2
 
 
 class ConfigError(Exception):
@@ -49,6 +54,16 @@ class HealthSettings:
 
     heartbeat_file: str
     max_age_seconds: int
+
+
+@dataclass(frozen=True)
+class FeedSettings:
+    """Consulta periódica al feed de USGS y retención de los originales (B1, B5)."""
+
+    url: str
+    poll_seconds: int
+    timeout_seconds: int
+    raw_retention_days: int
 
 
 def read_str(name: str, default: str | None = None) -> str:
@@ -150,3 +165,51 @@ def load_health_settings() -> HealthSettings:
 def load_log_level() -> str:
     """Devuelve el nivel de registro configurado."""
     return read_str("LOG_LEVEL", DEFAULT_LOG_LEVEL).upper()
+
+
+def read_feed_url() -> str:
+    """Lee la URL del feed y exige un esquema http(s).
+
+    Por qué existe:
+        Una URL sin esquema haría fallar a `urllib` en cada ciclo; es mejor detenerse al arrancar (A10).
+    """
+    url = read_str("USGS_FEED_URL", DEFAULT_USGS_FEED_URL)
+    if not url.startswith(ALLOWED_URL_SCHEMES):
+        raise ConfigError(f"La variable USGS_FEED_URL debe empezar por https:// o http://; se recibió '{url}'.")
+    return url
+
+
+def load_feed_settings() -> FeedSettings:
+    """Carga la configuración del productor en vivo (B1, A10).
+
+    Qué hace:
+        Lee `POLL_SECONDS`, `USGS_FEED_URL`, `HTTP_TIMEOUT_SECONDS` y `RAW_RETENTION_DAYS`
+        con sus valores por defecto y rangos (data-model.md §5).
+    Devuelve:
+        FeedSettings validada.
+    Por qué existe:
+        Sustituye al intervalo fijo del productor mínimo.
+    """
+    return FeedSettings(
+        url=read_feed_url(),
+        poll_seconds=read_int("POLL_SECONDS", DEFAULT_POLL_SECONDS, minimum=1),
+        timeout_seconds=read_int("HTTP_TIMEOUT_SECONDS", DEFAULT_HTTP_TIMEOUT_SECONDS,
+                                 minimum=1, maximum=MAX_HTTP_TIMEOUT_SECONDS),
+        raw_retention_days=read_int("RAW_RETENTION_DAYS", DEFAULT_RAW_RETENTION_DAYS, minimum=1),
+    )
+
+
+def validate_poll_against_health(poll_seconds: int, max_age_seconds: int) -> None:
+    """Exige que el latido pueda renovarse antes de caducar.
+
+    Qué hace:
+        Falla nombrando `POLL_SECONDS` si el doble del intervalo supera la antigüedad máxima.
+    Recibe:
+        poll_seconds: espera entre consultas; max_age_seconds: antigüedad máxima del latido.
+    Por qué existe:
+        Con un intervalo mayor, un productor sano se vería no sano (A10, spec US5.3).
+    """
+    if poll_seconds * HEARTBEAT_MARGIN_FACTOR > max_age_seconds:
+        raise ConfigError(
+            f"POLL_SECONDS ({poll_seconds}) debe ser como mucho la mitad de HEALTH_MAX_AGE_SECONDS ({max_age_seconds})."
+        )

@@ -1,0 +1,25 @@
+# T019 - segundo ciclo, parada y reinicio reales (2026-11-04T23:33:52Z)
+--- ciclos 2 y 3 antes de la parada (published~0, skipped~N)
+producer-1  | 2026-11-04 23:31:56,270 INFO [producer.loop] cycle=2 status=ok http=200 latency_ms=187 fetched=204 excluded=12 published=1 skipped=191 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:32:56,186 INFO [producer.loop] cycle=3 status=ok http=200 latency_ms=219 fetched=204 excluded=12 published=0 skipped=192 unmarked=0 next_wait_s=60.0
+--- recuentos antes de la parada
+ current_event | event_version | ingest_state 
+---------------+---------------+--------------
+           194 |           195 |          192
+(1 row)
+
+--- docker compose kill producer
+ Container seismic-observatory-producer-1 Killing 
+ Container seismic-observatory-producer-1 Killed 
+ Container seismic-observatory-producer-1 Starting 
+ Container seismic-observatory-producer-1 Started 
+--- log del productor tras el reinicio (arranque nuevo)
+producer-1  | 2026-11-04 23:32:56,186 INFO [producer.loop] cycle=3 status=ok http=200 latency_ms=219 fetched=204 excluded=12 published=0 skipped=192 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:33:55,143 INFO [producer.loop] cycle=1 status=ok http=200 latency_ms=146 fetched=203 excluded=11 published=0 skipped=192 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:34:55,105 INFO [producer.loop] cycle=2 status=ok http=200 latency_ms=242 fetched=203 excluded=11 published=1 skipped=191 unmarked=0 next_wait_s=60.0
+--- recuentos despues
+ current_event | event_version | ingest_state 
+---------------+---------------+--------------
+           194 |           196 |          192
+(1 row)
+

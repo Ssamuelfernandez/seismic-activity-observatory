@@ -87,43 +87,45 @@ def check_healthy() -> None:
     record(ok, "Los cinco servicios están healthy", str(service_states()))
 
 
-def is_synthetic_decision_line(entry: str) -> bool:
-    """Indica si una línea del registro es la decisión del consumidor sobre un evento sintético.
+REAL_EVENT_COUNT_SQL = (
+    "SELECT count(*) FROM live.current_event WHERE is_synthetic = false AND source = 'usgs_feed'"
+)
+
+
+def has_real_event(count_output: str) -> bool:
+    """Indica si la salida de `psql` (un recuento) indica al menos un evento real.
 
     Qué hace:
-        Busca `decision=` y `event_id=synthetic-` (consumer-runtime.md §4), sin exigir ningún marcador de texto.
+        Interpreta la salida como entero y exige que sea mayor que cero.
     Recibe:
-        entry: una línea del registro del consumidor.
+        count_output: texto devuelto por `psql -tA` para `REAL_EVENT_COUNT_SQL`.
     Devuelve:
-        True si la línea es una decisión sobre un evento `synthetic-…`.
+        True si hay al menos una fila real; False si es cero o la salida no es un número.
     Por qué existe:
-        El consumidor idempotente ya no escribe la antigua línea «Evento recibido» (A1, FR-003).
+        Con el productor real, A1 se comprueba en la base y no en un registro (FR-011).
     """
-    return "decision=" in entry and "event_id=synthetic-" in entry
+    text = count_output.strip()
+    return text.isdigit() and int(text) > 0
 
 
-def check_synthetic_event_in_consumer_log() -> None:
-    """A1: el consumidor deja la línea de decisión de un evento sintético del productor.
+def check_real_event_in_database() -> None:
+    """A1: tras el primer ciclo del productor hay un evento real en `live.current_event`.
 
     Qué hace:
-        Espera hasta `EVENT_TIMEOUT_SECONDS` una línea `decision=… event_id=synthetic-…`.
+        Espera hasta `EVENT_TIMEOUT_SECONDS` una fila con `is_synthetic = false` y `source = 'usgs_feed'`.
     Por qué existe:
-        Comprueba el recorrido productor -> Kafka -> consumidor. Cualquier decisión sirve, también
-        `decision=quarantined …` si el evento se rechazara.
+        Comprueba el recorrido USGS -> productor -> Kafka -> consumidor -> PostgreSQL.
     Limitación:
-        El grupo del consumidor conserva su offset tras `down`/`up`, así que ya no relee el tema desde
-        el principio: A1 depende de que el productor publique un evento NUEVO dentro de 60 s. Si
-        `PRODUCER_INTERVAL_SECONDS` (admite hasta 60) es largo, el check puede fallar por tiempo sin
-        que haya un error real.
+        Necesita acceso a USGS; el primer ciclo trae el contenido de `all_day` y llena la tabla.
     """
     deadline = time.time() + EVENT_TIMEOUT_SECONDS
-    line = ""
-    while time.time() < deadline and not line:
-        logs = compose("logs", "consumer", "--no-log-prefix").stdout
-        line = next((entry for entry in logs.splitlines() if is_synthetic_decision_line(entry)), "")
-        if not line:
+    count = ""
+    while time.time() < deadline and not has_real_event(count):
+        count = psql(REAL_EVENT_COUNT_SQL)
+        if not has_real_event(count):
             time.sleep(3)
-    record(bool(line), "El consumidor registra la decisión sobre un evento sintético", line.strip())
+    record(has_real_event(count), "live.current_event contiene eventos reales (is_synthetic=false, usgs_feed)",
+           f"filas: {count}")
 
 
 def check_api_health_endpoint() -> None:
@@ -225,7 +227,7 @@ def main() -> int:
     parser.add_argument("--skip-restart", action="store_true", help="omite la prueba de persistencia")
     args = parser.parse_args()
     check_healthy()
-    check_synthetic_event_in_consumer_log()
+    check_real_event_in_database()
     check_api_health_endpoint()
     check_only_api_is_published()
     check_topics()
@@ -233,7 +235,7 @@ def main() -> int:
     check_api_write_is_rejected()
     if not args.skip_restart:
         check_persistence_after_restart()
-        check_synthetic_event_in_consumer_log()
+        check_real_event_in_database()
     failed = [name for passed, name in results if not passed]
     print(f"\n{len(results) - len(failed)}/{len(results)} comprobaciones superadas.")
     return 1 if failed else 0

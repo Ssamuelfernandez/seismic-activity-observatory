@@ -43,18 +43,18 @@ async def start_producer(settings: KafkaSettings, retry: RetrySettings) -> AIOKa
                                RETRIABLE_KAFKA_ERRORS)
 
 
-async def publish_message(producer: AIOKafkaProducer, topic: str, key: str, message: dict) -> None:
+async def publish_message(producer: AIOKafkaProducer, topic: str, key: str | None, message: dict) -> None:
     """Publica un mensaje JSON y espera la confirmación del broker.
 
     Qué hace:
         Serializa el mensaje en UTF-8 y lo envía con `send_and_wait`.
     Recibe:
-        producer: productor conectado; topic: tema; key: clave (`event.id`); message: valor.
+        producer: productor conectado; topic: tema; key: clave (`event.id`, nula si falta); message: valor.
     Devuelve:
         Nada.
     Por qué existe:
         La publicación solo cuenta cuando el broker la confirma (kafka-message.md §2).
     """
     value = json.dumps(message, ensure_ascii=False).encode("utf-8")
-    await producer.send_and_wait(topic, value=value, key=key.encode("utf-8"))
+    await producer.send_and_wait(topic, value=value, key=None if key is None else key.encode("utf-8"))
     logger.info("Publicado en %s: clave=%s", topic, key)

@@ -87,7 +87,10 @@ services:
       <<: *common-env
       KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS:?Falta KAFKA_BOOTSTRAP_SERVERS en .env}
       KAFKA_TOPIC: ${KAFKA_TOPIC:?Falta KAFKA_TOPIC en .env}
-      PRODUCER_INTERVAL_SECONDS: ${PRODUCER_INTERVAL_SECONDS:?Falta PRODUCER_INTERVAL_SECONDS en .env}
+      POLL_SECONDS: ${POLL_SECONDS:?Falta POLL_SECONDS en .env}
+      USGS_FEED_URL: ${USGS_FEED_URL:?Falta USGS_FEED_URL en .env}
+      HTTP_TIMEOUT_SECONDS: ${HTTP_TIMEOUT_SECONDS:?Falta HTTP_TIMEOUT_SECONDS en .env}
+      RAW_RETENTION_DAYS: ${RAW_RETENTION_DAYS:?Falta RAW_RETENTION_DAYS en .env}
       DB_HOST: ${DB_HOST:?Falta DB_HOST en .env}
       DB_PORT: ${DB_PORT:?Falta DB_PORT en .env}
       DB_NAME: ${POSTGRES_DB:?Falta POSTGRES_DB en .env}
@@ -187,6 +190,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Falta POSTGRES_PASSWORD en .env}
       DB_USER: observatory_consumer
       DB_PASSWORD: ${DB_CONSUMER_PASSWORD:?Falta DB_CONSUMER_PASSWORD en .env}
+      # Rol real del productor (productor-live): se prueba su almacén de ingesta.
+      DB_PRODUCER_PASSWORD: ${DB_PRODUCER_PASSWORD:?Falta DB_PRODUCER_PASSWORD en .env}
       EVIDENCE_DIR: /app/evidence
       PYTEST_ADDOPTS: -p no:cacheprovider
     volumes:

@@ -1,0 +1,17 @@
+# T020 - prueba 2 (reenvio). Contraste: prueba de integracion del corte entre ack y marca (PostgreSQL real, mock USGS SINTETICO, publicador falso) + hecho real del reinicio.
+# Real: tras 'docker compose kill producer' el primer ciclo dio published=0 skipped=192 con current_event 194 / event_version 195 antes (ver reinicio.log).
+time="2026-11-05T00:39:38+01:00" level=warning msg="No services to build"
+time="2026-11-05T00:39:38+01:00" level=warning msg="No services to build"
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /opt/venv/bin/python3
+rootdir: /app
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 4 items
+
+tests/integration/test_producer_cycles.py::test_second_cycle_with_same_response_publishes_nothing PASSED [ 25%]
+tests/integration/test_producer_cycles.py::test_restart_on_same_database_publishes_nothing PASSED [ 50%]
+tests/integration/test_producer_cycles.py::test_only_a_greater_updated_is_published PASSED [ 75%]
+tests/integration/test_producer_cycles.py::test_cut_between_ack_and_mark_resends_once_and_consumer_is_idempotent PASSED [100%]
+
+============================== 4 passed in 2.84s ===============================

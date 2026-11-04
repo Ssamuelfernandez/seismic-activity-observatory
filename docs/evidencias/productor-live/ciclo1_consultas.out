@@ -1,0 +1,54 @@
+# T018 - consultas quickstart §2 puntos 2 y 6 (2026-11-04T23:33:35Z); datos reales de USGS
+--- filas reales en live.current_event
+ real_rows 
+-----------
+       192
+(1 row)
+
+ is_synthetic |   source    | count 
+--------------+-------------+-------
+ f            | usgs_feed   |   192
+ t            | replay_demo |     2
+(2 rows)
+
+--- earthquakes en la ultima raw_response
+ earthquakes_ultima_respuesta 
+------------------------------
+                          192
+(1 row)
+
+--- ingest_run
+ status | latency_ms | event_count |    h     | error 
+--------+------------+-------------+----------+-------
+    200 |        219 |         204 | fa071a01 | 
+    200 |        187 |         204 | fa071a01 | 
+    200 |        392 |         203 | aaa32639 | 
+(3 rows)
+
+ runs | ok 
+------+----
+    3 |  3
+(1 row)
+
+ raw_response_rows 
+-------------------
+                 2
+(1 row)
+
+--- exclusiones (live.exclusion; la tabla es live.exclusion, no ingest.exclusion)
+ observed_type | count 
+---------------+-------
+ quarry blast  |     5
+ explosion     |     7
+(2 rows)
+
+ ingest_state_rows 
+-------------------
+               192
+(1 row)
+
+ ce  | ev  | q 
+-----+-----+---
+ 194 | 195 | 0
+(1 row)
+

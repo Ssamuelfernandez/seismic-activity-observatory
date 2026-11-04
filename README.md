@@ -11,9 +11,10 @@ Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
 | `contratos-y-modelo` | Cerrada (2026-11-02): contratos, DDL, modelo de datos y evidencias |
 | `infra-compose` | Implementada y verificada (2026-11-04), pendiente de la revisión del alumno: Compose con cinco servicios, "hola mundo" de punta a punta con un evento sintético, roles de base de datos y evidencias en `docs/evidencias/infra-compose/` |
 | `consumidor-idempotente` | Implementada y verificada (2026-11-04), pendiente de la revisión del alumno: consumidor con validación, cuarentena, versiones, reintentos y contadores (C1–C8, C13; pruebas 2, 3, 4, 6 y 8). Evidencias en `docs/evidencias/consumidor-idempotente/`. Quedan diferidos el catálogo de países, la comprobación de esquema al arrancar y las pruebas de caída de PostgreSQL/Kafka con Docker (ver «Diferidas» en `specs/003-consumidor-idempotente/tasks.md`) |
+| `productor-live` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: productor real que consulta USGS cada `POLL_SECONDS` y publica en `earthquakes.live` sin duplicar (B1–B12, A10; pruebas 1, hasta PostgreSQL, y 2). Evidencias en `docs/evidencias/productor-live/`. Sin diferidas; B2, B11 y B12 pendientes de pasar `docs/borradores/productor-live.md` a la memoria |
 | Resto de features | No empezadas |
 
-El productor y la API son por ahora **mínimos**: el productor publica eventos sintéticos y la API solo responde `GET /api/salud`. El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
+La API es por ahora **mínima**: solo responde `GET /api/salud`. El productor ya es el **productor en vivo** (ver su sección más abajo). El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
 
 El orden de las fases está en [`docs/planificacion/02-roadmap-implementacion.md`](docs/planificacion/02-roadmap-implementacion.md).
 
@@ -150,6 +151,50 @@ python scripts/verify_consumer.py faq12 --yes
 **Advertencia:** `verify_consumer.py` ejecuta `docker compose down -v`, que **borra los volúmenes locales** de Kafka y PostgreSQL del proyecto. Por eso pide `--yes` (o `VERIFY_CONSUMER_CONFIRM=yes`); sin él avisa y termina con código 2 sin hacer nada. Ejecuta `docker compose build producer` antes de cada escenario (el script también lo hace como primer paso). Los datos son sintéticos (`is_synthetic = true`).
 
 Las salidas de las pruebas y de los escenarios están en [`docs/evidencias/consumidor-idempotente/`](docs/evidencias/consumidor-idempotente/).
+
+## Productor en vivo
+
+El productor consulta cada `POLL_SECONDS` (60 por defecto) el feed de USGS `USGS_FEED_URL` (por defecto `summary/all_day.geojson`, eventos de las últimas 24 horas) y publica en `earthquakes.live` solo lo nuevo o revisado: un evento se publica si no tiene estado previo o si su `updated` es mayor que el último publicado; los que no son `earthquake` se registran en `live.exclusion`. Cada consulta deja una fila en `ingest.ingest_run`. Los contratos del mensaje y de las tablas siguen en `specs/001-contratos-y-modelo/contracts/`; el diseño está en [`specs/004-productor-live/`](specs/004-productor-live/) y la guía de comprobación en su [quickstart](specs/004-productor-live/quickstart.md).
+
+**Variables nuevas** (`.env.example` las trae con valores por defecto):
+
+| Variable | Valor por defecto | Significado |
+|---|---|---|
+| `POLL_SECONDS` | 60 | Segundos entre consultas (entre 1 y 60) |
+| `USGS_FEED_URL` | `.../summary/all_day.geojson` | Feed que se consulta (`http://` o `https://`) |
+| `HTTP_TIMEOUT_SECONDS` | 10 | Espera máxima por operación de socket (entre 1 y 60) |
+| `RAW_RETENTION_DAYS` | 7 | Días que se conservan las respuestas originales |
+
+**Ver el log de ciclos:**
+
+```bash
+docker compose logs producer --no-log-prefix --tail 5
+# cycle=3 status=ok http=200 latency_ms=... fetched=... excluded=... published=... skipped=... unmarked=... next_wait_s=60.0
+```
+
+Un ciclo con el feed sin cambios debe mostrar `published=0`. Tras un fallo (USGS caído, 429, tiempo agotado) la espera crece entre 2 s y 60 s, con aleatoriedad, y vuelve a `POLL_SECONDS` al recuperarse.
+
+**Política de `raw_response`** (respuesta original de cada consulta, `ingest.raw_response`):
+
+- Se guarda el cuerpo completo solo si su hash SHA-256, calculado **sobre `features`** (no sobre `metadata`, que cambia en cada regeneración), difiere del de la última consulta correcta.
+- Retención de 7 días por defecto, configurable con `RAW_RETENTION_DAYS`. La purga se ejecuta al terminar cada ciclo correcto y siempre conserva la fila más reciente.
+- Estimación: unos 150 KB por respuesta distinta (en la exploración del feed pesó 150724 bytes, ver `docs/evidencias/f1/explore_usgs_salida.txt`). Es una estimación de una sola medición, no un límite.
+- `ingest.ingest_run` **no se purga**: es el registro de todas las consultas.
+
+**Volúmenes de PostgreSQL ya existentes:** la purga necesita que el rol `observatory_producer` tenga `SELECT` y `DELETE` sobre `ingest.raw_response`. `sql/002_roles.sql` lo concede, pero solo se aplica con un volumen nuevo. En uno existente, aplica el `GRANT` a mano (o haz `docker compose down -v`, que borra los datos):
+
+```bash
+docker compose exec postgres psql -U <POSTGRES_USER> -d <POSTGRES_DB> -c "GRANT SELECT, DELETE ON ingest.raw_response TO observatory_producer"
+```
+
+**Límites conocidos** (detalle en `specs/004-productor-live/research.md` §10):
+
+- No se respeta la cabecera `Retry-After`.
+- Un solo productor; dos a la vez no están soportados.
+- Un evento sin `id` o sin `updated` se republica en cada ciclo.
+- El periodo real entre consultas es algo mayor que `POLL_SECONDS`, porque la espera se suma a la duración del ciclo.
+- Si USGS tarda más del tiempo de espera, el ciclo cuenta como fallo aunque el servicio funcione.
+- Los eventos que USGS elimine del feed no se detectan: salir de la ventana de 24 h no equivale a ser eliminado, y la reconciliación exhaustiva es una ampliación. La recuperación de un hueco tras una parada de más de 24 h con el catálogo histórico está explicada, sin automatizar, en [`docs/borradores/productor-live.md`](docs/borradores/productor-live.md) (B2, B11 y B12).
 
 ## Configuración de Git: el hook `commit-msg`
 
