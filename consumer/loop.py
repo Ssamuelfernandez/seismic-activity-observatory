@@ -1,6 +1,8 @@
 """Bucle del consumidor mínimo: lee del tema y deja cada evento en el registro."""
+import asyncio
 import json
 import logging
+import time
 from dataclasses import dataclass
 
 from aiokafka import AIOKafkaConsumer
@@ -15,6 +17,9 @@ from common.retry import retry_forever
 logger = logging.getLogger(__name__)
 
 POLL_TIMEOUT_MS = 1000
+# Cada cuántos segundos se comprueba que el broker responde, y cuánto se espera la respuesta.
+HEALTH_PROBE_INTERVAL_SECONDS = 10
+HEALTH_PROBE_TIMEOUT_SECONDS = 5
 RETRIABLE_KAFKA_ERRORS = (KafkaError, OSError)
 
 
@@ -74,11 +79,35 @@ async def start_consumer(settings: ConsumerSettings) -> AIOKafkaConsumer:
                                RETRIABLE_KAFKA_ERRORS)
 
 
+async def broker_reachable(consumer: AIOKafkaConsumer) -> bool:
+    """Comprueba que el consumidor puede hablar con el broker.
+
+    Qué hace:
+        Pide al broker el último offset de las particiones asignadas, con un tiempo máximo de espera.
+    Recibe:
+        consumer: consumidor ya suscrito.
+    Devuelve:
+        True si el broker respondió a tiempo; False si no hay particiones asignadas o falló la consulta.
+    Por qué existe:
+        `getmany` devuelve vacío con el broker caído, así que sin esta comprobación el latido seguiría
+        renovándose y el consumidor nunca pasaría a unhealthy (A4, T014).
+    """
+    partitions = consumer.assignment()
+    if not partitions:
+        return False
+    try:
+        await asyncio.wait_for(consumer.end_offsets(list(partitions)), HEALTH_PROBE_TIMEOUT_SECONDS)
+    except (KafkaError, OSError, asyncio.TimeoutError):
+        return False
+    return True
+
+
 async def run_consumer(settings: ConsumerSettings) -> None:
     """Espera a PostgreSQL y Kafka y registra los mensajes que llegan.
 
     Qué hace:
-        Consulta el tema cada segundo, registra cada mensaje y renueva el latido en cada vuelta.
+        Consulta el tema cada segundo, registra cada mensaje y renueva el latido solo mientras el broker responde
+        (se comprueba cada HEALTH_PROBE_INTERVAL_SECONDS).
     Recibe:
         settings: configuración del consumidor.
     Devuelve:
@@ -91,11 +120,17 @@ async def run_consumer(settings: ConsumerSettings) -> None:
     consumer = await start_consumer(settings)
     logger.info("Consumidor suscrito al tema %s.", settings.kafka.topic)
     try:
+        reachable = False
+        last_probe = 0.0
         while True:
             batches = await consumer.getmany(timeout_ms=POLL_TIMEOUT_MS)
             for records in batches.values():
                 for record in records:
                     logger.info(describe_message(record.key, record.value))
-            touch_heartbeat(settings.health.heartbeat_file)
+            if time.monotonic() - last_probe >= HEALTH_PROBE_INTERVAL_SECONDS:
+                reachable = await broker_reachable(consumer)
+                last_probe = time.monotonic()
+            if reachable:
+                touch_heartbeat(settings.health.heartbeat_file)
     finally:
         await consumer.stop()
