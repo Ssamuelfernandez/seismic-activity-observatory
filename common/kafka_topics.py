@@ -1,5 +1,6 @@
 """Creación idempotente de los temas del contrato (kafka-message.md §1)."""
 import logging
+from typing import Literal
 
 from aiokafka.admin import AIOKafkaAdminClient, NewTopic
 from aiokafka.errors import TopicAlreadyExistsError
@@ -13,6 +14,28 @@ TOPIC_PARTITIONS = 1
 TOPIC_REPLICATION_FACTOR = 1
 # 7 días: cubre una caída del consumidor de varios días (kafka-message.md §1, A6).
 TOPIC_RETENTION_MS = 7 * 24 * 60 * 60 * 1000
+
+
+def topic_mode(topic: str) -> Literal["live", "replay"]:
+    """Devuelve el modo de procesamiento que corresponde a un tema.
+
+    Qué hace:
+        Traduce `earthquakes.live` a `live` y `earthquakes.replay` a `replay`.
+    Recibe:
+        topic: nombre del tema de origen del mensaje.
+    Devuelve:
+        `"live"` o `"replay"`.
+    Por qué existe:
+        El modo sale del tema y no del mensaje: es la base de la comprobación cruzada
+        `mode` ↔ tema (kafka-message.md §1) y del esquema de destino (FR-015, FR-030).
+    Lanza:
+        ValueError con el nombre del tema si no es uno de los dos del contrato.
+    """
+    if topic == TOPIC_LIVE:
+        return "live"
+    if topic == TOPIC_REPLAY:
+        return "replay"
+    raise ValueError(f"Tema desconocido: {topic}")
 
 
 def build_topic(name: str) -> NewTopic:

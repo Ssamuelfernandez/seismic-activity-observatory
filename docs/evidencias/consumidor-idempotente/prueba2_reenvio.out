@@ -1,0 +1,35 @@
+-- [1] L2 antes del reenvío (sesión 2)
+current_event=2 event_version=3
+
+-- [2] L2 después de reenviar 100 veces el mensaje 1
+SELECT event_id, mag, updated_ms, is_synthetic FROM live.current_event ORDER BY event_id;
+      event_id      | mag |  updated_ms   | is_synthetic 
+--------------------+-----+---------------+--------------
+ synthetic-faq12-e1 | 4.6 | 1793786940000 | t
+ synthetic-faq12-e2 | 3.1 | 1793787120000 | t
+(2 rows)
+
+SELECT event_id, updated_ms, mag FROM live.event_version ORDER BY event_id, updated_ms;
+      event_id      |  updated_ms   | mag 
+--------------------+---------------+-----
+ synthetic-faq12-e1 | 1793786700000 | 4.2
+ synthetic-faq12-e1 | 1793786940000 | 4.6
+ synthetic-faq12-e2 | 1793787120000 | 3.1
+(3 rows)
+
+SELECT count(*) AS current_rows FROM live.current_event;
+ current_rows 
+--------------
+            2
+(1 row)
+
+SELECT count(*) AS version_rows FROM live.event_version;
+ version_rows 
+--------------
+            3
+(1 row)
+
+-- [3] L2 comprobaciones
+PASS  Publicado el caso replay-100 — published case=replay-100 messages=100 topic=earthquakes.live
+PASS  El grupo llega a lag 0 tras replay-100
+PASS  L2: current_event = 2 y event_version = 3 tras 100 repeticiones — (2, 3)

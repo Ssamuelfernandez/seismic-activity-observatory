@@ -5,6 +5,8 @@ from aiokafka.errors import KafkaConnectionError
 
 from consumer.loop import broker_reachable
 
+BOOTSTRAP = "kafka:9092"
+
 
 class FakeConsumer:
     """Consumidor simulado con particiones asignadas y una consulta de offsets configurable."""
@@ -24,21 +26,21 @@ def test_broker_reachable_when_end_offsets_answers():
     async def answer(partitions):
         return {p: 10 for p in partitions}
 
-    assert asyncio.run(broker_reachable(FakeConsumer({"tp"}, answer)))
+    assert asyncio.run(broker_reachable(FakeConsumer({"tp"}, answer), BOOTSTRAP))
 
 
 def test_broker_not_reachable_without_assigned_partitions():
     async def answer(partitions):
         return {}
 
-    assert not asyncio.run(broker_reachable(FakeConsumer(set(), answer)))
+    assert not asyncio.run(broker_reachable(FakeConsumer(set(), answer), BOOTSTRAP))
 
 
 def test_broker_not_reachable_when_connection_fails():
     async def fail(partitions):
         raise KafkaConnectionError("sin broker")
 
-    assert not asyncio.run(broker_reachable(FakeConsumer({"tp"}, fail)))
+    assert not asyncio.run(broker_reachable(FakeConsumer({"tp"}, fail), BOOTSTRAP))
 
 
 def test_broker_not_reachable_when_it_does_not_answer_in_time(monkeypatch):
@@ -49,4 +51,4 @@ def test_broker_not_reachable_when_it_does_not_answer_in_time(monkeypatch):
     async def hang(partitions):
         await asyncio.sleep(5)
 
-    assert not asyncio.run(loop.broker_reachable(FakeConsumer({"tp"}, hang)))
+    assert not asyncio.run(loop.broker_reachable(FakeConsumer({"tp"}, hang), BOOTSTRAP))

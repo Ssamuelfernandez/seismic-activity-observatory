@@ -1,0 +1,16 @@
+
+=================================== ERRORS ====================================
+_______ ERROR collecting tests/scripts/test_verify_consumer_helpers.py ________
+ImportError while importing test module 'C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\tests\scripts\test_verify_consumer_helpers.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Roaming\uv\python\cpython-3.12.9-windows-x86_64-none\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\scripts\test_verify_consumer_helpers.py:6: in <module>
+    from scripts.consumer_scenarios.helpers import (
+E   ModuleNotFoundError: No module named 'scripts.consumer_scenarios'
+=========================== short test summary info ===========================
+ERROR tests/scripts/test_verify_consumer_helpers.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.09s

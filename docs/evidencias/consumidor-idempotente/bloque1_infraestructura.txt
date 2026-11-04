@@ -1,0 +1,424 @@
+Evidencia del bloque 1 (consumidor-idempotente). Nota: 'uv' no esta instalado en este equipo; las pruebas del equipo se ejecutan con .venv/Scripts/python -m pytest (equivalente a 'uv run pytest').
+
+== T003 ==
+$ .venv/Scripts/python -m pytest --markers -q
+@pytest.mark.integration: pruebas contra PostgreSQL 16 real, dentro de la red de Compose
+
+@pytest.mark.anyio: mark the (coroutine function) test to be run asynchronously via anyio.
+
+@pytest.mark.filterwarnings(warning): add a warning filter to the given test. see https://docs.pytest.org/en/stable/how-to/capture-warnings.html#pytest-mark-filterwarnings
+
+@pytest.mark.skip(reason=None): skip the given test function with an optional reason. Example: skip(reason="no way of currently testing this") skips the test.
+
+@pytest.mark.skipif(condition, ..., *, reason=...): skip the given test function if any of the conditions evaluate to True. Example: skipif(sys.platform == 'win32') skips the test if we are on the win32 platform. See https://docs.pytest.org/en/stable/reference/reference.html#pytest-mark-skipif
+
+@pytest.mark.xfail(condition, ..., *, reason=..., run=True, raises=None, strict=strict_xfail): mark the test function as an expected failure if any of the conditions evaluate to True. Optionally specify a reason for better reporting and run=False if you don't even want to execute the test function. If only specific exception(s) are expected, you can list them in raises, and if the test fails in other ways, it will be reported as a true failure. See https://docs.pytest.org/en/stable/reference/reference.html#pytest-mark-xfail
+
+@pytest.mark.parametrize(argnames, argvalues): call a test function multiple times passing in different arguments in turn. argvalues generally needs to be a list of values if argnames specifies only one name or a list of tuples of values if argnames specifies multiple names. Example: @parametrize('arg1', [1,2]) would lead to two calls of the decorated test function, one with arg1=1 and another with arg1=2.see https://docs.pytest.org/en/stable/how-to/parametrize.html for more info and examples.
+
+@pytest.mark.usefixtures(fixturename1, fixturename2, ...): mark tests as needing all of the specified fixtures. see https://docs.pytest.org/en/stable/explanation/fixtures.html#usefixtures
+
+@pytest.mark.tryfirst: mark a hook implementation function such that the plugin machinery will try to call it first/as early as possible. DEPRECATED, use @pytest.hookimpl(tryfirst=True) instead.
+
+@pytest.mark.trylast: mark a hook implementation function such that the plugin machinery will try to call it last/as late as possible. DEPRECATED, use @pytest.hookimpl(trylast=True) instead.
+
+(codigo de salida: 0)
+
+$ .venv/Scripts/python -m pytest -m not integration -q
+................................                                         [100%]
+32 passed in 0.24s
+(codigo de salida: 0)
+
+$ .venv/Scripts/python -m pytest --collect-only -q
+tests/common/test_config.py::test_read_str_missing_variable_names_it
+tests/common/test_config.py::test_read_str_empty_value_is_rejected
+tests/common/test_config.py::test_read_str_uses_default_when_missing
+tests/common/test_config.py::test_read_int_rejects_non_integer
+tests/common/test_config.py::test_read_int_rejects_out_of_range
+tests/common/test_config.py::test_read_int_accepts_value_in_range
+tests/common/test_config.py::test_read_optional_int_missing_returns_none
+tests/common/test_config.py::test_read_optional_int_empty_returns_none
+tests/common/test_config.py::test_read_optional_int_valid_value
+tests/common/test_config.py::test_read_optional_int_rejects_non_integer
+tests/common/test_config.py::test_read_optional_int_rejects_negative
+tests/common/test_health.py::test_missing_heartbeat_is_not_fresh
+tests/common/test_health.py::test_recent_heartbeat_is_fresh
+tests/common/test_health.py::test_old_heartbeat_is_not_fresh
+tests/common/test_health.py::test_clear_heartbeat_removes_previous_run_and_tolerates_absence
+tests/common/test_logging_setup.py::test_filter_drops_traceback_but_keeps_the_record
+tests/common/test_retry.py::test_next_delay_doubles_each_attempt
+tests/common/test_retry.py::test_next_delay_is_capped_at_maximum
+tests/common/test_retry.py::test_retry_forever_retries_until_operation_succeeds
+tests/common/test_retry.py::test_retry_forever_does_not_swallow_unexpected_errors
+tests/common/test_synthetic_event.py::test_event_id_has_synthetic_prefix
+tests/common/test_synthetic_event.py::test_event_ids_differ_between_seconds
+tests/common/test_synthetic_event.py::test_message_is_marked_synthetic_and_live
+tests/common/test_synthetic_event.py::test_message_has_all_required_envelope_fields
+tests/common/test_synthetic_event.py::test_event_keeps_times_in_milliseconds_and_id
+tests/common/test_synthetic_event.py::test_topic_definition_matches_contract
+tests/consumer/test_broker_probe.py::test_broker_reachable_when_end_offsets_answers
+tests/consumer/test_broker_probe.py::test_broker_not_reachable_without_assigned_partitions
+tests/consumer/test_broker_probe.py::test_broker_not_reachable_when_connection_fails
+tests/consumer/test_broker_probe.py::test_broker_not_reachable_when_it_does_not_answer_in_time
+tests/producer/test_loop.py::test_interval_that_leaves_room_for_the_heartbeat_is_accepted
+tests/producer/test_loop.py::test_interval_longer_than_half_the_max_age_is_rejected
+
+32 tests collected in 0.13s
+(codigo de salida: 0)
+
+$ git diff --stat -- uv.lock
+(codigo de salida: 0)
+
+== T005 ==
+$ .venv/Scripts/python -m pytest tests/common/test_config.py -q
+...........                                                              [100%]
+11 passed in 0.02s
+(codigo de salida: 0)
+
+$ .venv/Scripts/python -c print(sum(1 for _ in open('common/config.py',encoding='utf-8')), 'lineas en common/config.py')
+152 lineas en common/config.py
+(codigo de salida: 0)
+
+== T006 ==
+$ docker build --target production -t tmp-prod .
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.36kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12.16-slim-bookworm
+#2 DONE 0.1s
+
+#3 [internal] load metadata for ghcr.io/astral-sh/uv:0.12.13
+#3 DONE 0.1s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 330B done
+#4 DONE 0.0s
+
+#5 [production  1/10] FROM docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+#5 resolve docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337 0.0s done
+#5 DONE 0.0s
+
+#6 FROM ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6
+#6 resolve ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6 0.0s done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 1.93kB done
+#7 DONE 0.0s
+
+#8 [production  2/10] COPY --from=ghcr.io/astral-sh/uv:0.12.13 /uv /usr/local/bin/uv
+#8 CACHED
+
+#9 [production  3/10] WORKDIR /app
+#9 CACHED
+
+#10 [production  4/10] COPY pyproject.toml uv.lock .python-version ./
+#10 CACHED
+
+#11 [production  7/10] COPY producer ./producer
+#11 CACHED
+
+#12 [production  8/10] COPY consumer ./consumer
+#12 CACHED
+
+#13 [production  5/10] RUN uv sync --frozen --no-dev --no-install-project
+#13 CACHED
+
+#14 [production  6/10] COPY common ./common
+#14 CACHED
+
+#15 [production  9/10] COPY api ./api
+#15 CACHED
+
+#16 [production 10/10] RUN useradd --system --uid 10001 --no-create-home observatory
+#16 CACHED
+
+#17 exporting to image
+#17 exporting layers done
+#17 exporting manifest sha256:ed855d13eab941b8c5e04b261f2cb23b25228fdf1e5e5e0c36867a682a295cf2 done
+#17 exporting config sha256:1add2ad338b77d9031b713a942b9b0246e5099e3e2e8236d58222387a160d9ea done
+#17 exporting attestation manifest sha256:4579dcba8721e9182aeefe2bec1697c3046817dab061a2141b1ab54a19a8475a
+#17 exporting attestation manifest sha256:4579dcba8721e9182aeefe2bec1697c3046817dab061a2141b1ab54a19a8475a 0.2s done
+#17 exporting manifest list sha256:331b0e22577fbbb80bd8fd90ab21aa646e0831fee8d5e542e704865e2fc107d8
+#17 exporting manifest list sha256:331b0e22577fbbb80bd8fd90ab21aa646e0831fee8d5e542e704865e2fc107d8 0.1s done
+#17 naming to docker.io/library/tmp-prod:latest done
+#17 unpacking to docker.io/library/tmp-prod:latest 0.0s done
+#17 DONE 0.4s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/3qphd12h8wpz4sslswo3i4lcx
+(codigo de salida: 0)
+
+$ docker build --target test -t tmp-test .
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.36kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for ghcr.io/astral-sh/uv:0.12.13
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12.16-slim-bookworm
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 330B done
+#4 DONE 0.0s
+
+#5 [production  1/10] FROM docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+#5 resolve docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337 0.0s done
+#5 DONE 0.0s
+
+#6 FROM ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6
+#6 resolve ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6 0.0s done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 1.93kB done
+#7 DONE 0.0s
+
+#8 [production  3/10] WORKDIR /app
+#8 CACHED
+
+#9 [production  5/10] RUN uv sync --frozen --no-dev --no-install-project
+#9 CACHED
+
+#10 [production  2/10] COPY --from=ghcr.io/astral-sh/uv:0.12.13 /uv /usr/local/bin/uv
+#10 CACHED
+
+#11 [production  4/10] COPY pyproject.toml uv.lock .python-version ./
+#11 CACHED
+
+#12 [production  9/10] COPY api ./api
+#12 CACHED
+
+#13 [production  6/10] COPY common ./common
+#13 CACHED
+
+#14 [production 10/10] RUN useradd --system --uid 10001 --no-create-home observatory
+#14 CACHED
+
+#15 [production  8/10] COPY consumer ./consumer
+#15 CACHED
+
+#16 [production  7/10] COPY producer ./producer
+#16 CACHED
+
+#17 [test 1/1] RUN uv sync --frozen --no-install-project
+#17 CACHED
+
+#18 exporting to image
+#18 exporting layers done
+#18 exporting manifest sha256:b1e9b3956b6c47236467c23655886541465ab0c559ba37ba55ea96f69da62bba done
+#18 exporting config sha256:e8bbb86693405e0254d47222a985d7af241b3401c7a60d053b4719007974f733 done
+#18 exporting attestation manifest sha256:6c75112c88f48ba8cbfdcf7ceb0384852e414c01aded28b27cfa097f472fce09 0.1s done
+#18 exporting manifest list sha256:08fd53c42070049c123012d9df9d31b52b8206619870f368987aa45f0e514a3e
+#18 exporting manifest list sha256:08fd53c42070049c123012d9df9d31b52b8206619870f368987aa45f0e514a3e 0.0s done
+#18 naming to docker.io/library/tmp-test:latest done
+#18 unpacking to docker.io/library/tmp-test:latest 0.0s done
+#18 DONE 0.2s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/b5bcycx0znnm934uomg2qkebf
+(codigo de salida: 0)
+
+$ docker run --rm tmp-prod python -c import pytest
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'pytest'
+(codigo de salida: 1)
+
+$ docker run --rm tmp-test python -c import pytest; print(pytest.__version__)
+9.2.0
+(codigo de salida: 0)
+
+$ docker run --rm tmp-test id -un
+observatory
+(codigo de salida: 0)
+
+== T007 (salida filtrada: la config completa interpola secretos del .env y no se guarda) ==
+$ docker compose config --quiet
+(codigo de salida: 0)
+
+$ docker compose config --services
+postgres
+api
+kafka
+consumer
+producer
+(codigo de salida: 0)
+
+$ docker compose --profile test config --services
+kafka
+postgres
+producer
+tests
+api
+consumer
+(codigo de salida: 0)
+
+$ docker compose config | grep -c published:
+1
+
+$ docker compose --profile test config | grep -n (variables del servicio tests)
+16:      DB_HOST: postgres
+19:      DB_PORT: "5432"
+42:        target: 8000
+60:      CONSUMER_FAULT_CRASH_AT_OFFSET: ""
+61:      COUNTRY_CATALOG_PATH: /app/data/catalogo/paises.geojson
+62:      DB_HOST: postgres
+65:      DB_PORT: "5432"
+69:      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+70:      KAFKA_GROUP_ID: consumer-live
+94:        target: /app/data/catalogo
+129:        target: /var/lib/kafka/data
+154:        target: /var/lib/postgresql/data
+158:        target: /sql
+163:        target: /docker-entrypoint-initdb.d/10-init.sh
+170:      target: production
+183:      DB_HOST: postgres
+186:      DB_PORT: "5432"
+190:      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+218:      target: test
+224:      DB_HOST: postgres
+227:      DB_PORT: "5432"
+229:      EVIDENCE_DIR: /app/evidence
+230:      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+233:      PYTEST_ADDOPTS: -p no:cacheprovider
+241:        target: /app/tests
+246:        target: /app/sql
+251:        target: /app/data/catalogo
+256:        target: /app/evidence
+
+== T009 ==
+$ .venv/Scripts/python scripts/check_env_example.py
+PASS  .env.example coincide: 16 variables, 14 leídas por el código, sin secretos reales.
+(codigo de salida: 0)
+
+-- comprobacion temporal: variable borrada de .env.example (restaurada despues)
+$ .venv/Scripts/python scripts/check_env_example.py
+FAIL  compose.yaml usa ${CONSUMER_FAULT_CRASH_AT_OFFSET} pero falta en .env.example
+FAIL  CONSUMER_FAULT_CRASH_AT_OFFSET es obligatoria y falta en .env.example
+(codigo de salida: 1)
+
+$ .venv/Scripts/python scripts/check_env_example.py
+PASS  .env.example coincide: 16 variables, 14 leídas por el código, sin secretos reales.
+(codigo de salida: 0)
+
+== T011 ==
+$ docker compose up -d postgres
+(codigo de salida: 0)
+
+$ docker compose --profile test build tests
+ Image seismic-observatory-python-tests:0.1.0 Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 656B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.36kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12.16-slim-bookworm
+#3 DONE 0.0s
+
+#4 [internal] load metadata for ghcr.io/astral-sh/uv:0.12.13
+#4 DONE 0.0s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 330B done
+#5 DONE 0.0s
+
+#6 FROM ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6
+#6 resolve ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6 0.0s done
+#6 DONE 0.0s
+
+#7 [production  1/10] FROM docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+#7 resolve docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337 0.0s done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 1.93kB done
+#8 DONE 0.0s
+
+#9 [production  3/10] WORKDIR /app
+#9 CACHED
+
+#10 [production  9/10] COPY api ./api
+#10 CACHED
+
+#11 [production  7/10] COPY producer ./producer
+#11 CACHED
+
+#12 [production  8/10] COPY consumer ./consumer
+#12 CACHED
+
+#13 [production  6/10] COPY common ./common
+#13 CACHED
+
+#14 [production  4/10] COPY pyproject.toml uv.lock .python-version ./
+#14 CACHED
+
+#15 [production  5/10] RUN uv sync --frozen --no-dev --no-install-project
+#15 CACHED
+
+#16 [production 10/10] RUN useradd --system --uid 10001 --no-create-home observatory
+#16 CACHED
+
+#17 [production  2/10] COPY --from=ghcr.io/astral-sh/uv:0.12.13 /uv /usr/local/bin/uv
+#17 CACHED
+
+#18 [test 1/1] RUN uv sync --frozen --no-install-project
+#18 CACHED
+
+#19 exporting to image
+#19 exporting layers done
+#19 exporting manifest sha256:81a51bda92602c679c85e192f9b56510ab6b26a23d3626c1489ee59d37a8e0fd done
+#19 exporting config sha256:b02045764e8f46f4fa692ff5b556bc85757c89c27ca791484c81d46f8b39a59a done
+#19 exporting attestation manifest sha256:b774a67f46c1edc8dcdbb34b9ac072ac03e9e89003f7160a050ce0999c9e367a
+#19 exporting attestation manifest sha256:b774a67f46c1edc8dcdbb34b9ac072ac03e9e89003f7160a050ce0999c9e367a 0.2s done
+#19 exporting manifest list sha256:d1aa21795a9294454887608a39beb8c2d1d485e155e3bf07e61d5c95447e9ff7
+#19 exporting manifest list sha256:d1aa21795a9294454887608a39beb8c2d1d485e155e3bf07e61d5c95447e9ff7 0.0s done
+#19 naming to docker.io/library/seismic-observatory-python-tests:0.1.0 done
+#19 unpacking to docker.io/library/seismic-observatory-python-tests:0.1.0 0.0s done
+#19 DONE 0.3s
+
+#20 resolving provenance for metadata file
+#20 DONE 0.0s
+ Image seismic-observatory-python-tests:0.1.0 Built 
+(codigo de salida: 0)
+
+$ docker compose --profile test run --rm tests pytest tests/common -q
+..........................                                               [100%]
+26 passed in 0.23s
+(codigo de salida: 0)
+
+$ docker compose --profile test run --rm tests python -c import socket; socket.getaddrinfo('postgres', 5432); print('dns ok')
+dns ok
+(codigo de salida: 0)
+
+$ docker compose --profile test run --rm tests id -un
+observatory
+(codigo de salida: 0)
+
+$ docker compose --profile test run --rm tests ls /app/sql /app/data/catalogo
+/app/data/catalogo:
+paises.geojson
+
+/app/sql:
+001_schema.sql
+002_roles.sql
+(codigo de salida: 0)
+
+$ docker compose --profile test run --rm tests touch /app/sql/x
+touch: cannot touch '/app/sql/x': Read-only file system
+
+(codigo de salida: 1)
+
+$ docker compose --profile test run --rm tests python -c import tempfile
+with tempfile.NamedTemporaryFile(dir='/app/evidence'): print('escritura en /app/evidence ok')
+escritura en /app/evidence ok
+(codigo de salida: 0)
+

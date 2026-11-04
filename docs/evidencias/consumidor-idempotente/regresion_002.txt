@@ -1,0 +1,30 @@
+Regresion de 002 - nota del check A1 (T082)
+===========================================
+Alcance: este archivo solo recoge T082. NO se ha ejecutado `python scripts/verify_stack.py` completo
+(T086, diferida; usa down -v y no esta autorizado en este bloque).
+
+Cambio
+- scripts/verify_stack.py::check_synthetic_event_in_consumer_log (A1) ya no busca la cadena
+  "[SINTETICO]" (la antigua linea "Evento recibido ..." desaparecio con describe_message). Ahora usa
+  is_synthetic_decision_line: la linea debe contener "decision=" y "event_id=synthetic-"
+  (consumer-runtime.md s4).
+- Pruebas unitarias: tests/scripts/test_verify_stack_a1.py (3 pruebas).
+- grep -n "SINTÉTICO" scripts/verify_stack.py -> sin coincidencias (criterio de T082).
+
+Dependencia de A1 de un evento NUEVO del productor
+- El grupo del consumidor (KAFKA_GROUP_ID=consumer-live) conserva su offset tras `docker compose down`/`up`.
+  Ya no relee el tema desde el principio, asi que A1 solo pasa si el productor publica un evento nuevo
+  dentro de EVENT_TIMEOUT_SECONDS = 60 s.
+- PRODUCER_INTERVAL_SECONDS admite hasta 60 s. Con un intervalo largo (cercano a 60) el check puede
+  agotar el tiempo y fallar sin que haya un error real del consumidor; con intervalos cortos (valor por
+  defecto de .env.example) no hay problema. Mitigacion: volver a ejecutar el check o bajar el intervalo.
+
+Que pasa si el evento sintetico del productor de 002 se rechaza
+- Comprobado de forma offline con el venv: se construyo un mensaje con
+  common.synthetic_event.build_synthetic_message, se decodifico con common.decode.decode_value y se
+  valido con common.validation.validate_message(topic "earthquakes.live"). Resultado: ValidEvent
+  (event_id synthetic-<epoch>), es decir, NO se rechaza; la linea esperada es
+  "decision=new_event event_id=synthetic-... " (o redelivery_ignored en un reenvio).
+- Si alguna vez se rechazara, la linea "decision=quarantined event_id=synthetic-... reason=..." tambien
+  contiene "decision=" y "event_id=synthetic-", por lo que A1 tambien pasaria (la prueba unitaria lo cubre).
+  El check no distingue entre guardado y cuarentena; solo acredita el recorrido productor -> Kafka -> consumidor.

@@ -2,9 +2,11 @@
 
 Reglas:
   1. Las variables que `compose.yaml` interpola con ${NOMBRE...} son exactamente las claves de .env.example.
-  2. Toda variable que el código lee con read_str/read_int está definida en el bloque `environment:`
-     de algún servicio de compose.yaml.
+  2. Toda variable que el código lee con read_str/read_int/read_optional_int está definida en el
+     bloque `environment:` de algún servicio de compose.yaml.
   3. .env.example no contiene secretos reales: las contraseñas llevan el prefijo de ejemplo.
+  4. Las variables de REQUIRED_VARIABLES (p. ej. el gancho de fallo del consumidor) existen en
+     .env.example y en compose.yaml.
 
 Uso: python scripts/check_env_example.py   (código de salida 0 si todo coincide)
 """
@@ -15,10 +17,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CODE_DIRS = ("common", "producer", "consumer", "api")
 EXAMPLE_PASSWORD_PREFIX = "cambia-esta-clave"
+REQUIRED_VARIABLES = ("CONSUMER_FAULT_CRASH_AT_OFFSET",)
 
 INTERPOLATION = re.compile(r"\$\{([A-Z][A-Z0-9_]*)")
 ENV_KEY = re.compile(r"^\s{2,}([A-Z][A-Z0-9_]*):", re.MULTILINE)
-CODE_READ = re.compile(r"""read_(?:str|int)\(\s*["']([A-Z][A-Z0-9_]*)["']""")
+CODE_READ = re.compile(r"""read_(?:str|int|optional_int)\(\s*["']([A-Z][A-Z0-9_]*)["']""")
 
 
 def read_example_keys(path: Path) -> dict[str, str]:
@@ -55,6 +58,12 @@ def main() -> int:
     compose_env_keys = set(ENV_KEY.findall(compose_text))
     for name in sorted(read_code_variables() - compose_env_keys):
         problems.append(f"el código lee {name} pero ningún servicio de compose.yaml lo define")
+
+    for name in REQUIRED_VARIABLES:
+        if name not in example:
+            problems.append(f"{name} es obligatoria y falta en .env.example")
+        if name not in compose_env_keys:
+            problems.append(f"{name} es obligatoria y falta en compose.yaml")
 
     for name, value in example.items():
         if "PASSWORD" in name and not value.startswith(EXAMPLE_PASSWORD_PREFIX):

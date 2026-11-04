@@ -18,6 +18,41 @@ Fuente: feed `all_day.geojson` de USGS, según `docs/evidencias/f1/explore_usgs_
 | `coordinates[2]` (profundidad) | Profundidad del foco, tercera coordenada de la geometría. Hay 2 valores negativos (mínimo -0,18), válidos. | Decimal, kilómetros (unidad por confirmar con la documentación de USGS) | No faltó (0 nulos). Si falta se guarda NULL, nunca 0. |
 ## 3. Procedencia y registro de consultas
 ## 4. Calidad
+
+### 4.1 Reglas de validación del consumidor
+
+El consumidor valida cada mensaje de Kafka antes de tocar la base (`common/validation.py`, `common/validation_envelope.py`). Comprueba el tipo exacto (un `true` no es un número) y se detiene en el **primer** motivo que falla, en este orden. Los nulos se conservan como `NULL`: nunca se convierten en 0, y una magnitud o profundidad negativa es válida si está en rango.
+
+| # | Motivo de cuarentena | Qué comprueba |
+|---|---|---|
+| 1 | `invalid_json` | Los bytes no son UTF-8 o JSON válido, o el valor es nulo (tombstone). |
+| 2 | `invalid_envelope` | Faltan claves del sobre, `source` o `mode` fuera de los valores permitidos, `is_synthetic` no es booleano, o `ingested_at`/`replay_at` no son fechas UTC reales. |
+| 3 | `mode_topic_mismatch` | El `mode` del mensaje no coincide con el del tema (por ejemplo, `replay` en `earthquakes.live`). |
+| 4 | `replay_at_missing` | Un mensaje `replay` sin `replay_at`. |
+| 5 | `missing_id` | Falta `id` del evento o está vacío. |
+| 6 | `missing_time` | `properties.time` no es un entero. |
+| 7 | `missing_updated` | `properties.updated` no es un entero. |
+| 8 | `invalid_geometry` | La geometría no es un `Point` con al menos dos coordenadas. |
+| 9 | `coordinates_out_of_range` | Longitud fuera de [-180, 180] o latitud fuera de [-90, 90] (o no finita). |
+| 10 | `mag_out_of_range` | Magnitud fuera de [-10, 15]. |
+| 11 | `depth_out_of_range` | Profundidad fuera de [-100, 1000] km. |
+| 12 | `invalid_field_type` | `id`, `place`, `url`, `status` o `magType` no son texto; `sig` no es entero; `mag`, profundidad o coordenadas no son números. |
+| 13 | `value_out_of_range` | `sig` fuera de `int32`, `time`/`updated` fuera del rango admitido por la base, o `id` de más de 512 caracteres. |
+| 14 | `db_constraint_violation` | El evento no se puede guardar como `jsonb` (por ejemplo, anidamiento de más de 64 niveles). También se usa si la base rechaza el contenido con un error de integridad o de datos (SQLSTATE clase 23 o 22). |
+
+### 4.2 Qué pasa con un mensaje inválido
+
+- Va a la tabla `quarantine` con su motivo, el original, la referencia al mensaje (tema, partición y offset) y el SHA-256 de los bytes recibidos. No se escribe nada en las tablas de eventos.
+- La clave de idempotencia es `(original_sha256, reason)`: el mismo original inválido por el mismo motivo no duplica fila.
+- Una sola fila por mensaje, con el primer motivo según el orden anterior; el consumo no se detiene.
+- `is_synthetic` se copia a la cuarentena solo si es un booleano exacto. Por eso las filas ilegibles (bytes no UTF-8 y tombstone) quedan en `false`.
+- Los fallos de conexión con la base no son datos inválidos: se reintentan sin confirmar el offset y no producen cuarentena.
+
+### 4.3 Reglas de escritura y verificación
+
+- El offset se confirma solo después del commit en PostgreSQL; un corte entre ambos provoca una reentrega que se ignora (`ON CONFLICT (event_id, updated_ms) DO NOTHING`).
+- Solo una versión con `updated` estrictamente mayor sustituye al estado actual; el historial conserva todas las versiones distintas.
+- Evidencias: `docs/evidencias/consumidor-idempotente/` (pruebas 2, 3, 4, 6 y 8; 412 pruebas unitarias y 35 de integración).
 ## 5. Modelo conceptual, lógico y físico
 
 > Borrador. Se completará con las mediciones de la sección 7 y con el resultado de la carga real cuando existan.

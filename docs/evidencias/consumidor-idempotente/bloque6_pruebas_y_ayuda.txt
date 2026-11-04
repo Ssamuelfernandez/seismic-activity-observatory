@@ -1,0 +1,40 @@
+## pytest tests/scripts
+..................................                                       [100%]
+34 passed in 0.10s
+
+## pytest -m 'not integration' (equipo, Python 3.12.9)
+........................................................................ [ 70%]
+........................................................................ [ 88%]
+.................................................                        [100%]
+409 passed, 35 deselected in 0.59s
+
+## publish_messages --help (servicio tests)
+time="2026-11-04T20:40:09+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Running 
+time="2026-11-04T20:40:09+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-tests-run-74552c53299b Creating 
+ Container seismic-observatory-tests-run-74552c53299b Created 
+usage: publish_messages.py [-h] [--count COUNT]
+                           {constraint-twice,faq12,invalid-twice,late-old,numbered,quarantine-set,replay-100}
+
+Publicador de casos de prueba en `earthquakes.live` para `scripts/verify_consumer.py` (T072).
+
+positional arguments:
+  {constraint-twice,faq12,invalid-twice,late-old,numbered,quarantine-set,replay-100}
+                        caso a publicar
+
+options:
+  -h, --help            show this help message and exit
+  --count COUNT         solo para `numbered`
+
+Casos:
+  faq12            Los 5 mensajes de la FAQ 12 (data-model.md §4).
+  late-old         E1 con `updated` 10:07 y mag 4.4: versión antigua tardía no vista (prueba 4).
+  replay-100       El primer mensaje de la FAQ 12 repetido 100 veces (prueba 2).
+  invalid-twice    El mismo mensaje con latitud 145, dos veces (cuarentena y duplicado de cuarentena).
+  constraint-twice Un mensaje con `dmin = NaN` dos veces (`db_constraint_violation`, FR-036).
+  quarantine-set   Prueba 6: seis mensajes inválidos de motivos distintos y uno válido (el 2.º).
+  numbered         `count` eventos distintos `synthetic-numbered-0001...` (para las caídas de servicios).
+rc=0

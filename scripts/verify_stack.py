@@ -87,16 +87,43 @@ def check_healthy() -> None:
     record(ok, "Los cinco servicios están healthy", str(service_states()))
 
 
+def is_synthetic_decision_line(entry: str) -> bool:
+    """Indica si una línea del registro es la decisión del consumidor sobre un evento sintético.
+
+    Qué hace:
+        Busca `decision=` y `event_id=synthetic-` (consumer-runtime.md §4), sin exigir ningún marcador de texto.
+    Recibe:
+        entry: una línea del registro del consumidor.
+    Devuelve:
+        True si la línea es una decisión sobre un evento `synthetic-…`.
+    Por qué existe:
+        El consumidor idempotente ya no escribe la antigua línea «Evento recibido» (A1, FR-003).
+    """
+    return "decision=" in entry and "event_id=synthetic-" in entry
+
+
 def check_synthetic_event_in_consumer_log() -> None:
-    """Criterio: el consumidor muestra el evento sintético del productor."""
+    """A1: el consumidor deja la línea de decisión de un evento sintético del productor.
+
+    Qué hace:
+        Espera hasta `EVENT_TIMEOUT_SECONDS` una línea `decision=… event_id=synthetic-…`.
+    Por qué existe:
+        Comprueba el recorrido productor -> Kafka -> consumidor. Cualquier decisión sirve, también
+        `decision=quarantined …` si el evento se rechazara.
+    Limitación:
+        El grupo del consumidor conserva su offset tras `down`/`up`, así que ya no relee el tema desde
+        el principio: A1 depende de que el productor publique un evento NUEVO dentro de 60 s. Si
+        `PRODUCER_INTERVAL_SECONDS` (admite hasta 60) es largo, el check puede fallar por tiempo sin
+        que haya un error real.
+    """
     deadline = time.time() + EVENT_TIMEOUT_SECONDS
     line = ""
     while time.time() < deadline and not line:
         logs = compose("logs", "consumer", "--no-log-prefix").stdout
-        line = next((entry for entry in logs.splitlines() if "[SINTÉTICO]" in entry and "synthetic-" in entry), "")
+        line = next((entry for entry in logs.splitlines() if is_synthetic_decision_line(entry)), "")
         if not line:
             time.sleep(3)
-    record(bool(line), "El consumidor muestra un evento sintético", line.strip())
+    record(bool(line), "El consumidor registra la decisión sobre un evento sintético", line.strip())
 
 
 def check_api_health_endpoint() -> None:

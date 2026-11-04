@@ -1,0 +1,105 @@
+PASS  Referencia: publicado faq12 — published case=faq12 messages=5 topic=earthquakes.live
+PASS  Referencia: el grupo llega a lag 0
+
+-- [1] SQL de la ejecución de referencia, sin corte
+SELECT event_id, event_time_ms, updated_ms, mag, depth_km, lon, lat, place, status, url, sig, mag_type, country_id, date_id, source, is_synthetic FROM live.current_event ORDER BY event_id;
+      event_id      | event_time_ms |  updated_ms   | mag | depth_km |  lon   |  lat  |           place           |  status  |                    url                     | sig | mag_type | country_id |  date_id   |   source    | is_synthetic 
+--------------------+---------------+---------------+-----+----------+--------+-------+---------------------------+----------+--------------------------------------------+-----+----------+------------+------------+-------------+--------------
+ synthetic-faq12-e1 | 1793786400000 | 1793786940000 | 4.6 |      6.4 | -116.7 | 33.54 | Lugar sintético de prueba | reviewed | https://example.invalid/synthetic-faq12-e1 | 100 | ml       |            | 2026-11-04 | replay_demo | t
+ synthetic-faq12-e2 | 1793787060000 | 1793787120000 | 3.1 |      6.4 | -116.7 | 33.54 | Lugar sintético de prueba | reviewed | https://example.invalid/synthetic-faq12-e2 | 100 | ml       |            | 2026-11-04 | replay_demo | t
+(2 rows)
+
+SELECT event_id, updated_ms, mag, depth_km, source, is_synthetic, kafka_topic, kafka_partition, kafka_offset, md5(original::text) AS original_md5 FROM live.event_version ORDER BY event_id, updated_ms;
+      event_id      |  updated_ms   | mag | depth_km |   source    | is_synthetic |   kafka_topic    | kafka_partition | kafka_offset |           original_md5           
+--------------------+---------------+-----+----------+-------------+--------------+------------------+-----------------+--------------+----------------------------------
+ synthetic-faq12-e1 | 1793786700000 | 4.2 |      6.4 | replay_demo | t            | earthquakes.live |               0 |            0 | 932e7c18d78badc4817a4c59bb66a2b7
+ synthetic-faq12-e1 | 1793786940000 | 4.6 |      6.4 | replay_demo | t            | earthquakes.live |               0 |            2 | 98e140e1c10c768a2fe38bcc9f5bc93d
+ synthetic-faq12-e2 | 1793787120000 | 3.1 |      6.4 | replay_demo | t            | earthquakes.live |               0 |            4 | feae2ac57209bbe9c93d07ba64f58cea
+(3 rows)
+
+SELECT (SELECT count(*) FROM live.current_event) AS current_rows, (SELECT count(*) FROM live.event_version) AS version_rows, (SELECT count(*) FROM live.quarantine) AS quarantine_rows;
+ current_rows | version_rows | quarantine_rows 
+--------------+--------------+-----------------
+            2 |            3 |               0
+(1 row)
+
+SELECT event_id, updated_ms, count(*) AS copies FROM live.event_version GROUP BY 1, 2 HAVING count(*) > 1;
+ event_id | updated_ms | copies 
+----------+------------+--------
+(0 rows)
+
+PASS  Con corte: publicado faq12 — published case=faq12 messages=5 topic=earthquakes.live
+PASS  Con corte: el grupo llega a lag 0 tras el reinicio
+PASS  Registro: FAULT offset=2 y luego decision=redelivery_ignored
+PASS  El proceso terminó una sola vez, con código 137 — ['137']
+PASS  Compose reinició el contenedor una sola vez (no vuelve a morir) — 1
+PASS  El marcador existe en /tmp antes de la recreación final — /tmp/consumer_fault_done
+
+-- [1] Registro filtrado del consumidor con corte
+2026-11-04 19:42:31,600 INFO [consumer.loop] Consumidor suscrito al tema earthquakes.live.
+2026-11-04 19:42:36,460 INFO [consumer.reporting] decision=new_event event_id=synthetic-faq12-e1 topic=earthquakes.live partition=0 offset=0
+2026-11-04 19:42:36,477 INFO [consumer.reporting] decision=redelivery_ignored event_id=synthetic-faq12-e1 topic=earthquakes.live partition=0 offset=1
+2026-11-04 19:42:36,487 WARNING [consumer.fault_hook] FAULT crash_after_db_commit offset=2
+2026-11-04 19:42:45,397 INFO [consumer.loop] Consumidor suscrito al tema earthquakes.live.
+2026-11-04 19:42:45,408 INFO [consumer.reporting] decision=redelivery_ignored event_id=synthetic-faq12-e1 topic=earthquakes.live partition=0 offset=2
+2026-11-04 19:42:45,417 INFO [consumer.reporting] decision=redelivery_ignored event_id=synthetic-faq12-e1 topic=earthquakes.live partition=0 offset=3
+2026-11-04 19:42:45,427 INFO [consumer.reporting] decision=new_event event_id=synthetic-faq12-e2 topic=earthquakes.live partition=0 offset=4
+
+PASS  El SQL con corte es idéntico al de la ejecución sin corte
+PASS  2 actuales, 3 versiones y 0 en cuarentena (0 pérdidas) — ['2', '3', '0']
+PASS  0 versiones duplicadas por (event_id, updated_ms)
+
+-- [2] SQL de la ejecución con corte
+SELECT event_id, event_time_ms, updated_ms, mag, depth_km, lon, lat, place, status, url, sig, mag_type, country_id, date_id, source, is_synthetic FROM live.current_event ORDER BY event_id;
+      event_id      | event_time_ms |  updated_ms   | mag | depth_km |  lon   |  lat  |           place           |  status  |                    url                     | sig | mag_type | country_id |  date_id   |   source    | is_synthetic 
+--------------------+---------------+---------------+-----+----------+--------+-------+---------------------------+----------+--------------------------------------------+-----+----------+------------+------------+-------------+--------------
+ synthetic-faq12-e1 | 1793786400000 | 1793786940000 | 4.6 |      6.4 | -116.7 | 33.54 | Lugar sintético de prueba | reviewed | https://example.invalid/synthetic-faq12-e1 | 100 | ml       |            | 2026-11-04 | replay_demo | t
+ synthetic-faq12-e2 | 1793787060000 | 1793787120000 | 3.1 |      6.4 | -116.7 | 33.54 | Lugar sintético de prueba | reviewed | https://example.invalid/synthetic-faq12-e2 | 100 | ml       |            | 2026-11-04 | replay_demo | t
+(2 rows)
+
+SELECT event_id, updated_ms, mag, depth_km, source, is_synthetic, kafka_topic, kafka_partition, kafka_offset, md5(original::text) AS original_md5 FROM live.event_version ORDER BY event_id, updated_ms;
+      event_id      |  updated_ms   | mag | depth_km |   source    | is_synthetic |   kafka_topic    | kafka_partition | kafka_offset |           original_md5           
+--------------------+---------------+-----+----------+-------------+--------------+------------------+-----------------+--------------+----------------------------------
+ synthetic-faq12-e1 | 1793786700000 | 4.2 |      6.4 | replay_demo | t            | earthquakes.live |               0 |            0 | 932e7c18d78badc4817a4c59bb66a2b7
+ synthetic-faq12-e1 | 1793786940000 | 4.6 |      6.4 | replay_demo | t            | earthquakes.live |               0 |            2 | 98e140e1c10c768a2fe38bcc9f5bc93d
+ synthetic-faq12-e2 | 1793787120000 | 3.1 |      6.4 | replay_demo | t            | earthquakes.live |               0 |            4 | feae2ac57209bbe9c93d07ba64f58cea
+(3 rows)
+
+SELECT (SELECT count(*) FROM live.current_event) AS current_rows, (SELECT count(*) FROM live.event_version) AS version_rows, (SELECT count(*) FROM live.quarantine) AS quarantine_rows;
+ current_rows | version_rows | quarantine_rows 
+--------------+--------------+-----------------
+            2 |            3 |               0
+(1 row)
+
+SELECT event_id, updated_ms, count(*) AS copies FROM live.event_version GROUP BY 1, 2 HAVING count(*) > 1;
+ event_id | updated_ms | copies 
+----------+------------+--------
+(0 rows)
+
+PASS  Tras recrear sin la variable, el consumidor está healthy
+PASS  La variable queda vacía [] y el marcador ya no existe — [] | ls: cannot access '/tmp/consumer_fault_done': No such file or directory
+
+-- [3] Tras la recreación final
+[] | ls: cannot access '/tmp/consumer_fault_done': No such file or directory
+
+PASS  .env sin cambios (huella antes y después) — c94772034f86b73e == c94772034f86b73e
+
+-- [4] Comprobaciones
+PASS  Referencia: publicado faq12 — published case=faq12 messages=5 topic=earthquakes.live
+PASS  Referencia: el grupo llega a lag 0
+PASS  Con corte: publicado faq12 — published case=faq12 messages=5 topic=earthquakes.live
+PASS  Con corte: el grupo llega a lag 0 tras el reinicio
+PASS  Registro: FAULT offset=2 y luego decision=redelivery_ignored
+PASS  El proceso terminó una sola vez, con código 137 — ['137']
+PASS  Compose reinició el contenedor una sola vez (no vuelve a morir) — 1
+PASS  El marcador existe en /tmp antes de la recreación final — /tmp/consumer_fault_done
+PASS  El SQL con corte es idéntico al de la ejecución sin corte
+PASS  2 actuales, 3 versiones y 0 en cuarentena (0 pérdidas) — ['2', '3', '0']
+PASS  0 versiones duplicadas por (event_id, updated_ms)
+PASS  Tras recrear sin la variable, el consumidor está healthy
+PASS  La variable queda vacía [] y el marcador ya no existe — [] | ls: cannot access '/tmp/consumer_fault_done': No such file or directory
+PASS  .env sin cambios (huella antes y después) — c94772034f86b73e == c94772034f86b73e
+
+Evidencias: prueba8_reinicio.out, prueba8_reinicio.log
+
+14/14 comprobaciones superadas.

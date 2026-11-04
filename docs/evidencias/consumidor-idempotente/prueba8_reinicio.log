@@ -1,0 +1,9 @@
+-- [1] Registro filtrado del consumidor con corte
+2026-11-04 19:46:23,399 INFO [consumer.loop] Consumidor suscrito al tema earthquakes.live.
+2026-11-04 19:46:28,509 INFO [consumer.reporting] decision=new_event event_id=synthetic-faq12-e1 topic=earthquakes.live partition=0 offset=0
+2026-11-04 19:46:28,528 INFO [consumer.reporting] decision=redelivery_ignored event_id=synthetic-faq12-e1 topic=earthquakes.live partition=0 offset=1
+2026-11-04 19:46:28,537 WARNING [consumer.fault_hook] FAULT crash_after_db_commit offset=2
+2026-11-04 19:46:37,432 INFO [consumer.loop] Consumidor suscrito al tema earthquakes.live.
+2026-11-04 19:46:37,442 INFO [consumer.reporting] decision=redelivery_ignored event_id=synthetic-faq12-e1 topic=earthquakes.live partition=0 offset=2
+2026-11-04 19:46:37,452 INFO [consumer.reporting] decision=redelivery_ignored event_id=synthetic-faq12-e1 topic=earthquakes.live partition=0 offset=3
+2026-11-04 19:46:37,462 INFO [consumer.reporting] decision=new_event event_id=synthetic-faq12-e2 topic=earthquakes.live partition=0 offset=4

@@ -1,0 +1,36 @@
+# Bloque 4: salida observada de cada archivo de prueba ANTES de escribir su implementación (TDD)
+# Comando: .venv/Scripts/python -m pytest <archivo> -q  (equipo, Python 3.12.9). Se muestran las últimas líneas.
+
+== tests/consumer/test_resilience.py (antes de consumer/resilience.py) ==
+E   ImportError: cannot import name 'resilience' from 'consumer' (consumer\__init__.py)
+ERROR tests/consumer/test_resilience.py
+1 error in 0.28s
+
+== tests/consumer/test_counters.py (antes de consumer/counters.py) ==
+E   ModuleNotFoundError: No module named 'consumer.counters'
+ERROR tests/consumer/test_counters.py
+1 error in 0.12s
+
+== tests/consumer/test_reporting.py (antes de consumer/reporting.py) ==
+E   ImportError: cannot import name 'reporting' from 'consumer' (consumer\__init__.py)
+ERROR tests/consumer/test_reporting.py
+1 error in 0.13s
+
+== tests/consumer/test_fault_hook.py (antes de consumer/fault_hook.py) ==
+E   ImportError: cannot import name 'fault_hook' from 'consumer' (consumer\__init__.py)
+ERROR tests/consumer/test_fault_hook.py
+1 error in 0.11s
+
+== tests/consumer/test_pipeline.py (antes de consumer/pipeline.py) ==
+E   ImportError: cannot import name 'pipeline' from 'consumer' (consumer\__init__.py)
+ERROR tests/consumer/test_pipeline.py
+1 error in 0.25s
+
+== tests/consumer/test_consumer_loop.py (antes de reescribir consumer/loop.py) ==
+FAILED tests/consumer/test_consumer_loop.py (13 pruebas fallaban: LoopContext, consume_until_stopped, broker_reachable(consumer, bootstrap)... no existían)
+13 failed in 0.31s
+
+== tests/integration/test_restart_crash.py y test_counters_reconcile.py ==
+Se escribieron después de la implementación (probaban código ya existente de T046-T056); su primera ejecución
+contra PostgreSQL falló una vez por un error de la propia prueba (TRUNCATE sin las tablas de replay: FeatureNotSupportedError,
+"cannot truncate a table referenced in a foreign key constraint"), corregido en la prueba; después pasan (ver pytest_integracion_bloque4.txt).
