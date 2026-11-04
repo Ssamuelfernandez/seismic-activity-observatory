@@ -10,6 +10,7 @@ Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
 |---|---|
 | `contratos-y-modelo` | Cerrada (2026-11-02): contratos, DDL, modelo de datos y evidencias |
 | `infra-compose` | Implementada y verificada (2026-11-04), pendiente de la revisión del alumno: Compose con cinco servicios, "hola mundo" de punta a punta con un evento sintético, roles de base de datos y evidencias en `docs/evidencias/infra-compose/` |
+| `consumidor-idempotente` | Implementada y verificada (2026-11-04), pendiente de la revisión del alumno: consumidor con validación, cuarentena, versiones, reintentos y contadores (C1–C8, C13; pruebas 2, 3, 4, 6 y 8). Evidencias en `docs/evidencias/consumidor-idempotente/`. Quedan diferidos el catálogo de países, la comprobación de esquema al arrancar y las pruebas de caída de PostgreSQL/Kafka con Docker (ver «Diferidas» en `specs/003-consumidor-idempotente/tasks.md`) |
 | Resto de features | No empezadas |
 
 El productor y la API son por ahora **mínimos**: el productor publica eventos sintéticos y la API solo responde `GET /api/salud`. El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
@@ -30,13 +31,14 @@ El orden de las fases está en [`docs/planificacion/02-roadmap-implementacion.md
 | [`api/`](api/) | API FastAPI mínima: solo `GET /api/salud` |
 | [`sql/`](sql/) | `001_schema.sql` (esquema) y `002_roles.sql` (roles y permisos) |
 | [`scripts/`](scripts/) | `postgres_init.sh` (inicialización de la base), `verify_stack.py` y `check_env_example.py` (verificación) y `explore_usgs.py` (exploración del feed) y `verify_consumer.py` (escenarios del consumidor; usa `down -v`) |
-| [`tests/`](tests/) | Pruebas unitarias de `common/`, `producer/` y `consumer/` (pytest) |
+| [`tests/`](tests/) | Pruebas unitarias de `common/`, `producer/` y `consumer/` (pytest) y pruebas de integración con PostgreSQL real (`tests/integration/`, servicio `tests`) |
 | [`docs/planificacion/`](docs/planificacion/) | Checklist de requisitos ([01](docs/planificacion/01-checklist-requisitos.md)), roadmap ([02](docs/planificacion/02-roadmap-implementacion.md)), procedimiento de ejecución ([03](docs/planificacion/03-procedimiento-ejecucion.md)), glosario ([04](docs/planificacion/04-glosario-nomenclatura.md)) y [decisiones abiertas del contrato](docs/planificacion/decisiones-abiertas-contrato.md) |
 | `docs/enunciado/` | Material del profesor (solo lectura) |
 | `docs/evidencias/` | Salidas de pruebas y de revisiones; las de esta feature, en [`docs/evidencias/infra-compose/`](docs/evidencias/infra-compose/) |
 | `docs/memoria.md` | Memoria del proyecto (en redacción) |
 | [`specs/001-contratos-y-modelo/`](specs/001-contratos-y-modelo/) | Spec, plan, tareas y los tres contratos (`contracts/`) |
 | [`specs/002-infra-compose/`](specs/002-infra-compose/) | Spec, plan, tareas, investigación, modelo de infraestructura, contrato de variables de entorno y [quickstart](specs/002-infra-compose/quickstart.md) |
+| [`specs/003-consumidor-idempotente/`](specs/003-consumidor-idempotente/) | Spec, plan, investigación, tareas, bitácora, modelo de datos, [quickstart](specs/003-consumidor-idempotente/quickstart.md) y contrato de ejecución del consumidor (`contracts/consumer-runtime.md`) |
 | `data/catalogo/` | Catálogo de países (`paises.geojson`) |
 | `CODEMAP.md` | Mapa de dónde está cada cosa |
 | `.specify/`, `.claude/` | Configuración y plantillas de Spec Kit; agentes, habilidades y `settings.json` de Claude Code |
@@ -120,7 +122,7 @@ ngrok **se ejecuta en el equipo anfitrión** (`ngrok http 8000`) y **queda fuera
 
 ## Consumidor idempotente
 
-El consumidor lee `earthquakes.live` y `earthquakes.replay`, valida cada mensaje, lo guarda en PostgreSQL en una transacción por mensaje (sin duplicados, conservando todas las versiones) y envía a cuarentena lo que no se puede guardar. Escribe una línea `decision=… event_id=…` por mensaje y un resumen `COUNTERS {…}` cada 60 s y al parar. Los contratos están en `specs/001-contratos-y-modelo/contracts/` y los del consumidor en [`specs/003-consumidor-idempotente/contracts/`](specs/003-consumidor-idempotente/contracts/).
+El consumidor lee solo el tema live (`KAFKA_TOPIC`, por defecto `earthquakes.live`; el replay queda fuera de alcance de esta feature), valida cada mensaje, lo guarda en PostgreSQL en una transacción por mensaje (sin duplicados, conservando todas las versiones) y envía a cuarentena lo que no se puede guardar. Escribe una línea `decision=… event_id=…` por mensaje y un resumen `COUNTERS {…}` cada 60 s y al parar. Los contratos están en `specs/001-contratos-y-modelo/contracts/` y los del consumidor en [`specs/003-consumidor-idempotente/contracts/`](specs/003-consumidor-idempotente/contracts/).
 
 **Configuración del `.env` local** (no se comitea): además de las contraseñas, debe contener `KAFKA_GROUP_ID=consumer-live` (el grupo ya no se llama `consumer-minimal`) y `CONSUMER_FAULT_CRASH_AT_OFFSET=` (vacía; solo la usa la prueba 8). `.env.example` ya trae ambas.
 
