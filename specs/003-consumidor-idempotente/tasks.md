@@ -310,6 +310,10 @@ Comandos de referencia:
 
 **Objetivo**: dejar la feature cerrable (constitución §16): README, `CODEMAP.md`, ejecución final de pruebas y parada. Regresión de `002`, memoria, comprobación de FR-035, auditorías y revisión de quickstart están diferidas. **Dependencias**: bloques 1 a 6.
 
+- [ ] T082 Actualizar el check A1 de `scripts/verify_stack.py` (`check_synthetic_event_in_consumer_log`, líneas ~90-99): sustituir la búsqueda de `[SINTÉTICO]` por el reconocimiento de la línea de decisión (`decision=… event_id=synthetic-…`), sin exigir `[SINTÉTICO]`; anotar en el docstring que, como el grupo conserva su offset tras `down`/`up`, A1 depende de que el productor publique un evento **nuevo** dentro de `EVENT_TIMEOUT_SECONDS` = 60 s (`PRODUCER_INTERVAL_SECONDS` admite hasta 60) y qué ocurre si el intervalo es largo; comprobar qué ocurre si el evento sintético del productor de `002` se rechaza (la línea `decision=quarantined … event_id=synthetic-…` también satisface el check) y anotarlo en `docs/evidencias/consumidor-idempotente/regresion_002.txt`. CC-DOC, CC-14, CC-MAP.
+  - Cubre: A1, FR-003, plan §12.
+  - Criterio: `grep -n "SINTÉTICO" scripts/verify_stack.py` no devuelve nada; `python scripts/verify_stack.py` (T086) termina con 0.
+
 - [ ] T083 [P] `README.md`: sustituir (línea ~80, «Comprobar») la cita de las líneas «Evento recibido [SINTÉTICO] …» por la línea de decisión (`decision=… event_id=synthetic-…`), y hacer lo mismo en la línea ~26 de `specs/002-infra-compose/quickstart.md` (cita la misma línea; es un documento de `002`, no un contrato); añadir una sección breve para el consumidor idempotente con el comando de pruebas unitarias, el de integración (`docker compose --profile test run --rm tests …`, con el `build` previo), `python scripts/verify_consumer.py <escenario>` la nota de `docker compose build producer` antes de cada escenario, la advertencia de que `verify_consumer.py` usa `down -v` (borra los volúmenes locales) y pide `--yes`, y la nota de que el `.env` local (no se comitea) debe tener `KAFKA_GROUP_ID=consumer-live` y `CONSUMER_FAULT_CRASH_AT_OFFSET=`; referenciar `docs/evidencias/consumidor-idempotente/`.
   - Cubre: FR-035, FR-034, SC-012, constitución §16.
   - Criterio: `grep -n "SINTÉTICO\]" README.md specs/002-infra-compose/quickstart.md` no devuelve nada; `grep -n "verify_consumer" README.md` presente; un lector ajeno puede seguir la sección sin otro documento (SC-012; T091 diferida: revisión manual del alumno).
@@ -329,24 +333,24 @@ Comandos de referencia:
 ## Dependencias entre bloques y tareas
 
 ```text
-Bloque 1 (T001-T012, T093)  ──►  Bloque 2 (T013-T031)  ──►  Bloque 3 (T032-T044)  ──►  Bloque 4 (T045-T061)  ──►  Bloque 5 (T062-T070)  ──►  Bloque 6 (T071-T081)  ──►  Bloque 7 (T082-T092)
+Bloque 1 (T003-T009, T011-T012)  ──►  Bloque 2 (T013-T023, T025-T029, T031)  ──►  Bloque 3 (T032-T037, T039-T044)  ──►  Bloque 4 (T045-T057, T059-T061)  ──►  Bloque 5 (T068, T070)  ──►  Bloque 6 (T071-T076, T081)  ──►  Bloque 7 (T082-T083, T085, T087, T092)
 ```
 
-- T001 y T002 no dependen de nada; T002 debe correr **antes** de T006 y T007 (línea base). T003 precede a cualquier prueba marcada `integration`. T004→T005; T006→T007→T011; T011→T093 (T093 solo necesita `postgres` arriba) y T093 precede a T021, T023 y T012 (el cierre del bloque 1 recoge su resultado).
-- Bloque 2: cada tarea de prueba precede a su implementación (T015→T016, T017→T018, T019→T020, T021→T022, T023/T024→T025/T027, T026→T027, T028→T029). T013 (`records`) y T014 (`messages`) preceden a casi todo; T020 (`storable`) precede a T025 y T027; T022 (`transform`) precede a T025.
-- Bloque 3: T033 y T035 preceden a T043; **T035 precede a T037** (usa la sentencia de `queries.py`); T036 (conftest y `evidence.py`) precede a T037–T042; T044 requiere T037, T039, T040 y T042 (recoge los archivos de evidencia que escriben); T037 puede ejecutarse antes que el escritor (solo usa SQL) y es la **primera comprobación del riesgo** de la sentencia sin destino: si falla, se detiene el bloque y se escala.
-- Bloque 4: T046 precede a T054; T048, T050 y T052 preceden a T056; T054 precede a T056; T056→T057; T058–T060 requieren T054 y T056.
-- Bloque 5: T063→T067; T065→T069; T067→T069.
-- Bloque 6: T071→T073; T072 y T073 preceden a T074–T080.
-- Bloque 7: T082 antes de T086; T085 antes de T092.
+- T003 precede a cualquier prueba marcada `integration`. T004→T005; T006→T007→T011; T011 precede a T012.
+- Bloque 2: cada tarea de prueba precede a su implementación (T015→T016, T017→T018, T019→T020, T021→T022, T023→T025, T026→T027, T028→T029). T013 (`records`) y T014 (`messages`) preceden a casi todo; T020 (`storable`) precede a T025 y T027; T022 (`transform`) precede a T025.
+- Bloque 3: T033 y T035 preceden a T043; **T035 precede a T037** (usa la sentencia de `queries.py`); T036 (conftest y `evidence.py`) precede a T037 y T039–T042; T044 requiere T037, T039, T040 y T042 (recoge los archivos de evidencia que escriben); T037 puede ejecutarse antes que el escritor (solo usa SQL) y es la **primera comprobación del riesgo** de la sentencia sin destino: si falla, se detiene el bloque y se escala.
+- Bloque 4: T046 precede a T054; T048, T050 y T052 preceden a T056; T054 precede a T056; T056→T057; T059 y T060 requieren T054 y T056.
+- Bloque 5: T068 ejercita el escritor de T043.
+- Bloque 6: T071→T073; T072 y T073 preceden a T074–T076.
+- Bloque 7: T085 antes de T092.
 
-**Oportunidades de paralelo** (archivos distintos, sin dependencia pendiente): T004 con T003; T015, T017, T019, T021, T023, T024, T026 y T028 (escritura de pruebas, bloque 2) entre sí; T032 con T034; T037 con T038; T039 a T042 entre sí; T045, T047, T049, T051, T053 y T055 entre sí; T058, T059 y T060; T062, T064, T066 y T068; T083, T084 y T090. Las ediciones de `CODEMAP.md` no se paralelizan.
+**Oportunidades de paralelo** (archivos distintos, sin dependencia pendiente): T004 con T003; T015, T017, T019, T021, T023, T026 y T028 (escritura de pruebas, bloque 2) entre sí; T032 con T034; T037 y T039 a T042 entre sí; T045, T047, T049, T051, T053 y T055 entre sí; T059 y T060. Las ediciones de `CODEMAP.md` no se paralelizan.
 
 ## Estrategia de implementación
 
-- **MVP (US1, secuencia de la FAQ 12)**: bloques 1 y 2 completos, más T032 a T044 (bloque 3). Con eso se demuestra con PostgreSQL real el resultado de SC-001 (2 actuales, E1 con 4.6, 3 versiones), SC-002 y SC-003; falta el bucle de Kafka (bloque 4) para el resto de garantías.
+- **MVP (US1, secuencia de la FAQ 12)**: bloques 1 y 2 completos, más T032 a T037 y T039 a T044 (bloque 3). Con eso se demuestra con PostgreSQL real el resultado de SC-001 (2 actuales, E1 con 4.6, 3 versiones), SC-002 y SC-003; falta el bucle de Kafka (bloque 4) para el resto de garantías.
 - **Incremento 2 (US2 y US5)**: bloque 4 (orden de commits, reintentos, contadores, hook y pruebas 8).
-- **Incremento 3 (US6)**: bloque 5 (catálogo, comprobación de esquema, `date_dim`).
+- **Incremento 3 (US6)**: bloque 5 (`date_dim`).
 - **Incremento 4 (demostración con Docker y cierre)**: bloques 6 y 7.
 - Cada bloque termina con su tarea de cierre (tests ejecutados, evidencia, `CODEMAP.md`), y no se empieza el siguiente si algún test del anterior falla.
 
@@ -355,37 +359,35 @@ Bloque 1 (T001-T012, T093)  ──►  Bloque 2 (T013-T031)  ──►  Bloque 3
 | Historia | Tareas |
 |---|---|
 | US1 (FAQ 12, versiones) | T014, T028, T029, T039, T040, T043, T068, T074 |
-| US2 (reinicio y fallos) | T032, T033, T045, T046, T051 a T060, T076 a T078 |
-| US3 (cuarentena) | T015 a T020, T023 a T027, T042, T058, T075 |
-| US4 (nulos, negativos, tiempos) | T021, T022, T041, T068, T093 |
-| US5 (sintéticos y contadores) | T047 a T050, T060, T079 |
-| US6 (base lista y lógica reutilizable) | T013, T016, T030, T037, T038, T062 a T067, T069, T080 |
+| US2 (reinicio y fallos) | T032, T033, T045, T046, T051 a T057, T059, T060, T076 |
+| US3 (cuarentena) | T015 a T020, T023, T025 a T027, T042, T075 |
+| US4 (nulos, negativos, tiempos) | T021, T022, T041, T068 |
+| US5 (sintéticos y contadores) | T047 a T050, T060 |
+| US6 (base lista y lógica reutilizable) | T013, T016, T037 |
 
 | Requisito | Tareas principales |
 |---|---|
-| C1, FR-003, FR-004 | T001, T018, T023 a T025, T047, T048, T082, T084 |
-| C2, FR-001, FR-002 | T045, T046, T051 a T056, T059, T076, T078 |
+| C1, FR-003, FR-004 | T018, T023, T025, T047, T048, T082 |
+| C2, FR-001, FR-002 | T045, T046, T051 a T056, T059, T076 |
 | C3, FR-005, FR-006, FR-010 | T040, T043, T059 |
 | C4, FR-007 a FR-009 | T028, T029, T039, T043 |
-| C5, FR-011 a FR-015 | T026, T027, T033, T042, T053, T054, T058, T075 |
-| C6, C7, FR-016 a FR-021 | T021, T022, T041, T068, T093 (FR-020: T021, T041) |
-| C8, FR-023, FR-024, FR-036 | T047 a T050, T060, T079 |
+| C5, FR-011 a FR-015 | T026, T027, T033, T042, T053, T054, T075 |
+| C6, C7, FR-016 a FR-021 | T021, T022, T041, T068 (FR-020: T021, T041) |
+| C8, FR-023, FR-024, FR-036 | T047 a T050, T060 |
 | C13, FR-022 | T014, T041, T042 |
-| FR-025, FR-026 | T062 a T067, T069, T080 |
 | FR-027 | T033, T037, T057 |
-| FR-028, FR-029 | T056, T076 a T078 |
-| FR-030 a FR-033 | T013, T030, T036 a T038 |
-| FR-034, FR-035 | T012, T031, T044, T061, T070, T081, T084, T085, T088, T092 |
+| FR-028, FR-029 | T056, T076 |
+| FR-030 a FR-033 | T013, T036, T037 |
+| FR-034, FR-035 | T012, T031, T044, T061, T070, T081, T085, T092 |
 | Pruebas de aceptación 2, 3, 4, 6, 8 | 2: T040, T074; 3 y 4: T039, T074; 6: T042, T075; 8: T059, T076 |
-| SC-001 a SC-012 | SC-001: T039, T074; SC-002: T040; SC-003: T039; SC-004: T042, T075; SC-005: T059, T076; SC-006: T077; SC-007: T041; SC-008: T041, T042; SC-009: T060, T079; SC-010: T030; SC-011: T066, T080; SC-012: T091 |
+| SC-001 a SC-012 | SC-001: T039, T074; SC-002: T040; SC-003: T039; SC-004: T042, T075; SC-005: T059, T076; SC-007: T041; SC-008: T041, T042; SC-009: T060 |
 
-**Pendientes de la investigación ("Verificar en T…") asignados**: rango de tiempos en el `CHECK` del DDL → T093 (solo SQL, antes de `transform`) y T041 (filas reales); mapa de excepciones con excepciones reales y NUL forzado → T032 y T042; sentencia de cuarentena con el rol real → T037.
+**Pendientes de la investigación ("Verificar en T…") asignados**: rango de tiempos en el `CHECK` del DDL → T041 (filas reales); mapa de excepciones con excepciones reales y NUL forzado → T032 y T042; sentencia de cuarentena con el rol real → T037.
 
 ## Escalados y decisiones propias de este archivo
 
-- **Escalados**: ninguno. Se escalaría al alumno, sin cambiar el contrato ni conceder permisos: (a) que T037 (b) falle (la sentencia sin destino exige `SELECT`); (b) que T093 (o T041, al repetirse con filas reales) muestre que el `CHECK` del DDL no acepta los extremos del rango: se detiene y se escala **sin reducir el rango ni tocar el DDL**; habría que rehacer T021–T025, T041, `research.md` §6, `consumer-runtime.md` §1 y `plan.md` §13.2; (c) que T088 muestre cambios en contratos o en `sql/`.
-- **Decisiones de tasks (provisionales, no cambian contratos ni alcance)**: (1) `decide_version_outcome` es pura y no registra: `inconsistent_state` lo registra `writer.py` con `processing.is_inconsistent_state` (T029, T043); (2) `same_updated_conflict` es una única línea WARNING escrita por `reporting.log_decision`; (3) `validation_gap` la escribe `pipeline`, `FAULT` el hook, `catalog loaded` el cargador (T001); (4) fixtures comunes en `tests/support/messages.py` (T014) y publicador en `tests/support/publish_messages.py` (T072); (5) `resilience.py` se implementa en el bloque 4 antes de `pipeline.py`, por lo que en el bloque 3 el escritor se prueba sin reintentos; (6) las evidencias se guardan al cierre de cada bloque (CLAUDE.md pide evidencia al terminar una tarea de código: se interpreta a nivel de bloque, porque los tests de un bloque solo son ejecutables completos; **desviación literal de CLAUDE.md, a confirmar por el alumno**); (7) si `validation.py` o `verify_consumer.py` superan 250 líneas se dividen y se anota en `CODEMAP.md` (T025, T073). (8) las evidencias de los tests de integración las escribe el propio test con `tests/support/evidence.py` en un montaje de evidencias de lectura y escritura del servicio `tests` (T007, T036) y llevan el prefijo `bloque3_` para no confundirse con las versiones con Kafka real de T074/T075; (9) `verify_consumer.py` exige `--yes` (o `VERIFY_CONSUMER_CONFIRM=yes`) antes de `down -v` (T071, T073); (11) los archivos de prueba no tienen `__init__.py`, así que sus nombres base son únicos en todo `tests/`: el del bucle del consumidor es `tests/consumer/test_consumer_loop.py` (T003, T055, T069); (12) `test_roles` (e) afirma `INSERT` y `SELECT` permitidos y `UPDATE` denegado en `event_version`, según `sql/002_roles.sql` (T037). (10) T093 lleva el número 93 aunque se ejecuta en el bloque 1 (tras T011): se evita renumerar las 92 tareas y sus referencias cruzadas. **La numeración fuera de orden es decisión del alumno**: si prefiere renumerar, solo `research.md`, `plan.md` y este archivo citan T093; se puede hacer con una sustitución y no afecta a ninguna tarea.
-
+- **Escalados**: ninguno. Se escalaría al alumno, sin cambiar el contrato ni conceder permisos: (a) que T037 (b) falle (la sentencia sin destino exige `SELECT`); (b) que T041 (con filas reales) muestre que el `CHECK` del DDL no acepta los extremos del rango: se detiene y se escala **sin reducir el rango ni tocar el DDL**; habría que rehacer T021–T023, T025, T041, `research.md` §6, `consumer-runtime.md` §1 y `plan.md` §13.2.
+- **Decisiones de tasks (provisionales, no cambian contratos ni alcance)**: (1) `decide_version_outcome` es pura y no registra: `inconsistent_state` lo registra `writer.py` con `processing.is_inconsistent_state` (T029, T043); (2) `same_updated_conflict` es una única línea WARNING escrita por `reporting.log_decision`; (3) `validation_gap` la escribe `pipeline`, `FAULT` el hook; (4) fixtures comunes en `tests/support/messages.py` (T014) y publicador en `tests/support/publish_messages.py` (T072); (5) `resilience.py` se implementa en el bloque 4 antes de `pipeline.py`, por lo que en el bloque 3 el escritor se prueba sin reintentos; (6) las evidencias se guardan al cierre de cada bloque (CLAUDE.md pide evidencia al terminar una tarea de código: se interpreta a nivel de bloque, porque los tests de un bloque solo son ejecutables completos; **desviación literal de CLAUDE.md, a confirmar por el alumno**); (7) si `validation.py` o `verify_consumer.py` superan 250 líneas se dividen y se anota en `CODEMAP.md` (T025, T073). (8) las evidencias de los tests de integración las escribe el propio test con `tests/support/evidence.py` en un montaje de evidencias de lectura y escritura del servicio `tests` (T007, T036) y llevan el prefijo `bloque3_` para no confundirse con las versiones con Kafka real de T074/T075; (9) `verify_consumer.py` exige `--yes` (o `VERIFY_CONSUMER_CONFIRM=yes`) antes de `down -v` (T071, T073); (11) los archivos de prueba no tienen `__init__.py`, así que sus nombres base son únicos en todo `tests/`: el del bucle del consumidor es `tests/consumer/test_consumer_loop.py` (T003, T055); (12) `test_roles` (e) afirma `INSERT` y `SELECT` permitidos y `UPDATE` denegado en `event_version`, según `sql/002_roles.sql` (T037).
 ## Diferidas (no implementar)
 
 **No se implementa nada de esta sección.** Son tareas que no hacen falta para cumplir C1–C8, C13 ni las pruebas de aceptación 2, 3, 4, 6 y 8 con su evidencia, README y `CODEMAP.md`. Se conservan íntegras (marcadas `- [-]`, ni activas ni hechas) por si se reactivan en otra feature. Las tareas activas ya no dependen de ellas.
@@ -410,7 +412,6 @@ Bloque 1 (T001-T012, T093)  ──►  Bloque 2 (T013-T031)  ──►  Bloque 3
 | T078 | Caída de Kafka con Docker (US2.5): endurecimiento de FR-029; `broker_reachable` ya se prueba con dobles en T055. |
 | T079 | Conciliación de contadores con Docker: C8 queda demostrado por T049, T060 y las líneas `COUNTERS` de T074. |
 | T080 | Escenario del catálogo (SC-011); catálogo diferido. |
-| T082 | Regresión de `002` (check A1 de `verify_stack.py`): no es una prueba de esta feature. Consecuencia: A1 de `verify_stack.py` seguirá buscando `[SINTÉTICO]` hasta que se haga. |
 | T084 | `docs/memoria.md` §4: documentación fuera de README y CODEMAP. |
 | T086 | Ejecución de la regresión de `002`; depende de T002 y T082. |
 | T088 | Comprobación de `git diff` sobre contratos y `sql/` (FR-035): verificación, no una prueba; basta con no tocarlos. |
@@ -494,10 +495,6 @@ Bloque 1 (T001-T012, T093)  ──►  Bloque 2 (T013-T031)  ──►  Bloque 3
 - [-] T080 [US6] Escenario `catalog` (SC-011): `docker compose build producer`, `down -v`, `up -d kafka postgres consumer`; espera `healthy`; la línea `catalog loaded total=177 inserted=177 updated=0`; `SELECT count(*) FROM public.country;` → 177; `docker compose restart consumer` → `inserted=0 updated=0` y sigue en 177. Guarda `catalogo_paises.out`.
   - Cubre: FR-025, FR-026, US6.1, SC-011.
   - Criterio: `python scripts/verify_consumer.py catalog --yes` termina con 0.
-
-- [-] T082 Actualizar el check A1 de `scripts/verify_stack.py` (`check_synthetic_event_in_consumer_log`, líneas ~90-99): sustituir la búsqueda de `[SINTÉTICO]` por el reconocimiento de la línea de decisión (`decision=… event_id=synthetic-…`), sin exigir `[SINTÉTICO]`; anotar en el docstring que, como el grupo conserva su offset tras `down`/`up`, A1 depende de que el productor publique un evento **nuevo** dentro de `EVENT_TIMEOUT_SECONDS` = 60 s (`PRODUCER_INTERVAL_SECONDS` admite hasta 60) y qué ocurre si el intervalo es largo; comprobar qué ocurre si el evento sintético del productor de `002` se rechaza (la línea `decision=quarantined … event_id=synthetic-…` también satisface el check) y anotarlo en `docs/evidencias/consumidor-idempotente/regresion_002.txt`. CC-DOC, CC-14, CC-MAP.
-  - Cubre: A1, FR-003, plan §12.
-  - Criterio: `grep -n "SINTÉTICO" scripts/verify_stack.py` no devuelve nada; `python scripts/verify_stack.py` (T086) termina con 0.
 
 - [-] T084 [P] `docs/memoria.md` §4 «Calidad» (hoy vacío): resumen breve de las reglas de validación y calidad implementadas (orden de prevalencia, nulos y negativos válidos, cuarentena con motivo y referencia, regla general de no fallo por contenido, idempotencia por (`event_id`, `updated_ms`), **transacción única por mensaje, orden de commits —PostgreSQL, línea de decisión, offset, contadores— y la secuencia de la FAQ 12 con su resultado**, consecuencia de la cuarentena por bytes, límite `54*` aceptado), **con referencias** a `kafka-message.md` §6, `db-schema.md` §5 y a la spec/plan de la feature; sin copiar texto de `specs/`.
   - Cubre: C1, C8, FR-003, FR-034, constitución §15 y §18.
