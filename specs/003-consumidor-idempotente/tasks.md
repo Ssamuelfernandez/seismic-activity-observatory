@@ -126,7 +126,7 @@ Comandos de referencia:
   - Cubre: C5, C13, FR-011, FR-012, FR-014, FR-022, US3.8, US3.9, US3.10.
   - Criterio: falla antes de T027 y pasa después.
 
-- [x] T027 [US3] Crear `common/quarantine_row.py::build_quarantine_row(raw, decoded, reason, ref, now) -> QuarantineRow` (agrupar parámetros en dataclass si supera 4) con el saneado y la regla de copia de `research.md` §4, reutilizando `storable`. CC-DOC, CC-14, CC-MAP.
+- [x] T027 [US3] Crear `common/quarantine_row.py::build_quarantine_row(decoded, reason, ref, now) -> QuarantineRow` (4 parámetros: los bytes recibidos van en `decoded.raw`) con el saneado y la regla de copia de `research.md` §4, reutilizando `storable`. CC-DOC, CC-14, CC-MAP.
   - Cubre: C5, C13, FR-011, FR-012, FR-014, FR-022.
   - Criterio: `uv run pytest tests/common/test_quarantine_row.py -q` pasa.
 
@@ -296,7 +296,7 @@ Comandos de referencia:
 
 - [x] T075 [US3] Escenario `quarantine` (prueba 6, quickstart §6): latitud 145 seguida de un mensaje válido, más un `\u0000` real en `place`, bytes no UTF-8, tombstone, `mode = replay` y un id de 600 caracteres; lee `live.quarantine` con el administrador. Guarda `prueba6_cuarentena.out` (versión Kafka real).
   - Cubre: C5, FR-011 a FR-015, SC-004, SC-008, US3.1 a US3.11.
-  - Criterio: `python scripts/verify_consumer.py quarantine --yes` termina con 0; 1 fila por mensaje inválido con su motivo, `kafka_topic/partition/offset` y `original_sha256` de 64 hex; 0 filas en `current_event` para ellos; el válido guardado; el consumidor sigue `healthy`; `is_synthetic = true` en todas las filas.
+  - Criterio: `python scripts/verify_consumer.py quarantine --yes` termina con 0; 1 fila por mensaje inválido con su motivo, `kafka_topic/partition/offset` y `original_sha256` de 64 hex; 0 filas en `current_event` para ellos; el válido guardado; el consumidor sigue `healthy`; `is_synthetic = true` en las filas con mensaje sintético legible y `is_synthetic = false` en las filas ilegibles (bytes no UTF-8 y tombstone), por FR-011.
 
 - [x] T076 [US2] Escenario `restart` (prueba 8): arranca con `CONSUMER_FAULT_CRASH_AT_OFFSET=2` **pasada como variable de entorno del propio script** al lanzar `docker compose up -d --force-recreate consumer` (no se edita `.env`; `compose.yaml` la interpola con `${…:-}`) (mensaje sintético), el proceso termina con 137 tras el commit de PostgreSQL de ese offset (`FAULT crash_after_db_commit offset=2` en el registro, sin `decision=` previa de ese offset), Compose lo reinicia, el grupo reanuda desde el último offset confirmado y registra `decision=redelivery_ignored` para ese offset; compara SQL con una ejecución sin corte (mismos recuentos y contenido, 0 duplicados, 0 pérdidas) y al terminar **recrea el contenedor** (`docker compose up -d --force-recreate consumer`) sin la variable en el entorno del proceso, de modo que el marcador de `/tmp` desaparece y la variable queda vacía. Guarda `prueba8_reinicio.log` y `.out`.
   - Cubre: C2, FR-002, FR-028, SC-005, prueba 8, US2.1, US2.2.

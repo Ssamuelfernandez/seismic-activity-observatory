@@ -162,7 +162,7 @@ Funciones puras (todas en `common/`, sin importar `asyncpg` ni `aiokafka`):
 | `storable.sanitize_raw_text(raw)` | `bytes` → `str` | Saneado exacto en research §4. |
 | `validation.validate_message(decoded, topic_mode)` | → `ValidEvent \| Rejection` | 14 motivos en orden de prevalencia + regla general FR-014 (research §3). |
 | `transform.ms_to_utc(ms)`, `transform.build_event_rows(valid, ref, now)` | → `datetime`, `EventRows` | Incluye `date_id`, `dow` y la conversión de `numeric` (`Decimal(str(x))`). |
-| `quarantine_row.build_quarantine_row(raw, decoded, reason, ref, now)` | → `QuarantineRow` | Regla de copia y saneado de FR-011; SHA-256 de los bytes recibidos. |
+| `quarantine_row.build_quarantine_row(decoded, reason, ref, now)` | → `QuarantineRow` | Los bytes recibidos van en `decoded.raw` (4 parámetros). Regla de copia y saneado de FR-011; SHA-256 de los bytes recibidos. |
 | `processing.decide_version_outcome(...)`, `processing.is_newer_version(...)` | → `VersionOutcome` | Resultado de una versión a partir de lo que devolvió la base. |
 | `catalog.parse_country_catalog(geojson)` | `dict` → `list[CountryRow]` | 177 filas; falla con nombre si falta un campo. |
 | `consumer/db_errors.is_content_error(exc)` | excepción → `bool` | Pura aunque viva en `consumer/` (no abre conexiones; solo inspecciona la excepción). |

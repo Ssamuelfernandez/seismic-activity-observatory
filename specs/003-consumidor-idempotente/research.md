@@ -84,7 +84,8 @@ Tres comprobaciones previas al `INSERT`, todas en `common/` (puras): **tipo** (�
 | bytes no UTF-8 | `invalid_json` | `NULL`, `raw_text` con `\xNN` | `NULL` |
 | `"\ud800"` en una cadena | `db_constraint_violation` si por lo demás es válido; si no, el motivo que corresponda | `NULL`, `raw_text` (ASCII, contiene `\ud800` literal) | el id |
 | `event.id` de exactamente 512 caracteres, contenido normal | válido, se guarda | — | — |
-| JSON anidado a 1500 niveles | `invalid_json` (`RecursionError`) | `NULL`, `raw_text` | `NULL` |
+| JSON anidado a 1500 niveles | `decode_value` lo decodifica sin error (en Python 3.12 no salta `RecursionError` a 1500 niveles). Rige entonces la validación: si la raíz es una lista, `invalid_envelope`; si el anidamiento está dentro de `event`, `db_constraint_violation` (profundidad > 64, como la fila de 100 niveles). | `NULL`, `raw_text` en el segundo caso | `NULL` en el primero, el id en el segundo |
+| JSON anidado a 200000 niveles (`EXTREME_NESTING_DEPTH` en `tests/common/test_decode.py`) | `invalid_json` (`RecursionError` capturado en `decode_value`) | `NULL`, `raw_text` | `NULL` |
 | JSON anidado a 100 niveles dentro de `event` | `db_constraint_violation` (profundidad > 64) | `NULL`, `raw_text` | el id |
 
 **`1e400`**: Python lo lee como `inf`; PostgreSQL `numeric` lo aceptaría. Se aplica «no finito tras deserializar = no almacenable» (criterio de la spec, FR-014 punto 2): el consumidor trabaja con `float` y no puede asegurar que lo guardado coincida con lo recibido. Se prefiere el rigor a la excepción: si el campo es `mag`, `lon`, `lat` o profundidad, rige su motivo; en otro campo, `db_constraint_violation`.
