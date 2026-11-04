@@ -1,4 +1,6 @@
-# A12 — Sin contenedor de frontend ni ngrok; ngrok en el equipo (2026-11-04T00:25:08Z)
+# A12 — Sin contenedor de frontend ni ngrok; ngrok en el equipo (2026-11-04T00:32:11Z)
+(Segunda pasada, con el README ya actualizado en T028. La primera pasada, de 2026-11-04T00:25Z, dio partes 1 y 2 PASS y parte 3 pendiente del README.)
+
 ## 1) docker compose config --services (esperado: exactamente 5 — api, consumer, kafka, postgres, producer)
 api
 consumer
@@ -9,14 +11,15 @@ recuento: 5
 RESULTADO 1: PASS
 
 ## 2) grep -n -i -w -E 'ngrok|frontend|angular|netlify|node' compose.yaml (esperado: sin resultados)
-Nota: la primera pasada usó el patrón sin -w y coincidió con KAFKA_NODE_ID (variable del broker, no un servicio de Node): falso positivo del patrón; con -w (palabra completa) no coincide.
+Nota: sin -w el patrón coincide con KAFKA_NODE_ID (variable del broker), un falso positivo del patrón.
 (fin; coincidencias: 0)
 RESULTADO 2: PASS
-Imágenes de compose.yaml:  image: seismic-observatory-python:0.1.0; image: apache/kafka:4.1.2; image: postgres:16.15-bookworm;
+Imágenes de compose.yaml: image: seismic-observatory-python:0.1.0; image: apache/kafka:4.1.2; image: postgres:16.15-bookworm;
 
-## 3) README.md indica que ngrok se ejecuta en el equipo anfitrión (esperado: coincidencia)
-coincidencias de «ngrok» en README.md: 0
-RESULTADO 3: PENDIENTE/FAIL — el README aún no menciona ngrok; se añade en T028 (A12 depende de T028)
-Sí consta en specs/002-infra-compose/quickstart.md: 87:Se ejecuta en el equipo con `ngrok http 8000`; el authtoken nunca va al repositorio.
+## 3) README.md indica que ngrok se ejecuta en el equipo anfitrión y queda fuera de Compose
+117:### ngrok
+119:ngrok **se ejecuta en el equipo anfitrión** (`ngrok http 8000`) y **queda fuera de Compose y de esta feature**. Publica la API, que ya está en `127.0.0.1:8000`. Su authtoken nunca va al reposito
+(fin; líneas con «ngrok» en README.md: 2)
+RESULTADO 3: PASS (texto: «ngrok se ejecuta en el equipo anfitrión» y «queda fuera de Compose»)
 
-## Resumen A12: partes 1 y 2 PASS; parte 3 pendiente de T028 (T029 no puede marcarse hasta entonces).
+## Resumen A12: partes 1, 2 y 3 PASS.

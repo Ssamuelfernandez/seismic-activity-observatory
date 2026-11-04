@@ -31,6 +31,7 @@ def build_synthetic_message(event_id: str, now: datetime) -> dict:
         El «hola mundo» de punta a punta necesita un mensaje válido y marcado como sintético
         (constitución §7, A1).
     """
+    # Supera ~30 líneas por el docstring de la plantilla (§7.4); el cuerpo son 22 líneas y hace una sola cosa: armar el mensaje.
     now_ms = int(now.timestamp() * 1000)
     return {
         "source": SOURCE_DEMO,

@@ -115,6 +115,7 @@ async def run_consumer(settings: ConsumerSettings) -> None:
     Por qué existe:
         Prueba de punta a punta de la ruta Kafka → consumidor (A1) con reintentos (A4).
     """
+    # Supera ~30 líneas por el docstring de la plantilla (§7.4); el cuerpo son 19 líneas: arrancar y consumir en un bucle.
     clear_heartbeat(settings.health.heartbeat_file)
     await check_database(settings.database, settings.retry)
     consumer = await start_consumer(settings)

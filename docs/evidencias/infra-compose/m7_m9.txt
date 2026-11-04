@@ -1,10 +1,10 @@
 # T024 — Verificación de M7–M9 (solo verificar; FR-037)
-Fecha: 2026-11-03T23:34:23Z
-Rama: 002-infra-compose   Commit: 56848288bbaac90662d8ec59a6432b8029e65bff
+Fecha: 2026-11-04T00:34:33Z
+Rama: 002-infra-compose   Commit: 3eb9aad776e818082ce2ea95ff9c61c7ed1ed577
 Esta verificación no crea ni modifica nada fuera de este archivo.
 
 ## M7 — Historial sin trailers de coautoría ni líneas de «generado por»; configuración que lo impide
-Commits examinados (todas las ramas): 24
+Commits examinados (todas las ramas): 28
 PASS  Sin trailers Co-Authored-By en el historial — 0 coincidencias
 PASS  Sin líneas «generado por» / «generated with» en el historial — 0 coincidencias
 PASS  .claude/settings.json existe — existe
@@ -34,10 +34,10 @@ INFO  El hook vive en .git/hooks/ y no se versiona: debe instalarse en cada clon
 PASS  CLAUDE.md está versionado
 PASS  CODEMAP.md está versionado
 PASS  .specify/memory/constitution.md está versionado
-PENDIENTE  CODEMAP.md aún no recoge los archivos de infra-compose (faltan 5 de 9: ['compose.yaml', 'Dockerfile', '.env.example', 'sql/002_roles.sql', 'docs/evidencias/infra-compose'])
-PENDIENTE  README.md aún no recoge los archivos de infra-compose (faltan 9 de 9: ['compose.yaml', 'Dockerfile', '.env.example', 'common/', 'producer/', 'consumer/', 'api/', 'sql/002_roles.sql', 'docs/evidencias/infra-compose'])
-M8 «al día»: PENDIENTE DEL CIERRE de la feature (README en T028, CODEMAP en T030). No se cuenta como fallo.
-PASS  Ningún archivo de specs/ está copiado tal cual en docs/ — 18 archivos de specs/ y 30 de docs/ sin duplicados
+PASS  CODEMAP.md recoge los archivos de infra-compose — todos presentes
+PASS  README.md recoge los archivos de infra-compose — todos presentes
+M8 «al día»: CUMPLIDO — README y CODEMAP recogen todos los elementos de infra-compose.
+PASS  Ningún archivo de specs/ está copiado tal cual en docs/ — 18 archivos de specs/ y 41 de docs/ sin duplicados
     carpetas de primer nivel de docs/: ['borradores', 'enunciado', 'evidencias', 'memoria.md', 'planificacion']
     carpetas de primer nivel de specs/: ['001-contratos-y-modelo', '002-infra-compose']
 
@@ -58,6 +58,7 @@ INFO  copia de trabajo en este equipo: 6866c877d39cba9c357620878839b336d569f8c66
     historial de paises.geojson: 79c04f7 Añade enunciado, planificación y catálogo de países
 
 ## Resumen
-21/21 comprobaciones superadas.
-Pendiente del cierre (no cuenta como fallo): M8 «al día» (README y CODEMAP, T028 y T030).
+23/23 comprobaciones superadas.
+M8: CUMPLIDO
+M9: CUMPLIDO
 M7: CUMPLIDO

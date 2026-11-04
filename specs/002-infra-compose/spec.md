@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-03
 
-**Status**: Draft
+**Status**: Implemented
 
 **Input**: User description: "Feature: infra-compose. Poder levantar el sistema completo con un solo comando en Docker Compose y comprobar de punta a punta que los cinco servicios se comunican: un productor mínimo publica un evento ficticio marcado como sintético, un consumidor mínimo lo recibe, PostgreSQL conserva los datos tras reiniciar los contenedores y la API responde. Cubre A1–A12 (M7–M9 solo se verifican)."
 
