@@ -1,0 +1,44 @@
+# T026 — Tamaño del código (constitución §14; CODEMAP.md, Convenciones)
+Fecha: 2026-11-04T00:30:47Z
+Límites orientativos: función ≤ ~30 líneas, archivo ≤ ~250, parámetros ≤ 4.
+Una función se mide de su `def` a su última línea (incluye docstring y comentarios).
+
+Archivos Python examinados: 23; funciones: 80
+
+## Archivos (líneas / funciones / función más larga)
+  api/__init__.py: 1 líneas, 0 funciones, la más larga 0 líneas
+  api/main.py: 23 líneas, 1 funciones, la más larga 6 líneas
+  api/queries.py: 19 líneas, 1 funciones, la más larga 8 líneas
+  api/routers/__init__.py: 1 líneas, 0 funciones, la más larga 0 líneas
+  api/routers/health.py: 45 líneas, 1 funciones, la más larga 22 líneas
+  common/__init__.py: 1 líneas, 0 funciones, la más larga 0 líneas
+  common/config.py: 134 líneas, 7 funciones, la más larga 23 líneas
+  common/db.py: 62 líneas, 5 funciones, la más larga 21 líneas
+  common/health.py: 95 líneas, 6 funciones, la más larga 14 líneas
+  common/kafka_topics.py: 61 líneas, 2 funciones, la más larga 24 líneas
+  common/logging_setup.py: 37 líneas, 2 funciones, la más larga 15 líneas
+  common/retry.py: 59 líneas, 2 funciones, la más larga 30 líneas
+  common/synthetic_event.py: 55 líneas, 2 funciones, la más larga 35 líneas
+  consumer/__init__.py: 1 líneas, 0 funciones, la más larga 0 líneas
+  consumer/loop.py: 136 líneas, 5 funciones, la más larga 32 líneas
+  consumer/main.py: 26 líneas, 1 funciones, la más larga 11 líneas
+  producer/__init__.py: 1 líneas, 0 funciones, la más larga 0 líneas
+  producer/loop.py: 82 líneas, 4 funciones, la más larga 24 líneas
+  producer/main.py: 29 líneas, 1 funciones, la más larga 14 líneas
+  producer/publisher.py: 60 líneas, 3 funciones, la más larga 27 líneas
+  scripts/check_env_example.py: 72 líneas, 3 funciones, la más larga 26 líneas
+  scripts/explore_usgs.py: 240 líneas, 19 funciones, la más larga 19 líneas
+  scripts/verify_stack.py: 216 líneas, 15 funciones, la más larga 18 líneas
+
+## Archivos de más de 250 líneas: 0
+
+## Funciones de más de 30 líneas (con docstring): 2
+  common/synthetic_event.py:21 build_synthetic_message: 35 líneas totales, 22 de cuerpo sin docstring
+  consumer/loop.py:105 run_consumer: 32 líneas totales, 19 de cuerpo sin docstring
+
+## Funciones con más de 4 parámetros: 0
+
+## Resolución
+- Ningún archivo supera 250 líneas y ninguna función tiene más de 4 parámetros.
+- Las dos funciones que superan ~30 líneas (build_synthetic_message: 35; run_consumer: 32) lo hacen por el docstring de la plantilla de CODEMAP/§7.4; sus cuerpos son de 22 y 19 líneas y hacen una sola cosa. Se justificó con un comentario en cada una; no se dividieron porque partirlas no mejoraría la lectura.
+- Tras el cambio (solo comentarios): pytest 27 passed in 0.25s, check_env_example: PASS  .env.example coincide: 15 variable

@@ -1,0 +1,64 @@
+# T024 — Verificación de M7–M9 (solo verificar; FR-037)
+Fecha: 2026-11-04T00:34:33Z
+Rama: 002-infra-compose   Commit: 3eb9aad776e818082ce2ea95ff9c61c7ed1ed577
+Esta verificación no crea ni modifica nada fuera de este archivo.
+
+## M7 — Historial sin trailers de coautoría ni líneas de «generado por»; configuración que lo impide
+Commits examinados (todas las ramas): 28
+PASS  Sin trailers Co-Authored-By en el historial — 0 coincidencias
+PASS  Sin líneas «generado por» / «generated with» en el historial — 0 coincidencias
+PASS  .claude/settings.json existe — existe
+    contenido de .claude/: ['agents', 'settings.json', 'skills']
+PASS  settings.json desactiva la atribución en commits y PRs (attribution.commit y attribution.pr vacíos) — {"attribution": {"commit": "", "pr": ""}}
+PASS  .claude/settings.json está versionado (viaja con cada clon)
+core.hooksPath configurado: (no, se usa .git/hooks)
+Ruta que Git usaría para el hook: .git/hooks/commit-msg
+PASS  Hook commit-msg existe — existe
+    permisos (ls -l): -rwxr-xr-x 1 Samuel 197609 160 Nov  4 00:31 c:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\.git/hooks/commit-msg
+    contenido del hook:
+        | #!/bin/sh
+        | if grep -qiE "co-authored-by|generated with" "$1"; then
+        |   echo "Commit rechazado: sin trailers de coautoria ni lineas de herramienta." >&2
+        |   exit 1
+        | fi
+PASS  Hook con mensaje limpio: código de salida 0 — obtenido 0
+PASS  Hook con trailer Co-Authored-By: código de salida 1 — obtenido 1
+PASS  Hook con trailer co-authored-by en minúsculas: código de salida 1 — obtenido 1
+PASS  Hook con línea «Generated with»: código de salida 1 — obtenido 1
+INFO  Hook con «Generado por» (español): código de salida 0 (NO lo rechaza: el hook solo busca «co-authored-by» y «generated with»)
+INFO  El hook vive en .git/hooks/ y no se versiona: debe instalarse en cada clon (aviso previsto en el README, T028).
+    hooks activos en c:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\.git/hooks: ['commit-msg']
+    hook o plantilla versionados en el repositorio: ninguno
+
+## M8 — CLAUDE.md, CODEMAP.md y constitución versionados y al día; docs/ separado de specs/
+PASS  CLAUDE.md está versionado
+PASS  CODEMAP.md está versionado
+PASS  .specify/memory/constitution.md está versionado
+PASS  CODEMAP.md recoge los archivos de infra-compose — todos presentes
+PASS  README.md recoge los archivos de infra-compose — todos presentes
+M8 «al día»: CUMPLIDO — README y CODEMAP recogen todos los elementos de infra-compose.
+PASS  Ningún archivo de specs/ está copiado tal cual en docs/ — 18 archivos de specs/ y 41 de docs/ sin duplicados
+    carpetas de primer nivel de docs/: ['borradores', 'enunciado', 'evidencias', 'memoria.md', 'planificacion']
+    carpetas de primer nivel de specs/: ['001-contratos-y-modelo', '002-infra-compose']
+
+## M9 — docs/enunciado/ intacto; README del paquete renombrado; paises.geojson con su SHA-256
+PASS  git diff origin/main -- docs/enunciado está vacío — sin diferencias
+PASS  Ningún commit de la rama toca docs/enunciado — 0 commits
+PASS  docs/enunciado sin cambios sin confirmar — limpio
+    historial de docs/enunciado en todas las ramas:
+        79c04f7 Añade enunciado, planificación y catálogo de países
+PASS  Existe docs/enunciado/README-paquete.md
+PASS  No existe docs/enunciado/README.md (renombrado)
+SHA-256 declarado en FUENTES-Y-LICENCIAS.md: 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f
+PASS  La copia que Git guarda (HEAD:data/catalogo/paises.geojson) tiene el hash declarado — 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f
+PASS  La copia de origin/main tiene el hash declarado — 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f
+INFO  copia de trabajo en este equipo: 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f (coincide)
+    git ls-files --eol: i/lf    w/lf    attr/-text            	data/catalogo/paises.geojson
+    git status de data/: limpio
+    historial de paises.geojson: 79c04f7 Añade enunciado, planificación y catálogo de países
+
+## Resumen
+23/23 comprobaciones superadas.
+M8: CUMPLIDO
+M9: CUMPLIDO
+M7: CUMPLIDO

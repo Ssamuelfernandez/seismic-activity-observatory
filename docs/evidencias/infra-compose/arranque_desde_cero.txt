@@ -1,0 +1,16 @@
+# Arranque desde cero: down -v + up --build -d (2026-11-03T22:42:43Z)
+ Volume seismic-observatory_kafka-data Removed 
+ Volume seismic-observatory_postgres-data Removed 
+ Network seismic-observatory-backend Removed 
+ Container seismic-observatory-kafka-1 Healthy 
+ Container seismic-observatory-producer-1 Starting 
+ Container seismic-observatory-consumer-1 Started 
+ Container seismic-observatory-producer-1 Started 
+healthy: True tras 5 s de espera adicional
+tiempo total hasta healthy: 15 s
+SERVICE    STATUS                    PORTS
+api        Up 6 seconds (healthy)    127.0.0.1:8000->8000/tcp
+consumer   Up 5 seconds (healthy)    
+kafka      Up 12 seconds (healthy)   9092/tcp
+postgres   Up 12 seconds (healthy)   5432/tcp
+producer   Up 5 seconds (healthy)    

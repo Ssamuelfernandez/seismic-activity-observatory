@@ -43,18 +43,18 @@ Ponderación de la asignatura (de la sesión 8, sin cambios): test 30 % · prác
 
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
-| A1 | **[OBL]** 5 servicios separados en Compose: productor, Kafka, consumidor, PostgreSQL, API | `docker compose ps` los muestra healthy | Enunc. §2 | ☐ |
-| A2 | **[OBL]** `docker compose up --build -d` lo levanta todo | Funciona desde un clon limpio | Enunc. §2 | ☐ |
-| A3 | **[OBL]** Imagen reproducible por servicio Python (puede compartirse con distinto comando) | Dockerfile(s) con dependencias fijadas | Enunc. §2 | ☐ |
-| A4 | **[OBL]** Healthchecks y reintentos (el orden de arranque no basta) | Productor/consumidor reintentan hasta que Kafka/PG estén listos | Enunc. §2, §9 | ☐ |
-| A5 | **[OBL]** Volúmenes persistentes (PG, y lo necesario para originales) | Reiniciar contenedores no pierde datos | Enunc. §9 | ☐ |
-| A6 | **[OBL]** Retención limitada de Kafka | Parámetro configurado y documentado | Enunc. §9 | ☐ |
-| A7 | **[OBL]** Nombres de servicio en vez de `localhost` entre contenedores; documentar listeners de Kafka si hay acceso desde host | Config coherente con `.env.example` | Enunc. §9 · FAQ 28 | ☐ |
-| A8 | **[OBL]** Solo la API se expone (Kafka y PG nunca por el túnel) | Solo `127.0.0.1:8000:8000` publicado (o ngrok en la red Compose) | Enunc. §9 | ☐ |
-| A9 | **[OBL]** Uvicorn en `0.0.0.0:8000` dentro del contenedor (ngrok termina el HTTPS; la API recibe HTTP local) | Comprobado | Enunc. §9 · CONTRATO | ☐ |
-| A10 | **[OBL]** `.env.example` sin credenciales reales; variables coinciden con el código | Productor configurable por env: Kafka, topic, frecuencia | Enunc. §5, §9 | ☐ |
-| A11 | **[OBL]** Dependencias fijadas (`requirements.txt` / lock) | Versiones concretas | Guía 1.3 | ☐ |
-| A12 | Angular **no** necesita contenedor (SPA en Netlify); ngrok en host o contenedor | — | Guía 1.2 | ☐ |
+| A1 | **[OBL]** 5 servicios separados en Compose: productor, Kafka, consumidor, PostgreSQL, API | `docker compose ps` los muestra healthy | Enunc. §2 | [x] |
+| A2 | **[OBL]** `docker compose up --build -d` lo levanta todo | Funciona desde un clon limpio | Enunc. §2 | [x] |
+| A3 | **[OBL]** Imagen reproducible por servicio Python (puede compartirse con distinto comando) | Dockerfile(s) con dependencias fijadas | Enunc. §2 | [x] |
+| A4 | **[OBL]** Healthchecks y reintentos (el orden de arranque no basta) | Productor/consumidor reintentan hasta que Kafka/PG estén listos | Enunc. §2, §9 | [x] |
+| A5 | **[OBL]** Volúmenes persistentes (PG, y lo necesario para originales) | Reiniciar contenedores no pierde datos | Enunc. §9 | [x] |
+| A6 | **[OBL]** Retención limitada de Kafka | Parámetro configurado y documentado | Enunc. §9 | [x] |
+| A7 | **[OBL]** Nombres de servicio en vez de `localhost` entre contenedores; documentar listeners de Kafka si hay acceso desde host | Config coherente con `.env.example` | Enunc. §9 · FAQ 28 | [x] |
+| A8 | **[OBL]** Solo la API se expone (Kafka y PG nunca por el túnel) | Solo `127.0.0.1:8000:8000` publicado (o ngrok en la red Compose) | Enunc. §9 | [x] |
+| A9 | **[OBL]** Uvicorn en `0.0.0.0:8000` dentro del contenedor (ngrok termina el HTTPS; la API recibe HTTP local) | Comprobado | Enunc. §9 · CONTRATO | [x] |
+| A10 | **[OBL]** `.env.example` sin credenciales reales; variables coinciden con el código | Productor configurable por env: Kafka, topic, frecuencia | Enunc. §5, §9 | [x] |
+| A11 | **[OBL]** Dependencias fijadas (`requirements.txt` / lock) | Versiones concretas | Guía 1.3 | [x] |
+| A12 | Angular **no** necesita contenedor (SPA en Netlify); ngrok en host o contenedor | — | Guía 1.2 | [x] |
 
 ### B. Extracción e ingesta
 
@@ -255,9 +255,9 @@ Reglas de las conclusiones: interpretar, no solo mostrar; con cifras; **sin leng
 | M4 | **[OBL]** El profesor tiene acceso al repo | ☐ |
 | M5 | **[OBL]** NO subir `node_modules`, secretos, authtoken ngrok, volúmenes de BD ni descargas grandes regenerables (`data/raw/`); documentar dónde van los originales y cómo regenerarlos | ☐ |
 | M6 | Estructura (ver 03 §3): `README.md`, `docs/memoria.md`, `docs/evidencias/`, `docs/enunciado/` (solo lectura), `docs/planificacion/`, `sql/`, un directorio por servicio (las carpetas de servicio se crean cuando su feature se implementa) | ☐ |
-| M7 | Historial de Git sin trailers de coautoría ni líneas de "generado por" herramientas (commits y PRs): constitución + `.claude/settings.json` + hook `commit-msg`; comprobado con `git log` | ☐ |
-| M8 | `CLAUDE.md`, `CODEMAP.md` y la constitución (`.specify/`) versionados y al día; `docs/` (entregables) separado de `specs/` (herramienta de trabajo) | ☐ |
-| M9 | `docs/enunciado/` incluido tal cual y **sin modificar** (el `README.md` del paquete renombrado a `README-paquete.md`); `data/catalogo/paises.geojson` con su SHA-256 verificado | ☐ |
+| M7 | Historial de Git sin trailers de coautoría ni líneas de "generado por" herramientas (commits y PRs): constitución + `.claude/settings.json` + hook `commit-msg`; comprobado con `git log` | [x] |
+| M8 | `CLAUDE.md`, `CODEMAP.md` y la constitución (`.specify/`) versionados y al día; `docs/` (entregables) separado de `specs/` (herramienta de trabajo) | [x] |
+| M9 | `docs/enunciado/` incluido tal cual y **sin modificar** (el `README.md` del paquete renombrado a `README-paquete.md`); `data/catalogo/paises.geojson` con su SHA-256 verificado | [x] |
 
 ---
 

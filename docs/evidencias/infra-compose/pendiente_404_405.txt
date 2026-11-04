@@ -1,0 +1,21 @@
+# T027 — Pendiente trasladado a la feature api (007-api): cuerpo de error común en 404 y 405 (2026-11-04T00:31:07Z)
+Referencia: specs/001-contratos-y-modelo/contracts/api.md §6 — cuerpo común {"error": {"code", "message"}}; 404 = not_found, 405 = method_not_allowed.
+
+## GET /noexiste
+HTTP/1.1 404 Not Found
+date: Wed, 04 Nov 2026 00:31:06 GMT
+server: uvicorn
+content-length: 22
+content-type: application/json
+
+{"detail":"Not Found"}
+
+## POST /api/salud
+HTTP/1.1 405 Method Not Allowed
+date: Wed, 04 Nov 2026 00:31:06 GMT
+server: uvicorn
+allow: GET
+content-length: 31
+content-type: application/json
+
+{"detail":"Method Not Allowed"}

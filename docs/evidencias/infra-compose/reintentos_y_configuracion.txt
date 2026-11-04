@@ -1,0 +1,25 @@
+# Reintentos: Kafka detenido mientras productor y consumidor arrancan
+ Container seismic-observatory-kafka-1 Stopped 
+ Container seismic-observatory-producer-1 Started 
+ Container seismic-observatory-consumer-1 Started 
+--- producer
+2026-11-03 22:45:47,540 INFO [common.db] PostgreSQL disponible con el rol observatory_producer.
+2026-11-03 22:45:51,542 WARNING [common.retry] Reintento 1: no se pudo conectar con Kafka (kafka:9092) (KafkaConnectionError: KafkaConnectionError: Unable to bootstrap from [('kafka', 9092, <AddressFa
+2026-11-03 22:45:55,442 WARNING [common.retry] Reintento 2: no se pudo conectar con Kafka (kafka:9092) (KafkaConnectionError: KafkaConnectionError: Unable to bootstrap from [('kafka', 9092, <AddressFa
+--- consumer
+2026-11-03 22:45:47,604 INFO [common.db] PostgreSQL disponible con el rol observatory_consumer.
+2026-11-03 22:45:51,607 WARNING [common.retry] Reintento 1: no se pudo conectar con Kafka (kafka:9092) (KafkaConnectionError: KafkaConnectionError: Unable to bootstrap from [('kafka', 9092, <AddressFa
+2026-11-03 22:45:55,512 WARNING [common.retry] Reintento 2: no se pudo conectar con Kafka (kafka:9092) (KafkaConnectionError: KafkaConnectionError: Unable to bootstrap from [('kafka', 9092, <AddressFa
+--- estado con Kafka caído (no deben figurar healthy)
+consumer Up 25 seconds (health: starting)
+producer Up 25 seconds (health: starting)
+--- se vuelve a arrancar Kafka
+ Container seismic-observatory-kafka-1 Started 
+cinco servicios healthy tras recuperar Kafka: True
+
+# Variable obligatoria ausente
+error while interpolating x-common-env.RETRY_INITIAL_SECONDS: required variable RETRY_INITIAL_SECONDS is missing a value: Falta RETRY_INITIAL_SECONDS en .env
+
+# Los servicios usan nombres de servicio, no localhost
+DB_HOST=postgres
+KAFKA_BOOTSTRAP_SERVERS=kafka:9092

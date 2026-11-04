@@ -1,0 +1,16 @@
+# Comprobación manual con has_table_privilege / has_sequence_privilege (lecturas y secuencias)
+observatory_producer SELECT ingest.ingest_state -> t (esperado t) OK
+observatory_producer SELECT ingest.ingest_run -> t (esperado t) OK
+observatory_producer SELECT ingest.raw_response -> f (esperado f) OK
+observatory_producer DELETE ingest.raw_response -> f (esperado f) OK
+observatory_producer SELECT live.exclusion -> f (esperado f) OK
+observatory_producer SELECT replay.exclusion -> f (esperado f) OK
+observatory_consumer SELECT live.quarantine -> f (esperado f) OK
+observatory_consumer SELECT replay.quarantine -> f (esperado f) OK
+observatory_consumer SELECT live.event_version -> t (esperado t) OK
+observatory_consumer SELECT public.date_dim -> t (esperado t) OK
+observatory_producer USAGE ingest.raw_response_id_seq -> t (esperado t)
+observatory_producer USAGE ingest.ingest_run_id_seq -> t (esperado t)
+observatory_producer USAGE live.exclusion_id_seq -> t (esperado t)
+observatory_consumer USAGE live.quarantine_id_seq -> t (esperado t)
+observatory_consumer USAGE replay.quarantine_id_seq -> t (esperado t)

@@ -1,0 +1,23 @@
+# T013 — verify_stack.py completo en el clon (2026-11-03T23:41:05Z)
+Clon: C:/Users/Samuel/AppData/Local/Temp/clon-limpio-seismic   commit: d35ff2c0e4bf418b5df4ae9a9a90385f65c75bf9
+
+PASS  Los cinco servicios están healthy — {'api': 'healthy', 'consumer': 'healthy', 'kafka': 'healthy', 'postgres': 'healthy', 'producer': 'healthy'}
+PASS  El consumidor muestra un evento sintético — 2026-11-03 23:40:35,804 INFO [consumer.loop] Evento recibido [SINTÉTICO] clave=synthetic-1793749235 event_id=synthetic-1793749235 source=replay_demo
+PASS  GET /api/salud en 127.0.0.1:8000 — {"status": "ok", "last_ingestion": null, "generated": 1793749266469}
+PASS  Solo la API publica un puerto, en 127.0.0.1:8000 — {'api': [('127.0.0.1', 8000)]}
+PASS  kafka no tiene puertos enlazados al equipo — sin enlaces
+PASS  postgres no tiene puertos enlazados al equipo — sin enlaces
+INFO  el puerto 5432 del equipo responde, pero Compose no publica ninguno: lo atiende otro proceso local
+PASS  Tema earthquakes.live: 1 partición, factor 1, retención 7 días — Topic: earthquakes.live	TopicId: T2Y-a135RKeuri9tCbfWWg	PartitionCount: 1	ReplicationFactor: 1	Configs: min.insync.replicas=1,retention.ms=604800000
+PASS  Tema earthquakes.replay: 1 partición, factor 1, retención 7 días — Topic: earthquakes.replay	TopicId: JjIodFtHSKqU0f8jaYGJ0Q	PartitionCount: 1	ReplicationFactor: 1	Configs: min.insync.replicas=1,retention.ms=604800000
+PASS  Rol observatory_api: permisos de escritura según el contrato
+PASS  Rol observatory_producer: permisos de escritura según el contrato
+PASS  Rol observatory_consumer: permisos de escritura según el contrato
+PASS  Rol observatory_api: puede leer current_event, country e ingest_run
+PASS  La cuenta de la API no puede escribir (INSERT rechazado) — WRITE_DENIED
+PASS  Tras reiniciar, los cinco servicios vuelven a estar healthy
+PASS  PostgreSQL conserva el dato tras reiniciar los contenedores
+PASS  El consumidor muestra un evento sintético — 2026-11-03 23:41:37,023 INFO [consumer.loop] Evento recibido [SINTÉTICO] clave=synthetic-1793749235 event_id=synthetic-1793749235 source=replay_demo
+
+16/16 comprobaciones superadas.
+exit=0

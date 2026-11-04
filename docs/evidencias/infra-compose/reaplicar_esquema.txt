@@ -1,0 +1,72 @@
+# T019 — Reaplicar el esquema sobre una base ya inicializada (FR-020)
+Nota: una primera pasada (00:02 UTC) dio 6/6, pero la consulta de 'objetos' de la huella fallaba sin avisar (operator is not unique: text con el tipo char) y la huella estaba incompleta; se corrigió con un cast a text y ON_ERROR_STOP, y se repitió.
+Inicio: 2026-11-04T00:02:56Z
+
+## Huella antes
+objetos ingest S 2
+objetos ingest i 6
+objetos ingest r 3
+objetos live S 2
+objetos live i 10
+objetos live r 4
+objetos public i 2
+objetos public r 2
+objetos replay S 2
+objetos replay i 10
+objetos replay r 4
+restricciones ingest 6
+restricciones live 24
+restricciones public 6
+restricciones replay 24
+rol observatory_admin login=true super=true createdb=true createrole=true
+rol observatory_api login=true super=false createdb=false createrole=false
+rol observatory_consumer login=true super=false createdb=false createrole=false
+rol observatory_producer login=true super=false createdb=false createrole=false
+acl_tablas_y_secuencias md5=ae72e676188c46e47ebf09b5c1016fa1 filas=19
+acl_esquemas md5=e6475d6075d80a6ed8d53e82fa58023b
+privilegios_tabla md5=92cb87382ca25bfe50b801bc55dc77d4 filas=1583
+PASS  Huella inicial obtenida, con todas sus consultas (objetos, restricciones, roles, ACL y privilegios)
+
+## Reaplicar sql/001_schema.sql (psql -v ON_ERROR_STOP=1 -f /sql/001_schema.sql)
+código de salida: 0; avisos NOTICE: 27; líneas ERROR: 0
+    psql:/sql/001_schema.sql:27: NOTICE:  schema "live" already exists, skipping
+    psql:/sql/001_schema.sql:28: NOTICE:  schema "replay" already exists, skipping
+    psql:/sql/001_schema.sql:29: NOTICE:  schema "ingest" already exists, skipping
+PASS  001_schema.sql se reaplica sin error (código 0)
+PASS  Los avisos son «ya existe, se omite» — 27 avisos
+
+## Reaplicar sql/002_roles.sql con las contraseñas del entorno del contenedor
+código de salida: 0; líneas ERROR: 0
+    salida: ALTER ROLE | ALTER ROLE | ALTER ROLE | GRANT | GRANT | GRANT | GRANT | GRANT | GRANT | GRANT | GRANT | GRANT | GRANT | GRANT | GRANT | GRANT | GRANT | GRANT | GRANT
+PASS  002_roles.sql se reaplica sin error (código 0)
+
+## Huella después
+objetos ingest S 2
+objetos ingest i 6
+objetos ingest r 3
+objetos live S 2
+objetos live i 10
+objetos live r 4
+objetos public i 2
+objetos public r 2
+objetos replay S 2
+objetos replay i 10
+objetos replay r 4
+restricciones ingest 6
+restricciones live 24
+restricciones public 6
+restricciones replay 24
+rol observatory_admin login=true super=true createdb=true createrole=true
+rol observatory_api login=true super=false createdb=false createrole=false
+rol observatory_consumer login=true super=false createdb=false createrole=false
+rol observatory_producer login=true super=false createdb=false createrole=false
+acl_tablas_y_secuencias md5=ae72e676188c46e47ebf09b5c1016fa1 filas=19
+acl_esquemas md5=e6475d6075d80a6ed8d53e82fa58023b
+privilegios_tabla md5=92cb87382ca25bfe50b801bc55dc77d4 filas=1583
+PASS  La huella es idéntica antes y después (objetos, restricciones, roles y permisos)
+
+## verify_stack.py --skip-restart
+13/13 comprobaciones superadas.
+PASS  verify_stack.py --skip-restart sigue pasando tras reaplicar — 13/13 comprobaciones superadas.
+
+6/6 comprobaciones superadas.

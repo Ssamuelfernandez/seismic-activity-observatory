@@ -1,0 +1,32 @@
+# Ejecuciones de T014
+
+## Ejecución 1 (2026-11-03 23:45 UTC, antes de la corrección) — FALLO del consumidor
+[+0 s] docker compose stop kafka
+[+130 s] producer: healthy -> unhealthy
+Estado a los 332 s: consumer healthy, producer unhealthy, kafka exited
+RESULTADO consumer: NO pasó a unhealthy en 330 s  -> FALLO
+RESULTADO producer: unhealthy a los 130 s  -> PASS
+Recuperación: al arrancar Kafka, los cinco healthy en 15 s.
+Diagnóstico: con el broker caído `getmany` devuelve vacío cada segundo y el bucle seguía renovando el latido, así que el
+latido del consumidor no reflejaba la conexión con el broker. Además, el rango esperado del productor (150–180 s) suponía un
+último latido justo al parar Kafka, pero puede ser de hasta 30 s antes (intervalo de publicación): rango correcto 120–180 s.
+Corrección: consumer/loop.py::broker_reachable (consulta `end_offsets` cada 10 s, máximo 5 s) y el latido solo se renueva si el
+broker responde; contracts/config.md §E, research.md §6 y tasks.md T014 actualizados; 4 pruebas nuevas (tests/consumer/).
+
+## Ejecución 2 (2026-11-03 23:52 UTC, tras la corrección) — PASS
+(El script admite desde 60 s como margen inferior; config.md §E espera 90–120 s para el consumidor: 104 s está dentro.)
+
+Inicio: 2026-11-03T23:52:31Z
+Estado inicial: {'api': 'healthy', 'consumer': 'healthy', 'kafka': 'healthy', 'postgres': 'healthy', 'producer': 'healthy'}
+[+0 s] 23:52:32 docker compose stop kafka
+[+6 s] 23:52:38 producer: - -> healthy
+[+6 s] 23:52:38 consumer: - -> healthy
+[+6 s] 23:52:38 api: - -> healthy
+[+6 s] 23:52:38 postgres: - -> healthy
+[+104 s] 23:54:16 consumer: healthy -> unhealthy
+[+140 s] 23:54:52 producer: healthy -> unhealthy
+Estado al terminar la observación (+140 s): {'api': 'healthy', 'consumer': 'unhealthy', 'kafka': 'exited', 'postgres': 'healthy', 'producer': 'unhealthy'}
+RESULTADO consumer: unhealthy a los 104 s (esperado 60–120 s según config.md §E)  -> PASS
+RESULTADO producer: unhealthy a los 140 s (esperado 120–180 s según config.md §E)  -> PASS
+[recuperación +0 s] 23:54:53 docker compose start kafka
+[recuperación +21 s] 23:55:13 los cinco servicios healthy: {'api': 'healthy', 'consumer': 'healthy', 'kafka': 'healthy', 'postgres': 'healthy', 'producer': 'healthy'}

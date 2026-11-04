@@ -181,6 +181,7 @@ Dependencias de frontend: `F8a` (esqueleto + mapa contra mock) solo necesita el 
 - `/api/eventos` (filtros `start`, `end`, `min_mag`, `country_id`, `mode`, `limit`, `cursor`; default últimas 24 h; `metadata` completo; `truncated` con total y paginación; `properties` con `mag`, `magType`, `place`, `time`, `updated`, `country_id`, `country_name`), `/api/salud`, `/api/estadisticas` (mismos filtros). Forma de respuesta según `api.md` (F1b).
 - `/api/estadisticas` devuelve: conteos por hora UTC (ventana `[h, h+1)`, tiempo del evento), por país (incluyendo `null`), histogramas de magnitud y profundidad con `no_value`, comparación histórica (`n_recent`, `daily_mean_2025 = n_2025/365`, `variation_pct` o `null`), periodo, filtros, unidades.
 - CORS exacto + `localhost:4200` + cabecera ngrok; BD caída → 503 con mensaje (no `[]`).
+- **Pendiente heredado de `002-infra-compose`:** los 404 (`not_found`) y 405 (`method_not_allowed`) deben devolver el cuerpo de error común `{"error": {"code", "message"}}` de `contracts/api.md` §6; hoy usan el cuerpo por defecto de FastAPI (`{"detail": …}`, comprobado en `docs/evidencias/infra-compose/pendiente_404_405.txt`). Añadir manejadores globales en `api/main.py`.
 - **Verificación:** tests con `httpx`; `curl` de cada endpoint; parar PG y comprobar el 503; evento con mag nula excluido por `min_mag` pero contado aparte. **Cubre:** F1–F11.
 
 ### F8 — Frontend Angular desde cero (cinco features)

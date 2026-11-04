@@ -1,0 +1,109 @@
+# T010 — Clon limpio real (2026-11-03T23:38:13Z)
+## Precondición
+git status --short:
+?? docs/evidencias/infra-compose/clon_limpio.txt
+(fin)
+git diff origin/002-infra-compose --stat:
+(fin; vacío = OK)
+HEAD local: d35ff2c0e4bf418b5df4ae9a9a90385f65c75bf9
+origin/002-infra-compose: d35ff2c0e4bf418b5df4ae9a9a90385f65c75bf9
+## Stack del repositorio de trabajo
+(contenedores listados arriba; vacío = ninguno)
+ Volume seismic-observatory_postgres-data Removing 
+ Volume seismic-observatory_kafka-data Removing 
+ Volume seismic-observatory_kafka-data Removed 
+ Volume seismic-observatory_postgres-data Removed 
+Contenedores restantes del proyecto: 0
+Volúmenes restantes del proyecto: 0
+
+## Clon
+Carpeta: C:/Users/Samuel/AppData/Local/Temp/clon-limpio-seismic (fuera del repositorio; no existía antes)
+core.autocrlf del equipo: true
+Cloning into 'C:/Users/Samuel/AppData/Local/Temp/clon-limpio-seismic'...
+Commit del clon: d35ff2c0e4bf418b5df4ae9a9a90385f65c75bf9
+Rama del clon: 002-infra-compose
+.env en el clon (no se copia el del repositorio): ls: cannot access 'C:/Users/Samuel/AppData/Local/Temp/clon-limpio-seismic/.env': No such file or directory
+# T012 — Descarga en frío (2026-11-03T23:39:24Z)
+## Contenedores existentes en Docker (cualquier proyecto)
+whisper rhasspy/wyoming-whisper:latest
+piper rhasspy/wyoming-piper:latest
+homeassistant ghcr.io/home-assistant/home-assistant:stable
+cloudflare_tunnel cloudflare/cloudflared:latest
+qwen_server ghcr.io/ggml-org/llama.cpp:server-cuda
+qwen_abliterated ghcr.io/ggml-org/llama.cpp:server-cuda
+(fin)
+usan python:3.12.16-slim-bookworm: 0
+usan ghcr.io/astral-sh/uv:0.12.13: 0
+usan apache/kafka:4.1.2: 0
+usan postgres:16.15-bookworm: 0
+usan seismic-observatory-python:0.1.0: 0
+## Eliminación de imágenes para forzar la descarga
+Untagged: apache/kafka:4.1.2
+Deleted: sha256:5cc2a2fd93fa2687b44015eee04fb2c3edd9e526bd64bf8bec5ff1e268772e0e
+Untagged: postgres:16.15-bookworm
+Deleted: sha256:e8a07d2c7579b038938cdba6c539e580e5001caf9ea203d397b5cc83e76bd938
+Untagged: seismic-observatory-python:0.1.0
+Deleted: sha256:f961089da0c7bbf7a737589fc0af87ac54ffeb2273dc36577fc8ec5cd1e24109
+Error response from daemon: No such image: python:3.12.16-slim-bookworm
+Error response from daemon: No such image: ghcr.io/astral-sh/uv:0.12.13
+## Imágenes del proyecto tras eliminar
+postgres:16
+(fin; vacío = ninguna)
+
+## Tiempo 1 — descarga de imágenes
+docker pull python:3.12.16-slim-bookworm -> 2 s (exit 0)
+docker pull ghcr.io/astral-sh/uv:0.12.13 -> 2 s (exit 0)
+docker pull apache/kafka:4.1.2 -> 12 s (exit 0)
+docker pull postgres:16.15-bookworm -> 11 s (exit 0)
+TOTAL DESCARGA DE IMÁGENES: 27 s
+
+## Tiempo 2 — quickstart §1 desde el clon (2026-11-03T23:40:18Z)
+cp .env.example .env -> ok
+contraseñas de ejemplo cambiadas en el .env del clon (solo ahí)
+4
+-- 2a) construcción en frío: docker compose build --no-cache (la caché de BuildKit sigue caliente; sin --no-cache el build no sería frío)
+docker compose build --no-cache -> 8 s (exit 0)
+#19 resolving provenance for metadata file
+#19 DONE 0.0s
+ Image seismic-observatory-python:0.1.0 Built 
+-- 2b) docker compose up --build -d, hasta cinco healthy
+docker compose up --build -d -> 8 s (exit 0)
+ Container seismic-observatory-producer-1 Starting 
+ Container seismic-observatory-consumer-1 Starting 
+ Container seismic-observatory-consumer-1 Started 
+ Container seismic-observatory-producer-1 Started 
+cinco servicios healthy: 5/5 -> 14 s desde el inicio de up --build -d
+SERVICE    STATUS                    PORTS
+api        Up 7 seconds (healthy)    127.0.0.1:8000->8000/tcp
+consumer   Up 6 seconds (healthy)    
+kafka      Up 13 seconds (healthy)   9092/tcp
+postgres   Up 13 seconds (healthy)   5432/tcp
+producer   Up 6 seconds (healthy)    
+TIEMPO up --build -d hasta healthy (con caché de build caliente): 14 s
+TIEMPO construcción en frío + up hasta healthy (sin contar la descarga de imágenes): 22 s
+
+## Registro de la inicialización de PostgreSQL (10-init.sh)
+2026-11-03 23:40:28.733 UTC [49] LOG:  database system is ready to accept connections
+CREATE DATABASE
+/usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/10-init.sh
+CREATE SCHEMA
+CREATE TABLE
+CREATE INDEX
+COMMIT
+CREATE ROLE
+ALTER ROLE
+GRANT
+PostgreSQL init process complete; ready for start up.
+2026-11-03 23:40:29.307 UTC [1] LOG:  database system is ready to accept connections
+-- líneas de error (command not found, syntax error, ERROR:, No such file): 0
+-- Python en el contenedor de la API: Python 3.12.16
+
+## Resumen (T010–T013)
+- T010 clon limpio: PASS (commit d35ff2c, igual que origin/002-infra-compose; sin .env; stack del repositorio parado y volúmenes borrados para empezar de cero).
+- T011 checkout con LF: PASS (ver checkout_lf.txt).
+- T012 descarga en frío: PASS. Descarga de imágenes 27 s; construcción en frío (build --no-cache) 8 s; up --build -d hasta cinco healthy 14 s. Sin contar la descarga: 22 s (criterio de SC-001: menos de 300 s). Con descarga: 49 s.
+- T013 verify_stack.py en el clon: PASS 16/16 (ver clon_limpio_verify.txt).
+- Python en el contenedor de la API: 3.12.16.
+- Desviación de método: se añadió `docker compose build --no-cache` porque la caché de BuildKit seguía caliente.
+- Limitación: lo ejecutó el agente siguiendo el quickstart; SC-010 (persona ajena al desarrollo) no queda demostrado.
+- Equipo: Windows 11, Docker 29.1.5, Compose v5.0.1; otros contenedores ajenos al proyecto corrían en paralelo.

@@ -1,0 +1,22 @@
+# El contexto de build es la raíz del repositorio: solo debe entrar lo que la imagen necesita.
+.git
+.gitattributes
+.gitignore
+.claude
+.specify
+.venv
+.env
+.env.*
+!.env.example
+__pycache__
+*.pyc
+.pytest_cache
+docs
+specs
+data
+frontend
+notebooks
+tests
+scripts
+sql
+*.md

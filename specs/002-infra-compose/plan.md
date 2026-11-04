@@ -1,0 +1,201 @@
+# Implementation Plan: Infraestructura Compose y verificación de punta a punta
+
+**Branch**: `002-infra-compose` | **Date**: 2026-11-03 | **Spec**: [spec.md](spec.md)
+
+**Input**: Feature specification from `specs/002-infra-compose/spec.md`
+
+## Summary
+
+Un único `docker compose up --build -d` levanta cinco servicios (Kafka en modo KRaft, PostgreSQL 16, productor, consumidor y API) en una red interna de Compose. Solo la API se publica, en `127.0.0.1:8000`. El productor mínimo publica un evento sintético cada intervalo configurable en `earthquakes.live`; el consumidor mínimo lo escribe en su registro; la API responde `GET /api/salud` leyendo la base con un rol de solo lectura. PostgreSQL y Kafka usan volúmenes con nombre. El esquema (`sql/001_schema.sql`, sin cambios) y los roles (`sql/002_roles.sql`, nuevo) se aplican en la primera inicialización con contraseñas de variables de entorno. Productor, consumidor y API comparten una imagen Python con versión exacta y dependencias bloqueadas con `uv.lock`. El detalle de las decisiones está en [research.md](research.md); las variables, en [contracts/config.md](contracts/config.md); el procedimiento de verificación, en [quickstart.md](quickstart.md).
+
+**Estado (2026-11-04)**: las seis propuestas están aprobadas (DECIDIDO); la feature está **implementada y verificada** (las 33 tareas de `tasks.md` hechas, con evidencia en `docs/evidencias/infra-compose/`) y queda **pendiente de la revisión del alumno**. Sin commit de merge.
+
+## Technical Context
+
+**Language/Version**: Python 3.12.16 (exacto: `Dockerfile` y `.python-version`; `pyproject.toml` admite `>=3.12,<3.13` para que `uv` pueda bloquear sin tener 3.12.16 instalado en el equipo de desarrollo)
+
+**Primary Dependencies**: aiokafka 0.15.0, asyncpg 0.32.0, FastAPI 0.162.0, Uvicorn 0.54.0 (exactas en `pyproject.toml`; todo el árbol, en `uv.lock`). Desarrollo: pytest 9.2.0. Imágenes: `apache/kafka:4.1.2`, `postgres:16.15-bookworm`, `ghcr.io/astral-sh/uv:0.12.13`
+
+**Storage**: PostgreSQL 16 (volumen `postgres-data`); Kafka (volumen `kafka-data`)
+
+**Testing**: pytest para la lógica sin red (configuración, reintentos, latido, mensaje sintético); `scripts/verify_stack.py` para la verificación de punta a punta contra Docker; `scripts/check_env_example.py` para `.env.example`
+
+**Target Platform**: Docker Compose v2 en el equipo del alumno (probado en Windows 11 con Docker 29.1.5, Compose v5.0.1)
+
+**Project Type**: sistema de servicios (productor, consumidor y API) con infraestructura Compose
+
+**Performance Goals**: sistema sano en menos de 5 minutos desde un clon limpio (SC-001); evento sintético visible en el consumidor en menos de 60 s (SC-003). Medido: ~15 s con imágenes ya descargadas
+
+**Constraints**: solo la API expuesta (`127.0.0.1:8000`); nombres de servicio entre contenedores; sin secretos en Git; versiones fijadas; sin ampliar el alcance (constitución §12)
+
+**Scale/Scope**: 5 contenedores, 1 broker de un nodo, 1 partición por tema, un evento sintético cada 30 s por defecto
+
+## Constitution Check
+
+*GATE: pasa antes de la investigación y se vuelve a evaluar tras el diseño.*
+
+| § | Principio | Cumplimiento |
+|---|---|---|
+| 1 | Al menos una vez, offset tras commit en PG | No aplica todavía: el consumidor mínimo no escribe. No confirma offsets (`enable_auto_commit=False`) y lo deja documentado en el código; la regla se implementa en `consumidor-idempotente`. |
+| 7 | Datos sintéticos etiquetados y separados | `is_synthetic = true`, `event.id` con prefijo `synthetic` y `source = replay_demo`. No se escribe ninguna fila de eventos. |
+| 9 | Nombres de servicio | `kafka:9092` y `postgres:5432`. `127.0.0.1` solo aparece en la comprobación de salud de la propia API (su propio contenedor) y en la publicación del puerto. |
+| 10 | Solo la API expuesta; sin secretos; `.env.example` al día | Un solo puerto publicado; contraseñas de ejemplo con prefijo `cambia-esta-clave`; `scripts/check_env_example.py` comprueba la coincidencia. |
+| 11 | Versiones fijadas | Python exacto, dependencias `==` más `uv.lock`, imágenes con etiqueta concreta. |
+| 12 | Alcance cerrado | Sin USGS, validación, país, histórico, endpoints de datos, frontend ni ngrok. |
+| 13 | Idioma | Identificadores en inglés; docstrings y comentarios en español. |
+| 14 | Una responsabilidad por función; lógica pura separada del I/O | `main.py` solo arranca; `common/health.py::is_heartbeat_fresh`, `common/retry.py::next_delay` y `common/synthetic_event.py` son puros. |
+| 15 | Contratos únicos | No se duplica ni se modifica ningún contrato. Constantes de temas en `common/kafka_topics.py` (valores de `kafka-message.md` §1). |
+| 16 | Cierre de feature | **Cumplido**: pruebas unitarias y verificación de punta a punta ejecutadas, evidencia en `docs/evidencias/infra-compose/`, `README.md` y `CODEMAP.md` actualizados. |
+| 19 | Una feature cada vez; sin implementar sin spec, plan y tareas revisados | **Desviación de la constitución §19, validada por el alumno**: el código se escribió antes de `tasks.md` y de la revisión de las tareas (borrador adelantado, commit `33e1fc7`), porque el alumno pidió escribir los archivos reales junto con el plan. El alumno ha validado esa desviación. Las tareas (`tasks.md`) se limitan a completar y verificar; no hay merge. |
+| 20 | Commits | Ninguno hecho. |
+
+**Resultado**: sin violaciones sin justificar. Reevaluado tras el diseño: igual.
+
+## Project Structure
+
+### Documentation (this feature)
+
+```text
+specs/002-infra-compose/
+├── plan.md              # Este archivo
+├── research.md          # Decisiones y alternativas
+├── data-model.md        # Roles, permisos, volúmenes y red
+├── quickstart.md        # Levantar, verificar y reiniciar
+├── contracts/
+│   └── config.md        # Variables de entorno ↔ .env.example ↔ código
+├── checklists/
+│   └── requirements.md
+└── tasks.md             # Lo genera /speckit-tasks (aún no existe)
+```
+
+### Source Code (repository root)
+
+```text
+compose.yaml                  # 5 servicios, red, volúmenes, healthchecks
+Dockerfile                    # imagen Python compartida (contexto de build: raíz)
+.dockerignore
+.env.example                  # variables de ejemplo, sin secretos
+.gitattributes                # LF en .sh, .sql, .py, .yaml y Dockerfile (se montan en Linux)
+.python-version               # 3.12.16
+pyproject.toml  uv.lock       # dependencias exactas y bloqueo
+
+common/                       # importable por cualquier servicio (PYTHONPATH=/app)
+├── config.py                 # variables de entorno
+├── logging_setup.py
+├── retry.py                  # espera exponencial
+├── health.py                 # latido + healthcheck (python -m common.health)
+├── db.py                     # conexión y pool con reintentos
+├── kafka_topics.py           # creación idempotente de los temas del contrato
+└── synthetic_event.py        # mensaje sintético (lógica pura)
+
+producer/   main.py  loop.py  publisher.py
+consumer/   main.py  loop.py
+api/        main.py  queries.py  routers/health.py
+
+sql/
+├── 001_schema.sql            # sin cambios
+└── 002_roles.sql             # roles y permisos (nuevo)
+
+scripts/
+├── postgres_init.sh          # aplica 001 y 002 en la primera inicialización
+├── verify_stack.py           # verificación de punta a punta
+└── check_env_example.py      # .env.example ↔ compose ↔ código
+
+tests/  common/  producer/    # espejo de la estructura del código
+
+docs/evidencias/infra-compose/
+```
+
+**Structure Decision**: se respeta la estructura de `03-procedimiento-ejecucion.md` §3 y §7.1. No se crea `docker/`: la imagen compartida vive en la raíz porque su contexto de build es la raíz (para que `common/` entre en la imagen) y la inicialización de PostgreSQL usa las carpetas `sql/` y `scripts/` existentes. `producer/loop.py` y `consumer/loop.py` son nuevos respecto al esqueleto de §7.1: separan el bucle del arranque (`main.py`, regla 5) y se reutilizarán en `productor-live` y `consumidor-idempotente`.
+
+## Decisiones — todas DECIDIDO (aprobadas por el alumno el 2026-11-03)
+
+| # | Tema | DECIDIDO | Detalle |
+|---|---|---|---|
+| 1 | Bloqueo de dependencias | `uv` 0.12.13 con `pyproject.toml` (versiones `==`) y `uv.lock`; `uv sync --frozen` en el `Dockerfile` | research.md §1 |
+| 2 | Imágenes | `python:3.12.16-slim-bookworm`, `apache/kafka:4.1.2`, `postgres:16.15-bookworm` | research.md §2 |
+| 3 | Creación de temas | `common/kafka_topics.py::ensure_topics()` desde productor y consumidor al arrancar; auto-creación desactivada; retención a nivel de tema y a nivel de broker | research.md §3 |
+| 4 | Esquema y roles | `scripts/postgres_init.sh` en `docker-entrypoint-initdb.d`: aplica `001_schema.sql` y `002_roles.sql`, contraseñas por `psql -v` desde el entorno | research.md §4 |
+| 5 | Dato de la prueba de persistencia | Tabla `public.zz_infra_check` con un token aleatorio, creada y eliminada por `verify_stack.py` | research.md §5 |
+| 6 | Salud de productor y consumidor | Archivo de latido renovado tras cada vuelta correcta del bucle; el healthcheck comprueba su antigüedad | research.md §6 |
+
+Las decisiones constan en la sección Clarifications de [spec.md](spec.md). Los permisos de los roles siguen exactamente la tabla §1.1 de `db-schema.md` (ver [data-model.md](data-model.md)).
+
+## Trazabilidad A1–A12
+
+Cada requisito del checklist con su criterio de la spec, la tarea de `tasks.md` que lo verifica y la evidencia en `docs/evidencias/infra-compose/`. «(pendiente)» = evidencia aún por generar; el resto ya existe.
+
+| ID | Requisito (resumen) | Criterio de la spec | Tarea que lo verifica | Evidencia |
+|---|---|---|---|---|
+| A1 | 5 servicios separados, `docker compose ps` los muestra healthy | FR-001, FR-006; US1 escenario 1; SC-001 | T007 (hecha); T013 (pendiente, en clon limpio) | `arranque_desde_cero.txt`, `verificacion_completa.txt`; `clon_limpio_verify.txt` (pendiente) |
+| A2 | `docker compose up --build -d` lo levanta todo desde un clon limpio | FR-002; SC-001; SC-002; SC-010 | T010, T011, T012 (pendientes) | `clon_limpio.txt`, `checkout_lf.txt` (pendientes) |
+| A3 | Imagen reproducible por servicio Python, dependencias fijadas | FR-003, FR-004, FR-034, FR-035; SC-008 | T001 (hecha); T012 (construcción en frío, pendiente) | `uv.lock`, `Dockerfile`; `clon_limpio.txt` (pendiente) |
+| A4 | Healthchecks y reintentos en el código | FR-006, FR-007, FR-008, FR-009; SC-002 | T008 (hecha); T009, T014, T015 (pendientes) | `reintentos_y_configuracion.txt`; `arranque_sin_postgres.txt`, `latido_caduca.txt`, `salud_503.txt` (pendientes) |
+| A5 | Volúmenes persistentes: reiniciar no pierde datos | FR-018, FR-019, FR-020; SC-004 | T018 (hecha); T019 (pendiente) | `verificacion_completa.txt`; `reaplicar_esquema.txt` (pendiente) |
+| A6 | Retención limitada de Kafka, configurada y documentada | FR-016, FR-021; SC-009 | T025 (hecha); T028 (documentación en README, pendiente) | `verificacion_completa.txt`; `README.md` (pendiente) |
+| A7 | Nombres de servicio en vez de `localhost`; listeners documentados | FR-022, FR-026, FR-031 | T022 (hecha) | `check_env_example.txt`, `reintentos_y_configuracion.txt` (`DB_HOST=postgres`, `KAFKA_BOOTSTRAP_SERVERS=kafka:9092`); listeners en `research.md` §3 |
+| A8 | Solo la API se expone (`127.0.0.1:8000`) | FR-023; SC-005 | T020 (hecha); T013 (repite en el clon, pendiente) | `verificacion_completa.txt`; `clon_limpio_verify.txt` (pendiente) |
+| A9 | Uvicorn en `0.0.0.0:8000` dentro del contenedor | FR-024; US1 escenario 3 | T020 (hecha, indirecta: si escuchara solo en `127.0.0.1` el puerto publicado no respondería) | `verificacion_completa.txt` (`GET /api/salud` desde el equipo); comando en `compose.yaml` |
+| A10 | `.env.example` sin credenciales; variables coinciden con el código; productor configurable por entorno | FR-012, FR-031, FR-032, FR-033, FR-036; SC-007 | T022 (hecha); T023, T033 (pendientes) | `check_env_example.txt`; `busqueda_secretos.txt`, `config_por_entorno.txt` (pendientes) |
+| A11 | Dependencias fijadas (`requirements`/lock) | FR-034, FR-035; SC-008 | T001 (hecha); T012 (pendiente) | `pyproject.toml`, `uv.lock`; `clon_limpio.txt` (pendiente) |
+| A12 | Sin contenedor Angular; ngrok en el equipo | FR-005 | T029 (pendiente) | `a12.txt` (pendiente) |
+
+M7–M9 solo se verifican (FR-037): T024, evidencia `m7_m9.txt` (pendiente).
+
+## Pendientes trasladados a otras features
+
+| Pendiente | Feature | Dónde se anota |
+|---|---|---|
+| Los 404 (`not_found`) y 405 (`method_not_allowed`) deben devolver el cuerpo de error común `{"error": {"code", "message"}}` de `contracts/api.md` §6; hoy FastAPI usa su cuerpo por defecto (`{"detail": …}`). Añadir manejadores globales en `api/main.py`. | `007-api` | T027 → `docs/planificacion/02-roadmap-implementacion.md`, sección F7 |
+| Permisos de lectura de `raw_response`, purga (`DELETE`) y lecturas de `exclusion` y `quarantine`: se añaden al rol que corresponda actualizando la tabla §1.1 de `db-schema.md`. | `productor-live`, `consumidor-idempotente` | `data-model.md` |
+| Aplicar migraciones sobre un volumen ya inicializado (`postgres_init.sh` solo corre con el volumen vacío). | primera feature que añada una migración | `research.md` §4 |
+| Rol de la carga histórica (¿reutiliza `observatory_consumer` o uno propio?). | `historico-2025` | `data-model.md` |
+
+## Verificación realizada (2026-11-03 y 2026-11-04)
+
+Evidencia en [docs/evidencias/infra-compose/](../../docs/evidencias/infra-compose/). Las que se vieron afectadas por un cambio de código se regeneraron al final (`verificacion_completa.txt` 16/16, `pytest.txt` 27 pruebas, `check_env_example.txt`).
+
+| Evidencia | Qué demuestra |
+|---|---|
+| `arranque_desde_cero.txt`, `reintentos_y_configuracion.txt` | Arranque desde cero con la caché caliente (15 s); con Kafka parado, productor y consumidor reintentan; variable ausente nombrada en el error |
+| `verificacion_completa.txt` | `scripts/verify_stack.py` 16/16: salud, evento sintético en el log del consumidor, `/api/salud`, un único puerto, temas (1 partición, factor 1, 7 días), permisos de escritura por rol, escritura de la API rechazada, persistencia tras `down` + `up` |
+| `permisos_lectura_y_secuencias.txt` | Lecturas y secuencias de los roles según `db-schema.md` §1.1 |
+| `clon_limpio.txt`, `checkout_lf.txt`, `clon_limpio_verify.txt` | Clon limpio del commit `d35ff2c`, LF sin CR, descarga en frío: 22 s sin contar la descarga de imágenes (27 s; total 49 s), `verify_stack.py` 16/16 en el clon |
+| `latido_caduca.txt` | Consumidor `unhealthy` a los 104 s y productor a los 140 s con Kafka parado; recuperación en 21 s (tras corregir el latido del consumidor) |
+| `salud_503.txt` | 503 con el cuerpo de `api.md` §6, sin reinicio de la API, recuperación en 3 s (16/16 tras filtrar las trazas del pool) |
+| `arranque_sin_postgres.txt` | Arranque sin PostgreSQL: reintentos 1, 2, 4, 8, 16, 30 s; los cinco `healthy` 9 s después de PostgreSQL (12/12) |
+| `mensaje_crudo.txt` | Mensaje real frente a `kafka-message.md` §3 (18/18) |
+| `reaplicar_esquema.txt` | `001` y `002` reaplicados sobre una base inicializada: código 0 y huella idéntica (6/6) |
+| `config_por_entorno.txt` | Cadencia (5 s) y tema cambiados solo por entorno, y configuración restaurada (15/15) |
+| `busqueda_secretos.txt`, `python_en_contenedor.txt` | 0 credenciales reales; Python 3.12.16 en los tres contenedores |
+| `m7_m9.txt` | M7 y M9 cumplidos; M8 «al día» cerrado con README y CODEMAP (T028, T030) |
+| `a12.txt` | Cinco servicios, sin frontend ni ngrok en `compose.yaml`, README con ngrok en el anfitrión |
+| `tamanos_codigo.txt` | 0 archivos de más de 250 líneas; 2 funciones de ~30 líneas solo por el docstring, justificadas |
+| `pendiente_404_405.txt` | Los 404 y 405 usan el cuerpo por defecto de FastAPI; pendiente trasladado a `007-api` |
+
+## Hallazgos para la revisión
+
+1. **M7 cumplido (verificado el 2026-11-03)**: el historial no tiene trailers de coautoría ni líneas de «generado por» (0 coincidencias en 24 commits), `.claude/settings.json` existe, está versionado y desactiva la atribución, y el hook `commit-msg` existe y rechaza los mensajes con `Co-Authored-By` y «Generated with» (probado). Lo resolvió el alumno a mano. **Limitaciones**: el hook no versiona (vive en `.git/hooks/`; el README avisa de que debe instalarse en cada clon) y no detecta «generado por» en español.
+2. **M9 correcto**: el SHA-256 de `paises.geojson` en Git (y en `origin/main`) coincide con `FUENTES-Y-LICENCIAS.md`. `.gitattributes` fija `data/catalogo/paises.geojson -text` para que Git no convierta sus saltos de línea; en un clon nuevo la copia de trabajo conserva ese hash (LF) y `docs/enunciado/` no tiene cambios respecto a `origin/main`.
+3. **PostgreSQL local en el 5432 del equipo**: la sonda TCP desde el anfitrión responde, pero lo atiende un servicio local, no Compose. La comprobación de aislamiento se basa en que Docker no enlaza ningún puerto de Kafka ni de PostgreSQL.
+4. **Dos fallos encontrados y corregidos durante la verificación**: construir la imagen en tres servicios con la misma etiqueta provoca un conflicto (se construye solo en `producer`); un contenedor reiniciado conservaba su latido anterior y parecía sano (se borra al arrancar).
+5. **Supuestos de la spec que el plan afina**: el consumidor mínimo también crea los temas y comprueba su rol de base de datos al arrancar (necesario para FR-016 y FR-030); no escribe en ninguna tabla.
+
+6. **Primera tanda de verificaciones con Docker (T010–T013, 2026-11-03): superada.** Clon limpio del commit `d35ff2c`, checkout con LF (0 bytes CR en `postgres_init.sh`, `*.sql`, `compose.yaml` y `Dockerfile`, y SHA-256 de `paises.geojson` correcto), cinco servicios `healthy` en 22 s sin contar la descarga de imágenes (27 s; total 49 s) y `verify_stack.py` 16/16. Evidencias: `clon_limpio.txt`, `checkout_lf.txt`, `clon_limpio_verify.txt`.
+   - **Corrección de método en T011**: el recuento de CR con `grep -c $'\r'` devolvió el número de líneas de cada archivo (el patrón llegaba vacío); se sustituyó por un recuento binario con Python, que da 0. `tasks.md` T011 quedó corregida y `checkout_lf.txt` conserva la nota.
+   - **Corrección de método en T012**: tras eliminar las imágenes la caché de BuildKit seguía caliente y `up --build -d` no habría medido una construcción en frío; se añadió `docker compose build --no-cache` (8 s) y se suma al tiempo de `up`.
+   - **Límite de SC-010**: el quickstart lo siguió el propio agente, no una persona ajena al desarrollo; funcionó sin cambios, pero SC-010 se confirmará con una persona externa.
+
+7. **Segunda tanda de verificaciones con Docker (2026-11-04): superada tras corregir dos defectos reales y varios fallos de método.** T009, T014, T015, T017, T019, T023 (paso de Docker) y T033 pasan; A12 (T029) pasa sus partes 1 y 2 y espera a T028 (README).
+   - **Defecto 1 — latido del consumidor (T014)**: con Kafka caído `getmany` devuelve vacío cada segundo y el bucle seguía renovando el latido, así que el consumidor nunca pasaba a `unhealthy` (330 s sin cambiar). Corregido en `consumer/loop.py` (`broker_reachable`: consulta `end_offsets` cada 10 s, máximo 5 s; el latido se renueva solo si el broker responde); ahora `unhealthy` a los 104 s y recuperación en 21 s. Documentado en `contracts/config.md` §E y `research.md` §6; 4 pruebas nuevas.
+   - **Defecto 2 — trazas en el registro de la API (T015)**: el pool de asyncpg registraba un traceback completo cada 5 s con la base parada (sin credenciales ni SQL, pero T015 exige un registro sin trazas). Corregido con `DropTracebackFilter` en `common/logging_setup.py`; prueba nueva. Resultado: 16/16.
+   - **Rango esperado del productor (T014)**: el rango 150–180 s suponía un último latido justo al parar Kafka; con intervalo de 30 s puede ser de hasta 30 s antes: correcto 120–180 s (observado 140 s). Corregido en `config.md` §E y `tasks.md`.
+   - **Fallos de método corregidos (no del producto)**: la huella de T019 no incluía los objetos por un error de tipo en la consulta (cast a text y `ON_ERROR_STOP`); el lector de consola de T033 no terminaba con mensajes cada 5 s (`--max-messages`); el offset base de `earthquakes.live` se leía antes de recrear el productor y contaba un mensaje del antiguo (ahora después); el patrón de A12 coincidía con `KAFKA_NODE_ID` (`-w`).
+   - **Limitación del entorno**: el reloj de pared de la máquina virtual de Docker da saltos hacia atrás (−0,56, −0,77 y −1,33 s en 75 s; el del anfitrión, ninguno). Por eso una separación aislada entre mensajes puede salir de 3,7 s en lugar de 5 s; el criterio de cadencia de T033 usa mediana, porcentaje y recuento por ventana. El productor espera con reloj monótono.
+   - **Rehechas tras el cambio de código** (regla de T031): `verify_stack.py` 16/16, `pytest` 27 pasadas y `check_env_example.py` (`verificacion_completa.txt`, `pytest.txt`, `check_env_example.txt`).
+
+8. **Pendientes y límites al cierre**: (a) SC-010 no queda demostrado con una persona ajena al desarrollo; (b) el hook `commit-msg` no se versiona y no detecta «generado por»; (c) la configuración de un listener de Kafka para el anfitrión está documentada en el README pero **no se ha probado** y contradice A8 si se deja activa; (d) los 404 y 405 con el cuerpo de error común quedan para `007-api`; (e) `postgres_init.sh` solo corre con el volumen vacío, por lo que las migraciones futuras necesitarán otro mecanismo; (f) permisos de lectura de `raw_response`, purga y otros se añadirán en las features que los necesiten, actualizando `db-schema.md` §1.1; (g) el reloj de la máquina virtual de Docker da saltos hacia atrás, lo que puede acortar una separación entre mensajes medida con marcas de tiempo.
+
+## Complexity Tracking
+
+Sin violaciones de la constitución que justificar; la única desviación (§19) está declarada arriba.

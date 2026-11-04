@@ -1,0 +1,19 @@
+PASS  Los cinco servicios están healthy — {'api': 'healthy', 'consumer': 'healthy', 'kafka': 'healthy', 'postgres': 'healthy', 'producer': 'healthy'}
+PASS  El consumidor muestra un evento sintético — 2026-11-04 00:32:53,852 INFO [consumer.loop] Evento recibido [SINTÉTICO] clave=synthetic-1793749488 event_id=synthetic-1793749488 source=replay_demo
+PASS  GET /api/salud en 127.0.0.1:8000 — {"status": "ok", "last_ingestion": null, "generated": 1793752379344}
+PASS  Solo la API publica un puerto, en 127.0.0.1:8000 — {'api': [('127.0.0.1', 8000)]}
+PASS  kafka no tiene puertos enlazados al equipo — sin enlaces
+PASS  postgres no tiene puertos enlazados al equipo — sin enlaces
+INFO  el puerto 5432 del equipo responde, pero Compose no publica ninguno: lo atiende otro proceso local
+PASS  Tema earthquakes.live: 1 partición, factor 1, retención 7 días — Topic: earthquakes.live	TopicId: g6t2fPMVRo6aXhhx1Mltsw	PartitionCount: 1	ReplicationFactor: 1	Configs: min.insync.replicas=1,retention.ms=604800000
+PASS  Tema earthquakes.replay: 1 partición, factor 1, retención 7 días — Topic: earthquakes.replay	TopicId: 3E4CIRj6TESfDty6M7Z2GQ	PartitionCount: 1	ReplicationFactor: 1	Configs: min.insync.replicas=1,retention.ms=604800000
+PASS  Rol observatory_api: permisos de escritura según el contrato
+PASS  Rol observatory_producer: permisos de escritura según el contrato
+PASS  Rol observatory_consumer: permisos de escritura según el contrato
+PASS  Rol observatory_api: puede leer current_event, country e ingest_run
+PASS  La cuenta de la API no puede escribir (INSERT rechazado) — WRITE_DENIED
+PASS  Tras reiniciar, los cinco servicios vuelven a estar healthy
+PASS  PostgreSQL conserva el dato tras reiniciar los contenedores
+PASS  El consumidor muestra un evento sintético — 2026-11-04 00:33:29,423 INFO [consumer.loop] Evento recibido [SINTÉTICO] clave=synthetic-1793749488 event_id=synthetic-1793749488 source=replay_demo
+
+16/16 comprobaciones superadas.
