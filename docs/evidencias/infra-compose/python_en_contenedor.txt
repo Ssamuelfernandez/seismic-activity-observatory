@@ -1,0 +1,10 @@
+# Versión de Python dentro de los contenedores (T023, FR-034, A11) — 2026-11-04T00:25:06Z
+docker compose exec -T api python --version -> Python 3.12.16
+docker compose exec -T producer python --version -> Python 3.12.16
+docker compose exec -T consumer python --version -> Python 3.12.16
+Imagen de cada servicio Python:
+  api -> seismic-observatory-python:0.1.0
+  producer -> seismic-observatory-python:0.1.0
+  consumer -> seismic-observatory-python:0.1.0
+Dockerfile: FROM python:3.12.16-slim-bookworm
+.python-version: 3.12.16

@@ -1,0 +1,45 @@
+# Ejecuciones de T015
+
+## Ejecución 1 (2026-11-03 23:55 UTC, antes de la corrección) — 15/16, FALLO en el registro de la API
+503 con el cuerpo exacto de api.md §6 y Content-Type JSON en 3,9 s; unhealthy a los 61 s; sin reinicio; recuperación en 3 s.
+FALLO: el registro de la API contenía un `Traceback` cada 5 s ("Failed to restore the pool connection floor; retrying"),
+emitido por el propio pool de asyncpg (no por el código de la feature) mientras la base estaba parada. Sin credenciales ni SQL,
+pero T015 (d) exige que el registro no contenga trazas.
+Corrección: common/logging_setup.py::DropTracebackFilter aplicado al logger `asyncpg.pool` (conserva el aviso de una línea y
+descarta el traceback); prueba nueva en tests/common/test_logging_setup.py.
+
+## Ejecución 2 (2026-11-03 23:57 UTC, tras la corrección) — 16/16 PASS
+
+# T015 — /api/salud con la base caída
+Inicio: 2026-11-03T23:57:49Z
+Estado inicial de la API: {'restart_count': 0, 'started_at': '2026-11-03T23:57:31.329794477Z', 'status': 'running', 'health': 'healthy'}
+PASS  Línea base: GET /api/salud devuelve 200 y status ok — {"status":"ok","last_ingestion":null,"generated":1793750269700}
+
+[+0 s] docker compose stop postgres
+[+6 s] petición 1: HTTP 503, Content-Type 'application/json', 3.84 s, cuerpo: {"error":{"code":"database_unavailable","message":"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."}}
+PASS  Petición 1: código HTTP 503 — obtenido 503
+PASS  Petición 1: Content-Type application/json — application/json
+PASS  Petición 1: cuerpo exacto de api.md §6
+PASS  Petición 1: respuesta en menos de 10 s — 3.84 s
+[+15 s] petición 2: HTTP 503, Content-Type 'application/json', 3.84 s, cuerpo: {"error":{"code":"database_unavailable","message":"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."}}
+PASS  Petición 2: código HTTP 503 — obtenido 503
+PASS  Petición 2: Content-Type application/json — application/json
+PASS  Petición 2: cuerpo exacto de api.md §6
+PASS  Petición 2: respuesta en menos de 10 s — 3.84 s
+PASS  El cuerpo no contiene credenciales, SQL ni trazas
+PASS  El registro de la API no contiene credenciales, SQL ni trazas
+    log: INFO:     127.0.0.1:44912 - "GET /api/salud HTTP/1.1" 200 OK
+    log: INFO:     127.0.0.1:36994 - "GET /api/salud HTTP/1.1" 200 OK
+    log: INFO:     172.20.0.1:43936 - "GET /api/salud HTTP/1.1" 200 OK
+    log: 2026-11-03 23:57:56,190 ERROR [api.routers.health] La comprobación de salud no pudo consultar la base: gaierror
+PASS  Con la base parada, la API pasa a unhealthy — a los 67 s
+PASS  La API no se reinició ni terminó mientras la base estaba parada — {'restart_count': 0, 'started_at': '2026-11-03T23:57:31.329794477Z', 'status': 'running', 'health': 'unhealthy'}
+
+[recuperación +0 s] docker compose start postgres
+[recuperación +3 s] HTTP 200: {"status":"ok","last_ingestion":null,"generated":1793750339563}
+PASS  Tras arrancar PostgreSQL, /api/salud vuelve a 200 sin reiniciar la API — a los 3 s
+PASS  La API sigue siendo el mismo proceso (mismo StartedAt y RestartCount) — {'restart_count': 0, 'started_at': '2026-11-03T23:57:31.329794477Z', 'status': 'running', 'health': 'unhealthy'}
+PASS  La API vuelve a healthy — {'restart_count': 0, 'started_at': '2026-11-03T23:57:31.329794477Z', 'status': 'running', 'health': 'healthy'}
+Estado final: {'api': 'healthy', 'consumer': 'healthy', 'kafka': 'healthy', 'postgres': 'healthy', 'producer': 'healthy'}
+
+16/16 comprobaciones superadas.

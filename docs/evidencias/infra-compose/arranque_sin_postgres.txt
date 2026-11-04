@@ -1,0 +1,41 @@
+# T009 — Arranque adverso sin PostgreSQL (A4, FR-008, SC-002)
+Inicio: 2026-11-03T23:59:37Z
+Stack parado (sin -v). Contenedores del proyecto: 0
+Comando: docker compose up -d --no-deps kafka producer consumer api   (PostgreSQL NO se levanta)
+(salida vacía)
+PASS  PostgreSQL no está levantado
+
+## Observación durante 70 s
+[+17 s] producer=running/starting/reinicios=0; consumer=running/starting/reinicios=0; api=running/starting/reinicios=0
+[+28 s] producer=running/starting/reinicios=0; consumer=running/starting/reinicios=0; api=running/starting/reinicios=0
+[+40 s] producer=running/starting/reinicios=0; consumer=running/starting/reinicios=0; api=running/starting/reinicios=0
+[+52 s] producer=running/starting/reinicios=0; consumer=running/starting/reinicios=0; api=running/starting/reinicios=0
+[+63 s] producer=running/starting/reinicios=0; consumer=running/starting/reinicios=0; api=running/unhealthy/reinicios=0
+[+75 s] producer=running/starting/reinicios=0; consumer=running/starting/reinicios=0; api=running/unhealthy/reinicios=0
+PASS  producer, consumer y api siguen running con RestartCount 0 (no terminan ni se reinician) — {'producer': {'status': 'running', 'restarts': 0, 'started': '2026-11-03T23:59:47.380346226Z', 'health': 'starting'}, 'consumer': {'status': 'running', 'restarts': 0, 'started': '2026-11-03T23:59:47.381690517Z', 'health': 'starting'}, 'api': {'status': 'running', 'restarts': 0, 'started': '2026-11-03T23:59:40.429271746Z', 'health': 'unhealthy'}}
+PASS  Ninguno figura healthy sin base de datos
+
+## Líneas de reintento en los registros (primeras de cada servicio)
+PASS  producer: líneas «Reintento N … PostgreSQL (postgres)» con espera — 6 líneas; esperas ['1', '2', '4', '8', '16', '30']
+    2026-11-03 23:59:51,843 WARNING [common.retry] Reintento 1: no se pudo conectar con PostgreSQL (postgres) (gaierror: [Errno -5] No address associated with hostname). Nuev
+    2026-11-03 23:59:55,569 WARNING [common.retry] Reintento 2: no se pudo conectar con PostgreSQL (postgres) (gaierror: [Errno -5] No address associated with hostname). Nuev
+PASS  producer: sin Traceback en el registro
+PASS  consumer: líneas «Reintento N … PostgreSQL (postgres)» con espera — 6 líneas; esperas ['1', '2', '4', '8', '16', '30']
+    2026-11-03 23:59:51,861 WARNING [common.retry] Reintento 1: no se pudo conectar con PostgreSQL (postgres) (gaierror: [Errno -5] No address associated with hostname). Nuev
+    2026-11-03 23:59:55,585 WARNING [common.retry] Reintento 2: no se pudo conectar con PostgreSQL (postgres) (gaierror: [Errno -5] No address associated with hostname). Nuev
+PASS  consumer: sin Traceback en el registro
+PASS  api: líneas «Reintento N … PostgreSQL (postgres)» con espera — 6 líneas; esperas ['1', '2', '4', '8', '16', '30']
+    2026-11-03 23:59:45,292 WARNING [common.retry] Reintento 1: no se pudo conectar con PostgreSQL (postgres) (gaierror: [Errno -5] No address associated with hostname). Nuev
+    2026-11-03 23:59:50,298 WARNING [common.retry] Reintento 2: no se pudo conectar con PostgreSQL (postgres) (gaierror: [Errno -5] No address associated with hostname). Nuev
+PASS  api: sin Traceback en el registro
+
+## Recuperación
+[+0 s] 00:00:57 docker compose up -d postgres
+
+[+7 s] PostgreSQL healthy
+[+16 s] los cinco servicios healthy: {'api': 'healthy', 'consumer': 'healthy', 'kafka': 'healthy', 'postgres': 'healthy', 'producer': 'healthy'}
+PASS  Los cinco healthy sin reiniciar nada a mano, en menos de 120 s desde que PostgreSQL está healthy — 9 s
+PASS  GET /api/salud devuelve status ok — 200 {"status":"ok","last_ingestion":null,"generated":1793750474886}
+PASS  Los tres servicios Python son los mismos procesos (sin reinicios ni recreaciones) — {'producer': 0, 'consumer': 0, 'api': 0}
+
+12/12 comprobaciones superadas.

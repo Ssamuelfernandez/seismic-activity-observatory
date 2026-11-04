@@ -1,0 +1,26 @@
+# T017 — Mensaje crudo frente a kafka-message.md §3
+Fecha: 2026-11-04T00:01:35Z
+Comando: -T kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic earthquakes.live --from-beginning --max-messages 1 --timeout-ms 20000 --property print.key=true
+Líneas recibidas: 1
+PASS  Se recibió exactamente un mensaje
+Clave: synthetic-1793749488
+Valor (JSON): {"source": "replay_demo", "mode": "live", "ingested_at": "2026-11-03T23:44:48Z", "replay_at": null, "is_synthetic": true, "event": {"type": "Feature", "properties": {"mag": 1.0, "place": "Evento sintético de prueba (infra-compose)", "time": 1793749488017, "updated": 1793749488017, "magType": "ml", "type": "earthquake", "title": "M 1.0 - Evento sintético de prueba (infra-compose)"}, "geometry": {"type": "Point", "coordinates": [0.0, 0.0, 10.0]}, "id": "synthetic-1793749488"}}
+PASS  Campos de primer nivel obligatorios presentes — ['event', 'ingested_at', 'is_synthetic', 'mode', 'replay_at', 'source']
+PASS  Sin campos de primer nivel nuevos respecto al contrato — []
+PASS  La clave es igual a event.id y empieza por «synthetic» — synthetic-1793749488
+PASS  source = replay_demo (valor permitido por el contrato)
+PASS  mode = live (coincide con el tema earthquakes.live)
+PASS  replay_at = null con mode = live
+PASS  is_synthetic = true
+PASS  ingested_at en ISO 8601 UTC con sufijo Z — 2026-11-03T23:44:48Z
+PASS  event.type = Feature (GeoJSON sin modificar)
+PASS  event.id es una cadena no vacía
+PASS  event.properties.time y updated son enteros (milisegundos Unix) — time=1793749488017 updated=1793749488017
+PASS  time está en milisegundos (13 cifras)
+PASS  event.properties.type = earthquake
+PASS  geometry = Point con 3 coordenadas [lon, lat, profundidad] — [0.0, 0.0, 10.0]
+PASS  Coordenadas finitas y dentro de rango
+PASS  mag nula o dentro de −10…15 — 1.0
+PASS  El mensaje se distingue como sintético por la marca y por el identificador
+
+18/18 comprobaciones superadas.

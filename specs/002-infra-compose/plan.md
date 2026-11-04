@@ -174,6 +174,14 @@ Evidencia en [docs/evidencias/infra-compose/](../../docs/evidencias/infra-compos
    - **Corrección de método en T012**: tras eliminar las imágenes la caché de BuildKit seguía caliente y `up --build -d` no habría medido una construcción en frío; se añadió `docker compose build --no-cache` (8 s) y se suma al tiempo de `up`.
    - **Límite de SC-010**: el quickstart lo siguió el propio agente, no una persona ajena al desarrollo; funcionó sin cambios, pero SC-010 se confirmará con una persona externa.
 
+7. **Segunda tanda de verificaciones con Docker (2026-11-04): superada tras corregir dos defectos reales y varios fallos de método.** T009, T014, T015, T017, T019, T023 (paso de Docker) y T033 pasan; A12 (T029) pasa sus partes 1 y 2 y espera a T028 (README).
+   - **Defecto 1 — latido del consumidor (T014)**: con Kafka caído `getmany` devuelve vacío cada segundo y el bucle seguía renovando el latido, así que el consumidor nunca pasaba a `unhealthy` (330 s sin cambiar). Corregido en `consumer/loop.py` (`broker_reachable`: consulta `end_offsets` cada 10 s, máximo 5 s; el latido se renueva solo si el broker responde); ahora `unhealthy` a los 104 s y recuperación en 21 s. Documentado en `contracts/config.md` §E y `research.md` §6; 4 pruebas nuevas.
+   - **Defecto 2 — trazas en el registro de la API (T015)**: el pool de asyncpg registraba un traceback completo cada 5 s con la base parada (sin credenciales ni SQL, pero T015 exige un registro sin trazas). Corregido con `DropTracebackFilter` en `common/logging_setup.py`; prueba nueva. Resultado: 16/16.
+   - **Rango esperado del productor (T014)**: el rango 150–180 s suponía un último latido justo al parar Kafka; con intervalo de 30 s puede ser de hasta 30 s antes: correcto 120–180 s (observado 140 s). Corregido en `config.md` §E y `tasks.md`.
+   - **Fallos de método corregidos (no del producto)**: la huella de T019 no incluía los objetos por un error de tipo en la consulta (cast a text y `ON_ERROR_STOP`); el lector de consola de T033 no terminaba con mensajes cada 5 s (`--max-messages`); el offset base de `earthquakes.live` se leía antes de recrear el productor y contaba un mensaje del antiguo (ahora después); el patrón de A12 coincidía con `KAFKA_NODE_ID` (`-w`).
+   - **Limitación del entorno**: el reloj de pared de la máquina virtual de Docker da saltos hacia atrás (−0,56, −0,77 y −1,33 s en 75 s; el del anfitrión, ninguno). Por eso una separación aislada entre mensajes puede salir de 3,7 s en lugar de 5 s; el criterio de cadencia de T033 usa mediana, porcentaje y recuento por ventana. El productor espera con reloj monótono.
+   - **Rehechas tras el cambio de código** (regla de T031): `verify_stack.py` 16/16, `pytest` 27 pasadas y `check_env_example.py` (`verificacion_completa.txt`, `pytest.txt`, `check_env_example.txt`).
+
 ## Complexity Tracking
 
 Sin violaciones de la constitución que justificar; la única desviación (§19) está declarada arriba.

@@ -1,0 +1,54 @@
+# T033 — Configuración por entorno del productor (C1, A10, FR-012, US5-4)
+Inicio: 2026-11-04T00:22:53Z
+
+## Ejecuciones previas (mismo script con el criterio inicial «todas las separaciones entre 4 y 6 s»)
+- Ejecución 0 (00:08 UTC): el script se colgó en la lectura del tema (kafka-console-consumer con --timeout-ms no termina si llegan mensajes cada 5 s); se detuvo y se restauró el productor a mano. Corrección: leer un número fijo de mensajes con --max-messages y contar el total con kafka-get-offsets.
+- Ejecución 1 (00:13 UTC): 12/13. Separaciones [5.0, 5.0, 3.7, 5.0, 5.0, 5.0] -> una separación de 3,7 s.
+- Ejecución 2 (00:16 UTC): 12/13. Separaciones [5.0, 5.0, 5.0, 5.0, 5.0, 3.7, 5.0, 5.0] -> otra de 3,7 s en otro punto.
+- Diagnóstico: sonda de reloj dentro del contenedor de la API durante 75 s: saltos del reloj de pared de -0,559 s, -0,773 s y -1,331 s; en el anfitrión, ninguno. Es una corrección de reloj de la máquina virtual de Docker, no un fallo del productor (el productor espera 5 s con asyncio.sleep, reloj monótono).
+- Ajuste de criterio: mediana, porcentaje de separaciones válidas y recuento por ventana, que no dependen de saltos puntuales del reloj.
+- Ejecución 3 (00:20 UTC): 14/15. Cadencia correcta con el criterio nuevo; falló «earthquakes.live no recibió mensajes» (offset 37 -> 38) porque el offset base se leía antes de recrear el productor y el productor ANTIGUO publicó una vez más (su marca ...644 es anterior al primer mensaje de config-test ...645). Carrera de la prueba, no del productor: el offset base se lee ahora tras la recreación.
+Configuración original del productor: {'KAFKA_TOPIC': 'earthquakes.live', 'PRODUCER_INTERVAL_SECONDS': '30'}
+PASS  Configuración original: 30 s y earthquakes.live
+
+## 1) Tema de prueba (no es del contrato)
+Created topic config-test.
+PASS  Tema config-test creado
+
+## 2) Recrear solo el productor con PRODUCER_INTERVAL_SECONDS=5 y KAFKA_TOPIC=config-test
+time="2026-11-04T01:22:55+01:00" level=warning msg="No services to build" Container seismic-observatory-producer-1 Recreate Container seismic-observatory-producer-1 Recreated Container seismic-observatory-producer-1 Starting Container seismic-observatory-producer-1 Started
+Entorno visto por el productor: {'PRODUCER_INTERVAL_SECONDS': '5', 'KAFKA_TOPIC': 'config-test'}
+PASS  El productor ve la configuración nueva sin tocar .env ni el código
+PASS  .env sigue con PRODUCER_INTERVAL_SECONDS=30 (no se modificó)
+Offset final de earthquakes.live justo tras recrear el productor (el productor antiguo ya no existe): 42
+
+## 3) Esperar 40 s y leer el tema de prueba
+Mensajes publicados en config-test tras ~40 s (offset final): 9
+Primeras claves leídas (9): ['synthetic-1793751776', 'synthetic-1793751781', 'synthetic-1793751786', 'synthetic-1793751791', 'synthetic-1793751796', 'synthetic-1793751800', 'synthetic-1793751805', 'synthetic-1793751810', 'synthetic-1793751815']
+Marcas de tiempo (ms): [1793751776517, 1793751781523, 1793751786531, 1793751791541, 1793751796548, 1793751800213, 1793751805225, 1793751810233, 1793751815241]
+Separación entre marcas de tiempo consecutivas (s): [5.0, 5.0, 5.0, 5.0, 3.7, 5.0, 5.0, 5.0]
+PASS  Al menos 6 mensajes en ~40 s (cadencia de 5 s) — 9 mensajes
+PASS  Las claves leídas empiezan por synthetic-
+PASS  Cadencia: mediana de las separaciones entre 4,5 y 5,5 s — mediana 5.0 s
+PASS  Cadencia: al menos el 75 % de las separaciones está entre 4 y 6 s — 7/8
+PASS  Recuento por ventana: 8–10 mensajes en ~40–45 s (independiente de los saltos del reloj) — 9 mensajes
+Nota: el reloj de pared de la máquina virtual de Docker da saltos hacia atrás (medido con clock_probe: -0,56 s, -0,77 s y -1,33 s en 75 s; el del anfitrión no). Las marcas de Kafka y los identificadores salen de ese reloj, por lo que una separación aislada puede salir más corta (3,7 s).
+
+## 4) El tema earthquakes.live no recibió mensajes en esa ventana
+Offset final de earthquakes.live ahora: 42 (antes 42)
+PASS  earthquakes.live no recibió mensajes mientras el productor publicaba en config-test
+
+## 5) Restaurar la configuración original
+time="2026-11-04T01:23:39+01:00" level=warning msg="No services to build" Container seismic-observatory-producer-1 Recreate Container seismic-observatory-producer-1 Recreated Container seismic-observatory-producer-1 Starting Container seismic-observatory-producer-1 Started
+Entorno visto por el productor: {'PRODUCER_INTERVAL_SECONDS': '30', 'KAFKA_TOPIC': 'earthquakes.live'}
+PASS  Configuración restaurada: 30 s y earthquakes.live
+PASS  El productor vuelve a healthy — healthy
+Offset final de earthquakes.live tras restaurar y esperar 40 s: 44
+PASS  El productor vuelve a publicar en earthquakes.live — +2 mensajes
+PASS  Con cadencia de 30 s, ≤ 3 mensajes en ~45 s (no sigue a 5 s) — +2
+
+## 6) Eliminar el tema de prueba
+Temas ahora: ['__consumer_offsets', 'earthquakes.live', 'earthquakes.replay']
+PASS  Tema de prueba eliminado; los temas del contrato siguen — ['__consumer_offsets', 'earthquakes.live', 'earthquakes.replay']
+
+15/15 comprobaciones superadas.
