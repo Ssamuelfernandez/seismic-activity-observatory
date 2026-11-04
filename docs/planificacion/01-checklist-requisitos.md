@@ -85,19 +85,19 @@ Nota de nombres: los identificadores del proyecto (tablas, columnas, topics, có
 
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
-| C1 | **[OBL]** Validar, limpiar, enriquecer y escribir; reglas explícitas | Reglas listadas en memoria | Enunc. §6 | ☐ |
-| C2 | **[OBL]** Transacción PG (versión + estado actual) → commit → **después** commit del offset | `enable_auto_commit=False`; orden verificado | Enunc. §7 · FAQ 13 | ☐ |
-| C3 | **[OBL]** Al menos una vez + escritura idempotente (restricciones únicas + upsert). No hace falta transacción distribuida | Repetir un mensaje no cambia nada | Enunc. §7 | ☐ |
-| C4 | **[OBL]** Estado actual solo se actualiza si `updated` es más reciente; la versión recibida se conserva siempre sin pisar una posterior | Prueba "versión antigua tardía" | Enunc. §7 | ☐ |
-| C5 | **[OBL]** Cuarentena **duradera** (tabla `quarantine`) con motivo y referencia al original; no perder en silencio ni bloquear la cola | Tabla de cuarentena | Enunc. §6 · README §6 | ☐ |
-| C6 | **[OBL]** No rellenar nulos con 0; magnitud negativa y profundidad negativa **no** se rechazan sin investigar | Reglas justificadas | Enunc. §6 · FAQ 16 | ☐ |
-| C7 | **[OBL]** Fechas a UTC conservando el original (ms); separar tiempo de ocurrencia vs procesamiento | Campos distintos | Enunc. §6 | ☐ |
-| C8 | **[OBL]** Registrar qué transformaciones cambian datos y a cuántos registros afectan | Contadores | Enunc. §6 | ☐ |
+| C1 | **[OBL]** Validar, limpiar, enriquecer y escribir; reglas explícitas | Reglas listadas en memoria | Enunc. §6 | [x] |
+| C2 | **[OBL]** Transacción PG (versión + estado actual) → commit → **después** commit del offset | `enable_auto_commit=False`; orden verificado | Enunc. §7 · FAQ 13 | [x] |
+| C3 | **[OBL]** Al menos una vez + escritura idempotente (restricciones únicas + upsert). No hace falta transacción distribuida | Repetir un mensaje no cambia nada | Enunc. §7 | [x] |
+| C4 | **[OBL]** Estado actual solo se actualiza si `updated` es más reciente; la versión recibida se conserva siempre sin pisar una posterior | Prueba "versión antigua tardía" | Enunc. §7 | [x] |
+| C5 | **[OBL]** Cuarentena **duradera** (tabla `quarantine`) con motivo y referencia al original; no perder en silencio ni bloquear la cola | Tabla de cuarentena | Enunc. §6 · README §6 | [x] |
+| C6 | **[OBL]** No rellenar nulos con 0; magnitud negativa y profundidad negativa **no** se rechazan sin investigar | Reglas justificadas | Enunc. §6 · FAQ 16 | [x] |
+| C7 | **[OBL]** Fechas a UTC conservando el original (ms); separar tiempo de ocurrencia vs procesamiento | Campos distintos | Enunc. §6 | [x] |
+| C8 | **[OBL]** Registrar qué transformaciones cambian datos y a cuántos registros afectan | Contadores | Enunc. §6 | [x] |
 | C9 | **[OBL]** País por **punto dentro de polígono** (GeoPandas/Shapely), EPSG:4326, **no** parseando `place` | `country_id` = `ADM0_A3` | Enunc. §4.3 | ☐ |
 | C10 | **[OBL]** Comprobar unicidad de `ADM0_A3` antes de usarlo como ID (la validación indica 177 distintos) | Consulta/script | Enunc. §4.3 | ☐ |
 | C11 | **[OBL]** Documentar regla para puntos en frontera y múltiples coincidencias | Párrafo + implementación | Enunc. §4.3 · FAQ 19 | ☐ |
 | C12 | **[OBL]** "Sin país asignado" se conserva (no se atribuye al más cercano, no es error automático) y permanece en análisis | `country_id` nulo → etiqueta en API/panel | Enunc. §4.3 | ☐ |
-| C13 | **[OBL]** Casos de prueba artificiales **separados e identificados** | Marcados como sintéticos (`is_synthetic`) | Enunc. §6 | ☐ |
+| C13 | **[OBL]** Casos de prueba artificiales **separados e identificados** | Marcados como sintéticos (`is_synthetic`) | Enunc. §6 | [x] |
 | C14 | **[OBL, EVAL]** Apartado de calidad en memoria/notebook con código o consultas, resultados **antes/después**, decisiones y registros de ejemplo | Ver D | Enunc. §6, §12 | ☐ |
 | C15 | **[OPC]** Informe de calidad automático / panel de calidad / tabla de métricas | **No** hacerlo salvo que sobre tiempo | Enunc. §6 | — |
 
@@ -187,13 +187,13 @@ La columna "Feature" indica dónde se prueba por primera vez; la feature `prueba
 | # | Prueba | Resultado esperado | Evidencia | Feature | ☐ |
 |---|---|---|---|---|---|
 | 1 | Evento nuevo | 1 fila actual visible en API, mapa y análisis | SQL + captura | `productor-live` (real) + `pruebas-aceptacion` | ☐ |
-| 2 | Reenviar la misma versión | No aumenta el recuento | SQL antes/después | `productor-live`, `consumidor-idempotente` | ☐ |
-| 3 | Versión posterior | Cambian datos actuales y agregaciones afectadas | SQL + captura | `consumidor-idempotente` | ☐ |
-| 4 | Versión antigua tardía | No sustituye a la reciente | Actual + historial | `consumidor-idempotente` | ☐ |
+| 2 | Reenviar la misma versión | No aumenta el recuento | SQL antes/después | `productor-live`, `consumidor-idempotente` | [x] |
+| 3 | Versión posterior | Cambian datos actuales y agregaciones afectadas | SQL + captura | `consumidor-idempotente` | [x] |
+| 4 | Versión antigua tardía | No sustituye a la reciente | Actual + historial | `consumidor-idempotente` | [x] |
 | 5 | Magnitud nula | Se conserva, tratamiento documentado, se ve como **ND** | Captura | `geografia-pais` (+ panel) | ☐ |
-| 6 | Coordenadas inválidas | Cuarentena + motivo; ningún punto inventado | Fila de cuarentena | `consumidor-idempotente` | ☐ |
+| 6 | Coordenadas inválidas | Cuarentena + motivo; ningún punto inventado | Fila de cuarentena | `consumidor-idempotente` | [x] |
 | 7 | Evento marítimo | "Sin país asignado"; sigue en el análisis | Captura | `geografia-pais` (+ panel) | ☐ |
-| 8 | Reiniciar consumidor | Reanuda sin duplicar efectos ya persistidos | Logs + SQL | `consumidor-idempotente` | ☐ |
+| 8 | Reiniciar consumidor | Reanuda sin duplicar efectos ya persistidos | Logs + SQL | `consumidor-idempotente` | [x] |
 | 9 | Cerrar el túnel | Panel muestra el fallo y conserva/identifica la última lectura | Captura del aviso | `despliegue-tunel` | ☐ |
 | 10 | Reabrir el túnel | Se recupera automáticamente en el siguiente refresco | Captura | `despliegue-tunel` | ☐ |
 | 11 | Reproducción histórica | Va por Kafka, aislada de live, etiquetada, con duplicados y revisiones controlados | Demo + SQL | `replay` | ☐ |
