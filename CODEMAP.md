@@ -1,6 +1,6 @@
 # Mapa del código
 
-Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04) cerradas: existen los contratos, el DDL, el modelo de datos, el stack de Compose con productor, consumidor y API **mínimos** y sus evidencias. Las filas de `infra-compose` son rutas reales; las demás filas de la tabla son las **previstas** y se confirman al cerrar cada feature.
+Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04) cerradas, y `consumidor-idempotente` implementada (pendiente de la revisión del alumno): existen los contratos, el DDL, el modelo de datos, el stack de Compose con productor y API **mínimos**, el consumidor idempotente y sus evidencias. Las filas de estas features son rutas reales; las que citan `common/geo.py`, `producer/ingest_state.py`, `api/routers/events.py` y `frontend/` son **previstas** y se confirman al cerrar cada feature.
 
 ## Dónde está cada cosa
 | Quiero entender… | Mira… | Requisito |
@@ -20,24 +20,50 @@ Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04
 | Cómo se crean los temas y su retención de 7 días | common/kafka_topics.py; compose.yaml (broker); README.md (sección «Retención de Kafka») | A6 |
 | El evento sintético de prueba (`is_synthetic = true`) | common/synthetic_event.py | A1 |
 | El productor mínimo | producer/ (`main.py`, `loop.py`, `publisher.py`) | A1, A4, A10 |
-| El consumidor mínimo (solo registra, no escribe) | consumer/ (`main.py`, `loop.py`) | A1, A4 |
+| El consumidor idempotente: arranque, señales de parada y gancho de prueba | consumer/main.py | C2, FR-023, FR-027 |
+| El bucle (un mensaje por vuelta: escritura, línea de decisión, commit del offset, contadores; latido y sondeo del broker) | consumer/loop.py (`consume_until_stopped`, `process_and_commit`, `broker_reachable`) | C2, FR-001, FR-029 |
+| Procesar un mensaje (decodificar, validar, transformar, escribir, cuarentena; `db_constraint_violation`) | consumer/pipeline.py (`process_record`, `bind_pool_writers`) | C1, C2, C5 |
+| Reintentos sin límite de la base y del commit del offset, y la parada limpia | consumer/resilience.py (`retry_db_operation`, `commit_offset_with_retry`) | C2, FR-014, FR-029 |
+| La línea de decisión por mensaje y el volcado de contadores (`COUNTERS`) | consumer/reporting.py | C1, C8, FR-003 |
+| Los contadores de transformaciones y sus identidades | consumer/counters.py | C8, FR-023, FR-036 |
+| El gancho que corta el proceso entre ambos commits (prueba 8) | consumer/fault_hook.py | C2, SC-005 |
 | La API mínima (`GET /api/salud`) | api/ (`main.py`, `queries.py`, `routers/health.py`) | A1, A9 |
 | Los roles de base de datos y sus permisos | sql/002_roles.sql; specs/002-infra-compose/data-model.md | E5 (db-schema.md §1.1) |
 | Cómo se inicializa PostgreSQL (esquema y roles) la primera vez | scripts/postgres_init.sh | A5 |
-| Las pruebas unitarias | tests/ (`common/`, `producer/`, `consumer/`); `uv run pytest` | A4, A10 |
-| La verificación de punta a punta del stack | scripts/verify_stack.py | A1–A12 |
+| Cómo se ejecutan las pruebas de integración (servicio `tests`, perfil `test`, etapa `test` del `Dockerfile`) y la evidencia del bloque 1 | compose.yaml (servicio `tests`; monta `tests/`, `sql/` y `scripts/` en solo lectura, este último para que `tests/scripts/` importe `scripts`); Dockerfile (etapa `test`); pyproject.toml (marcador `integration`); docs/evidencias/consumidor-idempotente/ | FR-033 |
+| Las pruebas unitarias | tests/ (`common/`, `producer/`, `consumer/`); `uv run pytest -m "not integration"` | A4, A10 |
+| Las pruebas unitarias del procesamiento (puro, sin E/S): decodificar, validar, transformar, versión, cuarentena, temas | tests/common/ (`test_decode.py`, `test_storable.py`, `test_validation.py`, `test_transform.py`, `test_processing.py`, `test_records.py`, `test_quarantine_row.py`, `test_kafka_topics.py`) | C1–C8 |
+| Las pruebas unitarias del consumidor (bucle, canalización, reintentos, contadores, línea de decisión, gancho, SQL, errores de base, estado inconsistente) | tests/consumer/ (`test_consumer_loop.py`, `test_pipeline.py`, `test_resilience.py`, `test_counters.py`, `test_reporting.py`, `test_fault_hook.py`, `test_queries.py`, `test_db_errors.py`, `test_writer_inconsistent.py`); tests/support/`__init__.py` y scripts/consumer_scenarios/`__init__.py` son marcadores de paquete | C1–C8 |
+| Las pruebas de integración del bucle (corte tras el commit de PostgreSQL y reinicio; contadores contra SQL) y su arnés de Kafka simulado | tests/integration/test_restart_crash.py, tests/integration/test_counters_reconcile.py; tests/support/loop_harness.py | C2, C8, SC-005, SC-009 |
+| La evidencia del bloque 4 (pytest unitario e integración, TDD, corte simulado, contadores) | docs/evidencias/consumidor-idempotente/ (`pytest_*_bloque4.txt`, `bloque4_*`) | FR-034 |
+| La verificación de punta a punta del stack (A1 reconoce la línea `decision=… event_id=synthetic-…`) | scripts/verify_stack.py; nota de regresión en docs/evidencias/consumidor-idempotente/regresion_002.txt | A1–A12 |
+| La verificación del consumidor con Kafka y PostgreSQL reales (`faq12`, `quarantine`, `restart`; `down -v` solo con `--yes`) | scripts/verify_consumer.py (CLI); scripts/consumer_scenarios/ (`helpers.py` auxiliares puros, `stack.py` Docker/SQL/Kafka, `report.py` comprobaciones y evidencias, `faq12.py`, `quarantine.py`, `restart.py`; repartido en módulos por el límite de 250 líneas) | C2, C3, C4, C5, FR-034, SC-012 |
+| Los mensajes de cada escenario publicados en Kafka (casos con nombre, bytes exactos, todo sintético) | tests/support/publish_messages.py (se ejecuta en el servicio `tests`: `python -m tests.support.publish_messages <caso>`) | FR-031, SC-012 |
+| Las pruebas de los auxiliares del script de verificación y de los casos del publicador (sin Docker) | tests/scripts/test_verify_consumer_helpers.py, tests/scripts/test_publish_messages.py, tests/scripts/test_verify_stack_a1.py (reconocimiento de la línea de decisión del check A1) | SC-009, FR-034 |
+| La evidencia del bloque 6 (FAQ 12, reenvío, versiones, cuarentena y reinicio con Kafka real; consola de cada escenario) | docs/evidencias/consumidor-idempotente/ (`faq12_antes_despues.sql/.out`, `prueba2_reenvio.out`, `prueba3_4_versiones.out`, `prueba6_cuarentena.out`, `prueba8_reinicio.log/.out`, `bloque6_*`) | FR-034 |
 | Las evidencias de infra-compose (arranque, clon limpio, reintentos, latido, 503, M7–M9, secretos…) | docs/evidencias/infra-compose/ | A1–A12, M7–M9 |
 | La spec, el plan y las tareas de infra-compose | specs/002-infra-compose/ | A1–A12 |
 | Cómo se decide qué se publica | producer/ingest_state.py, producer/main.py | B6 |
-| Qué versión gana | common/processing.py::is_newer_version | C4 |
+| Qué versión gana | common/processing.py (`is_newer_version`, `decide_version_outcome`, `is_inconsistent_state`) | C4 |
 | Cómo se asigna el país | common/geo.py | C9–C12 |
-| Qué va a cuarentena y por qué | common/validation.py, consumer/writer.py | C5 |
+| Qué va a cuarentena y por qué | common/validation.py (+ `validation_envelope.py`: pasos 1-3, dividido por el límite de 250 líneas), common/quarantine_row.py, consumer/writer.py (`write_quarantine`) | C5 |
+| Cómo se escribe un evento en una transacción (estado actual, historial, `date_dim`) | consumer/writer.py (`write_event`) | C2, C3, C4 |
+| Todo el SQL del consumidor (el esquema sale de una lista cerrada) | consumer/queries.py | C2, C5 |
+| Qué error de base es de contenido (cuarentena) y cuál se reintenta | consumer/db_errors.py (`is_content_error`) | C5 |
+| Las pruebas de integración con PostgreSQL real (base temporal, rol `observatory_consumer`, FAQ 12, reenvío, nulos y tiempos, `date_dim`, cuarentena, permisos) | tests/integration/ (`conftest.py`, `test_faq12.py`, `test_idempotence.py`, `test_nulls_times.py`, `test_date_dim.py`, `test_quarantine.py` (más de 250 líneas: son 14 motivos y casos hostiles en una tabla, se mantiene unido por T042), `test_roles.py`) | C1–C8, C13 |
+| Ayudas de esas pruebas: base temporal, procesar un mensaje de punta a punta sin Kafka y escribir evidencias | tests/support/temp_database.py, tests/support/db_helpers.py, tests/support/evidence.py | FR-031, FR-033 |
+| La evidencia del bloque 3 (FAQ 12, reenvío, versiones, cuarentena, roles) | docs/evidencias/consumidor-idempotente/ (`bloque3_*.out/.sql`, `roles_consumidor.out`, `pytest_integracion_bloque3.txt`) | FR-034 |
+| Las estructuras del procesamiento (mensaje, resultado de versión, filas) | common/records.py | C1–C8 |
+| Cómo se decodifica el valor Kafka y qué contenido no se puede guardar | common/decode.py, common/storable.py | C1, C5 |
+| Cómo se convierten ms a UTC y se arman las filas de un evento | common/transform.py | C6, C7 |
+| Cómo se decide el modo (`live`/`replay`) de un tema | common/kafka_topics.py::topic_mode | C1 |
+| Los mensajes de prueba compartidos (secuencia FAQ 12) | tests/support/messages.py | C3, C4 |
 | Qué devuelve la API de eventos | api/routers/events.py, api/queries.py | F1–F3 |
 | Cómo el panel consume la API | frontend/src/app/core/api.service.ts | G1, G9 |
 
-## Flujo actual (infra-compose, eventos sintéticos)
+## Flujo actual (consumidor idempotente, eventos sintéticos)
 common/synthetic_event.py -> producer/loop.py -> producer/publisher.py -> Kafka (`earthquakes.live`)
-     -> consumer/loop.py (solo registra) ; API: api/routers/health.py -> api/queries.py -> PostgreSQL (rol de solo lectura)
+     -> consumer/loop.py -> consumer/pipeline.py -> common/{decode,validation,transform,quarantine_row}.py -> consumer/writer.py -> PostgreSQL ; API: api/routers/health.py -> api/queries.py -> PostgreSQL (rol de solo lectura)
 
 ## Flujo previsto de un evento (de USGS al mapa)
 USGS -> producer/usgs_client.py -> producer/publisher.py -> Kafka
@@ -57,3 +83,4 @@ Reglas completas en `docs/planificacion/03-procedimiento-ejecucion.md` §7.3. Re
 |---|---|---|
 | contratos-y-modelo | Contratos del mensaje Kafka, de la base de datos y de la API; `sql/001_schema.sql`; modelo de datos conceptual, lógico y físico; evidencias de las pruebas del esquema (E1–E5, E7, C4) | 2026-11-02 |
 | infra-compose | `compose.yaml` con Kafka (KRaft), PostgreSQL 16, productor, consumidor y API; imagen Python compartida con `uv.lock`; `.env.example`; reintentos, latido y healthchecks; temas con retención de 7 días; roles de base de datos (`sql/002_roles.sql`); productor, consumidor y API mínimos con eventos sintéticos; `verify_stack.py` y `check_env_example.py`; pruebas unitarias; evidencias en `docs/evidencias/infra-compose/` (A1–A12; M7–M9 verificados) | 2026-11-04 |
+| consumidor-idempotente | Consumidor que valida (`common/validation.py`), decide la versión (`common/processing.py`), escribe en una transacción por mensaje (`consumer/writer.py`), envía a cuarentena con motivo, reintenta sin límite la base y el commit del offset, deja una línea `decision=…` por mensaje y contadores `COUNTERS`; gancho de corte para la prueba 8; servicio `tests` (perfil `test`) y pruebas de integración con PostgreSQL real; `scripts/verify_consumer.py` (`faq12`, `quarantine`, `restart`); check A1 de `verify_stack.py` actualizado; evidencias en `docs/evidencias/consumidor-idempotente/` (C1–C8, C13; pruebas 2, 3, 4, 6 y 8) | 2026-11-04 |

@@ -1,0 +1,3 @@
+AVISO: este escenario ejecuta `docker compose down -v` y BORRA los volúmenes locales de Kafka y de
+PostgreSQL de este proyecto, incluidos los datos que `002` haya dejado. No se ha ejecutado nada.
+Para continuar, repite el comando con --yes (o define VERIFY_CONSUMER_CONFIRM=yes).

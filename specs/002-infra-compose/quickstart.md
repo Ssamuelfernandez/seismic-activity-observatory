@@ -23,7 +23,7 @@ Esperado: `kafka`, `postgres`, `producer`, `consumer` y `api` en `healthy` (la p
 
 | Qué | Comando | Esperado |
 |---|---|---|
-| Evento sintético en el consumidor | `docker compose logs consumer --no-log-prefix --tail 5` | Líneas `Evento recibido [SINTÉTICO] … event_id=synthetic-…` |
+| Evento sintético en el consumidor | `docker compose logs consumer --no-log-prefix --tail 5` | Líneas `decision=… event_id=synthetic-…` (una por mensaje) |
 | API | `curl http://127.0.0.1:8000/api/salud` | `{"status":"ok","last_ingestion":null,"generated":…}` |
 | Solo la API publica puertos | `docker compose ps` | Solo `127.0.0.1:8000->8000/tcp`, en `api` |
 | Temas y retención | `docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --describe --topic earthquakes.live` | `PartitionCount: 1`, `ReplicationFactor: 1`, `retention.ms=604800000` |

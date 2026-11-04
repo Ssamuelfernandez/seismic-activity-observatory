@@ -1,0 +1,6 @@
+-- [1] antes de las 100 repeticiones
+SELECT 'current_event' AS tabla, count(*) AS filas FROM live.current_event UNION ALL SELECT 'event_version', count(*) FROM live.event_version UNION ALL SELECT 'quarantine', count(*) FROM live.quarantine UNION ALL SELECT 'date_dim', count(*) FROM public.date_dim ORDER BY 1;
+
+-- [2] despues de las 100 repeticiones
+SELECT 'current_event' AS tabla, count(*) AS filas FROM live.current_event UNION ALL SELECT 'event_version', count(*) FROM live.event_version UNION ALL SELECT 'quarantine', count(*) FROM live.quarantine UNION ALL SELECT 'date_dim', count(*) FROM public.date_dim ORDER BY 1;
+

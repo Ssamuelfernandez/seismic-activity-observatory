@@ -1,0 +1,26 @@
+faq12 sin --yes: rc=2
+faq12 --yes: rc=0 15/15 comprobaciones superadas.
+quarantine --yes: rc=0 13/13 comprobaciones superadas.
+restart --yes: rc=0 14/14 comprobaciones superadas.
+## ls evidencias del bloque 6
+292 bytes  faq12_antes_despues.sql
+2585 bytes  faq12_antes_despues.out
+1218 bytes  prueba2_reenvio.out
+1928 bytes  prueba3_4_versiones.out
+3299 bytes  prueba6_cuarentena.out
+1055 bytes  prueba8_reinicio.log
+6763 bytes  prueba8_reinicio.out
+
+## docker compose ps
+consumer  Up 16 seconds (healthy)
+kafka  Up 47 seconds (healthy)
+postgres  Up 47 seconds (healthy)
+
+## variable y marcador en el consumidor
+[]
+ls: cannot access '/tmp/consumer_fault_done': No such file or directory
+
+## contratos sin cambios
+0
+## búsqueda de secretos en evidencias (nombres de variables)
+(fin)

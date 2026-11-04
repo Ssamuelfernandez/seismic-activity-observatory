@@ -1,7 +1,7 @@
 # Imagen Python compartida por productor, consumidor y API (A3).
 # Cada servicio la usa con un comando distinto (ver compose.yaml).
 # Versión exacta de Python: debe coincidir con .python-version.
-FROM python:3.12.16-slim-bookworm
+FROM python:3.12.16-slim-bookworm AS production
 
 # uv instala las dependencias exactas de uv.lock; la versión del binario también está fijada.
 COPY --from=ghcr.io/astral-sh/uv:0.12.13 /uv /usr/local/bin/uv
@@ -27,4 +27,11 @@ COPY consumer ./consumer
 COPY api ./api
 
 RUN useradd --system --uid 10001 --no-create-home observatory
+USER observatory
+
+# Etapa de pruebas (no es la imagen por defecto): production + dependencias del grupo dev.
+# Solo la usa el servicio `tests` de compose.yaml (perfil `test`).
+FROM production AS test
+USER root
+RUN uv sync --frozen --no-install-project
 USER observatory

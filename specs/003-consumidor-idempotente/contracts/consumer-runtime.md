@@ -51,6 +51,7 @@ Formato general: el de `common/logging_setup.py` (`%(asctime)s %(levelname)s [%(
 | Reintento de base o de commit | WARNING | `retry attempt=N wait_s=… op=<write_event\|write_quarantine\|commit_offset> event_id=… topic=… partition=… offset=… error=<Clase> sqlstate=<xxxxx\|-> detail="<≤200 caracteres>"` — sin traceback |
 | Defecto de validación previa | ERROR | `validation_gap event_id=… sqlstate=… …` (un error de clase 22/23 llegó a la base) |
 | Estado inconsistente | WARNING | `inconsistent_state event_id=…` |
+| Commit del offset omitido | WARNING | `commit_skipped event_id=… topic=… partition=… offset=… error=CommitFailedError` — el grupo perdió la partición; el mensaje se reentregará y se ignorará como reenvío (lo emite `consumer/resilience.py`) |
 | Broker no alcanzable | WARNING | `broker_unreachable bootstrap=<host:puerto> error=<Clase>` — una línea por sondeo fallido, sin traceback; la emite `broker_reachable` (`consumer/loop.py`). El escenario `kafka-down` la comprueba (FR-029, US2.5) |
 | Catálogo | INFO | `catalog loaded total=177 inserted=… updated=…` |
 | Contadores | INFO | `COUNTERS {…json con claves ordenadas…}` cada 60 s y al detenerse |

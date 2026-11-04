@@ -1,0 +1,31 @@
+# pytest -m 'not integration' -q (equipo, Python 3.12.9, .venv)
+........................................................................ [ 19%]
+........................................................................ [ 38%]
+........................................................................ [ 57%]
+........................................................................ [ 76%]
+........................................................................ [ 96%]
+...............                                                          [100%]
+375 passed, 31 deselected in 0.56s
+
+# pytest --collect-only -q (resumen)
+
+406 tests collected in 0.26s
+
+# pytest tests/consumer -v (bloque 4)
+........................................................................ [ 60%]
+................................................                         [100%]
+120 passed in 0.40s
+
+# wc -l consumer/*.py
+    1 consumer/__init__.py
+  115 consumer/counters.py
+   29 consumer/db_errors.py
+   55 consumer/fault_hook.py
+  215 consumer/loop.py
+   45 consumer/main.py
+  139 consumer/pipeline.py
+   86 consumer/queries.py
+   81 consumer/reporting.py
+  154 consumer/resilience.py
+   91 consumer/writer.py
+ 1011 total

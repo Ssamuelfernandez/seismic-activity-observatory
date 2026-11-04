@@ -1,0 +1,26 @@
+-- [1] live.quarantine leída con el administrador (versión Kafka real)
+SELECT id, reason, event_id, source, is_synthetic, kafka_topic, kafka_partition, kafka_offset, left(original_sha256, 12) AS sha, original IS NOT NULL AS has_json, left(raw_text, 40) AS raw FROM live.quarantine ORDER BY id;
+ id |          reason          |          event_id           |   source    | is_synthetic |   kafka_topic    | kafka_partition | kafka_offset |     sha      | has_json |                   raw                    
+----+--------------------------+-----------------------------+-------------+--------------+------------------+-----------------+--------------+--------------+----------+------------------------------------------
+  1 | coordinates_out_of_range | synthetic-quarantine-lat145 | replay_demo | t            | earthquakes.live |               0 |            0 | e56ef458ae03 | t        | 
+  2 | db_constraint_violation  | synthetic-quarantine-nul    | replay_demo | t            | earthquakes.live |               0 |            2 | dff760076f5a | f        | {"source": "replay_demo", "mode": "live"
+  3 | invalid_json             |                             |             | f            | earthquakes.live |               0 |            3 | 5f8e3f357eca | f        | \xff\xfe{
+  4 | invalid_json             |                             |             | f            | earthquakes.live |               0 |            4 | e3b0c44298fc | f        | 
+  5 | mode_topic_mismatch      | synthetic-quarantine-replay | replay_demo | t            | earthquakes.live |               0 |            5 | 8193a9b729d6 | t        | 
+  6 | value_out_of_range       |                             | replay_demo | t            | earthquakes.live |               0 |            6 | 3e97c0a53c47 | t        | 
+(6 rows)
+
+-- [2] Comprobaciones
+PASS  Publicado el caso quarantine-set — published case=quarantine-set messages=7 topic=earthquakes.live
+PASS  El grupo llega a lag 0 tras quarantine-set
+PASS  1 fila de cuarentena por mensaje inválido (6) y ninguna para el válido — [0, 2, 3, 4, 5, 6]
+PASS  offset 0: motivo coordinates_out_of_range, tema, partición 0 y SHA-256 de 64 hex — reason=coordinates_out_of_range topic=earthquakes.live partition=0 is_synthetic=t
+PASS  offset 2: motivo db_constraint_violation, tema, partición 0 y SHA-256 de 64 hex — reason=db_constraint_violation topic=earthquakes.live partition=0 is_synthetic=t
+PASS  offset 3: motivo invalid_json, tema, partición 0 y SHA-256 de 64 hex — reason=invalid_json topic=earthquakes.live partition=0 is_synthetic=f
+PASS  offset 4: motivo invalid_json, tema, partición 0 y SHA-256 de 64 hex — reason=invalid_json topic=earthquakes.live partition=0 is_synthetic=f
+PASS  offset 5: motivo mode_topic_mismatch, tema, partición 0 y SHA-256 de 64 hex — reason=mode_topic_mismatch topic=earthquakes.live partition=0 is_synthetic=t
+PASS  offset 6: motivo value_out_of_range, tema, partición 0 y SHA-256 de 64 hex — reason=value_out_of_range topic=earthquakes.live partition=0 is_synthetic=t
+PASS  current_event contiene solo el mensaje válido — ['synthetic-quarantine-valid']
+PASS  event_version contiene 1 fila (la del válido) — 1
+PASS  is_synthetic = true en las filas guardadas — [['t']]
+PASS  El consumidor sigue healthy

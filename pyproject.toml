@@ -22,3 +22,6 @@ package = false
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+markers = [
+    "integration: pruebas contra PostgreSQL 16 real, dentro de la red de Compose",
+]

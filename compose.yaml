@@ -81,6 +81,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: production
     command: ["python", "-m", "producer.main"]
     environment:
       <<: *common-env
@@ -122,6 +123,11 @@ services:
       DB_PASSWORD: ${DB_CONSUMER_PASSWORD:?Falta DB_CONSUMER_PASSWORD en .env}
       HEALTH_FILE: /tmp/consumer.alive
       HEALTH_MAX_AGE_SECONDS: 60
+      # Catálogo de países (solo lectura) y gancho de fallo de la prueba 8 (vacío = desactivado).
+      COUNTRY_CATALOG_PATH: /app/data/catalogo/paises.geojson
+      CONSUMER_FAULT_CRASH_AT_OFFSET: ${CONSUMER_FAULT_CRASH_AT_OFFSET:-}
+    volumes:
+      - ./data/catalogo:/app/data/catalogo:ro
     depends_on:
       kafka:
         condition: service_healthy
@@ -159,6 +165,41 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
+
+  tests:
+    # Pruebas de integración: perfil `test`, no arranca con `docker compose up`.
+    # No hereda x-python-service: otra imagen (etapa `test`), sin reinicio automático.
+    profiles: ["test"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    image: seismic-observatory-python-tests:0.1.0
+    pull_policy: never
+    networks: [backend]
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS:?Falta KAFKA_BOOTSTRAP_SERVERS en .env}
+      DB_HOST: ${DB_HOST:?Falta DB_HOST en .env}
+      DB_PORT: ${DB_PORT:?Falta DB_PORT en .env}
+      DB_NAME: ${POSTGRES_DB:?Falta POSTGRES_DB en .env}
+      # Administrador: crea la base temporal y lee la cuarentena; consumidor: el rol real que se prueba.
+      POSTGRES_USER: ${POSTGRES_USER:?Falta POSTGRES_USER en .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Falta POSTGRES_PASSWORD en .env}
+      DB_USER: observatory_consumer
+      DB_PASSWORD: ${DB_CONSUMER_PASSWORD:?Falta DB_CONSUMER_PASSWORD en .env}
+      EVIDENCE_DIR: /app/evidence
+      PYTEST_ADDOPTS: -p no:cacheprovider
+    volumes:
+      - ./tests:/app/tests:ro
+      - ./sql:/app/sql:ro
+      # Solo para que tests/scripts/ pueda importar `scripts` dentro del contenedor.
+      - ./scripts:/app/scripts:ro
+      - ./data/catalogo:/app/data/catalogo:ro
+      # Lectura y escritura: solo para tests/support/evidence.py.
+      - ./docs/evidencias/consumidor-idempotente:/app/evidence
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 networks:
   backend:

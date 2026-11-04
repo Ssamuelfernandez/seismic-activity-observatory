@@ -95,6 +95,24 @@ def read_int(name: str, default: int | None = None,
     return value
 
 
+def read_optional_int(name: str) -> int | None:
+    """Lee una variable entera opcional y no negativa.
+
+    Qué hace:
+        Devuelve None si la variable falta o está vacía; si no, la convierte a entero >= 0.
+    Recibe:
+        name: nombre de la variable de entorno.
+    Devuelve:
+        El entero, o None si no se configuró.
+    Por qué existe:
+        El gancho de fallo de la prueba 8 (offset de caída) es opcional y su ausencia
+        debe dejar el camino normal intacto (C2).
+    """
+    if os.environ.get(name, "") == "":
+        return None
+    return read_int(name, minimum=0)
+
+
 def load_kafka_settings() -> KafkaSettings:
     """Carga el broker y el tema desde el entorno (A7, A10)."""
     return KafkaSettings(
