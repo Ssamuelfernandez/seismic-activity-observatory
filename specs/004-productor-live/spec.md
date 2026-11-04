@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-05
 
-**Status**: Draft
+**Status**: Implemented (2026-11-05). 22/22 tareas verificadas. Evidencias: `docs/evidencias/productor-live/`. Tareas diferidas: ninguna. Pendiente del alumno: pasar `docs/borradores/productor-live.md` a la memoria (B2, B11, B12).
 
 **Input**: User description: "Productor real que consulta USGS cada POLL_SECONDS y publica en `earthquakes.live` sin duplicar. Cubre B1-B12 y A10. Pruebas de aceptación 1 (evento nuevo, real) y 2 (reenvío)."
 

@@ -56,6 +56,14 @@ Si el productor está parado más de 24 horas, los eventos ocurridos durante la 
 
 No se ha automatizado ni ejecutado en esta feature: la carga de datos históricos y su aislamiento de los datos en vivo pertenecen a las features `historico-2025` y `replay`. Fuentes: ENUNCIADO §5 y documentación pública del servicio de eventos de USGS.
 
+## Decisiones clave (para la defensa)
+
+- **Hash sobre `features`, no sobre el cuerpo.** `metadata.generated` cambia en cada regeneración del feed; un hash del cuerpo entero sería siempre distinto y no evitaría copias. Se usa sha256 del JSON canónico de `features` y se compara con la última consulta correcta; `raw_response` solo guarda el cuerpo si el hash cambia, mientras que `ingest_run` registra siempre la consulta.
+- **Ack, luego marca.** `ingest_state` se actualiza solo tras el ack de Kafka (`acks=all`, productor idempotente). Si el proceso muere entre ambos pasos, el evento se reenvía una vez y el consumidor lo ignora por `(event_id, updated_ms)`: se prefiere duplicar un mensaje (inocuo) a perder uno. El estado vive en PostgreSQL, así que sobrevive a reinicios.
+- **Backoff.** Exponencial con aleatoriedad: 2 s inicial, se duplica, tope 60 s, por debajo del máximo del latido (120 s) para que un fallo de USGS no deje el contenedor `unhealthy`. Tras un ciclo correcto vuelve a `POLL_SECONDS`. Un fallo de USGS no toca `ingest_state` ni `raw_response`.
+- **Retención.** `raw_response` se purga a 7 días (igual que el tema de Kafka), al terminar cada ciclo correcto; `ingest_run` no se purga. Requirió `GRANT SELECT, DELETE` al rol del productor en `sql/002_roles.sql` (no es un contrato).
+- **Lógica pura separada de la E/S** (`common/`), reutilizable por el histórico y el replay.
+
 ## Qué no se hizo
 
 - No se midió la distribución de latencia ni el comportamiento de USGS ante 429 o caídas.

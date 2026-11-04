@@ -10,3 +10,4 @@
 | implementar | bloque 2 (T006–T009) | verificador: 0 hallazgos | — | verificado |
 | implementar | bloque 3 (T010–T014) | verificador: 0 hallazgos (T010 sin TDD «falla antes»: menor) | — | verificado |
 | implementar | bloques 4 y 5 (T015–T022) | verificador: 0 hallazgos; ejecución real con USGS | — | verificado |
+| cierre | documentación (CODEMAP, README, borrador de defensa, estado de la spec) | CODEMAP ya al día; README tenía obsoleta la frase del productor mínimo; borrador sin decisiones clave | corregidos; sin tareas diferidas; B2/B11/B12 pendientes de pasar a la memoria | cerrado |
