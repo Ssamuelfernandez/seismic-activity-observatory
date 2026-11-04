@@ -40,13 +40,13 @@ GRANT SELECT ON live.current_event, replay.current_event, public.country, ingest
 -- Productor (db-schema.md §1.1):
 --   escribe exclusion (live y replay), ingest_state, ingest_run y raw_response;
 --   lee ingest_state e ingest_run (Q12).
--- Los permisos que falten (p. ej. leer raw_response o purgarla) los añadirá la feature
--- que los necesite, actualizando la tabla de §1.1.
+-- productor-live añade SELECT y DELETE sobre raw_response: la purga por retención (§3.9)
+-- necesita DELETE y SELECT (para el WHERE y la subconsulta). No es un cambio de contrato.
 -- -----------------------------------------------------------------------------
 GRANT INSERT ON live.exclusion, replay.exclusion TO observatory_producer;
 GRANT SELECT, INSERT, UPDATE ON ingest.ingest_state TO observatory_producer;
 GRANT SELECT, INSERT ON ingest.ingest_run TO observatory_producer;
-GRANT INSERT ON ingest.raw_response TO observatory_producer;
+GRANT SELECT, INSERT, DELETE ON ingest.raw_response TO observatory_producer;
 GRANT USAGE ON SEQUENCE live.exclusion_id_seq, replay.exclusion_id_seq,
                         ingest.ingest_run_id_seq, ingest.raw_response_id_seq
     TO observatory_producer;

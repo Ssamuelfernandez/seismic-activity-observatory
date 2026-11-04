@@ -9,3 +9,5 @@
 | productor-live | Volumen PostgreSQL existente: reaplicar el GRANT (quickstart §0) o `down -v` | Migración automática | Proyecto de clase; basta documentarlo |
 | productor-live | CODEMAP se actualiza una sola vez al final (T021), desviación declarada de CLAUDE.md | Actualizar tras cada tarea | Proporcionalidad: 22 tareas, el mapa solo importa al cierre |
 | productor-live | Feed `all_day.geojson` configurable por `USGS_FEED_URL`; backoff exponencial con jitter 2-60 s y timeout 10 s; solo urllib, sin dependencias nuevas | Librería `requests`/`httpx` | Cumple enunciado y latido máx. 120 s; constitución §11 |
+| productor-live | Criterio de grep `synthetic` en `producer/`: sin lógica sintética, queda solo la columna `is_synthetic` | Renombrar la columna o vaciar el grep | La columna es del contrato y renombrarla lo rompería |
+| productor-live | La `key` de `publisher.py` pasa a `str \| None`, con `acks=all` e idempotencia intactos | Descartar los eventos sin `id` | No perder eventos reales |

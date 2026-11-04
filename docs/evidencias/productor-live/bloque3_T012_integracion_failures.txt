@@ -1,0 +1,15 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /opt/venv/bin/python3
+rootdir: /app
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 6 items
+
+tests/integration/test_producer_failures.py::test_usgs_failure_logs_error_and_leaves_state_untouched[500] PASSED [ 16%]
+tests/integration/test_producer_failures.py::test_usgs_failure_logs_error_and_leaves_state_untouched[429] PASSED [ 33%]
+tests/integration/test_producer_failures.py::test_usgs_failure_logs_error_and_leaves_state_untouched[slow] PASSED [ 50%]
+tests/integration/test_producer_failures.py::test_usgs_failure_logs_error_and_leaves_state_untouched[not_json] PASSED [ 66%]
+tests/integration/test_producer_failures.py::test_usgs_failure_logs_error_and_leaves_state_untouched[no_features] PASSED [ 83%]
+tests/integration/test_producer_failures.py::test_loop_recovers_with_millisecond_backoff PASSED [100%]
+
+============================== 6 passed in 5.16s ===============================

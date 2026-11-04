@@ -1,0 +1,9 @@
+time="2026-11-05T00:30:27+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Running 
+time="2026-11-05T00:30:27+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-tests-run-0fb3aad6ad94 Creating 
+ Container seismic-observatory-tests-run-0fb3aad6ad94 Created 
+.....................................................                    [100%]
+53 passed, 487 deselected in 16.41s

@@ -59,6 +59,35 @@ async def _scenario(db: TempDatabase) -> dict[str, str]:
     return results
 
 
+async def _producer_scenario(db: TempDatabase) -> dict[str, str]:
+    """Permisos del productor sobre `raw_response` (purga) y sobre `current_event` (ninguno)."""
+    admin = await db.admin()
+    try:
+        await admin.execute("INSERT INTO ingest.raw_response (fetched_at, sha256, body) "
+                            f"VALUES (now(), '{'c' * 64}', '{{}}'::jsonb)")
+    finally:
+        await admin.close()
+    conn = await db.producer()
+    results: dict[str, str] = {}
+    try:
+        results["select"] = await _outcome(conn, "SELECT count(*) FROM ingest.raw_response")
+        results["update"] = await _outcome(conn, "UPDATE ingest.raw_response SET sha256 = sha256")
+        results["delete"] = await _outcome(conn, "DELETE FROM ingest.raw_response")
+        results["current"] = await _outcome(conn, "SELECT count(*) FROM live.current_event")
+    finally:
+        await conn.close()
+    return results
+
+
+def test_producer_role_can_purge_raw_response(db: TempDatabase) -> None:
+    """El productor puede leer y borrar `raw_response`, pero no actualizarla ni tocar `current_event`."""
+    r = asyncio.run(_producer_scenario(db))
+    assert r["select"] == "SELECT 1"
+    assert r["delete"] == "DELETE 1"
+    assert r["update"] == INSUFFICIENT_PRIVILEGE
+    assert r["current"] == INSUFFICIENT_PRIVILEGE
+
+
 def test_consumer_role_permissions(db: TempDatabase) -> None:
     r = asyncio.run(_scenario(db))
     record = evidence.record_text

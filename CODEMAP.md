@@ -1,6 +1,6 @@
 # Mapa del código
 
-Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04) cerradas, y `consumidor-idempotente` implementada y verificada (2026-11-04; pendiente de la revisión del alumno): existen los contratos, el DDL, el modelo de datos, el stack de Compose con productor y API **mínimos**, el consumidor idempotente y sus evidencias. Las filas de estas features son rutas reales; las que citan `common/geo.py`, `producer/ingest_state.py`, `api/routers/events.py` y `frontend/` son **previstas** y se confirman al cerrar cada feature.
+Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04) cerradas; `consumidor-idempotente` y `productor-live` (2026-11-05) implementadas y verificadas, pendientes de la revisión del alumno: existen los contratos, el DDL, el modelo de datos, el stack de Compose con API **mínima**, el consumidor idempotente, el productor que consulta USGS en vivo y sus evidencias. Las filas de estas features son rutas reales; las que citan `common/geo.py`, `api/routers/events.py` y `frontend/` son **previstas** y se confirman al cerrar cada feature.
 
 ## Dónde está cada cosa
 | Quiero entender… | Mira… | Requisito |
@@ -18,8 +18,23 @@ Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04
 | Cómo se reintenta la conexión a Kafka y PostgreSQL | common/retry.py, common/db.py | A4 |
 | Cómo se calcula la salud de productor y consumidor (latido) y los umbrales | common/health.py; consumer/loop.py::broker_reachable; specs/002-infra-compose/contracts/config.md §E | A4 |
 | Cómo se crean los temas y su retención de 7 días | common/kafka_topics.py; compose.yaml (broker); README.md (sección «Retención de Kafka») | A6 |
-| El evento sintético de prueba (`is_synthetic = true`) | common/synthetic_event.py | A1 |
-| El productor mínimo | producer/ (`main.py`, `loop.py`, `publisher.py`) | A1, A4, A10 |
+| El evento sintético de prueba (`is_synthetic = true`; el productor ya no lo usa, se conserva para pruebas del consumidor) | common/synthetic_event.py | C13 |
+| El productor en vivo: arranque (`main.py`), bucle ciclo → latido → espera con backoff (`loop.py`) y publicación con ack (`publisher.py`) | producer/ (`main.py`, `loop.py`, `publisher.py`) | B1, B10, A4, A10 |
+| Un ciclo del productor (consultar, guardar original, filtrar, decidir, publicar, marcar tras el ack) | producer/cycle.py (`run_cycle`) | B1, B3, B6, B7, B8, B9 |
+| La consulta HTTP al feed de USGS y sus errores (timeout, 429, 5xx) | producer/usgs_client.py (`fetch_feed`, `FeedFetchError`) | B1, B10 |
+| El almacén de ingesta en PostgreSQL (originales, ejecuciones, exclusiones, estado persistente, purga) y su SQL | producer/ingest_store.py, producer/ingest_queries.py | B3, B4, B5, B6, B9 |
+| Cómo se interpreta la respuesta y se calcula su hash (`parse_feed_body`, `hash_features`) | common/usgs_feed.py | B4, B5, B10 |
+| Qué se publica, se omite o se excluye (`id` + `updated`, motivo de exclusión) | common/ingest_decision.py | B3, B6 |
+| Cómo se arma el mensaje live y su clave Kafka | common/live_message.py | B7, B8 |
+| El backoff progresivo con jitter tras fallos de USGS | common/backoff.py | B10 |
+| La política de `raw_response` (hash, retención, purga) y las variables nuevas del productor | README.md (sección del productor); common/config.py (`FeedSettings`, `load_feed_settings`, `validate_poll_against_health`); specs/002-infra-compose/contracts/config.md | B5, A10 |
+| Las pruebas unitarias del productor (funciones puras, cliente contra el mock, ciclo con dobles, bucle) | tests/common/ (`test_usgs_feed.py`, `test_ingest_decision.py`, `test_live_message.py`, `test_backoff.py`); tests/producer/ (`test_usgs_client.py`, `test_cycle.py`, `test_loop.py`) | B1–B10 |
+| El servidor USGS simulado (SINTÉTICO: ids `synthetic-…`) y el arnés del productor para integración | tests/support/mock_usgs.py, tests/support/producer_harness.py | B10 |
+| Las pruebas de integración del productor (almacén y permisos, ciclos/reinicio/reenvío, fallos 500/429/timeout/JSON) | tests/integration/ (`test_producer_store.py`, `test_producer_cycles.py`, `test_producer_failures.py`) | B3–B6, B9, B10, prueba 2 |
+| Los apuntes de memoria del productor (B2, B11, B12) | docs/borradores/productor-live.md | B2, B11, B12 |
+| La spec, el plan, la investigación y las tareas del productor en vivo | specs/004-productor-live/ | B1–B12 |
+| Las evidencias del productor (pytest, ejecución real contra USGS, reinicio, evento nuevo, reenvío, regresión) | docs/evidencias/productor-live/ | B1–B12, pruebas 1 y 2 |
+| Los informes del verificador de los bloques 1 a 3 del productor | docs/evidencias/subagentes/verificador-productor-live-bloque{1,2,3}.md; plan-reviewer-productor-live.md | — |
 | El consumidor idempotente: arranque, señales de parada y gancho de prueba | consumer/main.py | C2, FR-023, FR-027 |
 | El bucle (un mensaje por vuelta: escritura, línea de decisión, commit del offset, contadores; latido y sondeo del broker) | consumer/loop.py (`consume_until_stopped`, `process_and_commit`, `broker_reachable`) | C2, FR-001, FR-029 |
 | Procesar un mensaje (decodificar, validar, transformar, escribir, cuarentena; `db_constraint_violation`) | consumer/pipeline.py (`process_record`, `bind_pool_writers`) | C1, C2, C5 |
@@ -46,7 +61,7 @@ Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04
 | La spec, el plan, la investigación, las tareas (activas y diferidas), la bitácora y el contrato de ejecución del consumidor idempotente | specs/003-consumidor-idempotente/ (`contracts/consumer-runtime.md`) | C1–C8, C13 |
 | Los apuntes para la memoria y la defensa del consumidor idempotente | docs/borradores/consumidor-idempotente.md | C1–C8, C13 |
 | El informe del revisor del cierre del consumidor idempotente | docs/evidencias/subagentes/plan-reviewer-consumidor-idempotente-cierre.md | — |
-| Cómo se decide qué se publica | producer/ingest_state.py, producer/main.py | B6 |
+| Cómo se decide qué se publica | common/ingest_decision.py, producer/cycle.py, producer/ingest_store.py (`load_state`, `mark_published`) | B6 |
 | Qué versión gana | common/processing.py (`is_newer_version`, `decide_version_outcome`, `is_inconsistent_state`) | C4 |
 | Cómo se asigna el país | common/geo.py | C9–C12 |
 | Qué va a cuarentena y por qué | common/validation.py (+ `validation_envelope.py`: pasos 1-3, dividido por el límite de 250 líneas), common/quarantine_row.py, consumer/writer.py (`write_quarantine`) | C5 |
@@ -64,13 +79,13 @@ Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04
 | Qué devuelve la API de eventos | api/routers/events.py, api/queries.py | F1–F3 |
 | Cómo el panel consume la API | frontend/src/app/core/api.service.ts | G1, G9 |
 
-## Flujo actual (consumidor idempotente, eventos sintéticos)
-common/synthetic_event.py -> producer/loop.py -> producer/publisher.py -> Kafka (`earthquakes.live`)
+## Flujo actual (productor en vivo y consumidor idempotente)
+USGS -> producer/usgs_client.py -> common/usgs_feed.py -> producer/ingest_store.py (original y estado) -> common/ingest_decision.py -> common/live_message.py
+     -> producer/cycle.py -> producer/publisher.py -> Kafka (`earthquakes.live`) -> (ack) producer/ingest_store.py (`mark_published`)
      -> consumer/loop.py -> consumer/pipeline.py -> common/{decode,validation,transform,quarantine_row}.py -> consumer/writer.py -> PostgreSQL ; API: api/routers/health.py -> api/queries.py -> PostgreSQL (rol de solo lectura)
 
 ## Flujo previsto de un evento (de USGS al mapa)
-USGS -> producer/usgs_client.py -> producer/publisher.py -> Kafka
-     -> consumer/pipeline.py -> common/validation.py -> common/geo.py
+Kafka -> consumer/pipeline.py -> common/validation.py -> common/geo.py
      -> consumer/writer.py -> PostgreSQL -> api/queries.py -> frontend/features/map
 
 ## Convenciones
@@ -87,3 +102,4 @@ Reglas completas en `docs/planificacion/03-procedimiento-ejecucion.md` §7.3. Re
 | contratos-y-modelo | Contratos del mensaje Kafka, de la base de datos y de la API; `sql/001_schema.sql`; modelo de datos conceptual, lógico y físico; evidencias de las pruebas del esquema (E1–E5, E7, C4) | 2026-11-02 |
 | infra-compose | `compose.yaml` con Kafka (KRaft), PostgreSQL 16, productor, consumidor y API; imagen Python compartida con `uv.lock`; `.env.example`; reintentos, latido y healthchecks; temas con retención de 7 días; roles de base de datos (`sql/002_roles.sql`); productor, consumidor y API mínimos con eventos sintéticos; `verify_stack.py` y `check_env_example.py`; pruebas unitarias; evidencias en `docs/evidencias/infra-compose/` (A1–A12; M7–M9 verificados) | 2026-11-04 |
 | consumidor-idempotente | Consumidor que valida (`common/validation.py`), decide la versión (`common/processing.py`), escribe en una transacción por mensaje (`consumer/writer.py`), envía a cuarentena con motivo, reintenta sin límite la base y el commit del offset, deja una línea `decision=…` por mensaje y contadores `COUNTERS`; gancho de corte para la prueba 8; servicio `tests` (perfil `test`) y pruebas de integración con PostgreSQL real; `scripts/verify_consumer.py` (`faq12`, `quarantine`, `restart`); check A1 de `verify_stack.py` actualizado; evidencias en `docs/evidencias/consumidor-idempotente/` (C1–C8, C13; pruebas 2, 3, 4, 6 y 8; el consumidor lee solo el tema live; diferidos: catálogo de países, comprobación de esquema al arrancar y caídas de PostgreSQL/Kafka con Docker) | 2026-11-04 |
+| productor-live | Productor que consulta el feed de USGS cada `POLL_SECONDS`, guarda el GeoJSON original con hash y retención (`ingest.raw_response`, `ingest.ingest_run`), excluye lo que no es `earthquake` con motivo (`live.exclusion`), decide con estado persistente (`ingest.ingest_state`) por `id` + `updated`, publica con clave `id` y marca solo tras el ack; backoff ante fallos de USGS; variables nuevas; permiso `SELECT, DELETE` sobre `raw_response`; sintéticos retirados del productor; evidencias en `docs/evidencias/productor-live/` (B1–B12; pruebas 1 hasta PostgreSQL y 2) | 2026-11-05 |

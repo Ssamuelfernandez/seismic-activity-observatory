@@ -19,12 +19,16 @@ Los valores de `.env.example` son **ejemplos no sensibles**. El archivo real es 
 | `KAFKA_BOOTSTRAP_SERVERS` | `kafka:9092` | `producer`, `consumer` | tal cual | Dirección del broker por nombre de servicio (A7) |
 | `KAFKA_TOPIC` | `earthquakes.live` | `producer`, `consumer` | tal cual | Tema donde publica el productor y del que lee el consumidor |
 | `KAFKA_GROUP_ID` | `consumer-minimal` | `consumer` | tal cual | Grupo del consumidor |
-| `PRODUCER_INTERVAL_SECONDS` | `30` | `producer` | tal cual | Segundos entre eventos sintéticos; entre 1 y 60 (FR-012) |
+| `POLL_SECONDS` | `60` | `producer` | tal cual | Segundos entre consultas al feed de USGS; entre 1 y 60, como mucho `HEALTH_MAX_AGE_SECONDS` / 2 (productor-live B1, FR-010) |
+| `USGS_FEED_URL` | `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson` | `producer` | tal cual | Feed de USGS; debe empezar por `http://` o `https://` |
+| `HTTP_TIMEOUT_SECONDS` | `10` | `producer` | tal cual | Espera máxima por operación de socket al consultar el feed; entre 1 y 60 |
+| `RAW_RETENTION_DAYS` | `7` | `producer` | tal cual | Días que se conservan los originales de `ingest.raw_response`; >= 1 |
 | `RETRY_INITIAL_SECONDS` | `1` | `producer`, `consumer`, `api` | tal cual | Primera espera entre reintentos de conexión (≥ 1) |
 | `RETRY_MAX_SECONDS` | `30` | `producer`, `consumer`, `api` | tal cual | Espera máxima entre reintentos (≥ `RETRY_INITIAL_SECONDS`) |
 | `LOG_LEVEL` | `INFO` | `producer`, `consumer`, `api` | tal cual | Nivel de registro |
+| `CONSUMER_FAULT_CRASH_AT_OFFSET` | (vacío) | `consumer` | tal cual | Gancho de la prueba 8: offset tras el cual el consumidor se cae una vez; vacío = desactivado |
 
-Total: **15** variables.
+Total: **19** variables, las mismas que `.env.example` (productor-live sustituye una por cuatro).
 
 ## B. Variables que `compose.yaml` fija (no están en `.env.example`)
 
@@ -34,7 +38,7 @@ Son constantes de diseño, no configuración del usuario. Las lee el código; el
 |---|---|---|---|
 | `DB_USER` | `observatory_producer` / `observatory_consumer` / `observatory_api` | cada uno | Cada servicio usa su propio rol (FR-030); el nombre del rol es parte del diseño de permisos |
 | `HEALTH_FILE` | `/tmp/producer.alive` / `/tmp/consumer.alive` | `producer`, `consumer` | Ruta interna del latido |
-| `HEALTH_MAX_AGE_SECONDS` | `120` (productor) / `60` (consumidor) | `producer`, `consumer` | Antigüedad máxima del latido. Debe cumplirse `PRODUCER_INTERVAL_SECONDS` ≤ `HEALTH_MAX_AGE_SECONDS` / 2 |
+| `HEALTH_MAX_AGE_SECONDS` | `120` (productor) / `60` (consumidor) | `producer`, `consumer` | Antigüedad máxima del latido. Debe cumplirse `POLL_SECONDS` ≤ `HEALTH_MAX_AGE_SECONDS` / 2 |
 
 ## C. Variables de las imágenes oficiales (las pone `compose.yaml`; el código Python no las lee)
 
@@ -52,10 +56,10 @@ Son constantes de diseño, no configuración del usuario. Las lee el código; el
 | `load_retry_settings` | `RETRY_INITIAL_SECONDS`, `RETRY_MAX_SECONDS` (con valores por defecto en el código: 1 y 30) |
 | `load_health_settings` | `HEALTH_FILE`, `HEALTH_MAX_AGE_SECONDS` |
 | `load_log_level` | `LOG_LEVEL` (por defecto `INFO`) |
-| `producer.loop.read_interval_seconds` | `PRODUCER_INTERVAL_SECONDS` |
+| `load_feed_settings` | `POLL_SECONDS`, `USGS_FEED_URL`, `HTTP_TIMEOUT_SECONDS`, `RAW_RETENTION_DAYS` (con valores por defecto en el código: 60, el `all_day.geojson`, 10 y 7) |
 | `consumer.main` | `KAFKA_GROUP_ID` |
 
-El código lee 14 nombres distintos; los 14 están definidos en `compose.yaml` (A: 11 con `${…}`; B: `DB_USER`, `HEALTH_FILE`, `HEALTH_MAX_AGE_SECONDS`).
+El código lee 17 nombres distintos; los 17 están definidos en `compose.yaml` (A: 14 con `${…}`; B: `DB_USER`, `HEALTH_FILE`, `HEALTH_MAX_AGE_SECONDS`).
 
 
 ## E. Umbrales de salud (latido y healthchecks)
@@ -72,6 +76,6 @@ Valores fijados en `compose.yaml`; los verifican las tareas T014 (latido) y T015
 
 Reglas y tiempos esperados:
 
-- **Coherencia**: `PRODUCER_INTERVAL_SECONDS` ≤ `HEALTH_MAX_AGE_SECONDS` / 2 del productor (hoy ≤ 60 s). El productor lo valida al arrancar.
-- **Latido**: el servicio lo borra al arrancar y lo renueva solo tras una vuelta correcta del bucle (productor: evento publicado y confirmado; consumidor: vuelta de consumo **y** el broker respondió a la comprobación `end_offsets` hecha cada 10 s con un máximo de espera de 5 s; con el broker caído `getmany` devuelve vacío, así que sin esa comprobación el latido no caducaría).
+- **Coherencia**: `POLL_SECONDS` ≤ `HEALTH_MAX_AGE_SECONDS` / 2 del productor (hoy ≤ 60 s). El productor lo valida al arrancar.
+- **Latido**: el servicio lo borra al arrancar y lo renueva solo tras una vuelta correcta del bucle (productor: ciclo correcto o fallo controlado de USGS; consumidor: vuelta de consumo **y** el broker respondió a la comprobación `end_offsets` hecha cada 10 s con un máximo de espera de 5 s; con el broker caído `getmany` devuelve vacío, así que sin esa comprobación el latido no caducaría).
 - **Detección tras parar Kafka**: el latido caduca a los 60 s (consumidor) o 120 s (productor); `unhealthy` llega tras 3 comprobaciones fallidas consecutivas, cada 15 s. Esperado tras parar el broker: consumidor `unhealthy` a los 90–120 s (latido de 60 s, comprobaciones cada 15 s y sondeo cada 10 s); productor a los 120–180 s (su último latido pudo ser de hasta 30 s antes de parar el broker, por eso no es 150–180 s). Un valor fuera de estos rangos se trata como fallo en T014 (o se corrige esta tabla si el cálculo era erróneo).

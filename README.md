@@ -151,6 +151,50 @@ python scripts/verify_consumer.py faq12 --yes
 
 Las salidas de las pruebas y de los escenarios están en [`docs/evidencias/consumidor-idempotente/`](docs/evidencias/consumidor-idempotente/).
 
+## Productor en vivo
+
+El productor consulta cada `POLL_SECONDS` (60 por defecto) el feed de USGS `USGS_FEED_URL` (por defecto `summary/all_day.geojson`, eventos de las últimas 24 horas) y publica en `earthquakes.live` solo lo nuevo o revisado: un evento se publica si no tiene estado previo o si su `updated` es mayor que el último publicado; los que no son `earthquake` se registran en `live.exclusion`. Cada consulta deja una fila en `ingest.ingest_run`. Los contratos del mensaje y de las tablas siguen en `specs/001-contratos-y-modelo/contracts/`; el diseño está en [`specs/004-productor-live/`](specs/004-productor-live/) y la guía de comprobación en su [quickstart](specs/004-productor-live/quickstart.md).
+
+**Variables nuevas** (`.env.example` las trae con valores por defecto):
+
+| Variable | Valor por defecto | Significado |
+|---|---|---|
+| `POLL_SECONDS` | 60 | Segundos entre consultas (entre 1 y 60) |
+| `USGS_FEED_URL` | `.../summary/all_day.geojson` | Feed que se consulta (`http://` o `https://`) |
+| `HTTP_TIMEOUT_SECONDS` | 10 | Espera máxima por operación de socket (entre 1 y 60) |
+| `RAW_RETENTION_DAYS` | 7 | Días que se conservan las respuestas originales |
+
+**Ver el log de ciclos:**
+
+```bash
+docker compose logs producer --no-log-prefix --tail 5
+# cycle=3 status=ok http=200 latency_ms=... fetched=... excluded=... published=... skipped=... unmarked=... next_wait_s=60.0
+```
+
+Un ciclo con el feed sin cambios debe mostrar `published=0`. Tras un fallo (USGS caído, 429, tiempo agotado) la espera crece entre 2 s y 60 s, con aleatoriedad, y vuelve a `POLL_SECONDS` al recuperarse.
+
+**Política de `raw_response`** (respuesta original de cada consulta, `ingest.raw_response`):
+
+- Se guarda el cuerpo completo solo si su hash SHA-256, calculado **sobre `features`** (no sobre `metadata`, que cambia en cada regeneración), difiere del de la última consulta correcta.
+- Retención de 7 días por defecto, configurable con `RAW_RETENTION_DAYS`. La purga se ejecuta al terminar cada ciclo correcto y siempre conserva la fila más reciente.
+- Estimación: unos 150 KB por respuesta distinta (en la exploración del feed pesó 150724 bytes, ver `docs/evidencias/f1/explore_usgs_salida.txt`). Es una estimación de una sola medición, no un límite.
+- `ingest.ingest_run` **no se purga**: es el registro de todas las consultas.
+
+**Volúmenes de PostgreSQL ya existentes:** la purga necesita que el rol `observatory_producer` tenga `SELECT` y `DELETE` sobre `ingest.raw_response`. `sql/002_roles.sql` lo concede, pero solo se aplica con un volumen nuevo. En uno existente, aplica el `GRANT` a mano (o haz `docker compose down -v`, que borra los datos):
+
+```bash
+docker compose exec postgres psql -U <POSTGRES_USER> -d <POSTGRES_DB> -c "GRANT SELECT, DELETE ON ingest.raw_response TO observatory_producer"
+```
+
+**Límites conocidos** (detalle en `specs/004-productor-live/research.md` §10):
+
+- No se respeta la cabecera `Retry-After`.
+- Un solo productor; dos a la vez no están soportados.
+- Un evento sin `id` o sin `updated` se republica en cada ciclo.
+- El periodo real entre consultas es algo mayor que `POLL_SECONDS`, porque la espera se suma a la duración del ciclo.
+- Si USGS tarda más del tiempo de espera, el ciclo cuenta como fallo aunque el servicio funcione.
+- Los eventos que USGS elimine del feed no se detectan: salir de la ventana de 24 h no equivale a ser eliminado, y la reconciliación exhaustiva es una ampliación. La recuperación de un hueco tras una parada de más de 24 h con el catálogo histórico está explicada, sin automatizar, en [`docs/borradores/productor-live.md`](docs/borradores/productor-live.md) (B2, B11 y B12).
+
 ## Configuración de Git: el hook `commit-msg`
 
 `.claude/settings.json` está versionado y desactiva la atribución en commits y PRs. **El hook `commit-msg` no se versiona** (vive en `.git/hooks/`, que Git no sube): **debe instalarse en cada clon**. Es un archivo `.git/hooks/commit-msg`, ejecutable, que rechaza los mensajes con trailers de coautoría o con «generated with»:

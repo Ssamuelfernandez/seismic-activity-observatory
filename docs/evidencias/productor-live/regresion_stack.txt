@@ -1,0 +1,34 @@
+# T022 regresion (2026-11-04T23:40:22Z)
+$ pytest -m "not integration" -q
+........................................................................ [ 88%]
+.......................................................                  [100%]
+487 passed, 53 deselected in 4.75s
+$ python scripts/verify_stack.py
+PASS  Los cinco servicios están healthy — {'api': 'healthy', 'consumer': 'healthy', 'kafka': 'healthy', 'postgres': 'healthy', 'producer': 'healthy'}
+PASS  live.current_event contiene eventos reales (is_synthetic=false, usgs_feed) — filas: 193
+PASS  GET /api/salud en 127.0.0.1:8000 — {"status": "ok", "last_ingestion": 1793835594860, "generated": 1793835628314}
+PASS  Solo la API publica un puerto, en 127.0.0.1:8000 — {'api': [('127.0.0.1', 8000)]}
+PASS  kafka no tiene puertos enlazados al equipo — sin enlaces
+PASS  postgres no tiene puertos enlazados al equipo — sin enlaces
+INFO  el puerto 5432 del equipo responde, pero Compose no publica ninguno: lo atiende otro proceso local
+PASS  Tema earthquakes.live: 1 partición, factor 1, retención 7 días — Topic: earthquakes.live	TopicId: RYpdKgeMQYChTJAFqPjOYQ	PartitionCount: 1	ReplicationFactor: 1	Configs: min.insync.replicas=1,retention.ms=604800000
+PASS  Tema earthquakes.replay: 1 partición, factor 1, retención 7 días — Topic: earthquakes.replay	TopicId: eWfs9DD8S9eTIl0tjiawbw	PartitionCount: 1	ReplicationFactor: 1	Configs: min.insync.replicas=1,retention.ms=604800000
+PASS  Rol observatory_api: permisos de escritura según el contrato
+PASS  Rol observatory_producer: permisos de escritura según el contrato
+PASS  Rol observatory_consumer: permisos de escritura según el contrato
+PASS  Rol observatory_api: puede leer current_event, country e ingest_run
+PASS  La cuenta de la API no puede escribir (INSERT rechazado) — WRITE_DENIED
+PASS  Tras reiniciar, los cinco servicios vuelven a estar healthy
+PASS  PostgreSQL conserva el dato tras reiniciar los contenedores
+PASS  live.current_event contiene eventos reales (is_synthetic=false, usgs_feed) — filas: 193
+
+16/16 comprobaciones superadas.
+exit=0
+$ git diff --stat -- specs/001-contratos-y-modelo sql/001_schema.sql docs/enunciado  (vacio = sin cambios)
+--- docker compose ps
+NAME                             IMAGE                              COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+seismic-observatory-api-1        seismic-observatory-python:0.1.0   "uvicorn api.main:apâ€¦"   api        13 seconds ago   Up 7 seconds (healthy)    127.0.0.1:8000->8000/tcp
+seismic-observatory-consumer-1   seismic-observatory-python:0.1.0   "python -m consumer.â€¦"   consumer   13 seconds ago   Up 6 seconds (healthy)    
+seismic-observatory-kafka-1      apache/kafka:4.1.2                 "/__cacert_entrypoinâ€¦"   kafka      13 seconds ago   Up 13 seconds (healthy)   9092/tcp
+seismic-observatory-postgres-1   postgres:16.15-bookworm            "docker-entrypoint.sâ€¦"   postgres   13 seconds ago   Up 13 seconds (healthy)   5432/tcp
+seismic-observatory-producer-1   seismic-observatory-python:0.1.0   "python -m producer.â€¦"   producer   13 seconds ago   Up 6 seconds (healthy)    

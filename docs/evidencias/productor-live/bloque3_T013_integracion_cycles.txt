@@ -1,0 +1,13 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /opt/venv/bin/python3
+rootdir: /app
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 4 items
+
+tests/integration/test_producer_cycles.py::test_second_cycle_with_same_response_publishes_nothing PASSED [ 25%]
+tests/integration/test_producer_cycles.py::test_restart_on_same_database_publishes_nothing PASSED [ 50%]
+tests/integration/test_producer_cycles.py::test_only_a_greater_updated_is_published PASSED [ 75%]
+tests/integration/test_producer_cycles.py::test_cut_between_ack_and_mark_resends_once_and_consumer_is_idempotent PASSED [100%]
+
+============================== 4 passed in 2.78s ===============================

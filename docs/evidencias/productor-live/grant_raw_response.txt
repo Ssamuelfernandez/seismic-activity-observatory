@@ -1,0 +1,9 @@
+$ GRANT (quickstart §0, volumen existente, sin down -v)
+GRANT
+       grantee        | privilege_type 
+----------------------+----------------
+ observatory_producer | DELETE
+ observatory_producer | INSERT
+ observatory_producer | SELECT
+(3 rows)
+

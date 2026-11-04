@@ -1,0 +1,5 @@
+producer-1  | 2026-11-04 23:30:55,531 INFO [common.kafka_topics] Tema creado: earthquakes.live
+producer-1  | 2026-11-04 23:30:55,533 INFO [common.kafka_topics] Tema creado: earthquakes.replay
+producer-1  | 2026-11-04 23:30:56,360 INFO [producer.loop] cycle=1 status=ok http=200 latency_ms=392 fetched=203 excluded=12 published=191 skipped=0 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:31:56,270 INFO [producer.loop] cycle=2 status=ok http=200 latency_ms=187 fetched=204 excluded=12 published=1 skipped=191 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:32:56,186 INFO [producer.loop] cycle=3 status=ok http=200 latency_ms=219 fetched=204 excluded=12 published=0 skipped=192 unmarked=0 next_wait_s=60.0

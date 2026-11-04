@@ -1,0 +1,8 @@
+tests/integration/test_producer_store.py::test_same_hash_twice_keeps_one_raw_and_two_runs PASSED [ 14%]
+tests/integration/test_producer_store.py::test_different_hash_adds_raw_response PASSED [ 28%]
+tests/integration/test_producer_store.py::test_failure_leaves_status_and_hash_null_and_is_not_reference PASSED [ 42%]
+tests/integration/test_producer_store.py::test_repeated_exclusion_leaves_one_row PASSED [ 57%]
+tests/integration/test_producer_store.py::test_mark_published_never_goes_backwards PASSED [ 71%]
+tests/integration/test_producer_store.py::test_purge_deletes_old_and_keeps_most_recent PASSED [ 85%]
+tests/integration/test_producer_store.py::test_purge_keeps_most_recent_even_if_older_than_retention PASSED [100%]
+============================== 7 passed in 1.03s ===============================

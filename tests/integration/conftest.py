@@ -90,7 +90,8 @@ def db() -> TempDatabase:
     name = f"{TEMP_DB_PREFIX}{uuid.uuid4().hex[:12]}"
     asyncio.run(_create_database(env, name))
     database = TempDatabase(name, env["DB_HOST"], int(env["DB_PORT"]), env["POSTGRES_USER"],
-                            env["POSTGRES_PASSWORD"], env["DB_USER"], env["DB_PASSWORD"])
+                            env["POSTGRES_PASSWORD"], env["DB_USER"], env["DB_PASSWORD"],
+                            producer_password=os.environ["DB_PRODUCER_PASSWORD"])
     try:
         asyncio.run(_apply_schema_and_grants(database))
         yield database
@@ -142,3 +143,12 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
     for item in items:
         if here in item.path.parents:
             item.add_marker(pytest.mark.integration)
+
+
+@pytest.fixture
+def mock_usgs():
+    """Servidor simulado de USGS (eventos sintéticos) que se apaga al terminar la prueba."""
+    from tests.support.mock_usgs import MockUsgs
+    server = MockUsgs().start()
+    yield server
+    server.stop()

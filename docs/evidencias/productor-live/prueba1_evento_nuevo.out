@@ -1,0 +1,29 @@
+# T020 - prueba 1 (evento nuevo real, hasta PostgreSQL). Datos reales de USGS (no sinteticos).
+recuentos (current_event reales | event_version | ingest_state):
+antes 2026-11-04T23:35:52Z current_event_real|event_version|ingest_state = 192|196|192
+despues 2026-11-04T23:39:16Z = 193|198|193
+
+--- ciclos del productor en esa ventana
+producer-1  | 2026-11-04 23:30:56,360 INFO [producer.loop] cycle=1 status=ok http=200 latency_ms=392 fetched=203 excluded=12 published=191 skipped=0 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:31:56,270 INFO [producer.loop] cycle=2 status=ok http=200 latency_ms=187 fetched=204 excluded=12 published=1 skipped=191 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:32:56,186 INFO [producer.loop] cycle=3 status=ok http=200 latency_ms=219 fetched=204 excluded=12 published=0 skipped=192 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:33:55,143 INFO [producer.loop] cycle=1 status=ok http=200 latency_ms=146 fetched=203 excluded=11 published=0 skipped=192 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:34:55,105 INFO [producer.loop] cycle=2 status=ok http=200 latency_ms=242 fetched=203 excluded=11 published=1 skipped=191 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:35:55,041 INFO [producer.loop] cycle=3 status=ok http=200 latency_ms=224 fetched=202 excluded=10 published=0 skipped=192 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:36:54,980 INFO [producer.loop] cycle=4 status=ok http=200 latency_ms=200 fetched=202 excluded=10 published=0 skipped=192 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:37:54,937 INFO [producer.loop] cycle=5 status=ok http=200 latency_ms=208 fetched=202 excluded=10 published=1 skipped=191 unmarked=0 next_wait_s=60.0
+producer-1  | 2026-11-04 23:38:54,968 INFO [producer.loop] cycle=6 status=ok http=200 latency_ms=306 fetched=203 excluded=10 published=1 skipped=192 unmarked=0 next_wait_s=60.0
+
+--- versiones recibidas desde 23:35:52Z
+   event_id    |      usgs_updated_at       |          received_at          |  source   | is_synthetic | kafka_offset | versions 
+---------------+----------------------------+-------------------------------+-----------+--------------+--------------+----------
+ aka2026vwuwqw | 2026-11-04 23:37:15.463+00 | 2026-11-04 23:37:54.93735+00  | usgs_feed | f            |          198 |        2
+ ok2026vqse    | 2026-11-04 23:38:14.4+00   | 2026-11-04 23:38:54.966278+00 | usgs_feed | f            |          199 |        1
+(2 rows)
+
+--- filas nuevas en current_event (event_id no visto antes de 23:35:52Z)
+  event_id  |         event_time         | mag |           place            |  source   | is_synthetic |      ingested_at       
+------------+----------------------------+-----+----------------------------+-----------+--------------+------------------------
+ ok2026vqse | 2026-11-04 23:36:47.267+00 | 2.2 | 6 km SW of Davis, Oklahoma | usgs_feed | f            | 2026-11-04 23:38:54+00
+(1 row)
+
