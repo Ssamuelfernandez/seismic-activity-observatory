@@ -1,1 +1,29 @@
-{ "attribution": { "commit": "", "pr": "" } }
+{
+  "attribution": { "commit": "", "pr": "" },
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git branch:*)",
+      "Bash(git switch:*)",
+      "Bash(git log:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker exec:*)",
+      "Bash(python:*)",
+      "Bash(pytest:*)",
+      "Bash(uv:*)",
+      "Bash(.venv/Scripts/python:*)",
+      "Bash(.venv/Scripts/pytest:*)"
+    ],
+    "deny": [
+      "Bash(git push:*)",
+      "Bash(git merge:*)",
+      "Bash(git reset:*)",
+      "Bash(git rebase:*)"
+    ]
+  }
+}
