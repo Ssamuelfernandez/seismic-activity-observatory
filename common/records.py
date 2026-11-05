@@ -116,8 +116,8 @@ class DateRow:
 class EventRows:
     """Filas listas para escribir de un evento válido (salida de `build_event_rows`).
 
-    `current` y `version` son diccionarios columna -> valor; `country_id` no aparece
-    (queda NULL, FR-021). `original` es el `event` serializado como texto JSON.
+    `current` y `version` son diccionarios columna -> valor; `country_id` va solo en `current`
+    (`None` = sin país). `original` es el `event` serializado como texto JSON.
     """
 
     current: dict
@@ -145,6 +145,17 @@ class EventRows:
     def is_synthetic(self) -> bool:
         """Marca de dato sintético copiada del sobre."""
         return self.current["is_synthetic"]
+
+
+@dataclass(frozen=True)
+class CountryRow:
+    """Fila de `public.country` (C10): código ADM0_A3 y nombres del catálogo."""
+
+    country_id: str
+    name_es: str
+    admin: str
+    continent: str
+    subregion: str
 
 
 @dataclass(frozen=True)

@@ -1,0 +1,23 @@
+-- [1] cuarentena de los casos inválidos (referencia Kafka y hash)
+SELECT event_id, reason, kafka_topic, kafka_partition, kafka_offset, left(original_sha256, 12) AS sha FROM live.quarantine ORDER BY kafka_offset
+
+event_id                  | reason                   | kafka_topic      | kafka_partition | kafka_offset | sha         
+--------------------------+--------------------------+------------------+-----------------+--------------+-------------
+synthetic-geo-lat-145     | coordinates_out_of_range | earthquakes.live | 0               | 4            | 0d5909176ae8
+synthetic-geo-lon-nan     | coordinates_out_of_range | earthquakes.live | 0               | 5            | f6bb36f6cc48
+synthetic-geo-no-point    | invalid_geometry         | earthquakes.live | 0               | 6            | af6190eedb52
+synthetic-geo-sin-time    | missing_time             | earthquakes.live | 0               | 7            | b076a51d8eb2
+synthetic-geo-sin-updated | missing_updated          | earthquakes.live | 0               | 8            | 61ce4da9cdb0
+(5 filas)
+
+-- [2] eventos guardados: todos sintéticos
+SELECT event_id, is_synthetic FROM live.current_event ORDER BY event_id
+
+event_id                | is_synthetic
+------------------------+-------------
+synthetic-geo-atlantico | True        
+synthetic-geo-madrid    | True        
+synthetic-geo-mag-nula  | True        
+synthetic-geo-negativos | True        
+(4 filas)
+

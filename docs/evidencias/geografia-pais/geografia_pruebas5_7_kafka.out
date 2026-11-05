@@ -1,0 +1,35 @@
+-- [1] current_event (administrador, Kafka real)
+SELECT event_id, coalesce(country_id, '(NULL)') AS country_id, coalesce(mag::text, '(NULL)') AS mag, is_synthetic FROM live.current_event WHERE event_id LIKE 'synthetic-geo-%' ORDER BY event_id;
+        event_id         | country_id |  mag   | is_synthetic 
+-------------------------+------------+--------+--------------
+ synthetic-geo-atlantico | (NULL)     | 3.0    | t
+ synthetic-geo-madrid    | ESP        | 3.0    | t
+ synthetic-geo-mag-nula  | ESP        | (NULL) | t
+(3 rows)
+
+-- [2] Recuentos: total = con país + sin país
+SELECT count(*) AS total, count(country_id) AS con_pais, count(*) - count(country_id) AS sin_pais FROM live.current_event;
+ total | con_pais | sin_pais 
+-------+----------+----------
+     3 |        2 |        1
+(1 row)
+
+-- [3] quarantine (administrador, Kafka real)
+SELECT event_id, reason, kafka_topic, kafka_partition, kafka_offset FROM live.quarantine WHERE event_id LIKE 'synthetic-geo-%' ORDER BY kafka_offset;
+       event_id        |          reason          |   kafka_topic    | kafka_partition | kafka_offset 
+-----------------------+--------------------------+------------------+-----------------+--------------
+ synthetic-geo-lat-145 | coordinates_out_of_range | earthquakes.live |               0 |            3
+(1 row)
+
+-- [4] Comprobaciones de las pruebas 5 y 7
+PASS  Publicado el caso geo-madrid — published case=geo-madrid messages=1 topic=earthquakes.live
+PASS  Publicado el caso geo-atlantico — published case=geo-atlantico messages=1 topic=earthquakes.live
+PASS  Publicado el caso geo-mag-nula — published case=geo-mag-nula messages=1 topic=earthquakes.live
+PASS  Publicado el caso geo-lat-145 — published case=geo-lat-145 messages=1 topic=earthquakes.live
+PASS  El grupo llega a lag 0 tras publicar los casos geo-*
+PASS  current_event contiene madrid, atlantico y mag-nula — ['synthetic-geo-atlantico', 'synthetic-geo-madrid', 'synthetic-geo-mag-nula']
+PASS  synthetic-geo-atlantico: country_id=(NULL) — country_id=(NULL) mag=3.0 is_synthetic=t
+PASS  synthetic-geo-madrid: country_id=ESP — country_id=ESP mag=3.0 is_synthetic=t
+PASS  synthetic-geo-mag-nula: country_id=ESP, mag=(NULL) — country_id=ESP mag=(NULL) is_synthetic=t
+PASS  synthetic-geo-lat-145 en cuarentena (coordinates_out_of_range), referencia Kafka incluida — [['synthetic-geo-lat-145', 'coordinates_out_of_range', 'earthquakes.live', '0', '3']]
+PASS  lat-145 no está en current_event — 0

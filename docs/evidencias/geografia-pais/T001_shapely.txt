@@ -1,0 +1,9 @@
+# T001 shapely
+ pyproject.toml |  1 +
+ uv.lock        | 43 ++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 43 insertions(+), 1 deletion(-)
+10:    "shapely==2.2.0",
+2.2.0
+ruedas cp312 manylinux x86_64/aarch64 y musllinux presentes en uv.lock:
+2
+Docker no disponible (daemon apagado): build/run de imagen PENDIENTE

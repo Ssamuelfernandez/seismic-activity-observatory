@@ -129,6 +129,12 @@ def stop_consumer() -> None:
     compose("stop", CONSUMER)
 
 
+def restart_consumer() -> bool:
+    """`docker compose restart consumer` (parada limpia y arranque) y espera a que vuelva a estar sano."""
+    compose("restart", CONSUMER)
+    return wait_healthy(CONSUMER)
+
+
 def start_consumer() -> bool:
     """`docker compose start consumer` y espera a que vuelva a estar sano."""
     compose("start", CONSUMER)

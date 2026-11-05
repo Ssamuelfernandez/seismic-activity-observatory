@@ -1,0 +1,8 @@
+-- [1] tras dos cargas del catálogo real
+SELECT count(*) AS paises, count(DISTINCT country_id) AS codigos FROM public.country
+
+paises | codigos
+-------+--------
+177    | 177    
+(1 filas)
+

@@ -25,11 +25,12 @@ def test_quarantine_statement_has_no_conflict_target() -> None:
     assert "live.quarantine" in sql
 
 
-def test_current_event_upsert_is_conditional_and_ignores_country() -> None:
+def test_current_event_upsert_is_conditional_and_writes_country() -> None:
     sql = queries.current_event_upsert("live")
+    assert "country_id" in queries.CURRENT_COLUMNS
     assert "ON CONFLICT (event_id) DO UPDATE" in sql
+    assert "country_id = EXCLUDED.country_id" in sql
     assert "WHERE EXCLUDED.updated_ms >" in sql
-    assert "country_id" not in sql
 
 
 def test_event_version_insert_conflicts_on_primary_key() -> None:

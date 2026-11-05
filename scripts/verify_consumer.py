@@ -4,11 +4,12 @@ Uso:
     python scripts/verify_consumer.py faq12 --yes        # FAQ 12, reenvíos y versión antigua (pruebas 2, 3, 4)
     python scripts/verify_consumer.py quarantine --yes   # cuarentena (prueba 6)
     python scripts/verify_consumer.py restart --yes      # corte entre commits y reinicio (prueba 8)
+    python scripts/verify_consumer.py geo --yes          # catálogo y país por geometría (pruebas 5 y 7)
 
 ATENCIÓN: cada escenario ejecuta `docker compose down -v`, que BORRA los volúmenes locales de Kafka y
 de PostgreSQL de este proyecto (incluidos los datos que `002` haya dejado). Sin `--yes` (o sin
 `VERIFY_CONSUMER_CONFIRM=yes`) el script avisa y termina con código 2 sin ejecutar nada destructivo.
-Cada escenario guarda su salida en `docs/evidencias/consumidor-idempotente/`; el código de salida es 0
+Cada escenario guarda su salida en `docs/evidencias/consumidor-idempotente/` (`geo`, en `geografia-pais/`); el código de salida es 0
 solo si todo coincide. Los datos son sintéticos (`is_synthetic = true`). `print` está permitido (CLI).
 """
 import argparse
@@ -21,7 +22,7 @@ from pathlib import Path
 # El script se ejecuta como `python scripts/verify_consumer.py`: se añade la raíz para importar `scripts.*`.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.consumer_scenarios import faq12, quarantine, restart  # noqa: E402
+from scripts.consumer_scenarios import faq12, geo, quarantine, restart  # noqa: E402
 from scripts.consumer_scenarios.helpers import CountersNotFound, confirm_destructive  # noqa: E402
 from scripts.consumer_scenarios.report import Checks, say  # noqa: E402
 
@@ -30,6 +31,7 @@ SCENARIOS: dict[str, Callable[[Checks], None]] = {
     "faq12": faq12.run,
     "quarantine": quarantine.run,
     "restart": restart.run,
+    "geo": geo.run,
 }
 WARNING = (
     "AVISO: este escenario ejecuta `docker compose down -v` y BORRA los volúmenes locales de Kafka y de\n"

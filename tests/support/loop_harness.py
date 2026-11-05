@@ -19,6 +19,7 @@ from consumer.counters import Counters
 from consumer.loop import LoopContext, consume_until_stopped
 from consumer.pipeline import PipelineDeps, bind_pool_writers
 from consumer.resilience import RetryControl
+from tests.support.db_helpers import no_country_locator
 from tests.support.temp_database import TempDatabase
 
 FIXED_NOW = datetime(2026, 11, 5, 9, 0, 0, tzinfo=timezone.utc)
@@ -74,11 +75,12 @@ async def open_pool(db: TempDatabase) -> asyncpg.Pool:
                                      password=db.consumer_password, min_size=1, max_size=POOL_MAX_SIZE)
 
 
-async def run_session(pool: asyncpg.Pool, consumer: ReplayConsumer, counters: Counters, hook=None) -> None:
+async def run_session(pool: asyncpg.Pool, consumer: ReplayConsumer, counters: Counters, hook=None,
+                      locate=no_country_locator) -> None:
     """Ejecuta el bucle real hasta que el consumidor simulado se queda sin mensajes (o el gancho corta)."""
     write_event, write_quarantine = bind_pool_writers(pool)
     control = RetryControl(RETRY, consumer.stop_event)
-    deps = PipelineDeps(write_event, write_quarantine, control, clock=lambda: FIXED_NOW, after_db_commit=hook)
+    deps = PipelineDeps(write_event, write_quarantine, control, locate, clock=lambda: FIXED_NOW, after_db_commit=hook)
     health = HealthSettings(str(HEARTBEAT_FILE), 60)
     context = LoopContext(consumer, deps, counters, health, consumer.stop_event, BOOTSTRAP)
     await consume_until_stopped(context)

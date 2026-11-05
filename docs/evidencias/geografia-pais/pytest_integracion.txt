@@ -1,0 +1,333 @@
+ Container seismic-observatory-postgres-1  Running
+
+-- [tras dos cargas del catálogo real] geografia_catalogo_carga
+SELECT count(*) AS paises, count(DISTINCT country_id) AS codigos FROM public.country
+paises | codigos
+-------+--------
+177    | 177    
+(1 filas)
+...
+-- [caso1_faq12] bloque4_contadores_integracion
+COUNTERS {"late_old_versions":0,"ms_to_utc_conversions":5,"new_events":2,"newer_versions_applied":1,"nulls_kept":{},"quarantine_duplicates":{},"quarantined":{},"received":5,"redeliveries_ignored":2,"same_updated_conflicts":0}
+SQL filas (current_event, event_version, quarantine): (2, 3, 0)
+SQL quarantine por motivo: {}
+
+-- [caso1_faq12: cuarentena por motivo (SQL)] bloque4_contadores_integracion
+SELECT reason, count(*) FROM live.quarantine GROUP BY reason ORDER BY reason
+reason | count
+-------+------
+(0 filas)
+.
+-- [caso2_faq12_latitud145_x2] bloque4_contadores_integracion
+COUNTERS {"late_old_versions":0,"ms_to_utc_conversions":5,"new_events":2,"newer_versions_applied":1,"nulls_kept":{},"quarantine_duplicates":{"coordinates_out_of_range":1},"quarantined":{"coordinates_out_of_range":1},"received":7,"redeliveries_ignored":2,"same_updated_conflicts":0}
+SQL filas (current_event, event_version, quarantine): (2, 3, 1)
+SQL quarantine por motivo: {'coordinates_out_of_range': 1}
+
+-- [caso2_faq12_latitud145_x2: cuarentena por motivo (SQL)] bloque4_contadores_integracion
+SELECT reason, count(*) FROM live.quarantine GROUP BY reason ORDER BY reason
+reason                   | count
+-------------------------+------
+coordinates_out_of_range | 1    
+(1 filas)
+.
+-- [caso3_faq12_dmin_nan_x2] bloque4_contadores_integracion
+COUNTERS {"late_old_versions":0,"ms_to_utc_conversions":7,"new_events":2,"newer_versions_applied":1,"nulls_kept":{},"quarantine_duplicates":{"db_constraint_violation":1},"quarantined":{"db_constraint_violation":1},"received":7,"redeliveries_ignored":2,"same_updated_conflicts":0}
+SQL filas (current_event, event_version, quarantine): (2, 3, 1)
+SQL quarantine por motivo: {'db_constraint_violation': 1}
+
+-- [caso3_faq12_dmin_nan_x2: cuarentena por motivo (SQL)] bloque4_contadores_integracion
+SELECT reason, count(*) FROM live.quarantine GROUP BY reason ORDER BY reason
+reason                  | count
+------------------------+------
+db_constraint_violation | 1    
+(1 filas)
+.....
+-- [antes] bloque3_faq12
+SELECT event_id, mag, updated_ms, is_synthetic FROM live.current_event ORDER BY event_id
+event_id | mag | updated_ms | is_synthetic
+---------+-----+------------+-------------
+(0 filas)
+
+-- [antes] bloque3_faq12
+SELECT event_id, updated_ms, mag FROM live.event_version ORDER BY event_id, updated_ms
+event_id | updated_ms | mag
+---------+------------+----
+(0 filas)
+
+-- [antes] bloque3_faq12
+SELECT count(*) AS current_rows FROM live.current_event
+current_rows
+------------
+0           
+(1 filas)
+
+-- [antes] bloque3_faq12
+SELECT count(*) AS version_rows FROM live.event_version
+version_rows
+------------
+0           
+(1 filas)
+
+-- [despues] bloque3_faq12
+SELECT event_id, mag, updated_ms, is_synthetic FROM live.current_event ORDER BY event_id
+event_id           | mag | updated_ms    | is_synthetic
+-------------------+-----+---------------+-------------
+synthetic-faq12-e1 | 4.6 | 1793786940000 | True        
+synthetic-faq12-e2 | 3.1 | 1793787120000 | True        
+(2 filas)
+
+-- [despues] bloque3_faq12
+SELECT event_id, updated_ms, mag FROM live.event_version ORDER BY event_id, updated_ms
+event_id           | updated_ms    | mag
+-------------------+---------------+----
+synthetic-faq12-e1 | 1793786700000 | 4.2
+synthetic-faq12-e1 | 1793786940000 | 4.6
+synthetic-faq12-e2 | 1793787120000 | 3.1
+(3 filas)
+
+-- [despues] bloque3_faq12
+SELECT count(*) AS current_rows FROM live.current_event
+current_rows
+------------
+2           
+(1 filas)
+
+-- [despues] bloque3_faq12
+SELECT count(*) AS version_rows FROM live.event_version
+version_rows
+------------
+3           
+(1 filas)
+.
+-- [antes] bloque3_prueba3_4_versiones
+SELECT event_id, mag, updated_ms, is_synthetic FROM live.current_event ORDER BY event_id
+event_id           | mag | updated_ms    | is_synthetic
+-------------------+-----+---------------+-------------
+synthetic-faq12-e1 | 4.6 | 1793786940000 | True        
+synthetic-faq12-e2 | 3.1 | 1793787120000 | True        
+(2 filas)
+
+-- [antes] bloque3_prueba3_4_versiones
+SELECT event_id, updated_ms, mag FROM live.event_version ORDER BY event_id, updated_ms
+event_id           | updated_ms    | mag
+-------------------+---------------+----
+synthetic-faq12-e1 | 1793786700000 | 4.2
+synthetic-faq12-e1 | 1793786940000 | 4.6
+synthetic-faq12-e2 | 1793787120000 | 3.1
+(3 filas)
+
+-- [antes] bloque3_prueba3_4_versiones
+SELECT count(*) AS current_rows FROM live.current_event
+current_rows
+------------
+2           
+(1 filas)
+
+-- [antes] bloque3_prueba3_4_versiones
+SELECT count(*) AS version_rows FROM live.event_version
+version_rows
+------------
+3           
+(1 filas)
+
+-- [despues] bloque3_prueba3_4_versiones
+SELECT event_id, mag, updated_ms, is_synthetic FROM live.current_event ORDER BY event_id
+event_id           | mag | updated_ms    | is_synthetic
+-------------------+-----+---------------+-------------
+synthetic-faq12-e1 | 4.6 | 1793786940000 | True        
+synthetic-faq12-e2 | 3.1 | 1793787120000 | True        
+(2 filas)
+
+-- [despues] bloque3_prueba3_4_versiones
+SELECT event_id, updated_ms, mag FROM live.event_version ORDER BY event_id, updated_ms
+event_id           | updated_ms    | mag
+-------------------+---------------+----
+synthetic-faq12-e1 | 1793786700000 | 4.2
+synthetic-faq12-e1 | 1793786820000 | 4.4
+synthetic-faq12-e1 | 1793786940000 | 4.6
+synthetic-faq12-e2 | 1793787120000 | 3.1
+(4 filas)
+
+-- [despues] bloque3_prueba3_4_versiones
+SELECT count(*) AS current_rows FROM live.current_event
+current_rows
+------------
+2           
+(1 filas)
+
+-- [despues] bloque3_prueba3_4_versiones
+SELECT count(*) AS version_rows FROM live.event_version
+version_rows
+------------
+4           
+(1 filas)
+.
+-- [Madrid: país por geometría] geografia_prueba7
+SELECT event_id, country_id, place FROM live.current_event WHERE event_id = 'synthetic-geo-madrid'
+event_id             | country_id | place                 
+---------------------+------------+-----------------------
+synthetic-geo-madrid | ESP        | 5 km de París, Francia
+(1 filas)
+..
+-- [Atlántico: fila con country_id vacío (NULL) y sin cuarentena] geografia_prueba7
+SELECT event_id, country_id, place FROM live.current_event WHERE event_id LIKE 'synthetic-geo-%' ORDER BY event_id
+event_id                | country_id | place                    
+------------------------+------------+--------------------------
+synthetic-geo-atlantico | NULL       | Lugar sintético de prueba
+(1 filas)
+.
+-- [total = con país + sin país] geografia_prueba7
+SELECT count(*) AS total, count(country_id) AS con_pais, count(*) - count(country_id) AS sin_pais FROM live.current_event
+total | con_pais | sin_pais
+------+----------+---------
+3     | 2        | 1       
+(1 filas)
+
+-- [Filas de los casos geográficos] geografia_prueba7
+SELECT event_id, country_id, place FROM live.current_event WHERE event_id LIKE 'synthetic-geo-%' ORDER BY event_id
+event_id                | country_id | place                    
+------------------------+------------+--------------------------
+synthetic-geo-atlantico | NULL       | Lugar sintético de prueba
+synthetic-geo-madrid    | ESP        | 5 km de París, Francia   
+synthetic-geo-mag-nula  | ESP        | Lugar sintético de prueba
+(3 filas)
+....
+-- [exclusión del tipo distinto de earthquake] geografia_no_earthquake
+SELECT event_id, updated_ms, kind, reason, observed_type, is_synthetic FROM live.exclusion ORDER BY event_id
+event_id    | updated_ms | kind                | reason                                 | observed_type | is_synthetic
+------------+------------+---------------------+----------------------------------------+---------------+-------------
+synthetic-1 | 1000       | non_earthquake_type | properties.type distinto de earthquake | quarry blast  | False       
+(1 filas)
+.
+-- [current_event: mag NULL, país ESP] geografia_prueba5
+SELECT event_id, mag, depth_km, country_id, is_synthetic FROM live.current_event WHERE event_id = 'synthetic-geo-mag-nula'
+event_id               | mag  | depth_km | country_id | is_synthetic
+-----------------------+------+----------+------------+-------------
+synthetic-geo-mag-nula | NULL | 10.0     | ESP        | True        
+(1 filas)
+
+-- [event_version: mag NULL] geografia_prueba5
+SELECT event_id, mag FROM live.event_version WHERE event_id = 'synthetic-geo-mag-nula'
+event_id               | mag 
+-----------------------+-----
+synthetic-geo-mag-nula | NULL
+(1 filas)
+
+-- [filas con mag = 0] geografia_prueba5
+SELECT (SELECT count(*) FROM live.current_event WHERE mag = 0) AS current_mag_cero, (SELECT count(*) FROM live.event_version WHERE mag = 0) AS version_mag_cero
+current_mag_cero | version_mag_cero
+-----------------+-----------------
+0                | 0               
+(1 filas)
+.
+-- [negativos: mag y profundidad tal cual] geografia_prueba5
+SELECT event_id, mag, depth_km, country_id, is_synthetic FROM live.current_event WHERE event_id = 'synthetic-geo-negativos'
+event_id                | mag   | depth_km | country_id | is_synthetic
+------------------------+-------+----------+------------+-------------
+synthetic-geo-negativos | -0.06 | -0.18    | ESP        | True        
+(1 filas)
+.......
+-- [cuarentena de los casos inválidos (referencia Kafka y hash)] geografia_prueba6_cuarentena
+SELECT event_id, reason, kafka_topic, kafka_partition, kafka_offset, left(original_sha256, 12) AS sha FROM live.quarantine ORDER BY kafka_offset
+event_id                  | reason                   | kafka_topic      | kafka_partition | kafka_offset | sha         
+--------------------------+--------------------------+------------------+-----------------+--------------+-------------
+synthetic-geo-lat-145     | coordinates_out_of_range | earthquakes.live | 0               | 4            | 0d5909176ae8
+synthetic-geo-lon-nan     | coordinates_out_of_range | earthquakes.live | 0               | 5            | f6bb36f6cc48
+synthetic-geo-no-point    | invalid_geometry         | earthquakes.live | 0               | 6            | af6190eedb52
+synthetic-geo-sin-time    | missing_time             | earthquakes.live | 0               | 7            | b076a51d8eb2
+synthetic-geo-sin-updated | missing_updated          | earthquakes.live | 0               | 8            | 61ce4da9cdb0
+(5 filas)
+
+-- [eventos guardados: todos sintéticos] geografia_prueba6_cuarentena
+SELECT event_id, is_synthetic FROM live.current_event ORDER BY event_id
+event_id                | is_synthetic
+------------------------+-------------
+synthetic-geo-atlantico | True        
+synthetic-geo-madrid    | True        
+synthetic-geo-mag-nula  | True        
+synthetic-geo-negativos | True        
+(4 filas)
+.
+-- [antes de las 100 repeticiones] bloque3_prueba2_reenvio
+SELECT 'current_event' AS tabla, count(*) AS filas FROM live.current_event UNION ALL SELECT 'event_version', count(*) FROM live.event_version UNION ALL SELECT 'quarantine', count(*) FROM live.quarantine UNION ALL SELECT 'date_dim', count(*) FROM public.date_dim ORDER BY 1
+tabla         | filas
+--------------+------
+current_event | 2    
+date_dim      | 1    
+event_version | 3    
+quarantine    | 0    
+(4 filas)
+
+-- [despues de las 100 repeticiones] bloque3_prueba2_reenvio
+SELECT 'current_event' AS tabla, count(*) AS filas FROM live.current_event UNION ALL SELECT 'event_version', count(*) FROM live.event_version UNION ALL SELECT 'quarantine', count(*) FROM live.quarantine UNION ALL SELECT 'date_dim', count(*) FROM public.date_dim ORDER BY 1
+tabla         | filas
+--------------+------
+current_event | 2    
+date_dim      | 1    
+event_version | 3    
+quarantine    | 0    
+(4 filas)
+.........................
+-- [un caso por motivo] bloque3_prueba6_cuarentena
+SELECT 'live' AS schema, reason, kafka_topic, kafka_partition, kafka_offset, original_sha256 FROM live.quarantine UNION ALL SELECT 'replay', reason, kafka_topic, kafka_partition, kafka_offset, original_sha256 FROM replay.quarantine ORDER BY 1, 5
+schema | reason                   | kafka_topic        | kafka_partition | kafka_offset | original_sha256                                                 
+-------+--------------------------+--------------------+-----------------+--------------+-----------------------------------------------------------------
+live   | invalid_json             | earthquakes.live   | 0               | 0            | 6c822e5b47f6bb15caa4be057b20f24d09dc72dc1776200d73c0342e78e44d1d
+live   | invalid_envelope         | earthquakes.live   | 0               | 1            | 67262fb2491f58c074e7c26e79d766cdfe291e127dda4a3fea5af3373aa0b25f
+live   | mode_topic_mismatch      | earthquakes.live   | 0               | 2            | c57e7b116f02633d27b40c7447b055534f5485f0db9be82812d4336a4efebd48
+live   | missing_id               | earthquakes.live   | 0               | 4            | 40758ce266b62248732a0d203cda4610bce2691d407d8092402a1f731be13f39
+live   | missing_time             | earthquakes.live   | 0               | 5            | 57e39837074dffd74337003a141c84b5edcaa0588f9f22b634b3b6ca06d31a6d
+live   | missing_updated          | earthquakes.live   | 0               | 6            | b4b85855f734cbf3f3a53108eba74c51c1b0ba11dd7caa1de03df987b4225e7d
+live   | invalid_geometry         | earthquakes.live   | 0               | 7            | 7c7d4d2e3f44d602005083ecb1ccd72b333056c20a56de5d9d47221da3376f53
+live   | coordinates_out_of_range | earthquakes.live   | 0               | 8            | 04ea12de50c3111bf687192b277fa697e5a6dd82966e648ef5e316be7719bbac
+live   | mag_out_of_range         | earthquakes.live   | 0               | 9            | e38ff933d6f5ef36a13fd482401a6cc483e54101470ec81535dc12a0dd996c77
+live   | depth_out_of_range       | earthquakes.live   | 0               | 10           | a32e4f6039b041db2fc19a967740859879cd367e9fc715f1c5a959b39f9c4b77
+live   | invalid_field_type       | earthquakes.live   | 0               | 11           | d2f0f773fada09379b45dfb055e84dd264eaf668a3de4909dc40b6cfa4e2c8e1
+live   | value_out_of_range       | earthquakes.live   | 0               | 12           | e6deb0f3c8a2501139b61952308a4c108782e23610b26aac4d3f60a5a5d8e0d6
+live   | db_constraint_violation  | earthquakes.live   | 0               | 13           | 05ca0bb69a93cfa5c9379e288af0c05a2799255606a7d43cbc0ae003e722418b
+replay | replay_at_missing        | earthquakes.replay | 0               | 3            | 9074c5d3a6e65dbb5982975c4fe6902ab6350bd3431ee536f87e23dc1ecf9b87
+(14 filas)
+.
+-- [latitud 145 (prueba 6)] bloque3_prueba6_cuarentena
+SELECT reason, event_id, kafka_topic, kafka_partition, kafka_offset, original_sha256 FROM live.quarantine
+reason                   | event_id           | kafka_topic      | kafka_partition | kafka_offset | original_sha256                                                 
+-------------------------+--------------------+------------------+-----------------+--------------+-----------------------------------------------------------------
+coordinates_out_of_range | synthetic-faq12-e1 | earthquakes.live | 0               | 7            | 04ea12de50c3111bf687192b277fa697e5a6dd82966e648ef5e316be7719bbac
+(1 filas)
+......
+-- [NUL forzado] bloque3_prueba6_cuarentena
+NUL forzado en place -> CharacterNotInRepertoireError sqlstate=22021
+.........
+-- [event_version tras corte en el offset 2 y reinicio] bloque4_prueba8_corte_simulado
+SELECT event_id, updated_ms, mag, kafka_offset FROM live.event_version ORDER BY 1, 2
+event_id           | updated_ms    | mag | kafka_offset
+-------------------+---------------+-----+-------------
+synthetic-faq12-e1 | 1793786700000 | 4.2 | 0           
+synthetic-faq12-e1 | 1793786940000 | 4.6 | 2           
+synthetic-faq12-e2 | 1793787120000 | 3.1 | 4           
+(3 filas)
+
+-- [current_event tras corte en el offset 2 y reinicio] bloque4_prueba8_corte_simulado
+SELECT event_id, mag, updated_ms FROM live.current_event ORDER BY 1
+event_id           | mag | updated_ms   
+-------------------+-----+--------------
+synthetic-faq12-e1 | 4.6 | 1793786940000
+synthetic-faq12-e2 | 3.1 | 1793787120000
+(2 filas)
+..
+-- [aserción (a)] roles_consumidor
+SELECT en live.quarantine -> sqlstate 42501
+
+-- [aserción (b)] roles_consumidor
+sentencia de producción (sin destino): primera vez -> INSERT 0 1; duplicado -> INSERT 0 0
+
+-- [aserción (c)] roles_consumidor
+variante con destino (original_sha256, reason) -> 42501
+
+-- [aserción (d)] roles_consumidor
+INSERT en ingest.ingest_state -> sqlstate 42501
+
+-- [aserción (e)] roles_consumidor
+event_version: INSERT ok (filas leídas con SELECT: 1); UPDATE -> sqlstate 42501; current_event UPDATE -> UPDATE 1; date_dim INSERT -> INSERT 0 1 y INSERT 0 0; country INSERT -> INSERT 0 1, UPDATE -> INSERT 0 1
+.
+73 passed, 534 deselected in 25.69s

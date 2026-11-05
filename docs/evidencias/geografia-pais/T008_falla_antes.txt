@@ -1,0 +1,9 @@
+$ pytest tests/integration/test_catalog_load.py -m integration (sin implementación; falla al importar)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\integration\test_catalog_load.py:15: in <module>
+    from consumer.catalog_loader import load_country_catalog
+E   ModuleNotFoundError: No module named 'consumer.catalog_loader'
+=========================== short test summary info ===========================
+ERROR tests/integration/test_catalog_load.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.18s

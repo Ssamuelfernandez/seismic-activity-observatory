@@ -109,9 +109,15 @@ def test_dow_sunday_is_seven() -> None:
     assert build_event_rows(_valid(message), REF, NOW).date.dow == 7
 
 
-def test_country_id_is_absent() -> None:
+def test_country_id_goes_only_in_current() -> None:
+    rows = build_event_rows(_valid(_message()), REF, NOW, "ESP")
+    assert rows.current["country_id"] == "ESP"
+    assert "country_id" not in rows.version
+
+
+def test_country_id_defaults_to_none_in_current() -> None:
     rows = build_event_rows(_valid(_message()), REF, NOW)
-    assert "country_id" not in rows.current
+    assert rows.current["country_id"] is None
     assert "country_id" not in rows.version
 
 

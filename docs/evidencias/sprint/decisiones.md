@@ -17,4 +17,5 @@
 | geografia-pais | El borde cuenta como dentro (covers) | Excluir el borde | Criterio del roadmap F5; evita perder eventos en frontera |
 | geografia-pais | Empate entre polígonos: menor ADM0_A3 y log `country_tie` | Elección arbitraria o duplicar el evento | Resultado determinista y reproducible |
 | geografia-pais | Sin polígono: `country_id` NULL, sin cuarentena, cuenta en totales | Mandar a cuarentena | Prueba 7: eventos oceánicos son válidos y no se pierden |
+| geografia-pais | No se validan geometrías del catálogo (USA y SDN tienen autointersecciones menores); solo se rechazan las vacías, sin buffer(0) | Validar y reparar con buffer(0) o rechazar geometrías inválidas | Validar bloquearía el arranque con el catálogo real; el archivo se usa tal cual (research.md D6) |
 | geografia-pais | T010 reescribe dos pruebas de 003 que esperaban el comportamiento anterior | Mantenerlas y forzar el comportamiento antiguo | El comportamiento esperado cambia por diseño de esta feature |

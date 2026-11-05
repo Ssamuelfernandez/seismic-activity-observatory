@@ -8,7 +8,9 @@ import asyncio
 import contextlib
 import logging
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
+from functools import partial
 from typing import Any
 
 from aiokafka import AIOKafkaConsumer
@@ -16,15 +18,18 @@ from aiokafka.errors import KafkaError
 
 from common.config import DatabaseSettings, HealthSettings, KafkaSettings, RetrySettings
 from common.db import check_database, create_pool_with_retry
+from common.geo import CountryMatch, assign_country
 from common.health import clear_heartbeat, touch_heartbeat
 from common.kafka_topics import ensure_topics
 from common.records import RawRecord
 from common.retry import retry_forever
+from consumer.catalog_loader import load_country_catalog
 from consumer.counters import Counters, apply_result
 from consumer.fault_hook import AfterDbCommit
 from consumer.pipeline import PipelineDeps, bind_pool_writers, process_record
 from consumer.reporting import log_decision, run_counters_dump
 from consumer.resilience import OpContext, RetryControl, StopRequested, commit_offset_with_retry
+from consumer.schema_check import ensure_schema_ready
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +53,7 @@ class ConsumerSettings:
     retry: RetrySettings
     health: HealthSettings
     group_id: str
+    country_catalog_path: str
 
 
 @dataclass
@@ -185,12 +191,37 @@ async def consume_until_stopped(context: LoopContext) -> None:
             await dump_task
 
 
+async def prepare_database(settings: ConsumerSettings) -> tuple[Any, Callable[[float, float], CountryMatch]]:
+    """Deja la base lista antes de consumir: esquema comprobado y catálogo de países cargado.
+
+    Qué hace:
+        Espera a PostgreSQL, abre el pool, comprueba las tablas y carga `public.country`.
+        Si algo falla cierra el pool y relanza el error (el proceso termina y Compose lo reinicia).
+    Recibe:
+        settings: configuración del consumidor (base y ruta del catálogo).
+    Devuelve:
+        El pool y el localizador de país ligado al índice espacial recién construido.
+    Por qué existe:
+        El FK de `current_event.country_id` exige el catálogo en la base antes del primer
+        mensaje (FR-008 a FR-011).
+    """
+    await check_database(settings.database, settings.retry)
+    pool = await create_pool_with_retry(settings.database, settings.retry)
+    try:
+        await ensure_schema_ready(pool)
+        index, _ = await load_country_catalog(pool, settings.country_catalog_path)
+    except BaseException:
+        await pool.close()
+        raise
+    return pool, partial(assign_country, index)
+
+
 async def run_consumer(settings: ConsumerSettings, stop_event: asyncio.Event,
                        after_db_commit: AfterDbCommit | None = None) -> None:
     """Espera a PostgreSQL y Kafka y consume hasta que se pida parar.
 
     Qué hace:
-        Comprueba la base, abre el pool y el consumidor, y delega en `consume_until_stopped`.
+        Prepara la base (esquema y catálogo), abre el consumidor y delega en `consume_until_stopped`.
     Recibe:
         settings: configuración; stop_event: se activa con SIGTERM/SIGINT;
         after_db_commit: gancho de prueba (None en producción).
@@ -200,13 +231,12 @@ async def run_consumer(settings: ConsumerSettings, stop_event: asyncio.Event,
         Ruta Kafka -> PostgreSQL idempotente con reintentos (C2, A4).
     """
     clear_heartbeat(settings.health.heartbeat_file)
-    await check_database(settings.database, settings.retry)
-    pool = await create_pool_with_retry(settings.database, settings.retry)
+    pool, locate = await prepare_database(settings)
     consumer = await start_consumer(settings)
     logger.info("Consumidor suscrito al tema %s.", settings.kafka.topic)
     write_event, write_quarantine = bind_pool_writers(pool)
     control = RetryControl(settings.retry, stop_event)
-    deps = PipelineDeps(write_event, write_quarantine, control, after_db_commit=after_db_commit)
+    deps = PipelineDeps(write_event, write_quarantine, control, locate, after_db_commit=after_db_commit)
     context = LoopContext(consumer, deps, Counters(), settings.health, stop_event, settings.kafka.bootstrap_servers)
     try:
         await consume_until_stopped(context)

@@ -1,0 +1,8 @@
+E        +  where ('event_id', 'event_time', 'event_time_ms', 'updated_at', 'updated_ms', 'mag', ...) = queries.CURRENT_COLUMNS
+
+tests\consumer\test_queries.py:30: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/common/test_transform.py::test_country_id_goes_only_in_current
+FAILED tests/common/test_transform.py::test_country_id_defaults_to_none_in_current
+FAILED tests/consumer/test_queries.py::test_current_event_upsert_is_conditional_and_writes_country
+3 failed, 36 passed in 0.12s

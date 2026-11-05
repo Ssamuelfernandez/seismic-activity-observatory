@@ -22,7 +22,8 @@ def test_help_lists_every_case() -> None:
     text = build_parser().format_help()
     assert all(name in text for name in CASES)
     assert set(CASES) == {"faq12", "late-old", "replay-100", "invalid-twice", "constraint-twice",
-                          "quarantine-set", "numbered"}
+                          "quarantine-set", "numbered", "geo-madrid", "geo-atlantico", "geo-mag-nula",
+                          "geo-lat-145"}
 
 
 @pytest.mark.parametrize(("name", "size"), [("faq12", 5), ("late-old", 1), ("replay-100", 100),
@@ -63,3 +64,13 @@ def test_all_published_messages_are_synthetic() -> None:
         for item in build_case(name):
             if item.value and decode_value(item.value).ok:
                 assert decode_value(item.value).obj["is_synthetic"] is True
+
+
+@pytest.mark.parametrize(("name", "reason", "event_id"), [
+    ("geo-madrid", None, "synthetic-geo-madrid"), ("geo-atlantico", None, "synthetic-geo-atlantico"),
+    ("geo-mag-nula", None, "synthetic-geo-mag-nula"), ("geo-lat-145", "coordinates_out_of_range", "synthetic-geo-lat-145"),
+])
+def test_geo_cases_are_single_keyed_messages_with_expected_validity(name: str, reason: str | None, event_id: str) -> None:
+    items = build_case(name)
+    assert len(items) == 1 and items[0].key == event_id.encode()
+    assert _reason(items[0]) == reason

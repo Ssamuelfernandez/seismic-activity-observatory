@@ -39,7 +39,7 @@ Decisiones de diseño con su motivo. Las tres primeras aplican las decisiones pr
 - **Esquema**: `to_regclass` sobre las 8 tablas que usa el consumidor (`public.country`, `public.date_dim` y las tres de `live` y de `replay`); el error nombra la tabla que falta. No se comprueban columnas (el DDL lo aplica `postgres_init.sh`; límite conocido).
 - **Carga**: una transacción con 177 `INSERT … ON CONFLICT (country_id) DO UPDATE … WHERE … IS DISTINCT FROM`. Ya existe `queries.COUNTRY_UPSERT`. La etiqueta del comando (`INSERT 0 1`/`INSERT 0 0`) no distingue insertada de actualizada; se calcula `inserted = count(*) después − count(*) antes` y `updated = cambiadas − inserted` (el rol tiene `SELECT` sobre `public.country`). Línea de log: `catalog loaded total=177 inserted=… updated=…`.
 - **Unicidad y propiedades (C10)**: antes de tocar la base, `parse_country_catalog` comprueba que `ADM0_A3` existe, es único y cumple `^[A-Z]{3}$` (el `CHECK` del DDL), y que `NAME_ES`, `ADMIN`, `CONTINENT` y `SUBREGION` existen. El error nombra el código o campo y la posición. En el archivo real hay 177 distintos y 0 nulos (comprobado al diseñar).
-- **Geometría**: solo `Polygon` y `MultiPolygon`; cualquier otra o una geometría vacía/inválida detiene el arranque con error nombrando la entidad. No se "repara" nada con `buffer(0)`: el archivo se usa tal cual.
+- **Geometría**: solo `Polygon` y `MultiPolygon`; cualquier otra, o una geometría vacía, detiene el arranque con error nombrando la entidad. No se validan geometrías (USA y SDN del catálogo real son inválidas por autointersección) y no se "repara" nada con `buffer(0)`: el archivo se usa tal cual.
 - **Ruta**: `COUNTRY_CATALOG_PATH` ya está en `compose.yaml` (consumer) con el montaje de solo lectura; no hay variable nueva ni cambio en `.env.example`.
 
 ## D7. Reglas de validez (FR-013): sin código nuevo, solo pruebas
@@ -65,3 +65,4 @@ El índice `STRtree` se construye una vez en el arranque y vive en el proceso (1
 - Antimeridiano: se usa el punto tal cual en [-180, 180] y el resultado del catálogo.
 - Cambiar el catálogo entre arranques actualiza `public.country` pero no borra filas que ya no estén en el archivo (FR-009 no pide borrado).
 - No se comprueban columnas del esquema al arrancar, solo que existan las tablas.
+- Geometrías no validadas: USA y SDN del catálogo real son inválidas por autointersección y se usan tal cual; `covered_by` funciona igual con ellas.

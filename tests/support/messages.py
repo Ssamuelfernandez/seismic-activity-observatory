@@ -88,6 +88,56 @@ def late_old_version_message() -> dict:
     return build_synthetic_message(FAQ12_E1, E1_TIME_MS, E1_UPDATED_1007, 4.4)
 
 
+MADRID = (-3.70, 40.42)
+ATLANTIC = (-30.0, 35.0)
+GEO_PREFIX = "synthetic-geo-"
+GEO_DEPTH = 10.0
+GEO_TIME_MS = E1_TIME_MS
+GEO_UPDATED_MS = E1_UPDATED_1005
+GEO_PLACE_ELSEWHERE = "5 km de París, Francia"
+NEGATIVE_MAG = -0.06
+NEGATIVE_DEPTH = -0.18
+INVALID_LATITUDE = 145
+
+
+def build_geo_message(case: str, lon: float, lat: float, *, mag: float | None = 3.0,
+                      depth: float = GEO_DEPTH, place: str = "Lugar sintético de prueba") -> dict:
+    """Mensaje sintético de F5 (`synthetic-geo-<caso>`) con coordenadas y magnitud a medida."""
+    event = build_event(f"{GEO_PREFIX}{case}", GEO_TIME_MS, GEO_UPDATED_MS, mag)
+    event["geometry"]["coordinates"] = [lon, lat, depth]
+    event["properties"]["place"] = place
+    return build_message(event)
+
+
+def geo_cases() -> dict[str, dict]:
+    """Los 9 casos de la feature geografía-país, todos sintéticos (`is_synthetic = true`).
+
+    Qué hace:
+        Construye madrid, atlantico, mag-nula, negativos, lat-145, lon-nan, no-point,
+        sin-time y sin-updated con ids `synthetic-geo-<caso>`.
+    Devuelve:
+        Diccionario caso -> mensaje (sobre del contrato).
+    Por qué existe:
+        Las pruebas 5, 6 y 7 y el escenario `geo` comparten los mismos mensajes (C9, C12, C13).
+    """
+    madrid_lon, madrid_lat = MADRID
+    cases = {
+        "madrid": build_geo_message("madrid", madrid_lon, madrid_lat, place=GEO_PLACE_ELSEWHERE),
+        "atlantico": build_geo_message("atlantico", *ATLANTIC),
+        "mag-nula": build_geo_message("mag-nula", madrid_lon, madrid_lat, mag=None),
+        "negativos": build_geo_message("negativos", madrid_lon, madrid_lat, mag=NEGATIVE_MAG, depth=NEGATIVE_DEPTH),
+        "lat-145": build_geo_message("lat-145", madrid_lon, INVALID_LATITUDE),
+        "lon-nan": build_geo_message("lon-nan", float("nan"), madrid_lat),
+        "no-point": build_geo_message("no-point", madrid_lon, madrid_lat),
+        "sin-time": build_geo_message("sin-time", madrid_lon, madrid_lat),
+        "sin-updated": build_geo_message("sin-updated", madrid_lon, madrid_lat),
+    }
+    cases["no-point"]["event"]["geometry"] = {"type": "LineString", "coordinates": [[madrid_lon, madrid_lat], [0, 0]]}
+    del cases["sin-time"]["event"]["properties"]["time"]
+    del cases["sin-updated"]["event"]["properties"]["updated"]
+    return cases
+
+
 def to_bytes(message: dict) -> bytes:
     """Serializa un mensaje como lo haría el productor (JSON UTF-8)."""
     return json.dumps(message).encode("utf-8")

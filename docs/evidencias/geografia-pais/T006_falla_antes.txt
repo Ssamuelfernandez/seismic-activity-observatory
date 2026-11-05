@@ -1,0 +1,9 @@
+$ pytest tests/consumer/test_schema_check.py (sin implementación)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\consumer\test_schema_check.py:6: in <module>
+    from consumer.schema_check import REQUIRED_TABLES, SchemaNotReadyError, ensure_schema_ready
+E   ModuleNotFoundError: No module named 'consumer.schema_check'
+=========================== short test summary info ===========================
+ERROR tests/consumer/test_schema_check.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.09s
