@@ -8,6 +8,7 @@ Los IDs (A1, B6, C4, F8, G5…) remiten al checklist; las fases (F0–F13) remit
 - 1-nov-2026 (rev. 3): reconciliación de los tres documentos. **El frontend se construye desde cero** (el proyecto Angular del paquete es solo un ejemplo): la feature del panel se divide en cinco. Tabla de features única (§4) con las semillas de spec integradas (antes estaban en el roadmap). Identificadores de código, BD y topics en inglés. Constitución ampliada (§5). Comandos de Spec Kit con nota de versión. Se añade la fuente de verdad por tema (§0).
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet; se decide en el plan de `panel-base-mock`. Afecta a §0, §3 (árbol de carpetas), §4.2, §6 y §7.5.
 - Nov-2026 (rev. 5): el profesor permite cambiar el frontend; decisión del alumno: **React + TypeScript + Vite + Tailwind** en lugar de Angular (mapa `react-globe.gl`, plan B MapLibre o Leaflet; TanStack Query; Chart.js; store único de filtros). Afecta a §0, §3, §4.2, §5 y §7.5. El alcance de las features no cambia.
+- 5-nov-2026 (rev. 6): se añade el requisito G17 (diseño responsive) a la fila `008-panel-base-mock` de §4.
 
 ---
 
@@ -158,7 +159,7 @@ Una feature = un ciclo completo de Spec Kit = una rama. Spec Kit numera las carp
 | `005-geografia-pais` | F5 | C9–C12 | 5 (magnitud nula), 7 (evento marítimo) |
 | `006-historico-2025` | F6 | B13–B18 | — (conteos cuadran con los archivos) |
 | `007-api` | F7 | F1–F12 (F12 se completa con `013`) | — (tests con httpx, 503 con BD parada) |
-| `008-panel-base-mock` | F8a | G0, G2, G11, G14, G15; parte de G12 (`magType`) | — (capturas con el mock) |
+| `008-panel-base-mock` | F8a | G0, G2, G11, G14, G15, G17; parte de G12 (`magType`) | — (capturas con el mock, incluida una a 375 px) |
 | `009-panel-filtros-tabla` | F8b | G6, G8, G16; parte de G12 (`country_id`, `country_name`, `truncated`) | — (capturas con filtros visibles) |
 | `010-panel-graficos-comparacion` | F8c | G3, G4, G5, G5b | — (capturas con filtros visibles) |
 | `011-panel-estado-fallos` | F8d | G7, G9; parte de G12 (`last_ingestion`) | — (fallo simulado en el mock) |
