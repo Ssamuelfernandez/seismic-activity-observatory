@@ -3,6 +3,6 @@
 - Feature: historico-2025 | Rama: 006-historico-2025 (desde main)
 - diseno: TERMINADA (commit db83c47)
 - implementar: TERMINADA (supervisor: CONTINUAR; commit "feat: historico-2025")
-- cierre: PENDIENTE
+- cierre: TERMINADA (documentación; commit "docs: cierre de historico-2025" pendiente del alumno)
 - Aviso: 7 archivos de docs/evidencias/consumidor-idempotente/ modificados por accidente y excluidos del commit (restaurar con `git checkout -- docs/evidencias/consumidor-idempotente`).
 - Sin merge ni push.

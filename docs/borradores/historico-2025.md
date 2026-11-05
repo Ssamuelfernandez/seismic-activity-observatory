@@ -28,7 +28,19 @@ El archivo `usgs_gap_<inicio>_<fin>.geojson` se añade a `gaps` del manifiesto s
 - **`MessageRef` con `None`**: el histórico no pasa por Kafka; `partition` y `offset` admiten `None` y `kafka_columns(ref)` deja las columnas `kafka_*` nulas. Es el único cambio en código compartido; las pruebas de 003–005 siguen pasando.
 - **Archivos versionados** en `data/historical/` (14 MB), de modo que un clon reproduce la carga sin red; el sha256 del manifiesto se comprueba antes de escribir nada.
 
+## Evidencias clave por requisito
+
+- B13: `descarga_2025.log` (registros y `usgs_count` por consulta; total 18 302 = `count` anual).
+- B14: `descarga_2025.log` (`duplicates=`) y `historico_recarga_huella.out`.
+- B15: `data/historical/manifest.json`; `descarga_2025_segunda.log` (reutilización, 0 peticiones).
+- B16: `T010_*` y `historico_reglas.out` (mismas reglas; una versión menor no retrocede).
+- B17: `carga2.out`, `verificacion.out`, `verificacion_tras_reinicio.out`.
+- B12: `hueco_ensayo.out`. B18: este borrador y la sección del README.
+
+Nota: la carpeta de evidencias contiene también archivos de otras features (`bloque3_*`, `bloque4_*`, `geografia_*`, `roles_consumidor.out`) generados por las pruebas al redirigir la evidencia; no se han borrado.
+
 ## Límites conocidos
+
 
 - Carrera entre `count` y descarga: si USGS publica una revisión entre ambas, el total puede no cuadrar y el error pide repetir.
 - `carga1.out` no muestra `new=18302` porque se ejecutó con una imagen anterior del consumidor; la cifra se comprueba en la verificación SQL.

@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-05
 
-**Status**: Draft (specify + clarify hechos; pendiente de revisión del alumno)
+**Status**: Implemented (2026-11-05). 25/25 tareas. Evidencias: `docs/evidencias/historico-2025/` (609 unitarias y 85 de integración sin fallos; 18302 eventos únicos cargados, recarga sin cambios). Tareas diferidas: ninguna. Pendiente del alumno: revisar, marcar B12–B18 y pasar `docs/borradores/historico-2025.md` a la memoria.
 
 **Input**: User description: "Descargar el histórico de 2025 de USGS (mundial, M>=4, solo terremotos, por meses) con procedencia registrada y cargarlo en la base reutilizando el procesamiento del consumidor, con origen `usgs_historical`. Cubre B13-B18 y documenta el procedimiento de recuperación de un hueco de más de 24 h (B12)."
 
