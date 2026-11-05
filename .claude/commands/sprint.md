@@ -1,5 +1,5 @@
 ---
-description: Modo sprint: ejecuta una feature completa (diseno, implementar, cierre) con el supervisor tomando las decisiones entre fases; commits en la rama de la feature, sin merge ni push
+description: "Modo sprint: ejecuta una feature completa (diseno, implementar, cierre) con el supervisor tomando las decisiones entre fases; commits en la rama de la feature, sin merge ni push"
 argument-hint: <nombre-feature> <brief con tope de tareas>
 ---
 

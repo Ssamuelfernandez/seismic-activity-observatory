@@ -1,6 +1,6 @@
 ---
 name: implementador
-description: Implementa un bloque de tareas de tasks.md (código, pruebas y evidencia) respetando la spec y los contratos. No da nada por verificado: eso lo hace el verificador.
+description: "Implementa un bloque de tareas de tasks.md (código, pruebas y evidencia) respetando la spec y los contratos. No da nada por verificado: eso lo hace el verificador."
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
