@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-05
 
-**Status**: Draft (specify + clarify hechos; pendiente de revisión del alumno)
+**Status**: Implemented (2026-11-05). 25/25 tareas. Evidencias: `docs/evidencias/api/` (731 unitarias y 202 de integración sin fallos; coherencia con SQL independiente; recorrido real con `curl`; 503 real). Tareas diferidas: ninguna. F9 (CORS) queda en `despliegue` y F12 es parcial hasta la feature de replay. Pendiente del alumno: revisar, marcar F1–F8, F10 y F11 y pasar `docs/borradores/api.md` a la memoria.
 
 **Input**: User description: "API que lee de PostgreSQL ya procesado y sirve al panel: `GET /api/eventos` (filtros, paginación, metadata completo), `GET /api/salud` y `GET /api/estadisticas` (mismos filtros), con la forma exacta de `contracts/api.md`, rol de solo lectura, 503 si la base falla, cuerpos 404/405 del error común y `mode=replay` aceptado devolviendo un intervalo vacío. Cubre F1-F8, F10 y F11; F9 (CORS) queda en la feature de despliegue (P1) y F12 se completa en la feature replay."
 

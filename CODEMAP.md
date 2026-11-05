@@ -104,6 +104,7 @@ Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04
 | La spec, el plan, la investigación, el modelo de datos, las tareas, la bitácora y el quickstart de historico-2025; la sección «Histórico 2025» del README con los comandos de descarga, carga y hueco | specs/006-historico-2025/; README.md | B12, B17, B18 |
 | Nota sobre las evidencias del histórico: `docs/evidencias/historico-2025/` también contiene archivos de otras features (`bloque3_*`, `bloque4_*`, `geografia_*`, `roles_consumidor.out`) que las pruebas de integración generaron al redirigir la evidencia; no son del histórico y no se han borrado. Las propias son `T0*`, `carga*.out`, `descarga_2025*.log`, `historico_*.out`, `hueco_ensayo.out`, `verificacion*` | docs/evidencias/historico-2025/ | — |
 | Los apuntes para la memoria y la defensa del histórico (por qué lote, instantánea, hueco >24 h, decisiones y límites) | docs/borradores/historico-2025.md | B12, B16, B18 |
+| Los apuntes para la memoria y la defensa de la API (decisiones, límites, demostración con `curl`) | docs/borradores/api.md | F1–F8, F10, F11 |
 | Qué devuelve la API de eventos | api/routers/events.py, api/queries.py (ya real, ver la fila de la API de consulta) | F1–F3 |
 | Cómo el panel consume la API | frontend/src/app/core/api.service.ts | G1, G9 |
 
