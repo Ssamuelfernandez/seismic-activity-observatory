@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-05
 
-**Status**: Diseño completo (spec, plan y tareas escritos); pendiente de revisión del alumno antes de implementar
+**Status**: Implemented (2026-11-05). 25/25 tareas. Evidencias: `docs/evidencias/geografia-pais/` (534 unitarias y 73 de integración sin fallos; `verify_consumer.py geo` 16/16). Tareas diferidas: ninguna. Pendiente del alumno: revisar y pasar `docs/borradores/geografia-pais.md` a la memoria (C9–C12).
 
 **Input**: User description: "Asignar país a cada evento por punto en polígono y aplicar las reglas de validez completas en el consumidor. Retoma lo diferido de consumidor-idempotente (catálogo de países en `public.country` y comprobación del esquema al arrancar). Cubre C9-C12. Pruebas de aceptación 5 (magnitud nula) y 7 (evento marítimo)."
 

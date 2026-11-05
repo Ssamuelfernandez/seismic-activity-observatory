@@ -401,17 +401,17 @@ Bloque 1 (T003-T009, T011-T012)  ──►  Bloque 2 (T013-T023, T025-T029, T031
 | T030 | Prueba `ast` de pureza de módulos (SC-010): calidad estructural, no una prueba de aceptación. |
 | T038 | Paridad de esquemas `live`/`replay` (FR-032): el consumidor solo escribe en `live`; el replay queda fuera de alcance. |
 | T058 | Cuarentena fallida con reintento, `CHECK`/disparador diferido y `54*` (US3.6-US3.8): endurecimiento de FR-014; la ruta feliz de C5 ya la prueba T042. |
-| T062 | Catálogo de países (FR-025): `country_id` queda `NULL`; no es necesario para C1–C8, C13 ni las pruebas 2, 3, 4, 6 y 8. |
-| T063 | Parser puro del catálogo de países; depende del catálogo diferido (T062). |
-| T064 | Comprobación de esquema al arrancar (FR-026): el esquema lo crea `001_schema.sql`; endurecimiento del arranque. |
-| T065 | Implementación de `ensure_schema_ready`; depende de T064. |
-| T066 | Prueba de carga idempotente del catálogo (SC-011); catálogo diferido. |
-| T067 | Cargador del catálogo de países; catálogo diferido. |
-| T069 | Cableado de arranque del catálogo y de la comprobación de esquema; ambos diferidos. |
+| T062 | Catálogo de países (FR-025): `country_id` queda `NULL`; no es necesario para C1–C8, C13 ni las pruebas 2, 3, 4, 6 y 8. Resuelto en 005-geografia-pais. |
+| T063 | Parser puro del catálogo de países; depende del catálogo diferido (T062). Resuelto en 005-geografia-pais. |
+| T064 | Comprobación de esquema al arrancar (FR-026): el esquema lo crea `001_schema.sql`; endurecimiento del arranque. Resuelto en 005-geografia-pais. |
+| T065 | Implementación de `ensure_schema_ready`; depende de T064. Resuelto en 005-geografia-pais. |
+| T066 | Prueba de carga idempotente del catálogo (SC-011); catálogo diferido. Resuelto en 005-geografia-pais. |
+| T067 | Cargador del catálogo de países; catálogo diferido. Resuelto en 005-geografia-pais. |
+| T069 | Cableado de arranque del catálogo y de la comprobación de esquema; ambos diferidos. Resuelto en 005-geografia-pais. |
 | T077 | Caída de PostgreSQL con Docker (SC-006): endurecimiento de FR-014/FR-029; los reintentos ya se prueban con dobles en T045/T053. |
 | T078 | Caída de Kafka con Docker (US2.5): endurecimiento de FR-029; `broker_reachable` ya se prueba con dobles en T055. |
 | T079 | Conciliación de contadores con Docker: C8 queda demostrado por T049, T060 y las líneas `COUNTERS` de T074. |
-| T080 | Escenario del catálogo (SC-011); catálogo diferido. |
+| T080 | Escenario del catálogo (SC-011); catálogo diferido. Resuelto en 005-geografia-pais. |
 | T084 | `docs/memoria.md` §4: documentación fuera de README y CODEMAP. |
 | T086 | Ejecución de la regresión de `002`; depende de T002 y T082. |
 | T088 | Comprobación de `git diff` sobre contratos y `sql/` (FR-035): verificación, no una prueba; basta con no tocarlos. |

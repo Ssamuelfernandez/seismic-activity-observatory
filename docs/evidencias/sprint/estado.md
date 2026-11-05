@@ -1,5 +1,5 @@
 # Estado del sprint — geografia-pais
 
 - Feature: geografia-pais | Rama: 005-geografia-pais (desde main)
-- diseno: TERMINADA (supervisor: CONTINUAR) | implementar: pendiente | cierre: pendiente
-- Siguiente: implementar (25 tareas, 5 bloques, specs/005-geografia-pais/tasks.md)
+- diseno: TERMINADA | implementar: TERMINADA (commit fbcbb2c) | cierre: TERMINADA (supervisor: CONTINUAR; commit "docs: cierre de geografia-pais")
+- Sprint COMPLETO. Sin merge ni push: la rama queda como actual para apilar la siguiente feature.

@@ -2,7 +2,7 @@
 
 **Input**: `specs/005-geografia-pais/` (spec.md, plan.md, research.md, data-model.md, quickstart.md).
 
-**Rama**: `005-geografia-pais`. **Estado**: ninguna tarea hecha. No se hace commit ni merge: al terminar T025 se detiene el trabajo y se espera la revisión del alumno.
+**Rama**: `005-geografia-pais`. **Estado**: 25/25 tareas hechas. No se hace commit ni merge: al terminar T025 se detiene el trabajo y se espera la revisión del alumno.
 
 **Cubre**: C9–C12; pruebas de aceptación 5 (magnitud nula) y 7 (evento marítimo), con refuerzo de la 6. Retoma de `003-consumidor-idempotente` las tareas diferidas T062–T067, T069 y T080 (catálogo y comprobación del esquema al arrancar).
 
@@ -128,15 +128,15 @@ Comandos de referencia: unitarias `uv run pytest -m "not integration" -q`; integ
   - Cubre: FR-020, constitución §16.
   - Criterio: 0 fallos en ambas ejecuciones; los 9 archivos de `docs/evidencias/geografia-pais/` existen y no están vacíos.
 
-- [ ] T023 Actualizar `CODEMAP.md` (filas de `common/geo.py`, `schema_check.py`, `catalog_loader.py`, tests nuevos, `scripts/geo_real_day.py`, escenario `geo`, `docs/evidencias/geografia-pais/`, `specs/005-geografia-pais/`; la fila de `geo.py` pasa de prevista a real; entrada en «Historial de features cerradas» y quitar el «diferido» de `consumidor-idempotente` que esta feature resuelve) y la sección de README del consumidor (país por geometría, catálogo al arrancar, `shapely` como dependencia nueva, límite: sin recálculo retroactivo). Solo documentación. CC-MAP.
+- [x] T023 Actualizar `CODEMAP.md` (filas de `common/geo.py`, `schema_check.py`, `catalog_loader.py`, tests nuevos, `scripts/geo_real_day.py`, escenario `geo`, `docs/evidencias/geografia-pais/`, `specs/005-geografia-pais/`; la fila de `geo.py` pasa de prevista a real; entrada en «Historial de features cerradas» y quitar el «diferido» de `consumidor-idempotente` que esta feature resuelve) y la sección de README del consumidor (país por geometría, catálogo al arrancar, `shapely` como dependencia nueva, límite: sin recálculo retroactivo). Solo documentación. CC-MAP.
   - Cubre: FR-020, constitución §16.
   - Criterio: `grep -n "geo.py\|catalog_loader\|schema_check" CODEMAP.md` muestra las filas reales; cada archivo de código nuevo aparece en `CODEMAP.md` (`git status --short` contra el mapa).
 
-- [ ] T024 Crear `docs/borradores/geografia-pais.md` (apuntes para la memoria, C9–C12): un párrafo con la regla de frontera (borde incluido) y de empates (`ADM0_A3` menor) con su motivo, `NULL` = «Sin país asignado», unicidad de `ADM0_A3` (177), resultado de la muestra real de un día con las cifras de `geo_real_day.out`, la limitación de precisión del catálogo 110m (FAQ 19, `FUENTES-Y-LICENCIAS.md`) y los límites conocidos de research.md. Solo documentación.
+- [x] T024 Crear `docs/borradores/geografia-pais.md` (apuntes para la memoria, C9–C12): un párrafo con la regla de frontera (borde incluido) y de empates (`ADM0_A3` menor) con su motivo, `NULL` = «Sin país asignado», unicidad de `ADM0_A3` (177), resultado de la muestra real de un día con las cifras de `geo_real_day.out`, la limitación de precisión del catálogo 110m (FAQ 19, `FUENTES-Y-LICENCIAS.md`) y los límites conocidos de research.md. Solo documentación.
   - Cubre: C11, FR-018.
   - Criterio: el archivo existe y las cifras citadas coinciden con las evidencias (revisión manual).
 
-- [ ] T025 Comprobaciones finales y parada: `git diff --stat -- specs/001-contratos-y-modelo/contracts sql/001_schema.sql docs/enunciado` vacío (SC-009); `uv run python scripts/check_env_example.py` con código 0; `grep -rn "Co-Authored-By\|Generated with" specs/005-geografia-pais docs/borradores/geografia-pais.md` sin resultados; actualizar el estado de `spec.md` y `bitacora.md`. Después, **detenerse y esperar la revisión del alumno** (sin commit ni merge).
+- [x] T025 Comprobaciones finales y parada: `git diff --stat -- specs/001-contratos-y-modelo/contracts sql/001_schema.sql docs/enunciado` vacío (SC-009); `uv run python scripts/check_env_example.py` con código 0; `grep -rn "Co-Authored-By\|Generated with" specs/005-geografia-pais docs/borradores/geografia-pais.md` sin resultados; actualizar el estado de `spec.md` y `bitacora.md`. Después, **detenerse y esperar la revisión del alumno** (sin commit ni merge).
   - Cubre: FR-017, SC-009, constitución §16, §19.
   - Criterio: los tres comandos dan el resultado indicado y el trabajo queda sin commit.
 

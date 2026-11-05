@@ -126,7 +126,7 @@ Quien audita el pipeline comprueba que los datos de prueba están marcados como 
 
 ### User Story 6 - Base lista y lógica reutilizable (Priority: P2) — Diferido (parcial)
 
-> **Diferido**: escenarios 6.1 (catálogo de países; se retoma en geografia-pais) y 6.3 (paridad `live`/`replay`; el replay queda fuera de alcance). Los escenarios 6.2 y 6.4 sí están implementados y probados.
+> **Diferido**: escenarios 6.1 (catálogo de países; se retoma en geografia-pais) y 6.3 (paridad `live`/`replay`; el replay queda fuera de alcance). Los escenarios 6.2 y 6.4 sí están implementados y probados. Resuelto en 005-geografia-pais (6.1, catálogo).
 
 Quien arranca el sistema desde cero obtiene la base preparada para el consumidor (esquemas, catálogo de países, tabla de fechas) sin pasos manuales, y quien construya el histórico o el replay puede reutilizar exactamente la misma lógica de procesamiento.
 
@@ -217,8 +217,8 @@ Quien arranca el sistema desde cero obtiene la base preparada para el consumidor
 
 **Preparación de la base y catálogos**
 
-- **FR-025** *(Diferido: no hace falta para C1–C8, C13 ni las pruebas 2, 3, 4, 6 y 8; `country_id` queda `NULL`; se retoma en geografia-pais)*: El consumidor MUST cargar el catálogo `data/catalogo/paises.geojson` (sin modificarlo) en `public.country` al arrancar, de forma repetible sin duplicar ni fallar.
-- **FR-026** *(Diferido: endurecimiento del arranque; el esquema ya lo crea `sql/001_schema.sql`)*: El esquema (`sql/001_schema.sql`) y los roles (`sql/002_roles.sql`) ya los aplica `infra-compose`; el consumidor MUST asumirlos, esperar a que la base esté lista con reintentos y fallar con un mensaje claro si falta una tabla esperada.
+- **FR-025** *(Diferido: no hace falta para C1–C8, C13 ni las pruebas 2, 3, 4, 6 y 8; `country_id` queda `NULL`; se retoma en geografia-pais)*: El consumidor MUST cargar el catálogo `data/catalogo/paises.geojson` (sin modificarlo) en `public.country` al arrancar, de forma repetible sin duplicar ni fallar. Resuelto en 005-geografia-pais.
+- **FR-026** *(Diferido: endurecimiento del arranque; el esquema ya lo crea `sql/001_schema.sql`)*: El esquema (`sql/001_schema.sql`) y los roles (`sql/002_roles.sql`) ya los aplica `infra-compose`; el consumidor MUST asumirlos, esperar a que la base esté lista con reintentos y fallar con un mensaje claro si falta una tabla esperada. Resuelto en 005-geografia-pais.
 - **FR-027**: El consumidor MUST usar su propio rol de base de datos (`observatory_consumer`) y solo los permisos que le asigna `db-schema.md` §1.1; cualquier permiso adicional que resulte necesario se anota como escalado, no se concede en silencio.
 - **FR-028**: El consumidor MUST consumir `earthquakes.live` con un grupo de consumo propio y MUST leer desde el principio del tema cuando el grupo no tiene offset guardado.
 - **FR-029**: Los reintentos de conexión a Kafka y a PostgreSQL, el latido y el healthcheck del consumidor MUST seguir cumpliendo A4 (`infra-compose`), y «saludable» MUST seguir significando que el consumidor sigue procesando. El latido NO se renueva durante el reintento por error de base o mensaje venenoso, por lo que el contenedor puede quedar `unhealthy`; es consecuencia aceptada y su detalle, junto con el valor del tope de espera y de la tasa de registro, se fija en el plan.
@@ -263,7 +263,7 @@ Asignación de país por punto en polígono (`country_id` queda `NULL`), product
 - **SC-008**: El 100 % de las filas procedentes de mensajes sintéticos lleva la marca de sintético en las tres tablas (actual, versión, cuarentena), y 0 filas reales la llevan.
 - **SC-009** *(Se verifica con `process_record` y una base temporal, no con el consumidor en Docker)*: Partiendo de una base y un grupo de consumo limpios, y en una sola sesión del consumidor, tras los casos concretos de FR-036 (FAQ 12, inválido repetido y `db_constraint_violation` repetido) los contadores del consumidor coinciden en el 100 % con las cifras obtenidas por consulta SQL sobre la base.
 - **SC-010**: Las funciones puras de validación y transformación se ejecutan en una suite de tests sin Kafka ni PostgreSQL y se reutilizan sin copias desde otro punto de entrada.
-- **SC-011** *(Diferido: depende del catálogo de países; se retoma en geografia-pais)*: Tras `docker compose up --build -d` desde un volumen limpio, el consumidor llega a estado saludable, `public.country` contiene 177 filas y repetir el arranque no cambia ese número.
+- **SC-011** *(Diferido: depende del catálogo de países; se retoma en geografia-pais)*: Tras `docker compose up --build -d` desde un volumen limpio, el consumidor llega a estado saludable, `public.country` contiene 177 filas y repetir el arranque no cambia ese número. Resuelto en 005-geografia-pais.
 - **SC-012**: Una persona ajena al desarrollo puede reproducir la secuencia de la FAQ 12 y comprobar el resultado siguiendo solo la documentación de la feature.
 
 ## Assumptions
