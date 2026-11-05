@@ -7,6 +7,7 @@ Los IDs (A1, B6, C4, F8, G5…) remiten al checklist; las fases (F0–F13) remit
 **Registro de cambios**
 - 1-nov-2026 (rev. 3): reconciliación de los tres documentos. **El frontend se construye desde cero** (el proyecto Angular del paquete es solo un ejemplo): la feature del panel se divide en cinco. Tabla de features única (§4) con las semillas de spec integradas (antes estaban en el roadmap). Identificadores de código, BD y topics en inglés. Constitución ampliada (§5). Comandos de Spec Kit con nota de versión. Se añade la fuente de verdad por tema (§0).
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet; se decide en el plan de `panel-base-mock`. Afecta a §0, §3 (árbol de carpetas), §4.2, §6 y §7.5.
+- Nov-2026 (rev. 5): el profesor permite cambiar el frontend; decisión del alumno: **React + TypeScript + Vite + Tailwind** en lugar de Angular (mapa `react-globe.gl`, plan B MapLibre o Leaflet; TanStack Query; Chart.js; store único de filtros). Afecta a §0, §3, §4.2, §5 y §7.5. El alcance de las features no cambia.
 
 ---
 
@@ -19,7 +20,7 @@ Los IDs (A1, B6, C4, F8, G5…) remiten al checklist; las fases (F0–F13) remit
 | Idioma | **Identificadores en inglés** (funciones, variables, archivos de código, tablas, columnas, topics). Docstrings, comentarios y documentación en español. Excepciones: rutas y campos fijados por el contrato del profesor (`/api/eventos`, `/api/salud`, `/api/estadisticas`, `country_id`, `country_name`…). El nombre de las carpetas de features en `specs/` va en español |
 | Claridad del código | Reglas de estructura y funciones + docstrings explicativos + mapa del código (`CODEMAP.md`) |
 | Contratos | La feature `001-contratos-y-modelo` es la **fuente de verdad** de los tres contratos. Las demás features los referencian y nunca los duplican |
-| Frontend | Angular + librería de mapa a decidir en el plan de panel-base-mock (candidata Globe.gl) **desde cero** (el ejemplo del paquete solo se consulta). Se desarrolla primero contra un **mock** del contrato y se reconecta a la API real |
+| Frontend | React + TypeScript + Vite + Tailwind, con mapa `react-globe.gl` (plan B MapLibre o Leaflet; se confirma en el plan de panel-base-mock) **desde cero** (el ejemplo del paquete solo se consulta). Se desarrolla primero contra un **mock** del contrato y se reconecta a la API real |
 | Documentación | `docs/enunciado/` (material del profesor) es **solo lectura**. `docs/` (entregables) y `specs/` (herramienta) son cosas distintas (§1) |
 
 ### Fuente de verdad por tema (si dos documentos discrepan, manda este orden)
@@ -125,7 +126,7 @@ observatorio-sismico/
 ├── producer/                  # productor live y replay
 ├── consumer/                  # consumidor
 ├── api/                       # FastAPI
-├── frontend/                  # Angular + librería de mapa a decidir (desde cero)
+├── frontend/                  # React + TS + Vite + Tailwind (desde cero)
 ├── sql/                       # DDL e índices
 ├── scripts/                   # exploración USGS, histórico: descarga y carga
 ├── data/
@@ -203,7 +204,7 @@ Regla: **el contrato se cambia antes que el código**. Si una feature necesita o
 | `geografia-pais` | Carga del catálogo, regla de frontera/empates, `NULL` = sin país, unicidad de `ADM0_A3` |
 | `historico-2025` | Particionado temporal, manifiesto, dedup, carga, procedimiento de hueco >24 h |
 | `api` | Endpoints, parámetros, esquemas de respuesta, errores, CORS, paginación/truncado |
-| `panel-base-mock` | Proyecto Angular, `config.json` (`mode: mock|api`), mock del contrato, mapa, fronteras, leyenda, atribución OSM, decisión de la librería de mapa tras un prototipo corto |
+| `panel-base-mock` | Proyecto React (Vite + TS + Tailwind), `config.json` (`mode: mock|api`), mock del contrato, mapa, fronteras, leyenda, atribución OSM, decisión de la librería de mapa tras un prototipo corto |
 | `panel-filtros-tabla` | Estado único de filtros, tabla accesible, truncado, uso de `country_id`/`country_name` |
 | `panel-graficos-comparacion` | Gráficos (hora UTC, país, distribuciones), panel lateral de comparación histórica |
 | `panel-estado-fallos` | Estado del sistema, refresco sin solape, timeout, última lectura conservada, aviso de desactualizado |
@@ -237,8 +238,8 @@ Datos y consistencia
 
 Infraestructura y seguridad
 9. Entre contenedores se usan nombres de servicio, nunca localhost.
-10. Solo la API se expone. Sin secretos en Git ni en Angular. .env.example siempre actualizado.
-11. Dependencias y versiones de runtime (Python, Node, Angular) fijadas (requirements/lock y package-lock).
+10. Solo la API se expone. Sin secretos en Git ni en el frontend. .env.example siempre actualizado.
+11. Dependencias y versiones de runtime (Python, Node, React/Vite) fijadas (requirements/lock y package-lock).
 12. No ampliar alcance: sin Spark, Flink, Kubernetes, ML, informes de calidad automáticos ni panel de calidad.
 
 Código
@@ -295,7 +296,7 @@ Criterios de aceptación: <pruebas de aceptación que debe pasar y cómo se comp
 ### Plantilla de prompt para `/speckit.plan`
 
 ```
-Stack: Python (versión fijada en esta feature), aiokafka, FastAPI, PostgreSQL, Docker Compose; en el frontend, Angular (versión estable vigente, fijada en el plan de panel-base-mock) + la librería de mapa elegida en panel-base-mock + Chart.js.
+Stack: Python (versión fijada en esta feature), aiokafka, FastAPI, PostgreSQL, Docker Compose; en el frontend, React + TypeScript + Vite + Tailwind (versiones estables vigentes, fijadas en el plan de panel-base-mock) + `react-globe.gl` (o la librería de mapa confirmada en panel-base-mock) + TanStack Query + Chart.js.
 Estructura: respeta la del repositorio (CODEMAP.md) y las reglas de código de la constitución (identificadores en inglés, docstrings en español).
 Contratos: usa los de specs/001-contratos-y-modelo/contracts/; si hace falta cambiarlos, indícalo en el plan antes de tocar código.
 ```
@@ -389,19 +390,21 @@ def is_newer_version(incoming_updated_ms: int, stored_updated_ms: int | None) ->
 
 Reglas del docstring: siempre incluye **por qué existe** y el **ID del checklist** cuando aplique. Los comentarios `#` explican el motivo de una decisión, no repiten lo que hace la línea.
 
-### 7.5 Angular (frontend, desde cero)
+### 7.5 React (frontend, desde cero)
 
 ```
 frontend/
   public/config.json     # mode (mock|api), apiBaseUrl, refreshSeconds, timeoutMs. Sin secretos
   mock/                  # JSON conforme al contrato, SINTÉTICO y etiquetado
-  src/app/
-    core/                # api.service, config.service, filters.service (estado único de filtros)
+  src/
+    api/                 # cliente HTTP y hooks de TanStack Query
+    config/              # lectura de config.json en tiempo de ejecución
+    store/               # store único de filtros
     features/            # map, events-table, charts, filters, system-status, historical-panel
-    shared/              # modelos, utilidades, componentes reutilizables
+    shared/              # tipos, utilidades, componentes reutilizables
 ```
 
-- Un único estado de filtros compartido (G6), no uno por componente.
+- Un único store de filtros compartido (G6), no uno por componente.
 - Los componentes muestran; el cálculo vive en la API (el frontend no calcula estadísticas).
 - El mapa vive en un componente aislado (entrada: lista de eventos; salida: evento seleccionado) para poder cambiar de librería.
 - Mock fiel al contrato, con casos límite: magnitud nula, sin país, truncado, modo replay, intervalo vacío.
@@ -475,7 +478,7 @@ curl http://127.0.0.1:8000/api/salud     # estado y última ingesta
 1. Compose arriba y datos cargados (8.1 y 8.2).
 2. Túnel: `ngrok http 8000` (en el equipo) o `ngrok http http://api:8000` (en contenedor). El authtoken solo en tu configuración local de ngrok.
 3. Poner la URL HTTPS de ngrok en `frontend/public/config.json` (con `mode: api`).
-4. Compilar y publicar en Netlify (directorio base `frontend`; directorio de publicación según `outputPath` de `angular.json`; `netlify.toml` con la regla de SPA `/* /index.html 200`).
+4. Compilar y publicar en Netlify (directorio base `frontend`; directorio de publicación `frontend/dist`, comando `npm run build`; `netlify.toml` con la regla de SPA `/* /index.html 200`).
 5. Comprobar CORS con el origen exacto de Netlify.
 6. Abrir el panel desde otro dispositivo.
 7. Si usas un dominio ngrok que cambia, repetir 3–4 en cada sesión.

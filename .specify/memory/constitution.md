@@ -39,11 +39,11 @@ mensaje.
 Entre contenedores MUST usarse nombres de servicio, nunca `localhost`.
 
 ### 10. Exposición y secretos
-Solo la API MUST exponerse. No MUST haber secretos en Git ni en Angular. `.env.example` MUST
+Solo la API MUST exponerse. No MUST haber secretos en Git ni en el frontend (React). `.env.example` MUST
 estar siempre actualizado.
 
 ### 11. Versiones fijadas
-Las dependencias y las versiones de runtime (Python, Node, Angular) MUST estar fijadas
+Las dependencias y las versiones de runtime (Python, Node; React/Vite en el frontend) MUST estar fijadas
 (requirements/lock y `package-lock`).
 
 ### 12. Alcance cerrado

@@ -127,7 +127,7 @@ Los contenedores siguen usando `kafka:9092`; los programas del equipo usan `loca
 
 ### ngrok
 
-ngrok **se ejecuta en el equipo anfitrión** (`ngrok http 8000`) y **queda fuera de Compose y de esta feature**. Publica la API, que ya está en `127.0.0.1:8000`. Su authtoken nunca va al repositorio ni a Angular.
+ngrok **se ejecuta en el equipo anfitrión** (`ngrok http 8000`) y **queda fuera de Compose y de esta feature**. Publica la API, que ya está en `127.0.0.1:8000`. Su authtoken nunca va al repositorio ni al frontend (React).
 
 ## Consumidor idempotente
 

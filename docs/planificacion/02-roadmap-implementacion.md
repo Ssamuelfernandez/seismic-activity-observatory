@@ -15,7 +15,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 
 **Objetivo.** Sistema que ingiere terremotos de USGS (feed reciente + histórico 2025 M≥4) y los integra con un catálogo de países, y responde: *¿dónde hay actividad sísmica y cómo se compara con un periodo histórico equivalente?*
 
-**Arquitectura obligatoria (Docker Compose, 5 servicios):** `producer` (Python+aiokafka) · `kafka` · `consumer` (Python+aiokafka) · `postgres` · `api` (FastAPI). Fuera de Compose: ngrok (HTTPS a la API) y el panel **Angular + librería de mapa a decidir, construido desde cero**, en Netlify. El `paises.geojson` y el `CONTRATO-API.md` (contrato mínimo) del profesor son la única base entregada; el frontend de ejemplo del paquete es solo referencia.
+**Arquitectura obligatoria (Docker Compose, 5 servicios):** `producer` (Python+aiokafka) · `kafka` · `consumer` (Python+aiokafka) · `postgres` · `api` (FastAPI). Fuera de Compose: ngrok (HTTPS a la API) y el panel **React + TypeScript + Vite + Tailwind con mapa `react-globe.gl` (plan B MapLibre o Leaflet), construido desde cero**, en Netlify. El `paises.geojson` y el `CONTRATO-API.md` (contrato mínimo) del profesor son la única base entregada; el frontend de ejemplo del paquete es solo referencia.
 
 **Reglas no negociables:** la fuente de verdad es la **constitución** (borrador en 03 §5; si difiere de esta lista, manda la constitución). Las más críticas:
 1. Procesamiento *al menos una vez* + escritura **idempotente**; offset de Kafka confirmado **después** del commit en PostgreSQL.
@@ -24,7 +24,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 4. País por **punto dentro de polígono** (EPSG:4326, `ADM0_A3`), nunca desde `place`; sin polígono → `NULL`.
 5. Nunca rellenar nulos con 0; magnitud o profundidad negativas no se rechazan solo por serlo.
 6. Datos inválidos → **cuarentena** con motivo y referencia al original.
-7. Entre contenedores, nombres de servicio; solo la API se expone; sin secretos en Git ni en Angular.
+7. Entre contenedores, nombres de servicio; solo la API se expone; sin secretos en Git ni en el frontend.
 8. Datos sintéticos / de prueba / mock **etiquetados** y separados de los reales.
 9. Identificadores en inglés; docstrings y comentarios en español.
 10. El frontend no calcula estadísticas: consume `/api/estadisticas`.
@@ -49,11 +49,11 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 | Estado productor | Esquema `ingest`: tabla `ingest_state(event_id PK, last_updated_ms, published_at)` + `ingest_run` (ts, url, status, latency_ms, event_count, sha256, error) | Sobrevive a reinicios (B6, B15) |
 | Originales | Tabla `ingest.raw_response(id, fetched_at, sha256, body jsonb)` insertando solo si el hash difiere del anterior; purga por antigüedad | Cumple B4–B5 (retención definida) |
 | Estadísticas | Todas calculadas en SQL sobre `current_event` | Reflejan revisiones sin contadores incrementales (FAQ 22) |
-| Frontend: base | Proyecto Angular nuevo (`ng new`, standalone components, versión estable vigente fijada en el plan de `panel-base-mock`) en `frontend/`, build de producción para Netlify | Se construye desde cero; el ejemplo del paquete solo se consulta |
-| Frontend: mapa | Librería libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; prototipo corto con unos 5.000 eventos del mock antes de fijarla (clic, leyenda, nulos como ND). Mapa en un componente aislado que recibe eventos y emite el seleccionado. Ocultar la Antártida (`ADM0_A3 = ATA`) en el globo. Plan B: Leaflet o MapLibre. Fronteras desde `paises.geojson` copiado a los assets (material reutilizado, G14). Se decide en el plan de `panel-base-mock` | Menos dependencias = menos riesgo de incompatibilidad con la versión de Angular; el componente aislado permite cambiar de librería |
-| Frontend: estado | Un servicio único de filtros (signals o RxJS) del que leen mapa, tabla, gráficos y panel lateral | Garantiza coherencia entre vistas (G6) |
-| Frontend: datos | `ApiService` con timeout, refresco ~60 s sin solapar peticiones, conservación de la última lectura y fuente seleccionable por `config.json` (`mock` \| `api`) | Permite desarrollar sin backend (G15) y probar fallos (G9) |
-| Gráficos Angular | Chart.js (versión fijada); empezar por el gráfico de dos barras del panel lateral y reutilizar el componente para el resto | Primer gráfico simple para calibrar; el resto reutiliza el componente |
+| Frontend: base | Proyecto React + TypeScript + Vite + Tailwind nuevo (`npm create vite`, plantilla `react-ts`; versiones de Node y dependencias fijadas en el plan de `panel-base-mock`) en `frontend/`, build de producción (`dist/`) para Netlify | Se construye desde cero; el ejemplo del paquete solo se consulta |
+| Frontend: mapa | Librería libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: `react-globe.gl`; prototipo corto con unos 5.000 eventos del mock antes de fijarla (clic, leyenda, nulos como ND). Mapa en un componente aislado que recibe eventos y emite el seleccionado. Ocultar la Antártida (`ADM0_A3 = ATA`) en el globo. Plan B: Leaflet o MapLibre. Fronteras desde `paises.geojson` copiado a los assets (material reutilizado, G14). Se decide en el plan de `panel-base-mock` | Menos dependencias = menos riesgo de incompatibilidad con la versión de React; el componente aislado permite cambiar de librería |
+| Frontend: estado | Un store único de filtros (la librería concreta se fija en el plan) del que leen mapa, tabla, gráficos y panel lateral | Garantiza coherencia entre vistas (G6) |
+| Frontend: datos | Capa de API con TanStack Query: timeout, refresco ~60 s sin solapar peticiones (`refetchInterval`), conservación de la última lectura y fuente seleccionable por `config.json` (`mock` \| `api`) | Permite desarrollar sin backend (G15) y probar fallos (G9) |
+| Gráficos | Chart.js (versión fijada); empezar por el gráfico de dos barras del panel lateral y reutilizar el componente para el resto | Primer gráfico simple para calibrar; el resto reutiliza el componente |
 | Forma de `/salud`, `/estadisticas`, paginación, límite de puntos, `mode` | Decisión propia, documentada en `specs/001-contratos-y-modelo/contracts/api.md` (el contrato mínimo del profesor no los define) | Ver 03 §4.1 |
 | Modalidad / fecha | Individual · entrega 19-nov-2026 (quedan ~18 días desde el 1-nov) | Priorizar núcleo en la primera semana y empezar el panel contra mock en paralelo; calendario en §5 |
 | ngrok | En el host (`ngrok http 8000`) con puerto `127.0.0.1:8000:8000` | Más simple; el token queda fuera del repo |
@@ -184,19 +184,19 @@ Dependencias de frontend: `F8a` (esqueleto + mapa contra mock) solo necesita el 
 - **Pendiente heredado de `002-infra-compose`:** los 404 (`not_found`) y 405 (`method_not_allowed`) deben devolver el cuerpo de error común `{"error": {"code", "message"}}` de `contracts/api.md` §6; hoy usan el cuerpo por defecto de FastAPI (`{"detail": …}`, comprobado en `docs/evidencias/infra-compose/pendiente_404_405.txt`). Añadir manejadores globales en `api/main.py`.
 - **Verificación:** tests con `httpx`; `curl` de cada endpoint; parar PG y comprobar el 503; evento con mag nula excluido por `min_mag` pero contado aparte. **Cubre:** F1–F11.
 
-### F8 — Frontend Angular desde cero (cinco features)
+### F8 — Frontend React desde cero (cinco features)
 
 El panel se construye en cinco bloques. Primero se trabaja contra el **mock del contrato** (G15) y al final se reconecta a la API real. Estructura de carpetas en 03 §7.5.
 
 **F8a — Esqueleto + mapa contra mock (feature `008-panel-base-mock`)**
-- Crear el proyecto Angular en `frontend/` (versión estable fijada en el plan, lock, `npm ci && npm start` y `npm run build` funcionando). Estructura: `core/` (api.service, config.service, filters.service), `features/` (map, events-table, charts, filters, system-status, historical-panel), `shared/`.
+- Crear el proyecto React + TypeScript + Vite + Tailwind en `frontend/` (versiones fijadas en el plan, lock, `npm ci && npm run dev` y `npm run build` funcionando). Estructura en `src/`: `api/` (cliente y hooks de TanStack Query), `config/` (lectura de `config.json`), `store/` (store único de filtros), `features/` (map, events-table, charts, filters, system-status, historical-panel), `shared/`.
 - `public/config.json` con `mode: mock|api`, `apiBaseUrl`, `refreshSeconds`, `timeoutMs`; se lee en tiempo de ejecución.
 - Mock en `frontend/mock/` conforme a `CONTRATO-API.md` (casos: mag nula, sin país, truncado, modo replay, intervalo vacío), **marcado como sintético**.
 - Mapa o globo con la librería elegida: fondo con atribución de su fuente, capa de fronteras (`paises.geojson` desde `data/catalogo/`), círculos (tamaño ∝ magnitud, color ∝ profundidad, ND para nulos), popup con ficha (incluye `magType`), leyenda.
 - **Verificación:** ver el mapa con los casos del mock en el navegador; captura. **Cubre:** G0, G2, G11, G14, G15, G12 (`magType`).
 
 **F8b — Filtros, tabla y estado único (feature `009-panel-filtros-tabla`)**
-- `filters.service` único (fechas, magnitud mínima, país/región) compartido por todas las vistas; tabla de eventos ordenable y accesible; uso de `country_id`, `country_name` y `truncated` (aviso, sin estadísticas sobre muestra truncada).
+- Store único de filtros (fechas, magnitud mínima, país/región) compartido por todas las vistas; tabla de eventos ordenable y accesible; uso de `country_id`, `country_name` y `truncated` (aviso, sin estadísticas sobre muestra truncada).
 - **Verificación:** al cambiar un filtro, mapa y tabla cambian a la vez; truncado visible. **Cubre:** G6, G8, G16, G12 (`country_id`, `country_name`, `truncated`).
 
 **F8c — Gráficos y panel lateral de comparación histórica (feature `010-panel-graficos-comparacion`)**
@@ -223,7 +223,7 @@ El panel se construye en cinco bloques. Primero se trabaja contra el **mock del 
 - **Evidencia:** `docs/evidencias/pruebas/NN-*.md` + tabla resumen en la memoria §8.
 
 ### F11 — ngrok y Netlify (feature `015-despliegue-tunel`)
-- Reservar dominio ngrok si la cuenta lo permite; `ngrok http 8000`; actualizar `config.json` con la URL HTTPS; build de producción; deploy en Netlify (Base directory `frontend`, publish `dist/<nombre-del-proyecto>/browser`; confirmar el `outputPath` en `angular.json`); poner el dominio de Netlify en CORS.
+- Reservar dominio ngrok si la cuenta lo permite; `ngrok http 8000`; actualizar `config.json` con la URL HTTPS; build de producción; deploy en Netlify (Base directory `frontend`, Build command `npm run build`, Publish directory `frontend/dist`); poner el dominio de Netlify en CORS.
 - Añadir `netlify.toml` y la regla de redirección para SPA (`/* /index.html 200`).
 - Probar desde otro dispositivo; probar cierre/reapertura del túnel (pruebas 9–10) y apagado de ngrok mientras el panel sigue abierto.
 - Escribir el **procedimiento de activación** para la defensa (H2).
@@ -261,14 +261,14 @@ Reparto de la documentación entre herramientas: la **constitución** recoge los
 | Recuentos suben sin eventos nuevos | Contar desde `current_event`, no por mensaje; comprobar clave de upsert |
 | Replay "no muestra nada" | Consultar el intervalo 2025 y el esquema `replay`, no "últimas 24 h" |
 | CORS falla aunque la URL abre | Origen exacto de Netlify, preflight OPTIONS, cabecera ngrok |
-| Angular recibe HTML | Página de aviso de ngrok o URL con `/api` duplicado |
+| El panel recibe HTML | Página de aviso de ngrok o URL con `/api` duplicado |
 | Puntos en sitios raros | Orden lon/lat en GeoJSON vs el orden que exija la librería de mapa elegida; comprobarlo con un evento conocido |
 | Mes >20.000 resultados | Detectar `count` y subdividir; nunca truncar en silencio |
 | Sobrecarga de alcance | Prioridad: pipeline correcto → pruebas → memoria; ignorar "opcionales" |
 | URL ngrok cambia | Dominio estático o recompilar Netlify; documentarlo en H2 |
 | Frontend desde cero consume demasiado tiempo | Empezar por el mock del contrato (F8a) en paralelo al backend; priorizar solo los G marcados [OBL]; no pulir estilos hasta tener F8e |
 | Mock y API real divergen | El contrato manda; contrastar en F8e y corregir mock o API, no el contrato |
-| Versiones de Angular y de la librería de mapa incompatibles | Fijar versiones en el plan de `008`; si hay problemas con un envoltorio de Angular, usar la librería directamente o el plan B (Leaflet o MapLibre) |
+| Versiones de React y de la librería de mapa incompatibles | Fijar versiones en el plan de `008`; si hay problemas con el envoltorio de React (`react-globe.gl`), usar `globe.gl` directamente o el plan B (Leaflet o MapLibre) |
 | Globo 3D: rendimiento con miles de puntos y la Antártida | Prototipo corto con ~5.000 eventos antes de fijar la librería; límite de anillos animados; ocultar ATA |
 | Spec Kit cambia comandos entre versiones | Confirmar con `specify --help`; fijar la versión de la CLI usada en el README (03 §2) |
 | Atribución de IA en commits por defecto | Constitución + `.claude/settings.json` + hook `commit-msg`; revisar cada commit antes de `git push` |

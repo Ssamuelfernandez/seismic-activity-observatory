@@ -7,6 +7,7 @@ Convención: **[OBL]** obligatorio · **[EVAL]** puntúa en rúbrica · **[OPC]*
 
 **Registro de cambios**
 - 31-oct-2026 (rev. 2): el frontend se construye desde cero (el proyecto Angular del paquete era un ejemplo, no una base entregada).
+- Nov-2026 (rev. 3): el profesor permite cambiar el framework del frontend; decisión del alumno: **React + TypeScript + Vite + Tailwind** en lugar de Angular. Mapa: `react-globe.gl` (candidata; plan B MapLibre o Leaflet). Datos: TanStack Query. Gráficos: Chart.js. Filtros: store único. El alcance de las features no cambia.
 - 1-nov-2026 (rev. 3): reconciliación con 02 y 03. Añadidos `country_name` y detalles del contrato (F1–F5, F12), nota de identificadores en inglés (C5, E3), columna "Feature" en la tabla de pruebas (I), requisitos M7–M9, puntos por confirmar nuevos (§5) y **§7 de trazabilidad ID → feature de Spec Kit**.
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet. Se decide en el plan de `panel-base-mock`. Afecta a §0, G0, G2, G11, G16, M2, §5 y la introducción del bloque G (frontend).
 
@@ -14,7 +15,7 @@ Convención: **[OBL]** obligatorio · **[EVAL]** puntúa en rúbrica · **[OPC]*
 
 ## 0. Qué es esto, en 6 líneas
 
-1. Pipeline en Docker Compose: USGS → **productor** (Python/aiokafka) → **Kafka** → **consumidor** (Python/aiokafka) → **PostgreSQL** → **API FastAPI** → ngrok (HTTPS) → **panel Angular + librería de mapa a decidir (candidata: Globe.gl) en Netlify (a construir desde cero)**.
+1. Pipeline en Docker Compose: USGS → **productor** (Python/aiokafka) → **Kafka** → **consumidor** (Python/aiokafka) → **PostgreSQL** → **API FastAPI** → ngrok (HTTPS) → **panel React + TypeScript + Vite + Tailwind, con mapa `react-globe.gl` (candidata; plan B MapLibre o Leaflet), en Netlify (a construir desde cero)**.
 2. Tres fuentes de datos: feed reciente (`all_day.geojson`), histórico 2025 (M≥4, por meses) y catálogo de países (Natural Earth, ya entregado).
 3. El núcleo técnico es: **no duplicar** (id + updated), **revisiones** (la versión antigua nunca pisa a la nueva), **idempotencia** (al menos una vez + upsert) y **país por punto-en-polígono**.
 4. La nota sale de 5 criterios: Extracción, Calidad, Modelado, Análisis, Reflexión. Más infraestructura **no** da más nota.
@@ -54,7 +55,7 @@ Ponderación de la asignatura (de la sesión 8, sin cambios): test 30 % · prác
 | A9 | **[OBL]** Uvicorn en `0.0.0.0:8000` dentro del contenedor (ngrok termina el HTTPS; la API recibe HTTP local) | Comprobado | Enunc. §9 · CONTRATO | [x] |
 | A10 | **[OBL]** `.env.example` sin credenciales reales; variables coinciden con el código | Productor configurable por env: Kafka, topic, frecuencia | Enunc. §5, §9 | [x] |
 | A11 | **[OBL]** Dependencias fijadas (`requirements.txt` / lock) | Versiones concretas | Guía 1.3 | [x] |
-| A12 | Angular **no** necesita contenedor (SPA en Netlify); ngrok en host o contenedor | — | Guía 1.2 | [x] |
+| A12 | El panel React **no** necesita contenedor (SPA en Netlify); ngrok en host o contenedor | — | Guía 1.2 | [x] |
 
 ### B. Extracción e ingesta
 
@@ -145,20 +146,20 @@ El contrato del profesor es **mínimo**: define el contenido de las respuestas (
 | F11 | La API consulta datos **ya procesados**; no depende de que el panel esté abierto | — | FAQ 2 | [x] |
 | F12 | Vista de reproducción: poder consultar el intervalo histórico y los datos aislados de replay, con `metadata.mode = "replay"` (parámetro de modo: **decisión propia**, no está en el contrato mínimo) | Parámetro/ruta de modo | FAQ 32 | ☐ |
 
-### G. Panel Angular (**construido desde cero**; el ejemplo del paquete solo sirve de referencia)
+### G. Panel React (**construido desde cero**; el ejemplo del paquete solo sirve de referencia)
 
-El frontend no viene hecho: hay que crear el proyecto Angular, integrar la librería de mapa elegida y desarrollar todas las vistas. Se puede avanzar **contra datos simulados (mock) que cumplan `CONTRATO-API.md`** sin esperar a la API real, y cambiar a la API en cuanto exista (G15).
+El frontend no viene hecho: hay que crear el proyecto React (Vite + TypeScript + Tailwind), integrar la librería de mapa elegida y desarrollar todas las vistas. Se puede avanzar **contra datos simulados (mock) que cumplan `CONTRATO-API.md`** sin esperar a la API real, y cambiar a la API en cuanto exista (G15).
 
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
-| G0 | **Crear el proyecto Angular** (versión estable fijada, `package-lock.json`), con la librería de mapa elegida (candidata: Globe.gl; alternativas Leaflet o MapLibre; se decide en el plan de panel-base-mock), estructura por componentes/servicios y build de producción funcionando | `npm ci && npm start` y `npm run build` OK desde clon limpio | Decisión propia | ☐ |
+| G0 | **Crear el proyecto React + TypeScript + Vite + Tailwind** (versiones de Node y de dependencias fijadas, `package-lock.json`), con la librería de mapa elegida (candidata: `react-globe.gl`; plan B MapLibre o Leaflet; se confirma en el plan de panel-base-mock), TanStack Query para los datos, estructura por componentes/hooks/store y build de producción (`dist/`) funcionando | `npm ci && npm run dev` y `npm run build` OK desde clon limpio | Decisión propia | ☐ |
 | G1 | **[OBL]** Consulta **vuestra API**, no USGS | `config.json` en modo `api` | Enunc. §8 | ☐ |
 | G2 | **[OBL]** Mapa o globo: fondo, fronteras, círculos, ficha; tamaño ∝ magnitud, color ∝ profundidad, **leyenda**, nulos visibles como **ND** | Implementado y comprobado visualmente con datos del mock y reales | Enunc. §8 | ☐ |
 | G3 | **[OBL]** Recuentos por país/subregión (incl. "Sin país asignado") y por **hora UTC fija según tiempo del evento** | Gráfico/tabla | Enunc. §8 | ☐ |
 | G4 | **[OBL]** Distribuciones de magnitud y profundidad indicando registros sin valor | — | Enunc. §8 | ☐ |
 | G5 | **[OBL]** Comparación histórica: últimas 24 h M≥4 vs media diaria 2025 con **mismos filtros**, denominador con **días a cero**; aviso de periodo reciente incompleto; si media=0 → ND | Cifras + fórmula | Enunc. §8 · FAQ 23 | ☐ |
 | G5b | **Decisión de diseño:** la comparación se muestra en un **panel lateral** junto al mapa (roadmap F8c, feature `panel-graficos-comparacion`). Se compara contra la **media diaria de 2025 en la misma zona/país y con M≥4**, no contra un día concreto del año pasado | Panel visible con cifra reciente, media 2025, diferencia y % | Decisión propia | ☐ |
-| G6 | **[OBL]** Filtros de fecha, magnitud y país/región, **coherentes** entre mapa y gráficos | Un único estado de filtros compartido | Enunc. §8 | ☐ |
+| G6 | **[OBL]** Filtros de fecha, magnitud y país/región, **coherentes** entre mapa y gráficos | Un único store de filtros compartido | Enunc. §8 | ☐ |
 | G7 | **[OBL]** Estado del sistema: último acceso correcto a la API, última ingesta correcta de USGS, periodo consultado, aviso si datos desactualizados o backend caído | Distinguir "última consulta del panel / respuesta generada / última ingesta" | Enunc. §8 · FAQ 31 | ☐ |
 | G8 | **[OBL]** Tabla consultable de eventos (alternativa accesible al mapa y al color) | — | Enunc. §8 | ☐ |
 | G9 | **[OBL]** Si falla la API: aviso claro, conservar/identificar la última lectura, no presentar datos viejos como recién obtenidos | Implementado y probado (pruebas 9–10) | FAQ 35 | ☐ |
@@ -175,8 +176,8 @@ El frontend no viene hecho: hay que crear el proyecto Angular, integrar la libre
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
 | H1 | **[OBL]** Panel Netlify accesible desde otro dispositivo | Probado | Guía 3.1 | ☐ |
-| H2 | **[OBL]** Procedimiento breve de activación para la defensa (Compose → datos/ingesta → ngrok → URL en Angular → panel → replay) | En README | Guía 3.2 | ☐ |
-| H3 | **[OBL]** ngrok: `ngrok http 8000` (host) o `ngrok http http://api:8000` (contenedor); authtoken fuera de Git y de Angular | — | Enunc. §9 | ☐ |
+| H2 | **[OBL]** Procedimiento breve de activación para la defensa (Compose → datos/ingesta → ngrok → URL en el panel → panel → replay) | En README | Guía 3.2 | ☐ |
+| H3 | **[OBL]** ngrok: `ngrok http 8000` (host) o `ngrok http http://api:8000` (contenedor); authtoken fuera de Git y del frontend | — | Enunc. §9 | ☐ |
 | H4 | **[OBL]** Equipo, contenedores y túnel **encendidos** durante la demo | — | Enunc. §9 | ☐ |
 | H5 | **[OBL]** Explicación individual oral: recorrido de un evento USGS → panel + **una decisión técnica propia** justificada | Preparado (apoyo: `CODEMAP.md`) | Guía 3.3 | ☐ |
 
@@ -268,7 +269,7 @@ Reglas de las conclusiones: interpretar, no solo mostrar; con cifras; **sin leng
 | `paises.geojson` (177 entidades, SHA-256 en `FUENTES-Y-LICENCIAS.md`) | Todo el backend (Dockerfiles, `compose.yaml`, productor, consumidor, PG, API) |
 | `CONTRATO-API.md` (contrato **mínimo**: `/api/eventos` con ejemplo; `/api/salud` y `/api/estadisticas` solo con su contenido) | Integración espacial en Python |
 | `ENUNCIADO`, FAQ, guía de entregables, `VALIDACION.md`, `FUENTES-Y-LICENCIAS.md` | Implementar `/api/eventos`, `/api/salud`, `/api/estadisticas` y decidir lo que el contrato deja abierto |
-| Ejemplo de frontend (Angular + Leaflet, 4 eventos ficticios): **solo referencia, no es tu base** | **Todo el frontend desde cero**: proyecto Angular, mapa, fronteras, filtros, tabla, gráficos, comparación histórica, estado del sistema, modo replay, mock del contrato |
+| Ejemplo de frontend (Angular + Leaflet, 4 eventos ficticios): **solo referencia, no es tu base** | **Todo el frontend desde cero** (React + TypeScript + Vite + Tailwind): proyecto, mapa, fronteras, filtros, tabla, gráficos, comparación histórica, estado del sistema, modo replay, mock del contrato |
 | — | Datos reales, histórico, replay por Kafka |
 | — | Memoria, mediciones, costes, pruebas con evidencias, defensa |
 
@@ -279,7 +280,7 @@ Límites del material de ejemplo (de `VALIDACION.md`): nunca se probó visualmen
 ## 4. Lo que NO tienes que hacer (ahorra tiempo)
 
 - Spark, Flink, Kubernetes, ML, servidor cloud permanente.
-- Generador automático de informes de calidad, panel de calidad en Angular, tabla de métricas de calidad.
+- Generador automático de informes de calidad, panel de calidad en el frontend, tabla de métricas de calidad.
 - Documento separado por cada apartado, ni documento aparte para la explicación individual.
 - Motor cartográfico propio; certificados TLS en FastAPI; transacción distribuida Kafka–PG.
 - Disponibilidad 24/7; contratar servicios; estudio empresarial; ROI.
@@ -291,13 +292,13 @@ Límites del material de ejemplo (de `VALIDACION.md`): nunca se probó visualmen
 
 1. ~~Fecha de entrega y modalidad~~ **Resuelto:** trabajo **individual**, entrega el **19 de noviembre de 2026**. Al ser individual, la explicación oral (H5) la defiendes tú entero: debes poder explicar todo el flujo, no solo una parte.
 2. **Dónde vive el histórico 2025**: ¿mismo esquema `live` que el feed (necesario para la comparación) o esquema propio? El enunciado no lo fija. Propuesta del roadmap: mismo esquema, columna `source`, y justificarlo.
-3. **Gráficos en Angular**: no se menciona librería; asumir que una dependencia fijada (p. ej. Chart.js) es válida, o SVG propio. Confirmar si importa.
+3. **Gráficos en el panel**: no se menciona librería; asumir que una dependencia fijada (p. ej. Chart.js) es válida, o SVG propio. Confirmar si importa.
 4. **Cobertura "últimas 24 h" en replay**: la vista de replay debe usar el intervalo de 2025; confirmar que el selector de modo en el panel es aceptable.
 5. **Dominio ngrok**: el gratuito puede cambiar entre sesiones y `config.json` se compila en el build → comprobar si tu cuenta permite un dominio estático para no recompilar Netlify cada vez.
 6. **Tamaño máximo de puntos por respuesta** (truncado/paginación): lo fijas tú, pero debe estar documentado.
 7. **Inconsistencia menor**: la FAQ menciona `ENUNCIADO.md` y `README.md` del paquete; tu carpeta ya los tiene todos. La guía de entregables no está en la carpeta (solo la subiste al chat): guárdala como `Guia-entregables.md` en `docs/enunciado/`.
 8. **Uso del frontend de ejemplo**: se asume que hay que desarrollar el panel desde cero y que el ejemplo es solo referencia. Si el profesor permite partir de él, G0 y parte de G2/G11 se simplifican; en ese caso indicarlo en M2.
-9. **Versión de Angular y de la librería de mapa**: ~~librería del mapa~~ **Resuelto:** es libre (confirmación del profesor por correo, 2-nov-2026; Leaflet era una guía, no una obligación). La versión de Angular no viene impuesta más allá de "Angular y la librería de mapa"; fijar la versión estable vigente en el plan de la feature `panel-base-mock` y documentarla.
+9. **Framework del frontend y librería de mapa**: ~~librería del mapa~~ **Resuelto:** es libre (confirmación del profesor por correo, 2-nov-2026; Leaflet era una guía, no una obligación). ~~Framework~~ **Resuelto:** el profesor permite cambiar Angular por otro; decisión del alumno: React + TypeScript + Vite + Tailwind. Fijar las versiones estables vigentes (Node, React, Vite, librería de mapa) en el plan de la feature `panel-base-mock` y documentarlas.
 10. **Identificadores en inglés** (tablas, columnas, topics, código) frente a los nombres en español de la estructura orientativa del enunciado (E3): se asume válido si se justifica y se documenta la equivalencia. Confirmar si importa.
 11. **Decisiones propias que el contrato mínimo deja abiertas**: forma de `/api/salud` y `/api/estadisticas`, paginación, límite de puntos y parámetro `mode`. Se documentan en `specs/001-contratos-y-modelo/contracts/api.md`; confirmar con el profesor solo si hay duda sobre alguna.
 12. **Spec Kit**: los comandos y flags cambian entre versiones; la fuente de verdad es `specify --help` (03 §2). Anotar la versión usada en el README.
@@ -312,7 +313,7 @@ Límites del material de ejemplo (de `VALIDACION.md`): nunca se probó visualmen
 - [ ] Datos reales con procedencia y originales conservados.
 - [ ] Repetir mensaje no duplica; revisión antigua no sustituye a la nueva.
 - [ ] Hay registros sin país y nulos tratados con justificación.
-- [ ] API consulta PG; Angular consulta la API; filtros coherentes mapa/tabla/gráficos.
+- [ ] API consulta PG; el panel React consulta la API; filtros coherentes mapa/tabla/gráficos.
 - [ ] Comparación histórica con mismos filtros y periodos comparables.
 - [ ] Panel abre desde otro dispositivo con túnel activo; si falla, lo indica.
 - [ ] Replay aislado y etiquetado.

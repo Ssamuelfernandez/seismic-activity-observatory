@@ -50,7 +50,7 @@ Un rango como `C1–C8` significa "del C1 al C8, ambos incluidos".
 | **D** | Las 6 dimensiones de calidad (no tiene IDs) | completitud, unicidad, validez, consistencia, actualidad, exactitud |
 | **E** | Modelo de datos y SQL | E1 modelo conceptual, lógico y físico |
 | **F** | API FastAPI | F1 `/api/eventos` · F8 error explícito si cae la BD |
-| **G** | Panel Angular | G2 mapa · G5 comparación histórica |
+| **G** | Panel React | G2 mapa · G5 comparación histórica |
 | **H** | Despliegue y defensa oral | H2 procedimiento de activación · H5 explicar un evento |
 | **I** | Las 11 pruebas de aceptación | numeradas 1 a 11 |
 | **J** | Replay (reproducción histórica) | J4 etiqueta "REPRODUCCIÓN" |
@@ -251,7 +251,7 @@ specify -> clarify -> plan -> tasks -> analyze -> [PARAR Y LEER] -> implement ->
 | **PG** | PostgreSQL |
 | **CORS** | Permiso del navegador para que el panel (Netlify) consulte tu API (ngrok) |
 | **Backoff** | Esperar cada vez más entre reintentos tras un error |
-| **SPA** | Aplicación web de una sola página (el panel Angular) |
+| **SPA** | Aplicación web de una sola página (el panel React) |
 
 ---
 
