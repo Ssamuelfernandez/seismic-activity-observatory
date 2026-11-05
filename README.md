@@ -125,6 +125,32 @@ ports:
 
 Los contenedores siguen usando `kafka:9092`; los programas del equipo usan `localhost:9094`. **Advertencias:** (1) esta configuración **no se ha probado** en esta feature; (2) publica un puerto de Kafka, lo que contradice la regla «solo la API se expone» (constitución §10, requisito A8): úsala solo de forma temporal y en local, ligada a `127.0.0.1`, **nunca a través de un túnel**, y revierte el cambio antes de entregar.
 
+### Acceso a la base de datos
+
+PostgreSQL **no publica puertos** en el equipo (5432 es interno), de acuerdo con «solo la API se expone» (constitución §10, requisito A8). Hay dos formas de inspeccionarla.
+
+**1. Consola `psql` dentro del contenedor (la vía oficial, sin cambios de configuración).** Usuario y base de datos son los de tu `.env` (en `.env.example`: `observatory_admin` y `observatory`); no pide contraseña porque la conexión es local al contenedor:
+
+```bash
+docker compose exec postgres psql -U observatory_admin -d observatory
+# Dentro de psql: \dn (esquemas) · \dt *.* (tablas) · \d live.current_event (estructura) · \q (salir)
+# Sin consola interactiva:
+docker compose exec postgres psql -U observatory_admin -d observatory -c "SELECT count(*) FROM live.current_event;"
+```
+
+**2. Cliente gráfico (DBeaver, pgAdmin…) — solo desarrollo local.** Se usa el archivo `compose.override.yaml` de la raíz, que Compose carga solo y que **está en `.gitignore`**: publica Postgres únicamente en `127.0.0.1`, en el puerto **5433** del equipo (el 5432 puede estar reservado por Windows o por un Postgres local), por lo que no es accesible desde la red.
+
+```yaml
+services:
+  postgres:
+    ports:
+      - "127.0.0.1:5433:5432"
+```
+
+Para activarlo, recrea solo ese servicio (se reinicia unos segundos; los datos están en el volumen): `docker compose up -d postgres`. Conexión desde el cliente: host `127.0.0.1`, puerto `5433`, base de datos, usuario y contraseña de tu `.env`. Para desactivarlo, borra `compose.override.yaml` y ejecuta de nuevo `docker compose up -d postgres`.
+
+**Advertencias:** (1) es una herramienta local, **no forma parte de la arquitectura entregada** ni debe usarse en un despliegue; (2) como no viaja con el repositorio, en la nube no tendría efecto; (3) nunca publiques Postgres en `0.0.0.0` ni lo pases por un túnel. En un servidor propio, entra por SSH con `docker compose exec` o con un túnel SSH desde tu cliente.
+
 ### ngrok
 
 ngrok **se ejecuta en el equipo anfitrión** (`ngrok http 8000`) y **queda fuera de Compose y de esta feature**. Publica la API, que ya está en `127.0.0.1:8000`. Su authtoken nunca va al repositorio ni al frontend (React).
