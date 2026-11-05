@@ -80,7 +80,7 @@ Se entrega a `process_record` como `RawRecord(topic="earthquakes.live", partitio
 ## 6. Consultas de verificación (viven en `consumer/queries.py`)
 
 - Eventos cargados del conjunto `U`: `SELECT count(*) FROM live.current_event WHERE event_id = ANY($1)`.
-- Cuarentena del conjunto: `SELECT count(DISTINCT event_id) FROM live.quarantine WHERE event_id = ANY($1)`.
+- Cuarentena del conjunto (`Q`): en producción NO se consulta `live.quarantine`, porque `observatory_consumer` solo tiene INSERT en ella. `Q` sale de los resultados de `process_record` de la misma carga (ids que acabaron en cuarentena) y se pasa a `verify_load(pool, unique_ids, quarantined_ids)`. La huella de `quarantine` (`snapshot_fingerprint`) la calcula el administrador.
 - Histórico sobre base limpia: `SELECT count(*) FROM live.current_event WHERE source = 'usgs_historical'`.
 - Huella para «0 diferencias»: recuento y `md5(string_agg(... ORDER BY ...))` de `current_event`, `event_version` y `quarantine` (sin `id` identidad de cuarentena).
 

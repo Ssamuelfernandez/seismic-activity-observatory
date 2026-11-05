@@ -92,7 +92,7 @@ async def _quarantine(decoded: DecodeResult, reason: str, ref: MessageRef, deps:
 
 def _log_validation_gap(valid: ValidEvent, ref: MessageRef, error: BaseException) -> None:
     """Un error de clase 22/23 llegó a la base: la validación previa tiene un hueco (consumer-runtime §4)."""
-    logger.error("validation_gap event_id=%s sqlstate=%s topic=%s partition=%d offset=%d error=%s",
+    logger.error("validation_gap event_id=%s sqlstate=%s topic=%s partition=%s offset=%s error=%s",
                  valid.event_id, getattr(error, "sqlstate", None) or NO_VALUE, ref.topic, ref.partition,
                  ref.offset, type(error).__name__)
 

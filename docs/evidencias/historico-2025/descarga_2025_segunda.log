@@ -1,0 +1,2 @@
+2026-11-05 12:40:40,467 INFO historical.download dedup duplicates=0 unique=18302 usgs_count_year=18302
+2026-11-05 12:40:40,479 INFO historical.download download_summary files=12 gaps=0 unique=18302 duplicates=0 usgs_count_year=18302

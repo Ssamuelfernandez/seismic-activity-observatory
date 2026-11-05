@@ -1,0 +1,9 @@
+-- [1] carga del hueco
+antes (current, version, cuarentena): (10, 10, 0)
+después del hueco: (13, 14, 0)
+resumen: nuevos=3 iguales=4 antiguos=1
+
+-- [2] repetir el hueco
+huella tras la 1.ª carga: {'current_event': (13, 'f5516e38fafe0aee11e6d740feb5cb21'), 'event_version': (14, '1326d8fa7e2456c5c21aaa873da3d609'), 'quarantine': (0, '')}
+huella tras repetir: {'current_event': (13, 'f5516e38fafe0aee11e6d740feb5cb21'), 'event_version': (14, '1326d8fa7e2456c5c21aaa873da3d609'), 'quarantine': (0, '')}
+

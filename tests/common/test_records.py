@@ -6,6 +6,7 @@ import pytest
 
 from common.records import (
     DecodeResult,
+    kafka_columns,
     EventRows,
     DateRow,
     MessageRef,
@@ -74,3 +75,16 @@ def test_event_rows_envelope_properties_come_from_current() -> None:
         None,
         True,
     )
+
+
+def test_kafka_columns_copies_a_real_reference() -> None:
+    assert kafka_columns(MessageRef("earthquakes.live", 2, 40)) == ("earthquakes.live", 2, 40)
+
+
+def test_kafka_columns_is_all_none_for_batch_reference() -> None:
+    assert kafka_columns(MessageRef("earthquakes.live", None, None)) == (None, None, None)
+
+
+def test_raw_record_without_partition_has_batch_reference() -> None:
+    record = RawRecord("earthquakes.live", None, None, None, b"v")
+    assert record.ref == MessageRef("earthquakes.live", None, None)

@@ -1,0 +1,77 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 674B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.39kB done
+#2 DONE 0.0s
+
+#3 [auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#4 [internal] load metadata for ghcr.io/astral-sh/uv:0.12.13
+#4 DONE 0.8s
+
+#5 [internal] load metadata for docker.io/library/python:3.12.16-slim-bookworm
+#5 DONE 0.9s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 330B done
+#6 DONE 0.0s
+
+#7 [production  1/11] FROM docker.io/library/python:3.12.16-slim-bookworm@sha256:da54eb86849fe19be7584d8b3f291fcf0c53c196760ab3d70dc6382f681ef9c0
+#7 resolve docker.io/library/python:3.12.16-slim-bookworm@sha256:da54eb86849fe19be7584d8b3f291fcf0c53c196760ab3d70dc6382f681ef9c0 0.0s done
+#7 DONE 0.1s
+
+#8 FROM ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6
+#8 resolve ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6 0.0s done
+#8 DONE 0.1s
+
+#9 [internal] load build context
+#9 transferring context: 6.53kB 0.0s done
+#9 DONE 0.0s
+
+#10 [production  7/11] COPY producer ./producer
+#10 CACHED
+
+#11 [production  5/11] RUN uv sync --frozen --no-dev --no-install-project
+#11 CACHED
+
+#12 [production  3/11] WORKDIR /app
+#12 CACHED
+
+#13 [production  4/11] COPY pyproject.toml uv.lock .python-version ./
+#13 CACHED
+
+#14 [production  8/11] COPY consumer ./consumer
+#14 CACHED
+
+#15 [production  9/11] COPY api ./api
+#15 CACHED
+
+#16 [production 10/11] COPY historical ./historical
+#16 CACHED
+
+#17 [production  6/11] COPY common ./common
+#17 CACHED
+
+#18 [production  2/11] COPY --from=ghcr.io/astral-sh/uv:0.12.13 /uv /usr/local/bin/uv
+#18 CACHED
+
+#19 [production 11/11] RUN useradd --system --uid 10001 --no-create-home observatory
+#19 CACHED
+
+#20 exporting to image
+#20 exporting layers done
+#20 exporting manifest sha256:ffe790e801a50bf91671112cd6ec4a7b6b73159ac9dad426eedb36451380787e 0.0s done
+#20 exporting config sha256:b0578101aca1f53a1fcbed33beece9f115752ed626b8ac6cfeb04e91191e462e
+#20 exporting config sha256:b0578101aca1f53a1fcbed33beece9f115752ed626b8ac6cfeb04e91191e462e 0.0s done
+#20 exporting attestation manifest sha256:9e9da44d49bf9276eedc2e365455ee391d9d8a45bfedcf1539a590ceee224c8f 0.0s done
+#20 exporting manifest list sha256:4f88eef352f08d6a8a2a638acf220ae0ce9023ee290b80a505f7950f5884afe1 0.0s done
+#20 naming to docker.io/library/seismic-observatory-python:0.1.0 done
+#20 unpacking to docker.io/library/seismic-observatory-python:0.1.0 0.0s done
+#20 DONE 0.2s
+
+#21 resolving provenance for metadata file
+#21 DONE 0.0s
+ seismic-observatory-python:0.1.0  Built

@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 from typing import Any
 
-from common.records import DecodeResult, MessageRef, QuarantineRow
+from common.records import DecodeResult, MessageRef, QuarantineRow, kafka_columns
 from common.storable import MAX_EVENT_ID_CHARS, is_storable_json, is_storable_text, sanitize_raw_text
 
 ALLOWED_SOURCES = frozenset({"usgs_feed", "usgs_historical", "replay_demo"})
@@ -61,6 +61,7 @@ def build_quarantine_row(decoded: DecodeResult, reason: str, ref: MessageRef, no
     """
     original = _serialize_original(decoded)
     obj = decoded.obj if decoded.ok else None
+    kafka_topic, kafka_partition, kafka_offset = kafka_columns(ref)
     return QuarantineRow(
         event_id=_copy_event_id(obj),
         reason=reason,
@@ -68,9 +69,9 @@ def build_quarantine_row(decoded: DecodeResult, reason: str, ref: MessageRef, no
         raw_text=None if original is not None else sanitize_raw_text(decoded.raw),
         original_sha256=hashlib.sha256(decoded.raw).hexdigest(),
         source=_copy_source(obj),
-        kafka_topic=ref.topic,
-        kafka_partition=ref.partition,
-        kafka_offset=ref.offset,
+        kafka_topic=kafka_topic,
+        kafka_partition=kafka_partition,
+        kafka_offset=kafka_offset,
         received_at=now,
         is_synthetic=_copy_is_synthetic(obj),
     )

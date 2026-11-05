@@ -44,7 +44,7 @@ Decisiones de diseño con su motivo. D1 resuelve la pregunta 2 de la spec; D2 ap
 
 ## D7. Verificación de conteos
 
-Descarga: Σ registros únicos de los 12 meses == `count` de USGS para todo 2025 (consulta aparte); si no, error con código ≠ 0 y las dos cifras. Carga: con `U` = conjunto de `id` únicos de los archivos y `Q` = `id` de esos eventos presentes en `live.quarantine` (por `event_id`), se exige `count(live.current_event WHERE event_id = ANY(U)) == |U| − |Q|` y, sobre base limpia, `count(source='usgs_historical') == |U| − |Q|`. La verificación se calcula con SQL sobre el estado actual (constitución §8). Si hay features sin `id`, van a cuarentena y no entran en `U`.
+Descarga: Σ registros únicos de los 12 meses == `count` de USGS para todo 2025 (consulta aparte); si no, error con código ≠ 0 y las dos cifras. Carga: con `U` = conjunto de `id` únicos de los archivos y `Q` = `id` de los eventos que `process_record` mandó a cuarentena en esa misma carga (el rol `observatory_consumer` solo tiene INSERT en `live.quarantine`, así que no se lee de la tabla), se exige `count(live.current_event WHERE event_id = ANY(U)) == |U| − |Q|` y, sobre base limpia, `count(source='usgs_historical') == |U| − |Q|`. La verificación se calcula con SQL sobre el estado actual (constitución §8). Si hay features sin `id`, van a cuarentena y no entran en `U`.
 
 ## D8. Idempotencia de la recarga
 
@@ -78,3 +78,6 @@ Se mide en T019. Regla de FR-019. El README dice en cada caso si el clon necesit
 - País con el catálogo simplificado `ne_110m` (límite de `geografia-pais`).
 - USGS puede publicar una revisión entre `count` y descarga: el error pide repetir.
 - Sin fuzz de archivos corruptos más allá de sha256 distinto/ausente.
+- Evidencia TDD «falla antes» solo en T010–T011 y parcial en los bloques 1–2.
+- La carrera entre `count` y descarga se resuelve repitiendo la descarga.
+- La cuarentena de la carga no se contrasta de forma independiente en BD por falta de permiso SELECT de `observatory_consumer`.

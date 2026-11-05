@@ -27,11 +27,33 @@ class ResultKind(Enum):
 
 @dataclass(frozen=True)
 class MessageRef:
-    """Referencia a un mensaje de Kafka (columnas `kafka_*` de las tablas)."""
+    """Referencia a un mensaje de Kafka (columnas `kafka_*` de las tablas).
+
+    `partition` y `offset` en `None` significan «carga por lote, sin referencia Kafka» (histórico);
+    el `topic` se conserva porque de él se derivan el modo y el esquema.
+    """
 
     topic: str
-    partition: int
-    offset: int
+    partition: int | None
+    offset: int | None
+
+
+def kafka_columns(ref: MessageRef) -> tuple[str | None, int | None, int | None]:
+    """Devuelve `(kafka_topic, kafka_partition, kafka_offset)` para las filas de la base.
+
+    Qué hace:
+        Copia la referencia tal cual si es de Kafka; si no tiene partición (carga por lote)
+        devuelve tres `None`, como admite el contrato (`db-schema.md` §3.2 y §3.5).
+    Recibe:
+        ref: referencia del mensaje.
+    Devuelve:
+        Tupla con las tres columnas `kafka_*`.
+    Por qué existe:
+        Evita copiar `ref.*` en cada constructor de filas y permite el histórico sin Kafka.
+    """
+    if ref.partition is None:
+        return None, None, None
+    return ref.topic, ref.partition, ref.offset
 
 
 @dataclass(frozen=True)
@@ -43,8 +65,8 @@ class RawRecord:
     """
 
     topic: str
-    partition: int
-    offset: int
+    partition: int | None
+    offset: int | None
     key: bytes | None
     value: bytes | None
 
@@ -168,9 +190,9 @@ class QuarantineRow:
     raw_text: str | None
     original_sha256: str
     source: str | None
-    kafka_topic: str
-    kafka_partition: int
-    kafka_offset: int
+    kafka_topic: str | None
+    kafka_partition: int | None
+    kafka_offset: int | None
     received_at: datetime
     is_synthetic: bool
 

@@ -1,0 +1,8 @@
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\common\test_records.py:7: in <module>
+    from common.records import (
+E   ImportError: cannot import name 'kafka_columns' from 'common.records' (C:\Users\Samuel Fernandez\Desktop\Proyectos\seismic-activity-observatory\common\records.py)
+=========================== short test summary info ===========================
+ERROR tests/common/test_records.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.22s

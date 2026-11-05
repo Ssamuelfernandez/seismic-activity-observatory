@@ -154,6 +154,13 @@ def test_kafka_reference_and_received_at() -> None:
     assert row.received_at == NOW
 
 
+def test_batch_reference_leaves_kafka_columns_null() -> None:
+    """Carga por lote (historico): sin particion ni offset las tres columnas `kafka_*` salen nulas."""
+    decoded = decode_value(to_bytes(_message()))
+    row = build_quarantine_row(decoded, "mag_out_of_range", MessageRef("earthquakes.live", None, None), NOW)
+    assert (row.kafka_topic, row.kafka_partition, row.kafka_offset) == (None, None, None)
+
+
 def test_reason_never_comes_from_message() -> None:
     message = _message()
     message["reason"] = "inventado"

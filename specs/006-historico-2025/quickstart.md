@@ -1,6 +1,6 @@
 # Guía de comprobación: Histórico 2025
 
-Pasos para comprobar la feature una vez implementada (T001–T025). Los nombres de módulo son los del plan §4. Comandos en Git Bash; los de Docker y `uv` son iguales en PowerShell.
+Pasos para comprobar la feature una vez implementada (T001–T025). Los nombres de módulo son los del plan §4. Comandos en Git Bash (en Windows, `MSYS_NO_PATHCONV=1` evita que Git Bash reescriba la ruta del volumen); los de Docker y `uv` son iguales en PowerShell.
 
 ## 1. Unitarias (sin Docker ni red)
 
@@ -32,9 +32,9 @@ Esperado: 12 archivos `data/historical/usgs_2025-MM.geojson` y `manifest.json`; 
 ## 4. Carga en la base del stack
 
 ```bash
-docker compose build consumer
+docker compose build producer   # la imagen es compartida; `build consumer` no hace nada
 docker compose up -d postgres
-docker compose run --rm --no-deps -v ./data/historical:/app/data/historical:ro consumer python -m historical.load_main
+MSYS_NO_PATHCONV=1 docker compose run --rm --no-deps -v ./data/historical:/app/data/historical:ro consumer python -m historical.load_main
 ```
 
 Esperado: línea `historical_summary ... ok=true`; la consulta de verificación (data-model §6) da `|U| − |Q|` eventos. Repetir el comando: `new=0 newer=0` y huella idéntica. `docker compose restart postgres` y volver a consultar: mismo recuento.
@@ -43,7 +43,7 @@ Esperado: línea `historical_summary ... ok=true`; la consulta de verificación 
 
 ```bash
 uv run python -m historical.download_main --start 2025-12-30T00:00:00 --end 2025-12-31T00:00:00
-docker compose run --rm --no-deps -v ./data/historical:/app/data/historical:ro consumer python -m historical.load_main
+MSYS_NO_PATHCONV=1 docker compose run --rm --no-deps -v ./data/historical:/app/data/historical:ro consumer python -m historical.load_main
 ```
 
 Esperado: `usgs_gap_20251230T000000_20251231T000000.geojson` en el manifiesto; la carga no duplica ni retrocede eventos ya presentes.

@@ -1,0 +1,6 @@
+Primer intento (sin COPY historical en el Dockerfile): 8 errores de coleccion ModuleNotFoundError historical; se anade la linea de T013 antes de medir la base.
+ seismic-observatory-python-tests:0.1.0  Built
+ Container seismic-observatory-postgres-1  Running
+........................................................................ [ 98%]
+.                                                                        [100%]
+73 passed, 580 deselected in 38.45s

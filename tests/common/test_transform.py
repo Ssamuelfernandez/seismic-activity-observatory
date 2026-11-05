@@ -129,6 +129,13 @@ def test_received_at_is_injected_clock_not_event_time() -> None:
     assert (rows.version["kafka_partition"], rows.version["kafka_offset"]) == (0, 7)
 
 
+def test_batch_reference_leaves_kafka_columns_null_in_version() -> None:
+    """Carga por lote (historico): sin particion ni offset las columnas `kafka_*` salen `None`."""
+    rows = build_event_rows(_valid(_message()), MessageRef("earthquakes.live", None, None), NOW)
+    version = rows.version
+    assert (version["kafka_topic"], version["kafka_partition"], version["kafka_offset"]) == (None, None, None)
+
+
 def test_ms_and_timestamps_are_consistent() -> None:
     rows = build_event_rows(_valid(_message()), REF, NOW)
     assert rows.current["event_time_ms"] == E1_TIME_MS

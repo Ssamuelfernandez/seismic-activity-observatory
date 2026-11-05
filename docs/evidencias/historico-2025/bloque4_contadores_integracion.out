@@ -1,0 +1,38 @@
+-- [1] caso1_faq12
+COUNTERS {"late_old_versions":0,"ms_to_utc_conversions":5,"new_events":2,"newer_versions_applied":1,"nulls_kept":{},"quarantine_duplicates":{},"quarantined":{},"received":5,"redeliveries_ignored":2,"same_updated_conflicts":0}
+SQL filas (current_event, event_version, quarantine): (2, 3, 0)
+SQL quarantine por motivo: {}
+
+-- [2] caso1_faq12: cuarentena por motivo (SQL)
+SELECT reason, count(*) FROM live.quarantine GROUP BY reason ORDER BY reason
+
+reason | count
+-------+------
+(0 filas)
+
+-- [3] caso2_faq12_latitud145_x2
+COUNTERS {"late_old_versions":0,"ms_to_utc_conversions":5,"new_events":2,"newer_versions_applied":1,"nulls_kept":{},"quarantine_duplicates":{"coordinates_out_of_range":1},"quarantined":{"coordinates_out_of_range":1},"received":7,"redeliveries_ignored":2,"same_updated_conflicts":0}
+SQL filas (current_event, event_version, quarantine): (2, 3, 1)
+SQL quarantine por motivo: {'coordinates_out_of_range': 1}
+
+-- [4] caso2_faq12_latitud145_x2: cuarentena por motivo (SQL)
+SELECT reason, count(*) FROM live.quarantine GROUP BY reason ORDER BY reason
+
+reason                   | count
+-------------------------+------
+coordinates_out_of_range | 1    
+(1 filas)
+
+-- [5] caso3_faq12_dmin_nan_x2
+COUNTERS {"late_old_versions":0,"ms_to_utc_conversions":7,"new_events":2,"newer_versions_applied":1,"nulls_kept":{},"quarantine_duplicates":{"db_constraint_violation":1},"quarantined":{"db_constraint_violation":1},"received":7,"redeliveries_ignored":2,"same_updated_conflicts":0}
+SQL filas (current_event, event_version, quarantine): (2, 3, 1)
+SQL quarantine por motivo: {'db_constraint_violation': 1}
+
+-- [6] caso3_faq12_dmin_nan_x2: cuarentena por motivo (SQL)
+SELECT reason, count(*) FROM live.quarantine GROUP BY reason ORDER BY reason
+
+reason                  | count
+------------------------+------
+db_constraint_violation | 1    
+(1 filas)
+

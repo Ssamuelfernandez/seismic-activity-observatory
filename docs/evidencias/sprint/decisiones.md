@@ -27,3 +27,8 @@
 | historico-2025 | Deduplicación por `id` conservando el `updated` mayor; sin id/updated va a cuarentena | Conservar la primera aparición | Evita perder revisiones y duplicar eventos |
 | historico-2025 | Mes con >20000 eventos: partición recursiva por punto medio, fusionada en el mismo archivo mensual | Descargar por semanas siempre | Solo se subdivide cuando el límite de USGS lo obliga |
 | historico-2025 | Si USGS revisa un evento entre `count` y la descarga, error y repetición manual | Reintento automático | Caso raro; simplicidad |
+| historico-2025 | `verify_load` toma el recuento de cuarentena de los resultados de `process_record` de la misma carga; la huella de producción cubre `current_event` y `event_version`, y con `quarantine` la calcula el administrador | GRANT SELECT sobre `live.quarantine` a `observatory_consumer` | No cambia roles (`002_roles.sql`); la verificación es suficiente para el alcance |
+| historico-2025 | `build_query_url` incluye milisegundos solo si hay fracción | Incluirlos siempre | Necesario para intervalos de la partición recursiva; probado contra USGS real |
+| historico-2025 | `data/historical/` versionado con manifest (13,9 MB < 50 MB, incluye archivo del ensayo de hueco) | Ignorarlo en `.gitignore` | Regla del brief; reproducibilidad |
+| historico-2025 | `common.geo` se importa en `load_main` solo para cablear `PipelineDeps` | Duplicar la geografía en el cargador | Excepción acotada (T017), igual que `consumer/loop.py` |
+| historico-2025 | Los 7 archivos de `docs/evidencias/consumidor-idempotente/` reescritos por el servicio `tests` se excluyen del commit | Commitearlos | Cambios accidentales ajenos a la feature |

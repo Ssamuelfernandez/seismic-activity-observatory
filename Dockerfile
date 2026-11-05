@@ -25,6 +25,7 @@ COPY common ./common
 COPY producer ./producer
 COPY consumer ./consumer
 COPY api ./api
+COPY historical ./historical
 
 RUN useradd --system --uid 10001 --no-create-home observatory
 USER observatory

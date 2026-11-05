@@ -52,7 +52,7 @@ historical/fetch_interval.py  NUEVO  count + descarga + división recursiva + re
 historical/download.py        NUEVO  download_year, download_gap: reutiliza archivos por sha, totales, comprobación del count
 historical/download_main.py   NUEVO  CLI: configura y arranca (--force, --start, --end)
 historical/loader.py          NUEVO  load_historical: lee manifiesto, verifica sha, dedup, process_record
-historical/verify.py          NUEVO  verify_load: fórmula únicos − cuarentena; huella de «0 diferencias»
+historical/verify.py          NUEVO  verify_load(pool, unique_ids, quarantined_ids): fórmula únicos − cuarentena (Q sale de los resultados de process_record, no de leer live.quarantine); huella de «0 diferencias»
 historical/load_main.py       NUEVO  CLI: pool, esquema, catálogo, carga, verificación, código de salida
 common/records.py             MessageRef admite None; kafka_columns(ref)
 common/transform.py, common/quarantine_row.py   usan kafka_columns

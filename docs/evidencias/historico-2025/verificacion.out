@@ -1,0 +1,57 @@
+     source      | is_synthetic | count 
+-----------------+--------------+-------
+ replay_demo     | t            |     3
+ usgs_historical | f            | 18302
+(2 rows)
+
+ historical_current 
+--------------------
+              18302
+(1 row)
+
+ historical_versions 
+---------------------
+               18302
+(1 row)
+
+ historical_quarantine 
+-----------------------
+                     0
+(1 row)
+
+ historical_with_null_country 
+------------------------------
+                        14350
+(1 row)
+
+ historical_kafka_not_null 
+---------------------------
+                         0
+(1 row)
+
+  month  | count 
+---------+-------
+ 2025-01 |  1413
+ 2025-02 |  1394
+ 2025-03 |  1178
+ 2025-04 |  1316
+ 2025-05 |  1228
+ 2025-06 |  1156
+ 2025-07 |  2684
+ 2025-08 |  2222
+ 2025-09 |  1604
+ 2025-10 |  1509
+ 2025-11 |  1321
+ 2025-12 |  1277
+(12 rows)
+
+   n   |      fingerprint_historical      
+-------+----------------------------------
+ 18302 | cb3875e9826e1c96fc2cdc9db0ed03b6
+(1 row)
+
+   n   |       fingerprint_versions       
+-------+----------------------------------
+ 18302 | cb3875e9826e1c96fc2cdc9db0ed03b6
+(1 row)
+
