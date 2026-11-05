@@ -1,5 +1,6 @@
-# Estado del sprint — geografia-pais
+# Estado del sprint — historico-2025
 
-- Feature: geografia-pais | Rama: 005-geografia-pais (desde main)
-- diseno: TERMINADA | implementar: TERMINADA (commit fbcbb2c) | cierre: TERMINADA (supervisor: CONTINUAR; commit "docs: cierre de geografia-pais")
-- Sprint COMPLETO. Sin merge ni push: la rama queda como actual para apilar la siguiente feature.
+- Feature: historico-2025 | Rama: 006-historico-2025 (desde main)
+- diseno: TERMINADA (supervisor: CONTINUAR; commit "docs: diseño de historico-2025")
+- implementar: PENDIENTE | cierre: PENDIENTE
+- Sin merge ni push.

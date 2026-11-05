@@ -19,3 +19,11 @@
 | geografia-pais | Sin polígono: `country_id` NULL, sin cuarentena, cuenta en totales | Mandar a cuarentena | Prueba 7: eventos oceánicos son válidos y no se pierden |
 | geografia-pais | No se validan geometrías del catálogo (USA y SDN tienen autointersecciones menores); solo se rechazan las vacías, sin buffer(0) | Validar y reparar con buffer(0) o rechazar geometrías inválidas | Validar bloquearía el arranque con el catálogo real; el archivo se usa tal cual (research.md D6) |
 | geografia-pais | T010 reescribe dos pruebas de 003 que esperaban el comportamiento anterior | Mantenerlas y forzar el comportamiento antiguo | El comportamiento esperado cambia por diseño de esta feature |
+| historico-2025 | `source = usgs_historical` en la carga | `historical` (valor del brief) | Es el valor que permiten el CHECK de `sql/001_schema.sql` y kafka-message.md §1; usar otro rompería el contrato |
+| historico-2025 | Carga por lote directa a `live`, sin pasar por Kafka | Publicar el histórico en Kafka | kafka-message.md §1 y db-schema.md §1 reservan el lote para el histórico; evita saturar el broker |
+| historico-2025 | El cargador reutiliza `consumer.pipeline.process_record` con `partition`/`offset` = None (`MessageRef` los admite) | Duplicar la lógica de validación/transformación en el cargador | Cambio mínimo, una sola lógica; las columnas kafka_* son nullable en el esquema |
+| historico-2025 | Hueco >24 h cubierto con `--start/--end` en el descargador, registrado en `gaps` del manifiesto | Procedimiento manual o ignorar el hueco | Mismo mecanismo reproducible y trazable |
+| historico-2025 | Archivos en `data/historical/`; se versionan si pesan <50 MB (medido en T019), si no `.gitignore` | Versionar siempre o nunca | Regla del brief; reproducibilidad sin inflar el repositorio |
+| historico-2025 | Deduplicación por `id` conservando el `updated` mayor; sin id/updated va a cuarentena | Conservar la primera aparición | Evita perder revisiones y duplicar eventos |
+| historico-2025 | Mes con >20000 eventos: partición recursiva por punto medio, fusionada en el mismo archivo mensual | Descargar por semanas siempre | Solo se subdivide cuando el límite de USGS lo obliga |
+| historico-2025 | Si USGS revisa un evento entre `count` y la descarga, error y repetición manual | Reintento automático | Caso raro; simplicidad |
