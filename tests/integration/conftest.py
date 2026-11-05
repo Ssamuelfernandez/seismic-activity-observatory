@@ -91,7 +91,8 @@ def db() -> TempDatabase:
     asyncio.run(_create_database(env, name))
     database = TempDatabase(name, env["DB_HOST"], int(env["DB_PORT"]), env["POSTGRES_USER"],
                             env["POSTGRES_PASSWORD"], env["DB_USER"], env["DB_PASSWORD"],
-                            producer_password=os.environ["DB_PRODUCER_PASSWORD"])
+                            producer_password=os.environ["DB_PRODUCER_PASSWORD"],
+                            api_password=os.environ["DB_API_PASSWORD"])
     try:
         asyncio.run(_apply_schema_and_grants(database))
         yield database

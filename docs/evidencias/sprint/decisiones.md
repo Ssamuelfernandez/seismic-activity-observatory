@@ -32,3 +32,15 @@
 | historico-2025 | `data/historical/` versionado con manifest (13,9 MB < 50 MB, incluye archivo del ensayo de hueco) | Ignorarlo en `.gitignore` | Regla del brief; reproducibilidad |
 | historico-2025 | `common.geo` se importa en `load_main` solo para cablear `PipelineDeps` | Duplicar la geografía en el cargador | Excepción acotada (T017), igual que `consumer/loop.py` |
 | historico-2025 | Los 7 archivos de `docs/evidencias/consumidor-idempotente/` reescritos por el servicio `tests` se excluyen del commit | Commitearlos | Cambios accidentales ajenos a la feature |
+| api | CORS fuera de la feature; OPTIONS responde 405 hasta el despliegue (F9 lo cubre despliegue) | Añadir CORS ahora | El brief lo aplaza; se decide con el origen real del panel |
+| api | Mismo rango por defecto (24 h) en modo live y replay | Rango distinto en replay | api.md no distingue el modo |
+| api | `API_MAX_EVENTS` (5000) y `API_DB_TIMEOUT_SECONDS` (5) en `.env.example` y README, sin editar `config.md` de 002 | Ampliar el contrato config.md | No se tocan contratos de otra feature |
+| api | Validación con código propio y un solo cuerpo de error, sin 422 automático | Validación por defecto del framework (422) | Contrato de error único y mensajes en español |
+| api | Transacción REPEATABLE READ de solo lectura por petición | READ COMMITTED por consulta | Total y listado coherentes con el consumidor escribiendo |
+| api | Paginación por cursor (event_time, event_id) en base64url | OFFSET/LIMIT | Estable ante inserciones concurrentes |
+| api | Errores reintentables de BD y errores SQL no previstos devuelven 503 | Distinguir 500 para SQL imprevisto | Simplicidad; límite conocido |
+| api | El modo replay lee `replay.current_event` (vacío hasta la feature replay) | Dejarlo sin implementar | Evita reescribir la API después |
+| api | Fábrica `create_app()` en `api/main.py` | Instancia global única | Permite crear la aplicación con configuración propia en las pruebas |
+| api | Comparación de dos periodos en una sola consulta con dos `FILTER` | Dos consultas separadas | Una sola lectura coherente dentro de la misma transacción |
+| api | `API_MAX_EVENTS` y `API_DB_TIMEOUT_SECONDS` con defecto `${VAR:-valor}` en `compose.yaml` | Exigirlas en `.env` | El arranque no falla si faltan; los valores por defecto están documentados |
+| api | Los 7 archivos de `docs/evidencias/consumidor-idempotente/` reescritos por la suite de integración se excluyen del commit | Commitearlos | Cambios accidentales ajenos a la feature (igual que en historico-2025) |

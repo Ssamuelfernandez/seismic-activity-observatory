@@ -1,0 +1,67 @@
+# Parando postgres: 13:00:17
+ Container seismic-observatory-postgres-1  Stopping
+ Container seismic-observatory-postgres-1  Stopped
+## /api/eventos con postgres parado
+HTTP/1.1 503 Service Unavailable
+date: Thu, 05 Nov 2026 13:00:17 GMT
+server: uvicorn
+content-length: 124
+content-type: application/json
+
+{"error":{"code":"database_unavailable","message":"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."}}
+[tiempo_total=3.992167s http=503]
+
+## /api/estadisticas con postgres parado
+HTTP/1.1 503 Service Unavailable
+date: Thu, 05 Nov 2026 13:00:21 GMT
+server: uvicorn
+content-length: 124
+content-type: application/json
+
+{"error":{"code":"database_unavailable","message":"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."}}
+[tiempo_total=3.986164s http=503]
+
+## /api/salud con postgres parado
+HTTP/1.1 503 Service Unavailable
+date: Thu, 05 Nov 2026 13:00:25 GMT
+server: uvicorn
+content-length: 124
+content-type: application/json
+
+{"error":{"code":"database_unavailable","message":"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."}}
+[tiempo_total=3.990515s http=503]
+
+# Arrancando postgres: 13:00:29
+ Container seismic-observatory-postgres-1  Starting
+ Container seismic-observatory-postgres-1  Started
+## /api/salud tras start (sin reiniciar la API)
+HTTP/1.1 200 OK
+date: Thu, 05 Nov 2026 13:00:36 GMT
+server: uvicorn
+content-length: 72
+content-type: application/json
+
+{"status":"ok","last_ingestion":1793883635374,"generated":1793883637795}
+[tiempo_total=0.003352s http=200]
+
+## /api/eventos?limit=1 tras start (sin reiniciar la API)
+HTTP/1.1 200 OK
+date: Thu, 05 Nov 2026 13:00:37 GMT
+server: uvicorn
+content-length: 668
+content-type: application/json
+
+{"type":"FeatureCollection","metadata":{"generated":1793883637887,"last_ingestion":1793883635374,"mode":"live","count":1,"total":173,"truncated":true,"next_cursor":"eyJ0IjoxNzkzODgyNzcyOTAwLCJpZCI6Im5jNzU0NjI3NDIifQ","null_mag_excluded":0},"features":[{"type":"Feature","id":"nc75462742","geometry":{"type":"Point","coordinates":[-122.814834594727,38.8056678771973,3.25]},"properties":{"mag":0.75,"magType":"md","place":"6 km WNW of The Geysers, CA","time":1793882772900,"updated":1793882869894,"country_id":"USA","country_name":"Estados Unidos","is_synthetic":false,"status":"automatic","url":"https://earthquake.usgs.gov/earthquakes/eventpage/nc75462742","sig":9}}]}
+[tiempo_total=0.008635s http=200]
+
+## /api/estadisticas tras start (sin reiniciar la API)
+HTTP/1.1 200 OK
+date: Thu, 05 Nov 2026 13:00:37 GMT
+server: uvicorn
+content-length: 2841
+content-type: application/json
+
+{"metadata":{"generated":1793883637939,"last_ingestion":1793883635374,"mode":"live"},"period":{"start":1793797237939,"end":1793883637939},"filters":{"min_mag":null,"country_id":null},"total":173,"by_hour":{"unit":"events","no_value":0,"buckets":[{"hour_start":1793797200000,"count":3},{"hour_start":1793800800000,"count":4},{"hour_start":1793804400000,"count":11},{"hour_start":1793808000000,"count":3},{"hour_start":1793811600000,"count":9},{"hour_start":1793815200000,"count":9},{"hour_start":1793818800000,"count":16},{"hour_start":1793822400000,"count":4},{"hour_start":1793826000000,"count":9},{"hour_start":1793829600000,"count":6},{"hour_start":1793833200000,"count":8},{"hour_start":1793836800000,"count":6},{"hour_start":1793840400000,"count":2},{"hour_start":1793844000000,"count":6},{"hour_start":1793847600000,"count":6},{"hour_start":1793851200000,"count":11},{"hour_start":1793854800000,"count":5},{"hour_start":1793858400000,"count":7},{"hour_start":1793862000000,"count":7},{"hour_start":1793865600000,"count":7},{"hour_start":1793869200000,"count":13},{"hour_start":1793872800000,"count":7},{"hour_start":1793876400000,"count":7},{"hour_start":1793880000000,"count":7},{"hour_start":1793883600000,"count":0}]},"by_country":{"unit":"events","no_value":26,"items":[{"country_id":"USA","country_name":"Estados Unidos","subregion":"Northern America","count":141},{"country_id":null,"country_name":null,"subregion":null,"count":26},{"country_id":"AFG","country_name":"Afganistán","subregion":"Southern Asia","count":1},{"country_id":"CHN","country_name":"China","subregion":"Eastern Asia","count":1},{"country_id":"MEX","country_name":"México","subregion":"Central America","count":1},{"country_id":"NIC","country_name":"Nicaragua","subregion":"Central America","count":1},{"country_id":"TUR","country_name":"Turquía","subregion":"Western Asia","count":1},{"country_id":"TZA","country_name":"Tanzania","subregion":"Eastern Africa","count":1}]},"histograms":{"magnitude":{"unit":"dimensionless","no_value":0,"bins":[{"lower":null,"upper":1,"count":53},{"lower":1,"upper":2,"count":58},{"lower":2,"upper":3,"count":47},{"lower":3,"upper":4,"count":5},{"lower":4,"upper":5,"count":9},{"lower":5,"upper":6,"count":1},{"lower":6,"upper":7,"count":0},{"lower":7,"upper":null,"count":0}]},"depth":{"unit":"km","no_value":0,"bins":[{"lower":null,"upper":10,"count":109},{"lower":10,"upper":35,"count":36},{"lower":35,"upper":70,"count":6},{"lower":70,"upper":300,"count":20},{"lower":300,"upper":null,"count":2}]}},"comparison":{"unit":"events","min_mag_applied":4.0,"recent_period":{"start":1793797237939,"end":1793883637939},"reference_period":{"start":1735689600000,"end":1767225600000},"n_recent":10,"n_2025":18302,"daily_mean_2025":50.14246575342466,"diff_abs":-40.14246575342466,"variation_pct":-80.06,"recent_incomplete":true}}
+[tiempo_total=0.031610s http=200]
+
+Up 4 minutes (healthy)

@@ -1,8 +1,9 @@
-# Estado del sprint — historico-2025
+# Estado del sprint — api
 
-- Feature: historico-2025 | Rama: 006-historico-2025 (desde main)
-- diseno: TERMINADA (commit db83c47)
-- implementar: TERMINADA (supervisor: CONTINUAR; commit "feat: historico-2025")
-- cierre: TERMINADA (documentación; commit "docs: cierre de historico-2025" pendiente del alumno)
-- Aviso: 7 archivos de docs/evidencias/consumidor-idempotente/ modificados por accidente y excluidos del commit (restaurar con `git checkout -- docs/evidencias/consumidor-idempotente`).
+- Feature: api | Rama: 007-api (desde main)
+- diseno: TERMINADA (commit "docs: diseño de api")
+- implementar: TERMINADA (supervisor: CONTINUAR; commit "feat: api")
+- cierre: TERMINADA (supervisor: CONTINUAR; commit "docs: cierre de api")
+- Aviso: 7 archivos de docs/evidencias/consumidor-idempotente/ reescritos por la suite de integración y 15 sin seguimiento (geografia_*, historico_*) excluidos de los commits.
+- Checklist F1–F8, F10, F11 sin marcar: lo marca el alumno.
 - Sin merge ni push.

@@ -1,0 +1,8 @@
+# segunda pagina con next_cursor
+HTTP/1.1 200 OK
+date: Thu, 05 Nov 2026 13:00:16 GMT
+server: uvicorn
+content-length: 679
+content-type: application/json
+
+{"type":"FeatureCollection","metadata":{"generated":1793883617169,"last_ingestion":1793883562961,"mode":"live","count":1,"total":173,"truncated":true,"next_cursor":"eyJ0IjoxNzkzODgxNTE4NzkwLCJpZCI6Imh2NzUwNjg4OTYifQ","null_mag_excluded":0},"features":[{"type":"Feature","id":"hv75068896","geometry":{"type":"Point","coordinates":[-155.453506469727,19.4044990539551,5.76999998092651]},"properties":{"mag":1.7,"magType":"md","place":"22 km N of Pāhala, Hawaii","time":1793881518790,"updated":1793881728130,"country_id":"USA","country_name":"Estados Unidos","is_synthetic":false,"status":"automatic","url":"https://earthquake.usgs.gov/earthquakes/eventpage/hv75068896","sig":44}}]}

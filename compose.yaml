@@ -155,6 +155,9 @@ services:
       DB_NAME: ${POSTGRES_DB:?Falta POSTGRES_DB en .env}
       DB_USER: observatory_api
       DB_PASSWORD: ${DB_API_PASSWORD:?Falta DB_API_PASSWORD en .env}
+      # Límites de la API de consulta (common/api_config.py); los valores por defecto coinciden con los del código.
+      API_MAX_EVENTS: ${API_MAX_EVENTS:-5000}
+      API_DB_TIMEOUT_SECONDS: ${API_DB_TIMEOUT_SECONDS:-5}
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -192,6 +195,8 @@ services:
       DB_PASSWORD: ${DB_CONSUMER_PASSWORD:?Falta DB_CONSUMER_PASSWORD en .env}
       # Rol real del productor (productor-live): se prueba su almacén de ingesta.
       DB_PRODUCER_PASSWORD: ${DB_PRODUCER_PASSWORD:?Falta DB_PRODUCER_PASSWORD en .env}
+      # Rol real de la API (feature api): se prueba con el pool de solo lectura.
+      DB_API_PASSWORD: ${DB_API_PASSWORD:?Falta DB_API_PASSWORD en .env}
       EVIDENCE_DIR: /app/evidence
       PYTEST_ADDOPTS: -p no:cacheprovider
     volumes:

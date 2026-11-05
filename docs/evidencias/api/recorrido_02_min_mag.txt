@@ -1,0 +1,10 @@
+# curl -i 'http://127.0.0.1:8000/api/eventos?min_mag=4&limit=3'
+# fecha: 2026-11-05T12:57:00Z
+HTTP/1.1 200 OK
+date: Thu, 05 Nov 2026 12:56:59 GMT
+server: uvicorn
+content-length: 1419
+content-type: application/json
+
+{"type":"FeatureCollection","metadata":{"generated":1793883420290,"last_ingestion":1793883382276,"mode":"live","count":3,"total":10,"truncated":true,"next_cursor":"eyJ0IjoxNzkzODU0NTYyNjcwLCJpZCI6Im5jNzU0NjI2MzcifQ","null_mag_excluded":0},"features":[{"type":"Feature","id":"us7000tw7b","geometry":{"type":"Point","coordinates":[147.7534,49.2594,554.419]},"properties":{"mag":4.8,"magType":"mb","place":"Sea of Okhotsk","time":1793873373723,"updated":1793874271040,"country_id":null,"country_name":null,"is_synthetic":false,"status":"reviewed","url":"https://earthquake.usgs.gov/earthquakes/eventpage/us7000tw7b","sig":354}},{"type":"Feature","id":"us7000tw76","geometry":{"type":"Point","coordinates":[32.149,-3.4641,10.0]},"properties":{"mag":5.1,"magType":"mb","place":"19 km NNW of Masumbwe, Tanzania","time":1793870552714,"updated":1793880997993,"country_id":"TZA","country_name":"Tanzania","is_synthetic":false,"status":"reviewed","url":"https://earthquake.usgs.gov/earthquakes/eventpage/us7000tw76","sig":409}},{"type":"Feature","id":"nc75462637","geometry":{"type":"Point","coordinates":[-125.585333333333,40.4073333333333,10.0]},"properties":{"mag":4.96,"magType":"mw","place":"111 km W of Petrolia, CA","time":1793854562670,"updated":1793883118460,"country_id":null,"country_name":null,"is_synthetic":false,"status":"reviewed","url":"https://earthquake.usgs.gov/earthquakes/eventpage/nc75462637","sig":425}}]}
+# [recortado a 2500 bytes]

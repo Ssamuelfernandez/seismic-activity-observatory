@@ -1,0 +1,10 @@
+# curl -i 'http://127.0.0.1:8000/api/eventos?start=2025-03-01&end=2025-03-02&limit=2'
+# fecha: 2026-11-05T12:57:00Z
+HTTP/1.1 200 OK
+date: Thu, 05 Nov 2026 12:56:59 GMT
+server: uvicorn
+content-length: 1027
+content-type: application/json
+
+{"type":"FeatureCollection","metadata":{"generated":1793883420576,"last_ingestion":1793883382276,"mode":"live","count":2,"total":45,"truncated":true,"next_cursor":"eyJ0IjoxNzQwODcyNTUwNTI5LCJpZCI6InVzNjAwMHB3Y2UifQ","null_mag_excluded":0},"features":[{"type":"Feature","id":"us6000pwck","geometry":{"type":"Point","coordinates":[-179.552,-22.133,590.686]},"properties":{"mag":4.8,"magType":"mb","place":"south of the Fiji Islands","time":1740873144769,"updated":1746732284040,"country_id":null,"country_name":null,"is_synthetic":false,"status":"reviewed","url":"https://earthquake.usgs.gov/earthquakes/eventpage/us6000pwck","sig":354}},{"type":"Feature","id":"us6000pwce","geometry":{"type":"Point","coordinates":[-177.3562,-29.3998,51.427]},"properties":{"mag":5.2,"magType":"mb","place":"Kermadec Islands, New Zealand","time":1740872550529,"updated":1746732284040,"country_id":null,"country_name":null,"is_synthetic":false,"status":"reviewed","url":"https://earthquake.usgs.gov/earthquakes/eventpage/us6000pwce","sig":416}}]}
+# [recortado a 2500 bytes]

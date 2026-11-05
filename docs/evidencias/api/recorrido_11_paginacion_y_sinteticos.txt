@@ -1,0 +1,16 @@
+== Paginacion 24 h (sin parametros), limit=50
+  pagina 1: count=50 total=173 truncated=True next_cursor=si
+  pagina 2: count=50 total=173 truncated=True next_cursor=si
+  pagina 3: count=50 total=173 truncated=True next_cursor=si
+  pagina 4: count=23 total=173 truncated=True next_cursor=null
+24h: paginas=4 ids=173 unicos=173 total=173
+is_synthetic true en 24h: 0 de 173
+time min/max: 1793798459506 1793882772900 generated: 1793883603085 ventana 24h ok: True
+== Paginacion dia 2025-03-01, limit=10
+  pagina 1: count=10 total=45 truncated=True next_cursor=si
+  pagina 2: count=10 total=45 truncated=True next_cursor=si
+  pagina 3: count=10 total=45 truncated=True next_cursor=si
+  pagina 4: count=10 total=45 truncated=True next_cursor=si
+  pagina 5: count=5 total=45 truncated=True next_cursor=null
+2025-03-01: paginas=5 ids=45 unicos=45 total=45
+is_synthetic true en el dia 2025: 0 de 45

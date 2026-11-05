@@ -1,0 +1,8 @@
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\api\test_stats_builder.py:3: in <module>
+    from api.stats_builder import (DEPTH_THRESHOLDS, MAGNITUDE_THRESHOLDS, build_bins, build_by_country,
+E   ModuleNotFoundError: No module named 'api.stats_builder'
+=========================== short test summary info ===========================
+ERROR tests/api/test_stats_builder.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.10s

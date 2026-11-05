@@ -1,0 +1,4 @@
+ Container seismic-observatory-postgres-1  Running
+........................................................................ [ 83%]
+..............                                                           [100%]
+86 passed, 699 deselected in 59.40s

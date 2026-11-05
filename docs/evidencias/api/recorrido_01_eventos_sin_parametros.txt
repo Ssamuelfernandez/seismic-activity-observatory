@@ -1,0 +1,10 @@
+# curl -i 'http://127.0.0.1:8000/api/eventos?limit=3'
+# fecha: 2026-11-05T12:57:00Z
+HTTP/1.1 200 OK
+date: Thu, 05 Nov 2026 12:56:59 GMT
+server: uvicorn
+content-length: 1501
+content-type: application/json
+
+{"type":"FeatureCollection","metadata":{"generated":1793883420208,"last_ingestion":1793883382276,"mode":"live","count":3,"total":174,"truncated":true,"next_cursor":"eyJ0IjoxNzkzODgxNDcxNTY4LCJpZCI6ImFrYTIwMjZ2eHZvcGMifQ","null_mag_excluded":0},"features":[{"type":"Feature","id":"nc75462742","geometry":{"type":"Point","coordinates":[-122.814834594727,38.8056678771973,3.25]},"properties":{"mag":0.75,"magType":"md","place":"6 km WNW of The Geysers, CA","time":1793882772900,"updated":1793882869894,"country_id":"USA","country_name":"Estados Unidos","is_synthetic":false,"status":"automatic","url":"https://earthquake.usgs.gov/earthquakes/eventpage/nc75462742","sig":9}},{"type":"Feature","id":"hv75068896","geometry":{"type":"Point","coordinates":[-155.453506469727,19.4044990539551,5.76999998092651]},"properties":{"mag":1.7,"magType":"md","place":"22 km N of Pāhala, Hawaii","time":1793881518790,"updated":1793881728130,"country_id":"USA","country_name":"Estados Unidos","is_synthetic":false,"status":"automatic","url":"https://earthquake.usgs.gov/earthquakes/eventpage/hv75068896","sig":44}},{"type":"Feature","id":"aka2026vxvopc","geometry":{"type":"Point","coordinates":[-146.452,61.59,20.0]},"properties":{"mag":1.9,"magType":"ml","place":"47 km SSE of Nelchina, Alaska","time":1793881471568,"updated":1793881581052,"country_id":"USA","country_name":"Estados Unidos","is_synthetic":false,"status":"automatic","url":"https://earthquake.usgs.gov/earthquakes/eventpage/aka2026vxvopc","sig":56}}]}
+# [recortado a 2500 bytes]
