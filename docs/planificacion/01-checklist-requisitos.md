@@ -132,17 +132,17 @@ El contrato del profesor es **mínimo**: define el contenido de las respuestas (
 
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
-| F1 | **[OBL]** `GET /api/eventos` → HTTP 200, `Content-Type: application/json`, `FeatureCollection`; sin eventos = `features: []`; **un evento = una vez, versión actual**; por defecto últimas 24 h. Cada feature: `id`, geometría `Point` con `[lon, lat, depth_km]` y `properties` con `mag`, `magType`, `place`, `time`, `updated`, `country_id`, `country_name` | Cumple el contrato | CONTRATO | ☐ |
-| F2 | **[OBL]** `metadata`: `generated` (generación de la respuesta; no implica ingesta activa), `last_ingestion` (última consulta correcta a USGS), `mode`, `count`, `truncated`. Fechas en ms Unix UTC | Presentes | CONTRATO | ☐ |
-| F3 | **[OBL]** Filtros `start` (ISO 8601, incl.), `end` (ISO 8601, excl.), `min_mag`, `country_id` | Probados; **mag nula no cumple `min_mag`** y se cuenta aparte | CONTRATO | ☐ |
-| F4 | **[OBL]** `null` (nunca NaN/Infinity) para mag/profundidad/país desconocidos; geometría válida siempre en este endpoint | — | CONTRATO | ☐ |
-| F5 | **[OBL]** Si se trunca: `truncated: true`, total completo y paginación (**mecanismo y límite propios**, documentados: el contrato no los fija); el panel no calcula estadísticas globales sobre una muestra truncada | Límite y paginación documentados | CONTRATO | ☐ |
-| F6 | **[OBL]** `GET /api/salud`: estado API + fecha de última ingesta, sin credenciales (forma propia, documentada) | — | CONTRATO | ☐ |
-| F7 | **[OBL]** `GET /api/estadisticas`: conteos por hora UTC y por país, distribuciones, comparación histórica; con periodo, filtros, unidad y registros sin valor; **mismos filtros que el mapa** (forma propia, documentada) | — | CONTRATO | ☐ |
-| F8 | **[OBL]** Fallo de BD → error explícito, **nunca** "0 eventos" como resultado válido | Prueba con PG parado | CONTRATO | ☐ |
+| F1 | **[OBL]** `GET /api/eventos` → HTTP 200, `Content-Type: application/json`, `FeatureCollection`; sin eventos = `features: []`; **un evento = una vez, versión actual**; por defecto últimas 24 h. Cada feature: `id`, geometría `Point` con `[lon, lat, depth_km]` y `properties` con `mag`, `magType`, `place`, `time`, `updated`, `country_id`, `country_name` | Cumple el contrato | CONTRATO | [x] |
+| F2 | **[OBL]** `metadata`: `generated` (generación de la respuesta; no implica ingesta activa), `last_ingestion` (última consulta correcta a USGS), `mode`, `count`, `truncated`. Fechas en ms Unix UTC | Presentes | CONTRATO | [x] |
+| F3 | **[OBL]** Filtros `start` (ISO 8601, incl.), `end` (ISO 8601, excl.), `min_mag`, `country_id` | Probados; **mag nula no cumple `min_mag`** y se cuenta aparte | CONTRATO | [x] |
+| F4 | **[OBL]** `null` (nunca NaN/Infinity) para mag/profundidad/país desconocidos; geometría válida siempre en este endpoint | — | CONTRATO | [x] |
+| F5 | **[OBL]** Si se trunca: `truncated: true`, total completo y paginación (**mecanismo y límite propios**, documentados: el contrato no los fija); el panel no calcula estadísticas globales sobre una muestra truncada | Límite y paginación documentados | CONTRATO | [x] |
+| F6 | **[OBL]** `GET /api/salud`: estado API + fecha de última ingesta, sin credenciales (forma propia, documentada) | — | CONTRATO | [x] |
+| F7 | **[OBL]** `GET /api/estadisticas`: conteos por hora UTC y por país, distribuciones, comparación histórica; con periodo, filtros, unidad y registros sin valor; **mismos filtros que el mapa** (forma propia, documentada) | — | CONTRATO | [x] |
+| F8 | **[OBL]** Fallo de BD → error explícito, **nunca** "0 eventos" como resultado válido | Prueba con PG parado | CONTRATO | [x] |
 | F9 | **[OBL]** CORS: origen exacto de Netlify + `http://localhost:4200`; métodos GET y OPTIONS; cabecera `ngrok-skip-browser-warning`; sin cookies | Preflight OK | CONTRATO · Enunc. §9 | ☐ |
-| F10 | **[OBL]** Sin rutas de administración ni secretos expuestos | — | Enunc. §9 | ☐ |
-| F11 | La API consulta datos **ya procesados**; no depende de que el panel esté abierto | — | FAQ 2 | ☐ |
+| F10 | **[OBL]** Sin rutas de administración ni secretos expuestos | — | Enunc. §9 | [x] |
+| F11 | La API consulta datos **ya procesados**; no depende de que el panel esté abierto | — | FAQ 2 | [x] |
 | F12 | Vista de reproducción: poder consultar el intervalo histórico y los datos aislados de replay, con `metadata.mode = "replay"` (parámetro de modo: **decisión propia**, no está en el contrato mínimo) | Parámetro/ruta de modo | FAQ 32 | ☐ |
 
 ### G. Panel Angular (**construido desde cero**; el ejemplo del paquete solo sirve de referencia)
