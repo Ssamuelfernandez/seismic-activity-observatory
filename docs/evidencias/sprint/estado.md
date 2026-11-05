@@ -1,5 +1,5 @@
-# Estado del sprint — productor-live
+# Estado del sprint — geografia-pais
 
-- Feature: productor-live | Rama: 004-productor-live (desde main)
-- diseno: TERMINADA | implementar: TERMINADA (22/22) | cierre: TERMINADA
-- Estado: COMPLETA. Sin merge ni push. Siguiente feature se apila sobre esta rama.
+- Feature: geografia-pais | Rama: 005-geografia-pais (desde main)
+- diseno: TERMINADA (supervisor: CONTINUAR) | implementar: pendiente | cierre: pendiente
+- Siguiente: implementar (25 tareas, 5 bloques, specs/005-geografia-pais/tasks.md)
