@@ -1,0 +1,165 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "generated": 1793700000000,
+    "last_ingestion": 1793699970000,
+    "mode": "replay",
+    "count": 6,
+    "total": 6,
+    "truncated": false,
+    "next_cursor": null,
+    "null_mag_excluded": 0
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "mock-replay-001",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.08,
+          62.624,
+          144.9
+        ]
+      },
+      "properties": {
+        "mag": 6.2,
+        "magType": "mww",
+        "place": "Sintético: reproducción 1",
+        "time": 1735700000000,
+        "updated": 1735700060000,
+        "country_id": "CHL",
+        "country_name": "Chile",
+        "is_synthetic": true,
+        "status": "automatic",
+        "url": null,
+        "sig": null
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mock-replay-002",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.413,
+          33.222,
+          131.9
+        ]
+      },
+      "properties": {
+        "mag": 4.5,
+        "magType": "mww",
+        "place": "Sintético: reproducción 2",
+        "time": 1735696400000,
+        "updated": 1735696460000,
+        "country_id": "JPN",
+        "country_name": "Japón",
+        "is_synthetic": true,
+        "status": "automatic",
+        "url": null,
+        "sig": null
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mock-replay-003",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -41.681,
+          29.118,
+          185.2
+        ]
+      },
+      "properties": {
+        "mag": 4.9,
+        "magType": "mww",
+        "place": "Sintético: reproducción 3",
+        "time": 1735692800000,
+        "updated": 1735692860000,
+        "country_id": "USA",
+        "country_name": "Estados Unidos",
+        "is_synthetic": true,
+        "status": "automatic",
+        "url": null,
+        "sig": null
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mock-replay-004",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          56.032,
+          54.466,
+          44.7
+        ]
+      },
+      "properties": {
+        "mag": 5.3,
+        "magType": "mww",
+        "place": "Sintético: reproducción 4",
+        "time": 1735689200000,
+        "updated": 1735689260000,
+        "country_id": "IDN",
+        "country_name": "Indonesia",
+        "is_synthetic": true,
+        "status": "automatic",
+        "url": null,
+        "sig": null
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mock-replay-005",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          69.25,
+          -26.11,
+          58
+        ]
+      },
+      "properties": {
+        "mag": 5.7,
+        "magType": "mww",
+        "place": "Sintético: reproducción 5",
+        "time": 1735685600000,
+        "updated": 1735685660000,
+        "country_id": "MEX",
+        "country_name": "México",
+        "is_synthetic": true,
+        "status": "automatic",
+        "url": null,
+        "sig": null
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "mock-replay-006",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          170.793,
+          49.483,
+          44.7
+        ]
+      },
+      "properties": {
+        "mag": 5.1,
+        "magType": "mww",
+        "place": "Sintético: reproducción 6",
+        "time": 1735682000000,
+        "updated": 1735682060000,
+        "country_id": "TUR",
+        "country_name": "Turquía",
+        "is_synthetic": true,
+        "status": "automatic",
+        "url": null,
+        "sig": null
+      }
+    }
+  ]
+}

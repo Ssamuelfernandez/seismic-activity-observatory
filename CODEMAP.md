@@ -107,6 +107,11 @@ Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04
 | Los apuntes para la memoria y la defensa de la API (decisiones, límites, demostración con `curl`) | docs/borradores/api.md | F1–F8, F10, F11 |
 | Qué devuelve la API de eventos | api/routers/events.py, api/queries.py (ya real, ver la fila de la API de consulta) | F1–F3 |
 | Cómo el panel consume la API | frontend/src/app/core/api.service.ts | G1, G9 |
+| El proyecto del panel (feature `panel-base-mock`, bloque 1): paquete con versiones exactas y lock, Node 24.18.0, Vite con alias `@/` y `assetsInlineLimit: 0`, TypeScript, entrada HTML, `main.tsx`, `App.tsx` provisional, Tailwind (`index.css`) y `.gitignore` de `node_modules`/`dist` | frontend/ (`package.json`, `package-lock.json`, `.nvmrc`, `vite.config.ts`, `tsconfig.json`, `index.html`, `.gitignore`); frontend/src/ (`main.tsx`, `App.tsx`, `index.css`) | G0 |
+| La carpeta reservada para el store de filtros (Zustand, feature 009; solo README) | frontend/src/store/README.md | G6 (reservada) |
+| Los tipos del contrato de eventos (`metadata`, `properties`, `Feature`) y el formato de valores (ND, coma decimal, fecha UTC, textos fijos) | frontend/src/shared/types/contract.ts; frontend/src/shared/lib/format.ts; prueba en frontend/tests/format.test.ts | G2, G12 (`magType`) |
+| El mock sintético (cuatro casos: `base`, `truncated`, `replay`, `empty`) y su generador determinista | frontend/mock/ (`base.json`, `truncated.json`, `replay.json`, `empty.json`); frontend/scripts/generate-mock.mjs; evidencia en docs/evidencias/panel-base-mock/ (`T003_*`) | G15 |
+| La comprobación de que el mock cumple `api.md` §3.2 y §3.4 y la prueba con un archivo estropeado | frontend/tests/support/validateEventsResponse.ts; frontend/tests/mock.test.ts; frontend/tests/fixtures/bad-response.json | G15 |
 
 ## Flujo actual (productor en vivo y consumidor idempotente)
 USGS -> producer/usgs_client.py -> common/usgs_feed.py -> producer/ingest_store.py (original y estado) -> common/ingest_decision.py -> common/live_message.py

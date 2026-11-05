@@ -1,0 +1,14 @@
+npm notice run observatorio-sismico-panel@0.1.0 build
+npm notice run tsc --noEmit && vite build
+[33mYou are using Node.js 20.13.1. Vite requires Node.js version 20.19+ or 22.12+. Please upgrade your Node.js version.[39m
+[36mvite v8.3.6 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 16 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.40 kB │ gzip:  0.27 kB
+dist/assets/index-BmKPt8yE.css    4.43 kB │ gzip:  1.49 kB
+dist/assets/index-BXpAgDMp.js   219.58 kB │ gzip: 68.63 kB
+
+[32m✓ built in 173ms[39m
+exit=0

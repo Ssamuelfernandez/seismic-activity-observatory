@@ -1,0 +1,32 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "generated": 1793700000000,
+    "last_ingestion": null,
+    "mode": "otro",
+    "count": 3,
+    "total": 1,
+    "truncated": false,
+    "next_cursor": null
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "us1234abcd",
+      "geometry": { "type": "Point", "coordinates": [10, "x", null] },
+      "properties": {
+        "mag": "5.0",
+        "magType": null,
+        "place": null,
+        "time": 1793600000000.5,
+        "updated": 1793600060000,
+        "country_id": null,
+        "country_name": null,
+        "is_synthetic": false,
+        "status": null,
+        "url": null,
+        "sig": null
+      }
+    }
+  ]
+}

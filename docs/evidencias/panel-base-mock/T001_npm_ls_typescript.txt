@@ -1,0 +1,4 @@
+observatorio-sismico-panel@0.1.0 C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\frontend
+`-- typescript@6.0.3
+
+exit=0

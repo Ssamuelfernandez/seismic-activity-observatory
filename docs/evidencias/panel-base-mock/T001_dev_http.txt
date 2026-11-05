@@ -1,0 +1,2 @@
+GET / -> HTTP 200
+GET /src/main.tsx -> HTTP 200
