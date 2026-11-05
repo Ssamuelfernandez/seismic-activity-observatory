@@ -5,7 +5,7 @@ codificación de la consola de Windows (cp1252). `print` está permitido (CC-DOC
 """
 from pathlib import Path
 
-from scripts.consumer_scenarios.helpers import evidence_path
+from scripts.consumer_scenarios.helpers import EVIDENCE_DIR, evidence_path
 
 ENCODING = "utf-8"
 
@@ -45,8 +45,8 @@ def say(text: str = "") -> None:
 class Evidence:
     """Un archivo de evidencia formado por bloques con cabecera `-- [n] etiqueta`."""
 
-    def __init__(self, name: str, extension: str) -> None:
-        self.path: Path = evidence_path(name, extension)
+    def __init__(self, name: str, extension: str, directory: Path = EVIDENCE_DIR) -> None:
+        self.path: Path = evidence_path(name, extension, directory)
         self.blocks: list[str] = []
 
     def add(self, label: str, body: str) -> None:

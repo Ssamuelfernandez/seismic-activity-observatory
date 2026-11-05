@@ -5,9 +5,11 @@ el escritor contra PostgreSQL real. No clasifica errores: si la base lanza, la e
 """
 import json
 from datetime import datetime, timezone
+from collections.abc import Callable
 from typing import Any
 
 from common.decode import decode_value
+from common.geo import CountryMatch
 from common.kafka_topics import TOPIC_LIVE, topic_mode
 from common.quarantine_row import build_quarantine_row
 from common.records import MessageRef, ProcessingResult, Rejection, ResultKind
@@ -17,6 +19,12 @@ from consumer.writer import write_event, write_quarantine
 
 NOW = datetime(2026, 11, 5, 9, 0, 0, tzinfo=timezone.utc)
 PARTITION = 0
+NO_COUNTRY = CountryMatch(None, ())
+
+
+def no_country_locator(lon: float, lat: float) -> CountryMatch:
+    """Localizador de pruebas «sin país»: mantiene el comportamiento previo a la geografía."""
+    return NO_COUNTRY
 
 
 def to_raw(message: dict) -> bytes:
@@ -25,7 +33,8 @@ def to_raw(message: dict) -> bytes:
 
 
 async def process_raw(conn: Any, raw: bytes | None, offset: int, topic: str = TOPIC_LIVE,
-                      now: datetime = NOW) -> ProcessingResult:
+                      now: datetime = NOW,
+                      locate: Callable[[float, float], CountryMatch] = no_country_locator) -> ProcessingResult:
     """Decodifica, valida, transforma y escribe un mensaje; devuelve su `ProcessingResult`."""
     mode = topic_mode(topic)
     ref = MessageRef(topic, PARTITION, offset)
@@ -36,7 +45,7 @@ async def process_raw(conn: Any, raw: bytes | None, offset: int, topic: str = TO
         inserted = await write_quarantine(conn, row, mode)
         return ProcessingResult(ResultKind.QUARANTINE, ref, reason=verdict.reason, inserted=inserted,
                                 event_id=row.event_id, is_synthetic=row.is_synthetic)
-    rows = build_event_rows(verdict, ref, now)
+    rows = build_event_rows(verdict, ref, now, locate(verdict.lon, verdict.lat).country_id)
     outcome = await write_event(conn, rows, mode)
     return ProcessingResult(ResultKind.EVENT, ref, outcome=outcome, converted=True, nulls=rows.nulls,
                             event_id=verdict.event_id, is_synthetic=verdict.is_synthetic,

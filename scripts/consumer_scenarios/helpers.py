@@ -11,6 +11,7 @@ from consumer.counters import check_identities
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EVIDENCE_DIR = REPO_ROOT / "docs" / "evidencias" / "consumidor-idempotente"
+GEO_EVIDENCE_DIR = REPO_ROOT / "docs" / "evidencias" / "geografia-pais"
 CONFIRM_VARIABLE = "VERIFY_CONSUMER_CONFIRM"
 CONFIRM_VALUE = "yes"
 COUNTERS_PATTERN = re.compile(r"COUNTERS (\{.*\})\s*$")
@@ -131,9 +132,9 @@ def check_crash_sequence(log_text: str, offset: int) -> list[str]:
     return problems + ([] if after else [f"no hay decision=redelivery_ignored del offset {offset} tras el FAULT"])
 
 
-def evidence_path(name: str, extension: str) -> Path:
-    """Ruta de un archivo de evidencia dentro de `docs/evidencias/consumidor-idempotente/`."""
-    return EVIDENCE_DIR / f"{name}.{extension}"
+def evidence_path(name: str, extension: str, directory: Path = EVIDENCE_DIR) -> Path:
+    """Ruta de un archivo de evidencia (por defecto en `docs/evidencias/consumidor-idempotente/`)."""
+    return directory / f"{name}.{extension}"
 
 
 def confirm_destructive(args: Any, env: Mapping[str, str]) -> bool:

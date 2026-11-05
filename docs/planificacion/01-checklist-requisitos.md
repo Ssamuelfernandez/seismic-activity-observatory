@@ -93,10 +93,10 @@ Nota de nombres: los identificadores del proyecto (tablas, columnas, topics, có
 | C6 | **[OBL]** No rellenar nulos con 0; magnitud negativa y profundidad negativa **no** se rechazan sin investigar | Reglas justificadas | Enunc. §6 · FAQ 16 | [x] |
 | C7 | **[OBL]** Fechas a UTC conservando el original (ms); separar tiempo de ocurrencia vs procesamiento | Campos distintos | Enunc. §6 | [x] |
 | C8 | **[OBL]** Registrar qué transformaciones cambian datos y a cuántos registros afectan | Contadores | Enunc. §6 | [x] |
-| C9 | **[OBL]** País por **punto dentro de polígono** (GeoPandas/Shapely), EPSG:4326, **no** parseando `place` | `country_id` = `ADM0_A3` | Enunc. §4.3 | ☐ |
-| C10 | **[OBL]** Comprobar unicidad de `ADM0_A3` antes de usarlo como ID (la validación indica 177 distintos) | Consulta/script | Enunc. §4.3 | ☐ |
-| C11 | **[OBL]** Documentar regla para puntos en frontera y múltiples coincidencias | Párrafo + implementación | Enunc. §4.3 · FAQ 19 | ☐ |
-| C12 | **[OBL]** "Sin país asignado" se conserva (no se atribuye al más cercano, no es error automático) y permanece en análisis | `country_id` nulo → etiqueta en API/panel | Enunc. §4.3 | ☐ |
+| C9 | **[OBL]** País por **punto dentro de polígono** (GeoPandas/Shapely), EPSG:4326, **no** parseando `place` | `country_id` = `ADM0_A3` | Enunc. §4.3 | [x] |
+| C10 | **[OBL]** Comprobar unicidad de `ADM0_A3` antes de usarlo como ID (la validación indica 177 distintos) | Consulta/script | Enunc. §4.3 | [x] |
+| C11 | **[OBL]** Documentar regla para puntos en frontera y múltiples coincidencias | Párrafo + implementación | Enunc. §4.3 · FAQ 19 | [x] |
+| C12 | **[OBL]** "Sin país asignado" se conserva (no se atribuye al más cercano, no es error automático) y permanece en análisis | `country_id` nulo → etiqueta en API/panel | Enunc. §4.3 | [x] |
 | C13 | **[OBL]** Casos de prueba artificiales **separados e identificados** | Marcados como sintéticos (`is_synthetic`) | Enunc. §6 | [x] |
 | C14 | **[OBL, EVAL]** Apartado de calidad en memoria/notebook con código o consultas, resultados **antes/después**, decisiones y registros de ejemplo | Ver D | Enunc. §6, §12 | ☐ |
 | C15 | **[OPC]** Informe de calidad automático / panel de calidad / tabla de métricas | **No** hacerlo salvo que sobre tiempo | Enunc. §6 | — |

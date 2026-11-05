@@ -12,6 +12,7 @@ from typing import Any
 import asyncpg
 
 from common.decode import decode_value
+from common.geo import CountryMatch
 from common.kafka_topics import topic_mode
 from common.quarantine_row import build_quarantine_row
 from common.records import (
@@ -43,11 +44,12 @@ def utc_now() -> datetime:
 
 @dataclass(frozen=True)
 class PipelineDeps:
-    """Dependencias de `process_record`: escritores, política de reintento, reloj y gancho."""
+    """Dependencias de `process_record`: escritores, reintento, localizador de país, reloj y gancho."""
 
     write_event: EventWriter
     write_quarantine: QuarantineWriter
     control: RetryControl
+    locate: Callable[[float, float], CountryMatch]
     clock: Callable[[], datetime] = utc_now
     after_db_commit: AfterDbCommit | None = None
 
@@ -95,10 +97,19 @@ def _log_validation_gap(valid: ValidEvent, ref: MessageRef, error: BaseException
                  ref.offset, type(error).__name__)
 
 
+def _locate_country(valid: ValidEvent, deps: PipelineDeps) -> str | None:
+    """Asigna el país por geometría (nunca por `place`) y anota los empates (C11)."""
+    match = deps.locate(valid.lon, valid.lat)
+    if len(match.candidates) > 1:
+        logger.info("country_tie event_id=%s candidates=%s chosen=%s", valid.event_id,
+                    ",".join(match.candidates), match.country_id)
+    return match.country_id
+
+
 async def _write_valid(valid: ValidEvent, decoded: DecodeResult, ref: MessageRef,
                        deps: PipelineDeps) -> ProcessingResult:
     """Transforma y escribe un evento válido; un error de contenido de la base va a cuarentena."""
-    rows = build_event_rows(valid, ref, deps.clock())
+    rows = build_event_rows(valid, ref, deps.clock(), _locate_country(valid, deps))
     context = OpContext(OP_WRITE_EVENT, valid.event_id, ref)
     mode = topic_mode(ref.topic)
     try:
@@ -116,12 +127,12 @@ async def process_record(record: RawRecord, deps: PipelineDeps) -> ProcessingRes
     """Procesa un mensaje de Kafka hasta dejarlo guardado en PostgreSQL.
 
     Qué hace:
-        Decodifica, valida y, si es válido, transforma (ms a UTC) y escribe el evento en una
+        Decodifica, valida y, si es válido, asigna el país por geometría, transforma (ms a UTC) y escribe el evento en una
         transacción; si no, escribe una fila de cuarentena. Las escrituras se reintentan sin
         límite ante fallos de la base; un error de contenido de la base manda el mensaje a
         cuarentena como `db_constraint_violation`. Después invoca `after_db_commit`.
     Recibe:
-        record: mensaje leído de Kafka; deps: escritores, reintentos, reloj y gancho.
+        record: mensaje leído de Kafka; deps: escritores, reintentos, localizador, reloj y gancho.
     Devuelve:
         ProcessingResult con el destino, el resultado de la versión y los datos del registro.
         Si la escritura no puede completarse no devuelve nada (el bucle no avanza).

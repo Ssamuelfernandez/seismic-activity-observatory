@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 import asyncpg.exceptions as pg_exc
 import pytest
 
+from common.geo import CountryMatch
 from common.records import MessageRef, RawRecord, ResultKind, VersionOutcome
 from consumer import pipeline, resilience
 from consumer.pipeline import PipelineDeps, process_record
@@ -31,9 +32,18 @@ class Recorder:
         self.inserted = inserted
         self.rows = []
         self.hook_args = []
+        self.locate_calls: list[tuple[float, float]] = []
+        self.event_rows = []
+        self.match = CountryMatch("ESP", ("ESP",))
+
+    def locate(self, lon, lat):
+        self.calls.append("locate")
+        self.locate_calls.append((lon, lat))
+        return self.match
 
     async def write_event(self, rows, mode):
         self.calls.append("write_event")
+        self.event_rows.append(rows)
         if self.event_errors:
             raise self.event_errors.pop(0)
         return self.outcome
@@ -51,7 +61,7 @@ class Recorder:
 
     def deps(self, stop_event=None, with_hook=True) -> PipelineDeps:
         control = RetryControl(RetrySettings(1, 30), stop_event or asyncio.Event())
-        return PipelineDeps(self.write_event, self.write_quarantine, control, lambda: NOW,
+        return PipelineDeps(self.write_event, self.write_quarantine, control, self.locate, lambda: NOW,
                             self.hook if with_hook else None)
 
 
@@ -94,7 +104,7 @@ def run(rec: RawRecord, recorder: Recorder, **kwargs):
 def test_valid_message_writes_and_then_calls_the_hook_in_that_order():
     recorder = Recorder()
     run(valid_record(), recorder)
-    assert recorder.calls == ["write_event", "after_db_commit"]
+    assert recorder.calls == ["locate", "write_event", "after_db_commit"]
 
 
 def test_valid_message_result_has_all_the_fields():
@@ -148,7 +158,7 @@ def test_content_error_from_the_event_writer_goes_to_quarantine_and_logs_validat
         result = run(valid_record(), recorder)
     assert result.kind is ResultKind.QUARANTINE and result.reason == "db_constraint_violation"
     assert result.converted is True and result.inserted is True and result.nulls == ()
-    assert recorder.calls == ["write_event", "write_quarantine", "after_db_commit"]
+    assert recorder.calls == ["locate", "write_event", "write_quarantine", "after_db_commit"]
     (line,) = [r for r in caplog.records if r.levelno == logging.ERROR]
     message = line.getMessage()
     assert message.startswith(f"validation_gap event_id={FAQ12_E1} sqlstate=23514")
@@ -176,13 +186,13 @@ def test_permanent_writer_failure_never_returns_and_never_reaches_the_hook():
     stop.set()
     with pytest.raises(StopRequested):
         run(valid_record(), recorder, stop_event=stop)
-    assert recorder.calls == ["write_event"]
+    assert recorder.calls == ["locate", "write_event"]
 
 
 def test_no_hook_installed_means_nothing_is_called_after_the_write():
     recorder = Recorder()
     run(valid_record(), recorder, with_hook=False)
-    assert recorder.calls == ["write_event"]
+    assert recorder.calls == ["locate", "write_event"]
 
 
 def test_program_defect_in_the_writer_is_not_swallowed():
@@ -197,3 +207,44 @@ def test_the_message_is_not_mutated_and_the_clock_is_injected():
     before = copy.deepcopy(message)
     run(record(to_bytes(message)), recorder)
     assert message == before and pipeline.utc_now().tzinfo is timezone.utc
+
+
+def test_locator_is_called_once_with_lon_lat_and_its_country_reaches_the_writer():
+    recorder = Recorder()
+    run(valid_record(), recorder)
+    message = build_synthetic_message(FAQ12_E1, E1_TIME_MS, E1_UPDATED_1005, 4.2)
+    lon, lat = message["event"]["geometry"]["coordinates"][:2]
+    assert recorder.locate_calls == [(lon, lat)]
+    assert recorder.event_rows[0].current["country_id"] == "ESP"
+    assert "country_id" not in recorder.event_rows[0].version
+
+
+def test_locator_is_not_called_when_the_message_goes_to_quarantine():
+    recorder = Recorder()
+    run(latitude_145_record(), recorder)
+    assert recorder.locate_calls == [] and "locate" not in recorder.calls
+
+
+def test_no_country_is_written_as_none():
+    recorder = Recorder()
+    recorder.match = CountryMatch(None, ())
+    run(valid_record(), recorder)
+    assert recorder.event_rows[0].current["country_id"] is None
+
+
+def test_multiple_candidates_log_a_country_tie_line(caplog):
+    recorder = Recorder()
+    recorder.match = CountryMatch("AAA", ("AAA", "BBB"))
+    with caplog.at_level(logging.INFO, logger="consumer.pipeline"):
+        run(valid_record(), recorder)
+    (line,) = [r.getMessage() for r in caplog.records if r.getMessage().startswith("country_tie")]
+    assert line == f"country_tie event_id={FAQ12_E1} candidates=AAA,BBB chosen=AAA"
+
+
+@pytest.mark.parametrize("match", [CountryMatch("ESP", ("ESP",)), CountryMatch(None, ())])
+def test_single_or_no_candidate_logs_no_country_tie(caplog, match):
+    recorder = Recorder()
+    recorder.match = match
+    with caplog.at_level(logging.INFO, logger="consumer.pipeline"):
+        run(valid_record(), recorder)
+    assert not [r for r in caplog.records if "country_tie" in r.getMessage()]

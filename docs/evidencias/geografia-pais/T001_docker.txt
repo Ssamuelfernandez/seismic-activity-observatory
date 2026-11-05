@@ -1,0 +1,202 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 674B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.36kB done
+#2 DONE 0.1s
+
+#3 [internal] load metadata for ghcr.io/astral-sh/uv:0.12.13
+#3 ...
+
+#4 [auth] library/python:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#5 [internal] load metadata for docker.io/library/python:3.12.16-slim-bookworm
+#5 ...
+
+#3 [internal] load metadata for ghcr.io/astral-sh/uv:0.12.13
+#3 DONE 2.8s
+
+#5 [internal] load metadata for docker.io/library/python:3.12.16-slim-bookworm
+#5 DONE 3.1s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 330B done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 DONE 0.0s
+
+#8 FROM ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6
+#8 resolve ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6
+#8 ...
+
+#9 [production  1/10] FROM docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+#9 resolve docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+#9 resolve docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337 0.0s done
+#9 ...
+
+#7 [internal] load build context
+#7 transferring context: 382.01kB 0.1s done
+#7 DONE 0.2s
+
+#9 [production  1/10] FROM docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+#9 sha256:560ad164c1fd1ea529655e9f0a0eebc06ba4ad9de73701013445883f16041990 0B / 250B 0.2s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 0B / 13.68MB 0.2s
+#9 sha256:a4516a4e263798f91046a65329f83ee86d1bd6aba295a387dcf47c290bd695ba 0B / 3.34MB 0.2s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 0B / 28.25MB 0.2s
+#9 sha256:560ad164c1fd1ea529655e9f0a0eebc06ba4ad9de73701013445883f16041990 250B / 250B 0.3s done
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 1.05MB / 13.68MB 2.4s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 2.10MB / 13.68MB 4.3s
+#9 sha256:a4516a4e263798f91046a65329f83ee86d1bd6aba295a387dcf47c290bd695ba 1.05MB / 3.34MB 4.9s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 0B / 28.25MB 5.2s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 3.15MB / 13.68MB 6.6s
+#9 ...
+
+#8 FROM ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6
+#8 resolve ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6 0.0s done
+#8 sha256:3471d3b072e10e870dcfe9c837f0de57ed212ca6e4e77b9dfb0add7e8be02ae0 96B / 96B 0.3s done
+#8 sha256:487ecb53ddf6f1c74dc81f7dc145b5db76eb9e1a4889c5649fdf040b2caad3f5 11.53MB / 23.02MB 9.9s
+#8 ...
+
+#9 [production  1/10] FROM docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+#9 sha256:a4516a4e263798f91046a65329f83ee86d1bd6aba295a387dcf47c290bd695ba 1.05MB / 3.34MB 10.0s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 4.19MB / 13.68MB 10.3s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 1.05MB / 28.25MB 10.3s
+#9 sha256:a4516a4e263798f91046a65329f83ee86d1bd6aba295a387dcf47c290bd695ba 2.10MB / 3.34MB 11.1s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 5.24MB / 13.68MB 13.6s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 2.10MB / 28.25MB 15.4s
+#9 sha256:a4516a4e263798f91046a65329f83ee86d1bd6aba295a387dcf47c290bd695ba 2.10MB / 3.34MB 16.2s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 6.29MB / 13.68MB 16.5s
+#9 sha256:a4516a4e263798f91046a65329f83ee86d1bd6aba295a387dcf47c290bd695ba 3.15MB / 3.34MB 17.4s
+#9 sha256:a4516a4e263798f91046a65329f83ee86d1bd6aba295a387dcf47c290bd695ba 3.34MB / 3.34MB 18.3s done
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 7.34MB / 13.68MB 19.2s
+#9 ...
+
+#8 FROM ghcr.io/astral-sh/uv:0.12.13@sha256:b485bd65cc2cf1c9a93b3554012c9c3778cf7b1b5fd3d3096ce9e1226c97e1e6
+#8 sha256:487ecb53ddf6f1c74dc81f7dc145b5db76eb9e1a4889c5649fdf040b2caad3f5 23.02MB / 23.02MB 19.9s done
+#8 extracting sha256:487ecb53ddf6f1c74dc81f7dc145b5db76eb9e1a4889c5649fdf040b2caad3f5 0.2s done
+#8 extracting sha256:3471d3b072e10e870dcfe9c837f0de57ed212ca6e4e77b9dfb0add7e8be02ae0 0.0s done
+#8 DONE 20.4s
+
+#9 [production  1/10] FROM docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 3.15MB / 28.25MB 20.5s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 8.39MB / 13.68MB 21.0s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 9.44MB / 13.68MB 22.2s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 10.49MB / 13.68MB 23.1s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 11.53MB / 13.68MB 24.1s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 5.24MB / 28.25MB 24.4s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 12.58MB / 13.68MB 24.9s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 13.63MB / 13.68MB 25.8s
+#9 sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 13.68MB / 13.68MB 25.8s done
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 7.34MB / 28.25MB 26.5s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 9.44MB / 28.25MB 28.8s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 11.53MB / 28.25MB 29.8s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 13.63MB / 28.25MB 30.9s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 15.73MB / 28.25MB 31.6s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 17.83MB / 28.25MB 32.4s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 19.92MB / 28.25MB 33.0s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 22.02MB / 28.25MB 33.4s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 24.12MB / 28.25MB 34.0s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 26.21MB / 28.25MB 34.5s
+#9 sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 28.25MB / 28.25MB 37.2s done
+#9 extracting sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc
+#9 extracting sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 0.6s done
+#9 DONE 38.1s
+
+#9 [production  1/10] FROM docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+#9 extracting sha256:a4516a4e263798f91046a65329f83ee86d1bd6aba295a387dcf47c290bd695ba 0.1s done
+#9 DONE 38.3s
+
+#9 [production  1/10] FROM docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+#9 extracting sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59
+#9 extracting sha256:5b676d7ddb724969a481e77bf8fa799dd439efe94776431a478e7e4bb55a3e59 0.3s done
+#9 DONE 38.5s
+
+#9 [production  1/10] FROM docker.io/library/python:3.12.16-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+#9 extracting sha256:560ad164c1fd1ea529655e9f0a0eebc06ba4ad9de73701013445883f16041990 0.0s done
+#9 DONE 38.6s
+
+#10 [production  2/10] COPY --from=ghcr.io/astral-sh/uv:0.12.13 /uv /usr/local/bin/uv
+#10 DONE 0.2s
+
+#11 [production  3/10] WORKDIR /app
+#11 DONE 0.0s
+
+#12 [production  4/10] COPY pyproject.toml uv.lock .python-version ./
+#12 DONE 0.1s
+
+#13 [production  5/10] RUN uv sync --frozen --no-dev --no-install-project
+#13 0.325 Using CPython 3.12.16 interpreter at: /usr/local/bin/python3.12
+#13 0.325 Creating virtual environment at: /opt/venv
+#13 0.718 Downloading pydantic-core (2.1MiB)
+#13 0.718 Downloading numpy (16.0MiB)
+#13 0.719 Downloading asyncpg (3.6MiB)
+#13 0.719 Downloading shapely (2.2MiB)
+#13 0.719 Downloading aiokafka (1.2MiB)
+#13 2.723  Downloaded aiokafka
+#13 4.712  Downloaded pydantic-core
+#13 4.863  Downloaded shapely
+#13 6.511  Downloaded asyncpg
+#13 9.544  Downloaded numpy
+#13 9.544 Prepared 18 packages in 9.21s
+#13 9.741 Installed 18 packages in 197ms
+#13 9.741  + aiokafka==0.15.0
+#13 9.741  + annotated-doc==0.0.5
+#13 9.741  + annotated-types==0.8.0
+#13 9.741  + anyio==4.16.0
+#13 9.741  + asyncpg==0.32.0
+#13 9.741  + click==8.5.0
+#13 9.741  + fastapi==0.162.0
+#13 9.741  + h11==0.16.0
+#13 9.741  + idna==3.20
+#13 9.742  + numpy==2.5.4
+#13 9.742  + opentelemetry-api==1.45.2
+#13 9.742  + pydantic==2.14.2
+#13 9.742  + pydantic-core==2.50.2
+#13 9.742  + shapely==2.2.0
+#13 9.742  + starlette==1.10.0
+#13 9.742  + typing-extensions==4.16.0
+#13 9.742  + typing-inspection==0.4.4
+#13 9.742  + uvicorn==0.54.0
+#13 DONE 9.8s
+
+#14 [production  6/10] COPY common ./common
+#14 DONE 0.1s
+
+#15 [production  7/10] COPY producer ./producer
+#15 DONE 0.1s
+
+#16 [production  8/10] COPY consumer ./consumer
+#16 DONE 0.1s
+
+#17 [production  9/10] COPY api ./api
+#17 DONE 0.1s
+
+#18 [production 10/10] RUN useradd --system --uid 10001 --no-create-home observatory
+#18 0.211 useradd warning: observatory's uid 10001 is greater than SYS_UID_MAX 999
+#18 DONE 0.3s
+
+#19 exporting to image
+#19 exporting layers
+#19 exporting layers 5.1s done
+#19 exporting manifest sha256:2a36ace01805bd3afb289a0f084b95f816478f37a7220ae554f261899c6cdddb 0.0s done
+#19 exporting config sha256:51b731f0f89f5036c149d10b96855c82fbc8dbba5141341a06f97c7e6df8d655 0.0s done
+#19 exporting attestation manifest sha256:1425558f43e3078c1224e13588b81d53a82f82599405a53a75c1fda5890d4625 0.0s done
+#19 exporting manifest list sha256:2959f5499fd1b2b878e763aee8dbf23acc0b654d8e76790c48301a4480923682 0.0s done
+#19 naming to docker.io/library/seismic-observatory-python:0.1.0 done
+#19 unpacking to docker.io/library/seismic-observatory-python:0.1.0
+#19 unpacking to docker.io/library/seismic-observatory-python:0.1.0 1.3s done
+#19 DONE 6.6s
+
+#20 resolving provenance for metadata file
+#20 DONE 0.0s
+ seismic-observatory-python:0.1.0  Built
+ Network seismic-observatory-backend  Creating
+ Network seismic-observatory-backend  Created
+ Volume seismic-observatory_postgres-data  Creating
+ Volume seismic-observatory_postgres-data  Created
+ Volume seismic-observatory_kafka-data  Creating
+ Volume seismic-observatory_kafka-data  Created
+shapely 2.2.0 ok

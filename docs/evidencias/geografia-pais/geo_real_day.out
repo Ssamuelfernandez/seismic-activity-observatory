@@ -1,0 +1,8 @@
+eventos en el feed: 181
+sin geometría Point válida (no asignados): 0
+con país: 153
+sin país (country_id NULL): 28
+códigos distintos: 6
+los 10 más frecuentes: USA=147, CAN=2, CHN=1, TUR=1, NIC=1, AFG=1
+códigos fuera del catálogo: ninguno
+resultado: sin error

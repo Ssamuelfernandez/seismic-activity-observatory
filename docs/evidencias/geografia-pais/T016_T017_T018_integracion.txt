@@ -1,0 +1,27 @@
+ Container seismic-observatory-postgres-1  Running
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /opt/venv/bin/python3
+rootdir: /app
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 17 items
+
+tests/integration/test_geography.py::test_madrid_is_spain_even_if_place_names_another_country PASSED [  5%]
+tests/integration/test_geography.py::test_reprocessing_madrid_100_times_changes_no_table PASSED [ 11%]
+tests/integration/test_geography.py::test_atlantic_event_is_stored_without_country_and_not_quarantined PASSED [ 17%]
+tests/integration/test_geography.py::test_with_country_plus_without_country_equals_total PASSED [ 23%]
+tests/integration/test_geography.py::test_later_version_at_sea_clears_country PASSED [ 29%]
+tests/integration/test_geography.py::test_late_old_version_in_another_country_does_not_change_country PASSED [ 35%]
+tests/integration/test_geography.py::test_every_country_id_exists_in_the_catalog PASSED [ 41%]
+tests/integration/test_geography_validity.py::test_null_magnitude_stays_null_and_keeps_country PASSED [ 47%]
+tests/integration/test_geography_validity.py::test_negative_values_are_stored_as_received_with_country PASSED [ 52%]
+tests/integration/test_geography_validity.py::test_latitude_145_goes_to_quarantine_with_kafka_reference_and_hash PASSED [ 58%]
+tests/integration/test_geography_validity.py::test_invalid_case_goes_to_quarantine_without_calling_locator[lat-145-coordinates_out_of_range] PASSED [ 64%]
+tests/integration/test_geography_validity.py::test_invalid_case_goes_to_quarantine_without_calling_locator[lon-nan-coordinates_out_of_range] PASSED [ 70%]
+tests/integration/test_geography_validity.py::test_invalid_case_goes_to_quarantine_without_calling_locator[no-point-invalid_geometry] PASSED [ 76%]
+tests/integration/test_geography_validity.py::test_invalid_case_goes_to_quarantine_without_calling_locator[sin-time-missing_time] PASSED [ 82%]
+tests/integration/test_geography_validity.py::test_invalid_case_goes_to_quarantine_without_calling_locator[sin-updated-missing_updated] PASSED [ 88%]
+tests/integration/test_geography_validity.py::test_all_cases_together_and_only_synthetic_events_are_flagged PASSED [ 94%]
+tests/integration/test_geography_exclusion.py::test_non_earthquake_is_excluded_and_not_published PASSED [100%]
+
+============================== 17 passed in 5.76s ==============================

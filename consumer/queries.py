@@ -8,7 +8,7 @@ SCHEMAS_BY_MODE = {"live": "live", "replay": "replay"}
 DATE_COLUMNS = ("date_id", "year", "month", "day", "dow")
 CURRENT_COLUMNS = (
     "event_id", "event_time", "event_time_ms", "updated_at", "updated_ms", "mag", "mag_type",
-    "depth_km", "lon", "lat", "place", "status", "url", "sig", "date_id", "source",
+    "depth_km", "lon", "lat", "place", "status", "url", "sig", "date_id", "country_id", "source",
     "is_synthetic", "ingested_at", "replay_at",
 )
 VERSION_COLUMNS = (
@@ -21,7 +21,7 @@ QUARANTINE_COLUMNS = (
 )
 COUNTRY_COLUMNS = ("country_id", "name_es", "admin", "continent", "subregion")
 JSONB_COLUMNS = frozenset({"original"})
-# Columnas que el DO UPDATE de current_event nunca toca (la clave y el país, FR-021).
+# Columnas que el DO UPDATE de current_event nunca toca (solo la clave; el país se actualiza con la versión).
 UPSERT_FIXED_COLUMNS = frozenset({"event_id"})
 
 
@@ -53,6 +53,10 @@ COUNTRY_UPSERT = (
             "public.country.continent, public.country.subregion) IS DISTINCT FROM "
             "(EXCLUDED.name_es, EXCLUDED.admin, EXCLUDED.continent, EXCLUDED.subregion)")
 )
+
+COUNTRY_COUNT = "SELECT count(*) FROM public.country"
+# `::text` evita depender del decodificador de `regclass`; NULL = la tabla no existe.
+REGCLASS_CHECK = "SELECT to_regclass($1)::text"
 
 
 def select_stored_updated(mode: str) -> str:

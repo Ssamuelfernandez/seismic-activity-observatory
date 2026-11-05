@@ -1,0 +1,8 @@
+-- [1] exclusión del tipo distinto de earthquake
+SELECT event_id, updated_ms, kind, reason, observed_type, is_synthetic FROM live.exclusion ORDER BY event_id
+
+event_id    | updated_ms | kind                | reason                                 | observed_type | is_synthetic
+------------+------------+---------------------+----------------------------------------+---------------+-------------
+synthetic-1 | 1000       | non_earthquake_type | properties.type distinto de earthquake | quarry blast  | False       
+(1 filas)
+

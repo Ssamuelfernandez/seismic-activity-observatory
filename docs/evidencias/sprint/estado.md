@@ -1,5 +1,5 @@
-# Estado del sprint — productor-live
+# Estado del sprint — geografia-pais
 
-- Feature: productor-live | Rama: 004-productor-live (desde main)
-- diseno: TERMINADA | implementar: TERMINADA (22/22) | cierre: TERMINADA
-- Estado: COMPLETA. Sin merge ni push. Siguiente feature se apila sobre esta rama.
+- Feature: geografia-pais | Rama: 005-geografia-pais (desde main)
+- diseno: TERMINADA | implementar: TERMINADA (commit fbcbb2c) | cierre: TERMINADA (supervisor: CONTINUAR; commit "docs: cierre de geografia-pais")
+- Sprint COMPLETO. Sin merge ni push: la rama queda como actual para apilar la siguiente feature.

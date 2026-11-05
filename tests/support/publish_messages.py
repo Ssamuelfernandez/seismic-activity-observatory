@@ -22,6 +22,7 @@ from tests.support.messages import (
     build_message,
     build_synthetic_message,
     faq12_sequence,
+    geo_cases,
     late_old_version_message,
     to_bytes,
 )
@@ -113,6 +114,16 @@ def case_numbered(count: int = DEFAULT_NUMBERED_COUNT) -> list[Outgoing]:
     return [_from_message(_message(f"synthetic-numbered-{number:04d}")) for number in range(1, count + 1)]
 
 
+def _geo_case(name: str) -> Callable[[], list[Outgoing]]:
+    """Fabrica el caso `geo-<name>`: un único mensaje de `geo_cases()` (F5, sintético)."""
+    def build() -> list[Outgoing]:
+        return [_from_message(geo_cases()[name])]
+    build.__doc__ = f"Caso geográfico `{name}` (un mensaje sintético de F5)."
+    return build
+
+
+GEO_CASE_NAMES = ("madrid", "atlantico", "mag-nula", "lat-145")
+
 CASES: dict[str, Callable[[], list[Outgoing]]] = {
     "faq12": case_faq12,
     "late-old": case_late_old,
@@ -121,6 +132,7 @@ CASES: dict[str, Callable[[], list[Outgoing]]] = {
     "constraint-twice": case_constraint_twice,
     "quarantine-set": case_quarantine_set,
     "numbered": case_numbered,
+    **{f"geo-{name}": _geo_case(name) for name in GEO_CASE_NAMES},
 }
 
 

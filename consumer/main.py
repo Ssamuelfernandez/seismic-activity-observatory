@@ -22,6 +22,7 @@ def build_settings() -> ConsumerSettings:
         retry=load_retry_settings(),
         health=load_health_settings(),
         group_id=read_str("KAFKA_GROUP_ID"),
+        country_catalog_path=read_str("COUNTRY_CATALOG_PATH"),
     )
 
 

@@ -1,6 +1,7 @@
 """Transformación de un evento válido en filas de base de datos (data-model.md §2, C6, C7).
 
-Lógica pura: no usa `asyncpg` ni `aiokafka`. No escribe `country_id` (queda NULL, FR-021).
+Lógica pura: no usa `asyncpg` ni `aiokafka`. El `country_id` lo calcula quien llama (geometría,
+`common/geo.py`) y solo viaja en `current`; la versión no lo guarda.
 """
 import json
 from datetime import date, datetime, timedelta, timezone
@@ -60,8 +61,10 @@ def _find_nulls(valid: ValidEvent) -> tuple[str, ...]:
     return tuple(name for name in NULLABLE_FIELDS if values[name] is None)
 
 
-def _build_current(valid: ValidEvent, event_time: datetime, updated_at: datetime, date_id: date) -> dict:
-    """Columnas de `current_event` (sin `country_id`)."""
+def _build_current(valid: ValidEvent, times: tuple[datetime, datetime, date],
+                   country_id: str | None) -> dict:
+    """Columnas de `current_event`; `times` = (event_time, updated_at, date_id)."""
+    event_time, updated_at, date_id = times
     return {
         "event_id": valid.event_id,
         "event_time": event_time,
@@ -78,6 +81,7 @@ def _build_current(valid: ValidEvent, event_time: datetime, updated_at: datetime
         "url": valid.url,
         "sig": valid.sig,
         "date_id": date_id,
+        "country_id": country_id,
         "source": valid.source,
         "is_synthetic": valid.is_synthetic,
         "ingested_at": valid.ingested_at,
@@ -104,16 +108,18 @@ def _build_version(valid: ValidEvent, current: dict, original: str, ref: Message
     }
 
 
-def build_event_rows(valid: ValidEvent, ref: MessageRef, now: datetime) -> EventRows:
+def build_event_rows(valid: ValidEvent, ref: MessageRef, now: datetime,
+                     country_id: str | None = None) -> EventRows:
     """Construye las filas de `current_event`, `event_version` y `date_dim` de un evento.
 
     Qué hace:
         Convierte ms a UTC, los números a `Decimal(str(x))`, calcula el día UTC y el día de
         la semana ISO, lista los campos nulos y serializa el `event` original.
     Recibe:
-        valid: evento ya validado; ref: referencia Kafka del mensaje; now: reloj inyectado (UTC).
+        valid: evento ya validado; ref: referencia Kafka del mensaje; now: reloj inyectado (UTC);
+        country_id: país asignado por geometría (`None` = sin país).
     Devuelve:
-        EventRows listo para escribir (sin `country_id`).
+        EventRows listo para escribir (`country_id` solo en `current`).
     Por qué existe:
         Aísla la transformación del I/O para que consumidor, histórico y replay la reutilicen
         (C6, C7, FR-016 a FR-021, constitución §3 y §5).
@@ -122,6 +128,6 @@ def build_event_rows(valid: ValidEvent, ref: MessageRef, now: datetime) -> Event
     updated_at = ms_to_utc(valid.updated_ms)
     date_row = _build_date_row(event_time)
     original = _serialize_event(valid.event)
-    current = _build_current(valid, event_time, updated_at, date_row.date_id)
+    current = _build_current(valid, (event_time, updated_at, date_row.date_id), country_id)
     version = _build_version(valid, current, original, ref, now)
     return EventRows(current=current, version=version, date=date_row, nulls=_find_nulls(valid), original=original)

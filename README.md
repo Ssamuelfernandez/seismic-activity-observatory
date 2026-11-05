@@ -10,8 +10,9 @@ Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
 |---|---|
 | `contratos-y-modelo` | Cerrada (2026-11-02): contratos, DDL, modelo de datos y evidencias |
 | `infra-compose` | Implementada y verificada (2026-11-04), pendiente de la revisión del alumno: Compose con cinco servicios, "hola mundo" de punta a punta con un evento sintético, roles de base de datos y evidencias en `docs/evidencias/infra-compose/` |
-| `consumidor-idempotente` | Implementada y verificada (2026-11-04), pendiente de la revisión del alumno: consumidor con validación, cuarentena, versiones, reintentos y contadores (C1–C8, C13; pruebas 2, 3, 4, 6 y 8). Evidencias en `docs/evidencias/consumidor-idempotente/`. Quedan diferidos el catálogo de países, la comprobación de esquema al arrancar y las pruebas de caída de PostgreSQL/Kafka con Docker (ver «Diferidas» en `specs/003-consumidor-idempotente/tasks.md`) |
+| `consumidor-idempotente` | Implementada y verificada (2026-11-04), pendiente de la revisión del alumno: consumidor con validación, cuarentena, versiones, reintentos y contadores (C1–C8, C13; pruebas 2, 3, 4, 6 y 8). Evidencias en `docs/evidencias/consumidor-idempotente/`. Queda diferida la prueba de caída de PostgreSQL/Kafka con Docker (ver «Diferidas» en `specs/003-consumidor-idempotente/tasks.md`); el catálogo de países y la comprobación de esquema al arrancar los resuelve `geografia-pais` |
 | `productor-live` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: productor real que consulta USGS cada `POLL_SECONDS` y publica en `earthquakes.live` sin duplicar (B1–B12, A10; pruebas 1, hasta PostgreSQL, y 2). Evidencias en `docs/evidencias/productor-live/`. Sin diferidas; B2, B11 y B12 pendientes de pasar `docs/borradores/productor-live.md` a la memoria |
+| `geografia-pais` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: país por geometría (`ADM0_A3`), catálogo de 177 países cargado al arrancar, comprobación de esquema y reglas de validez (C9–C12, C13; pruebas 5 y 7). Evidencias en `docs/evidencias/geografia-pais/`. Sin tareas diferidas; apuntes en `docs/borradores/geografia-pais.md` |
 | Resto de features | No empezadas |
 
 La API es por ahora **mínima**: solo responde `GET /api/salud`. El productor ya es el **productor en vivo** (ver su sección más abajo). El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
@@ -40,6 +41,7 @@ El orden de las fases está en [`docs/planificacion/02-roadmap-implementacion.md
 | [`specs/001-contratos-y-modelo/`](specs/001-contratos-y-modelo/) | Spec, plan, tareas y los tres contratos (`contracts/`) |
 | [`specs/002-infra-compose/`](specs/002-infra-compose/) | Spec, plan, tareas, investigación, modelo de infraestructura, contrato de variables de entorno y [quickstart](specs/002-infra-compose/quickstart.md) |
 | [`specs/003-consumidor-idempotente/`](specs/003-consumidor-idempotente/) | Spec, plan, investigación, tareas, bitácora, modelo de datos, [quickstart](specs/003-consumidor-idempotente/quickstart.md) y contrato de ejecución del consumidor (`contracts/consumer-runtime.md`) |
+| [`specs/005-geografia-pais/`](specs/005-geografia-pais/) | Spec, plan, investigación, modelo de datos, tareas, bitácora y quickstart de la asignación de país |
 | `data/catalogo/` | Catálogo de países (`paises.geojson`) |
 | `CODEMAP.md` | Mapa de dónde está cada cosa |
 | `.specify/`, `.claude/` | Configuración y plantillas de Spec Kit; agentes, habilidades y `settings.json` de Claude Code |
@@ -151,6 +153,14 @@ python scripts/verify_consumer.py faq12 --yes
 **Advertencia:** `verify_consumer.py` ejecuta `docker compose down -v`, que **borra los volúmenes locales** de Kafka y PostgreSQL del proyecto. Por eso pide `--yes` (o `VERIFY_CONSUMER_CONFIRM=yes`); sin él avisa y termina con código 2 sin hacer nada. Ejecuta `docker compose build producer` antes de cada escenario (el script también lo hace como primer paso). Los datos son sintéticos (`is_synthetic = true`).
 
 Las salidas de las pruebas y de los escenarios están en [`docs/evidencias/consumidor-idempotente/`](docs/evidencias/consumidor-idempotente/).
+
+### País por geometría y catálogo al arrancar
+
+- **País**: el consumidor asigna `country_id` (`ADM0_A3`) a cada evento válido por punto en polígono con las coordenadas del mensaje (`common/geo.py`); nunca usa el texto `place`. El borde cuenta como dentro; si el punto cae en varios polígonos gana el `ADM0_A3` menor; si no cae en ninguno, `country_id` queda `NULL` («Sin país asignado») y el evento se guarda igualmente.
+- **Arranque**: antes de consumir comprueba que existen las 8 tablas que usa (`consumer/schema_check.py`) y carga `data/catalogo/paises.geojson` (ruta en `COUNTRY_CATALOG_PATH`, ya en `compose.yaml`; sin variable nueva) en `public.country` de forma repetible (`consumer/catalog_loader.py`; línea `catalog loaded total=… inserted=… updated=…`). Si falta una tabla o el catálogo es inválido (código repetido, campo ausente, geometría no poligonal), termina con error y Compose lo reinicia.
+- **Dependencia nueva**: `shapely` (2.x, versión exacta en `pyproject.toml`/`uv.lock`); no se usa GeoPandas.
+- **Límites**: no hay recálculo retroactivo (las filas guardadas antes solo cambian si llega una versión con `updated` mayor; se parte de base limpia); el catálogo es 110m, así que costas y territorios pequeños pueden salir sin país.
+- **Verificación**: `python scripts/verify_consumer.py geo --yes` (usa `down -v`, como los demás escenarios) y `uv run python scripts/geo_real_day.py docs/evidencias/geografia-pais/feed_all_day.geojson` (sin red ni base). Evidencias en [`docs/evidencias/geografia-pais/`](docs/evidencias/geografia-pais/).
 
 ## Productor en vivo
 

@@ -1,0 +1,2 @@
+['atlantico', 'lat-145', 'lon-nan', 'madrid', 'mag-nula', 'negativos', 'no-point', 'sin-time', 'sin-updated']
+True 9

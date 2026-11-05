@@ -1,0 +1,8 @@
+-- [1] Primer arranque (base nueva): línea del registro y recuento
+PASS  Línea `catalog loaded` por arranque: [(177, 177, 0)] — [(177, 177, 0)]
+PASS  SELECT count(*) FROM public.country = 177 — 177
+
+-- [2] Tras `docker compose restart consumer` (carga repetible: inserted=0 updated=0)
+PASS  docker compose restart consumer: vuelve a estar healthy
+PASS  Línea `catalog loaded` por arranque: [(177, 177, 0), (177, 0, 0)] — [(177, 177, 0), (177, 0, 0)]
+PASS  SELECT count(*) FROM public.country = 177 — 177

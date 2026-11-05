@@ -18,6 +18,7 @@ from consumer.counters import Counters
 from consumer.pipeline import PipelineDeps
 from consumer.resilience import RetryControl
 from common.records import VersionOutcome
+from tests.support.db_helpers import no_country_locator
 from tests.support.messages import (
     E1_TIME_MS, E1_UPDATED_1005, FAQ12_E1, build_synthetic_message, to_bytes,
 )
@@ -75,7 +76,7 @@ class World:
         self.counters = Counters()
         deps = PipelineDeps(self.write_event, self.write_quarantine,
                             RetryControl(RetrySettings(1, 30), self.stop_event),
-                            after_db_commit=self.hook)
+                            no_country_locator, after_db_commit=self.hook)
         self.context = loop.LoopContext(self.consumer, deps, self.counters, HealthSettings(str(self.heartbeat), 60),
                                         self.stop_event, BOOTSTRAP)
 
@@ -257,8 +258,68 @@ def test_start_consumer_uses_manual_commit_and_a_long_poll_interval(monkeypatch)
     monkeypatch.setattr(loop, "ensure_topics", no_topics)
     settings = loop.ConsumerSettings(
         kafka=SimpleNamespace(bootstrap_servers=BOOTSTRAP, topic=TOPIC), database=None,
-        retry=RetrySettings(1, 30), health=None, group_id="consumer-live")
+        retry=RetrySettings(1, 30), health=None, group_id="consumer-live",
+        country_catalog_path="catalogo.geojson")
     asyncio.run(loop.start_consumer(settings))
     assert captured["enable_auto_commit"] is False and captured["group_id"] == "consumer-live"
     assert captured["auto_offset_reset"] == "earliest"
     assert captured["max_poll_interval_ms"] == loop.MAX_POLL_INTERVAL_MS == 86_400_000
+
+
+class StartupSpy:
+    """Dobles del arranque: anotan el orden y pueden fallar en un paso."""
+
+    def __init__(self, monkeypatch, fail_at=None):
+        self.calls: list[str] = []
+        self.fail_at = fail_at
+        self.pool = SimpleNamespace(close=self.close)
+        monkeypatch.setattr(loop, "check_database", self.step("check_database"))
+        monkeypatch.setattr(loop, "create_pool_with_retry", self.step("pool", self.pool))
+        monkeypatch.setattr(loop, "ensure_schema_ready", self.step("ensure_schema_ready"))
+        monkeypatch.setattr(loop, "load_country_catalog", self.step("load_catalog", (None, None)))
+        monkeypatch.setattr(loop, "start_consumer", self.step("start_consumer", SimpleNamespace(stop=self.stop)))
+        monkeypatch.setattr(loop, "assign_country", lambda index, lon, lat: None)
+
+        async def no_consume(context):
+            self.calls.append("consume")
+
+        monkeypatch.setattr(loop, "consume_until_stopped", no_consume)
+
+    def step(self, name, result=None):
+        async def run(*args, **kwargs):
+            self.calls.append(name)
+            if self.fail_at == name:
+                raise RuntimeError(name)
+            return result
+        return run
+
+    async def close(self):
+        self.calls.append("pool_close")
+
+    async def stop(self):
+        self.calls.append("consumer_stop")
+
+
+def run_consumer_with(monkeypatch, tmp_path, fail_at=None):
+    spy = StartupSpy(monkeypatch, fail_at)
+    settings = loop.ConsumerSettings(
+        kafka=SimpleNamespace(bootstrap_servers=BOOTSTRAP, topic=TOPIC), database=None,
+        retry=RetrySettings(1, 30), health=HealthSettings(str(tmp_path / "alive"), 60),
+        group_id="g", country_catalog_path="catalogo.geojson")
+    return spy, lambda: asyncio.run(loop.run_consumer(settings, asyncio.Event()))
+
+
+def test_startup_order_loads_the_catalog_before_creating_the_consumer(tmp_path, monkeypatch):
+    spy, run = run_consumer_with(monkeypatch, tmp_path)
+    run()
+    assert spy.calls == ["check_database", "pool", "ensure_schema_ready", "load_catalog",
+                         "start_consumer", "consume", "consumer_stop", "pool_close"]
+
+
+@pytest.mark.parametrize("failing", ["ensure_schema_ready", "load_catalog"])
+def test_nothing_is_consumed_if_schema_check_or_catalog_load_fails(tmp_path, monkeypatch, failing):
+    spy, run = run_consumer_with(monkeypatch, tmp_path, fail_at=failing)
+    with pytest.raises(RuntimeError):
+        run()
+    assert "start_consumer" not in spy.calls and "consume" not in spy.calls
+    assert spy.calls[-1] == "pool_close"

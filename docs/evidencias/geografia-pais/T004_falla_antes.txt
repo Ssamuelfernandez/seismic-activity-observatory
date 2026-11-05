@@ -1,0 +1,4 @@
+=========================== short test summary info ===========================
+ERROR tests/common/test_geo.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.22s
