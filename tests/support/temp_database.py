@@ -19,6 +19,14 @@ class TempDatabase:
     consumer_password: str
     producer_user: str = "observatory_producer"
     producer_password: str = ""
+    api_user: str = "observatory_api"
+    api_password: str = ""
+
+    async def api_pool(self) -> asyncpg.Pool:
+        """Pool con el rol real `observatory_api` (solo lectura), el que usa la API de consulta."""
+        return await asyncpg.create_pool(host=self.host, port=self.port, database=self.name,
+                                         user=self.api_user, password=self.api_password,
+                                         min_size=1, max_size=2, timeout=CONNECT_TIMEOUT_SECONDS)
 
     async def producer(self) -> asyncpg.Connection:
         """Conexión con el rol real `observatory_producer` (productor-live)."""

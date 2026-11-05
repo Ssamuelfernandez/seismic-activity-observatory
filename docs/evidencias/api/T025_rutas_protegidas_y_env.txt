@@ -1,0 +1,4 @@
+# git diff --stat de rutas protegidas (vacio = sin cambios)
+# fin
+PASS  .env.example coincide: 21 variables, 20 leídas por el código, sin secretos reales.
+check_env_example rc=0

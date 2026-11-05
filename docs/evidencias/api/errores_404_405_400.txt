@@ -1,0 +1,111 @@
+## curl -i http://127.0.0.1:8000/api/foo
+HTTP/1.1 404 Not Found
+date: Thu, 05 Nov 2026 13:00:48 GMT
+server: uvicorn
+content-length: 72
+content-type: application/json
+
+{"error":{"code":"not_found","message":"La ruta solicitada no existe."}}
+[http=404 tiempo=0.003675s]
+
+## curl -i -X POST http://127.0.0.1:8000/api/eventos
+HTTP/1.1 405 Method Not Allowed
+date: Thu, 05 Nov 2026 13:00:48 GMT
+server: uvicorn
+allow: GET
+content-length: 100
+content-type: application/json
+
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+[http=405 tiempo=0.005514s]
+
+## curl -i http://127.0.0.1:8000/api/eventos?min_mag=abc
+HTTP/1.1 400 Bad Request
+date: Thu, 05 Nov 2026 13:00:48 GMT
+server: uvicorn
+content-length: 121
+content-type: application/json
+
+{"error":{"code":"invalid_parameter","message":"El parámetro 'min_mag' debe ser un número finito; se recibió 'abc'."}}
+[http=400 tiempo=0.006902s]
+
+## curl -i http://127.0.0.1:8000/api/eventos?limit=0
+HTTP/1.1 400 Bad Request
+date: Thu, 05 Nov 2026 13:00:48 GMT
+server: uvicorn
+content-length: 124
+content-type: application/json
+
+{"error":{"code":"invalid_parameter","message":"El parámetro 'limit' debe ser un entero entre 1 y 5000; se recibió '0'."}}
+[http=400 tiempo=0.005147s]
+
+## curl -i http://127.0.0.1:8000/api/eventos?cursor=xx
+HTTP/1.1 400 Bad Request
+date: Thu, 05 Nov 2026 13:00:48 GMT
+server: uvicorn
+content-length: 141
+content-type: application/json
+
+{"error":{"code":"invalid_cursor","message":"El parámetro 'cursor' no es válido; usa el valor de 'next_cursor' de la respuesta anterior."}}
+[http=400 tiempo=0.006050s]
+
+## curl -i http://127.0.0.1:8000/api/eventos?mode=otro
+HTTP/1.1 400 Bad Request
+date: Thu, 05 Nov 2026 13:00:48 GMT
+server: uvicorn
+content-length: 119
+content-type: application/json
+
+{"error":{"code":"invalid_parameter","message":"El parámetro 'mode' debe ser 'live' o 'replay'; se recibió 'otro'."}}
+[http=400 tiempo=0.004618s]
+
+## curl -i http://127.0.0.1:8000/api/estadisticas?mode=otro
+HTTP/1.1 400 Bad Request
+date: Thu, 05 Nov 2026 13:00:48 GMT
+server: uvicorn
+content-length: 119
+content-type: application/json
+
+{"error":{"code":"invalid_parameter","message":"El parámetro 'mode' debe ser 'live' o 'replay'; se recibió 'otro'."}}
+[http=400 tiempo=0.004149s]
+
+## curl -i http://127.0.0.1:8000/docs
+HTTP/1.1 404 Not Found
+date: Thu, 05 Nov 2026 13:00:48 GMT
+server: uvicorn
+content-length: 72
+content-type: application/json
+
+{"error":{"code":"not_found","message":"La ruta solicitada no existe."}}
+[http=404 tiempo=0.003468s]
+
+## curl -i http://127.0.0.1:8000/openapi.json
+HTTP/1.1 404 Not Found
+date: Thu, 05 Nov 2026 13:00:48 GMT
+server: uvicorn
+content-length: 72
+content-type: application/json
+
+{"error":{"code":"not_found","message":"La ruta solicitada no existe."}}
+[http=404 tiempo=0.003050s]
+
+## curl -i http://127.0.0.1:8000/redoc
+HTTP/1.1 404 Not Found
+date: Thu, 05 Nov 2026 13:00:48 GMT
+server: uvicorn
+content-length: 72
+content-type: application/json
+
+{"error":{"code":"not_found","message":"La ruta solicitada no existe."}}
+[http=404 tiempo=0.003289s]
+
+## curl -i http://127.0.0.1:8000/
+HTTP/1.1 404 Not Found
+date: Thu, 05 Nov 2026 13:00:48 GMT
+server: uvicorn
+content-length: 72
+content-type: application/json
+
+{"error":{"code":"not_found","message":"La ruta solicitada no existe."}}
+[http=404 tiempo=0.003028s]
+

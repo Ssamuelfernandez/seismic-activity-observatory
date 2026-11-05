@@ -1,0 +1,10 @@
+# curl -i 'http://127.0.0.1:8000/api/eventos?min_mag=4&country_id=jpn&limit=20&start=2026-10-01'
+# fecha: 2026-11-05T12:57:00Z
+HTTP/1.1 200 OK
+date: Thu, 05 Nov 2026 12:56:59 GMT
+server: uvicorn
+content-length: 205
+content-type: application/json
+
+{"type":"FeatureCollection","metadata":{"generated":1793883420378,"last_ingestion":1793883382276,"mode":"live","count":0,"total":0,"truncated":false,"next_cursor":null,"null_mag_excluded":0},"features":[]}
+# [recortado a 3500 bytes]

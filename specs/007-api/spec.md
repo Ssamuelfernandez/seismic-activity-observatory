@@ -109,7 +109,7 @@ Si hay más eventos que el máximo, la respuesta lo dice (`truncated: true`, `to
 
 ### User Story 5 - Errores de petición con el cuerpo común y modo `replay` vacío (Priority: P2)
 
-Cualquier petición incorrecta recibe el cuerpo `{"error": {"code", "message"}}` con el código de `api.md` §6: 400 por parámetros, 404 por ruta inexistente, 405 por método distinto de GET/OPTIONS. `mode=replay` se acepta y devuelve un intervalo vacío hasta que exista la feature replay.
+Cualquier petición incorrecta recibe el cuerpo `{"error": {"code", "message"}}` con el código de `api.md` §6: 400 por parámetros, 404 por ruta inexistente, 405 por método distinto de GET (`OPTIONS` incluido hasta la feature de despliegue, P1). `mode=replay` se acepta y devuelve un intervalo vacío hasta que exista la feature replay.
 
 **Why this priority**: cierra el pendiente heredado de `002` (404/405) y evita un panel que dependa de formas de error distintas; el replay solo necesita que la API no falle.
 
@@ -153,7 +153,7 @@ Cualquier petición incorrecta recibe el cuerpo `{"error": {"code", "message"}}`
 - **FR-013**: Todos los errores MUST usar el cuerpo común `{"error": {"code", "message"}}` con los códigos de `api.md` §6 (`invalid_parameter`, `invalid_cursor`, `not_found`, `method_not_allowed`, `database_unavailable`, `internal_error`), incluidos los 404 y 405 generados por el framework y las validaciones de parámetros (que MUST NOT devolver 422). El `message` está en español y no incluye credenciales, SQL ni trazas (pendiente heredado de `002`, roadmap F7).
 - **FR-014**: La API MUST usar el rol de base de datos de solo lectura `observatory_api` (db-schema.md §1.1), sin escribir en ninguna tabla; el esquema (`live`/`replay`) se elige con una lista cerrada, nunca con texto del cliente; todos los valores del cliente MUST ir parametrizados en SQL (F10, F11).
 - **FR-015**: `mode` MUST aceptar `live` (por defecto) y `replay`; cualquier otro valor es 400. En `replay` la API MUST leer solo del esquema `replay`, y cuando está vacío devolver el intervalo vacío con la misma forma (F12 parcial).
-- **FR-016**: Solo `GET` y `OPTIONS` MUST estar permitidos; MUST NOT existir rutas de administración ni la API MUST exponer secretos (F10, constitución §10).
+- **FR-016**: Solo `GET` MUST estar permitido (`OPTIONS` responde 405 hasta la feature de despliegue, P1); MUST NOT existir rutas de administración ni la API MUST exponer secretos (F10, constitución §10).
 - **FR-017**: La API MUST consultar solo datos ya procesados en la base y no depender de que el panel esté abierto (F11).
 - **FR-018**: Las respuestas MUST llevar `Content-Type: application/json` y las fechas MUST ser milisegundos Unix UTC en `metadata`, `properties`, `period` y `comparison` (F2, `api.md` §1).
 - **FR-019**: El máximo de eventos por respuesta y el tiempo máximo de espera de la base MUST ser configurables por variables de entorno con valor por defecto, documentadas en `.env.example`; no puede haber secretos en el repositorio (constitución §10).
@@ -191,7 +191,7 @@ Cualquier petición incorrecta recibe el cuerpo `{"error": {"code", "message"}}`
 - Los índices existentes (`ix_current_event_time` y los del esquema) bastan; no se añaden índices ni se modifica `sql/001_schema.sql`.
 - Proporcionalidad: trabajo de clase de unas 2 semanas; máximo 25 tareas y 5 bloques; sin fuzz, sin auditorías ni endurecimiento de casos raros. Lo raro se documenta como límite conocido (una línea).
 - Fuera de alcance: panel, replay (productor/consumidor/datos de replay y selector de intervalo), túnel y despliegue (ngrok, Netlify), CORS (la feature de despliegue), autenticación, caché y limitación de tasa.
-- Límites conocidos: rango de un año en `by_hour` ≈ 8 760 entradas; un cursor reutilizado con otros filtros no se detecta; el 503 se verifica con la API en marcha (si la base está parada al arrancar, la API reintenta y no atiende todavía); parámetros desconocidos se ignoran.
+- Límites conocidos: rango de un año en `by_hour` ≈ 8 760 entradas; un cursor reutilizado con otros filtros no se detecta; el 503 se verifica con la API en marcha (si la base está parada al arrancar, la API reintenta y no atiende todavía); parámetros desconocidos se ignoran; un error SQL imprevisto sale como 503 `database_unavailable`, no como 500.
 
 ## Preguntas para el alumno
 

@@ -54,7 +54,7 @@ Sin violaciones; no hay tabla de justificaciones.
 
 ```text
 api/
-├── main.py            # crea la app, registra routers y manejadores; sin lógica
+├── main.py            # create_app() crea la app, registra routers y manejadores; `app = create_app()`; sin lógica
 ├── errors.py          # ApiError (código, estado, mensaje) y manejadores globales (400/404/405/500/503)
 ├── params.py          # PURO: parámetros crudos -> QueryFilters / PageRequest; validación y rango por defecto
 ├── cursor.py          # PURO: codificar/decodificar el cursor opaco

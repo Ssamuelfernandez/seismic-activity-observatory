@@ -1,0 +1,10 @@
+# curl -i 'http://127.0.0.1:8000/api/eventos?country_id=none&limit=2'
+# fecha: 2026-11-05T12:57:00Z
+HTTP/1.1 200 OK
+date: Thu, 05 Nov 2026 12:56:59 GMT
+server: uvicorn
+content-length: 1055
+content-type: application/json
+
+{"type":"FeatureCollection","metadata":{"generated":1793883420472,"last_ingestion":1793883382276,"mode":"live","count":2,"total":26,"truncated":true,"next_cursor":"eyJ0IjoxNzkzODc3NjkwMzQwLCJpZCI6Imh2NzUwNjg4ODEifQ","null_mag_excluded":0},"features":[{"type":"Feature","id":"aka2026vxtqyo","geometry":{"type":"Point","coordinates":[-155.318,56.686,6.3]},"properties":{"mag":2.2,"magType":"ml","place":"75 km WSW of Akhiok, Alaska","time":1793878023663,"updated":1793878105837,"country_id":null,"country_name":null,"is_synthetic":false,"status":"automatic","url":"https://earthquake.usgs.gov/earthquakes/eventpage/aka2026vxtqyo","sig":74}},{"type":"Feature","id":"hv75068881","geometry":{"type":"Point","coordinates":[-155.365997314453,19.0503330230713,30.8899993896484]},"properties":{"mag":1.71,"magType":"md","place":"20 km SE of Pāhala, Hawaii","time":1793877690340,"updated":1793877896090,"country_id":null,"country_name":null,"is_synthetic":false,"status":"automatic","url":"https://earthquake.usgs.gov/earthquakes/eventpage/hv75068881","sig":45}}]}
+# [recortado a 2500 bytes]

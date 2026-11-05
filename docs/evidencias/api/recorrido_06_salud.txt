@@ -1,0 +1,10 @@
+# curl -i 'http://127.0.0.1:8000/api/salud'
+# fecha: 2026-11-05T12:57:00Z
+HTTP/1.1 200 OK
+date: Thu, 05 Nov 2026 12:56:59 GMT
+server: uvicorn
+content-length: 72
+content-type: application/json
+
+{"status":"ok","last_ingestion":1793883382276,"generated":1793883420650}
+# [recortado a 800 bytes]

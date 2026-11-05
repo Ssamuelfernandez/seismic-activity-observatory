@@ -1,0 +1,47 @@
+[1 min_mag=4, todo 2025]
+  filtros: start=2025-01-01&end=2026-01-01&min_mag=4
+  SQL: SELECT count(*) FROM live.current_event WHERE event_time_ms >= 1735689600000 AND event_time_ms < 1767225600000 AND mag >= 4
+  eventos.metadata.total=18302 estadisticas.total=18302 suma_by_hour=18302 suma_by_country=18302 suma_hist_magnitud=18302 suma_hist_profundidad=18302 cuenta_SQL=18302
+  null_mag_excluded=0 magnitude.no_value=0
+  RESULTADO: IGUALES
+[2 country_id=jpn, 2025]
+  filtros: start=2025-01-01&end=2026-01-01&country_id=jpn
+  SQL: SELECT count(*) FROM live.current_event WHERE event_time_ms >= 1735689600000 AND event_time_ms < 1767225600000 AND country_id = 'JPN'
+  eventos.metadata.total=129 estadisticas.total=129 suma_by_hour=129 suma_by_country=129 suma_hist_magnitud=129 suma_hist_profundidad=129 cuenta_SQL=129
+  null_mag_excluded=0 magnitude.no_value=0
+  RESULTADO: IGUALES
+[3 country_id=none, 2025]
+  filtros: start=2025-01-01&end=2026-01-01&country_id=none
+  SQL: SELECT count(*) FROM live.current_event WHERE event_time_ms >= 1735689600000 AND event_time_ms < 1767225600000 AND country_id IS NULL
+  eventos.metadata.total=14350 estadisticas.total=14350 suma_by_hour=14350 suma_by_country=14350 suma_hist_magnitud=14350 suma_hist_profundidad=14350 cuenta_SQL=14350
+  null_mag_excluded=0 magnitude.no_value=0
+  RESULTADO: IGUALES
+[4 rango marzo 2025 (sin otros filtros)]
+  filtros: start=2025-03-01&end=2025-04-01
+  SQL: SELECT count(*) FROM live.current_event WHERE event_time_ms >= 1740787200000 AND event_time_ms < 1743465600000
+  eventos.metadata.total=1178 estadisticas.total=1178 suma_by_hour=1178 suma_by_country=1178 suma_hist_magnitud=1178 suma_hist_profundidad=1178 cuenta_SQL=1178
+  null_mag_excluded=0 magnitude.no_value=0
+  RESULTADO: IGUALES
+[5 combinado: min_mag=5, chl, jun-sep 2025]
+  filtros: start=2025-06-01&end=2025-09-01&min_mag=5&country_id=chl
+  SQL: SELECT count(*) FROM live.current_event WHERE event_time_ms >= 1748736000000 AND event_time_ms < 1756684800000 AND mag >= 5 AND country_id = 'CHL'
+  eventos.metadata.total=4 estadisticas.total=4 suma_by_hour=4 suma_by_country=4 suma_hist_magnitud=4 suma_hist_profundidad=4 cuenta_SQL=4
+  null_mag_excluded=0 magnitude.no_value=0
+  RESULTADO: IGUALES
+[6 ultimas 24 h (en vivo, rango explicito)]
+  filtros: start=2026-11-04T13:01:50Z&end=2026-11-05T13:01:50Z
+  SQL: SELECT count(*) FROM live.current_event WHERE event_time_ms >= 1793797310000 AND event_time_ms < 1793883710000
+  eventos.metadata.total=173 estadisticas.total=173 suma_by_hour=173 suma_by_country=173 suma_hist_magnitud=173 suma_hist_profundidad=173 cuenta_SQL=173
+  null_mag_excluded=0 magnitude.no_value=0
+  RESULTADO: IGUALES
+[7 24 h en vivo, min_mag=2]
+  filtros: start=2026-11-04T13:01:50Z&end=2026-11-05T13:01:50Z&min_mag=2
+  SQL: SELECT count(*) FROM live.current_event WHERE event_time_ms >= 1793797310000 AND event_time_ms < 1793883710000 AND mag >= 2
+  eventos.metadata.total=62 estadisticas.total=62 suma_by_hour=62 suma_by_country=62 suma_hist_magnitud=62 suma_hist_profundidad=62 cuenta_SQL=62
+  null_mag_excluded=0 magnitude.no_value=0
+  RESULTADO: IGUALES
+[comparison.n_2025 vs cuenta SQL independiente]
+  SQL: SELECT count(*) FROM live.current_event WHERE event_time_ms >= 1735689600000 AND event_time_ms < 1767225600000 AND mag >= 4
+  comparison.n_2025=18302 min_mag_applied=4.0 cuenta_SQL=18302 reference_period={'start': 1735689600000, 'end': 1767225600000}
+  RESULTADO: IGUALES
+TODO COHERENTE

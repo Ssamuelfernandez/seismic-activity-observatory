@@ -1,6 +1,6 @@
 # Mapa del código
 
-Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04) cerradas; `consumidor-idempotente`, `productor-live` y `geografia-pais` (2026-11-05) implementadas y verificadas, pendientes de la revisión del alumno: existen los contratos, el DDL, el modelo de datos, el stack de Compose con API **mínima**, el consumidor idempotente con país por geometría, el productor que consulta USGS en vivo y sus evidencias. Las filas de estas features son rutas reales; las que citan `api/routers/events.py` y `frontend/` son **previstas** y se confirman al cerrar cada feature.
+Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04) cerradas; `consumidor-idempotente`, `productor-live`, `geografia-pais`, `historico-2025` y `api` (2026-11-05) implementadas y verificadas, pendientes de la revisión del alumno: existen los contratos, el DDL, el modelo de datos, el stack de Compose con API **mínima**, el consumidor idempotente con país por geometría, el productor que consulta USGS en vivo y sus evidencias. Las filas de estas features son rutas reales; las que citan `frontend/` son **previstas** y se confirman al cerrar cada feature.
 
 ## Dónde está cada cosa
 | Quiero entender… | Mira… | Requisito |
@@ -42,7 +42,18 @@ Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04
 | La línea de decisión por mensaje y el volcado de contadores (`COUNTERS`) | consumer/reporting.py | C1, C8, FR-003 |
 | Los contadores de transformaciones y sus identidades | consumer/counters.py | C8, FR-023, FR-036 |
 | El gancho que corta el proceso entre ambos commits (prueba 8) | consumer/fault_hook.py | C2, SC-005 |
-| La API mínima (`GET /api/salud`) | api/ (`main.py`, `queries.py`, `routers/health.py`) | A1, A9 |
+| La API de consulta: arranque, pool y manejadores (`main.py`); sus tres rutas de solo lectura (`routers/events.py`, `routers/stats.py`, `routers/health.py`) | api/ (`main.py`, `routers/events.py`, `routers/stats.py`, `routers/health.py`) | F1–F8, F10, F11, A1, A9 |
+| Cómo se lee la base: transacción `REPEATABLE READ` de solo lectura con espera acotada, y las consultas de eventos, conteos y última ingesta | api/db_access.py, api/queries.py | F1, F8, F11 |
+| Cómo se validan los parámetros, el rango por defecto de 24 h y el cursor (puro, sin FastAPI ni asyncpg) | api/params.py, api/timeutil.py, api/cursor.py | F3, F5 |
+| Cómo se construye el SQL de filtros (esquema por lista cerrada, valores como `$n`) y cómo se serializa un evento a GeoJSON y `metadata` | api/sql_filters.py, api/serializers.py | F1–F4, F10 |
+| Cómo se calculan las estadísticas (consultas SQL con `width_bucket`, por hora y por país, comparación con 2025) y cómo se arma la respuesta (puro) | api/stats_queries.py, api/stats_builder.py | F7 |
+| Los errores de la API (un solo cuerpo `{"error": …}`, 400/404/405/500/503, sin 422) | api/errors.py | F8, F10 |
+| La configuración de la API (`API_MAX_EVENTS`, `API_DB_TIMEOUT_SECONDS`) | common/api_config.py; .env.example; compose.yaml (servicio `api`); tests/common/test_api_config.py | F5, FR-019 |
+| Las pruebas unitarias de la API (parámetros, cursor, errores, serialización, filtros SQL, estadísticas) | tests/api/ (`test_params.py`, `test_cursor.py`, `test_errors.py`, `test_serializers.py`, `test_sql_filters.py`, `test_stats_builder.py`) | F1–F7, F10 |
+| Las pruebas de integración de la API con el rol real `observatory_api` (consultas, eventos, paginación, replay, estadísticas, coherencia, comparación, salud, base caída, errores, solo lectura, banco de pruebas) | tests/integration/ (`test_api_harness.py`, `test_api_queries.py`, `test_api_events.py`, `test_api_pagination.py`, `test_api_replay_events.py`, `test_api_stats_queries.py`, `test_api_stats.py`, `test_api_coherence.py`, `test_api_comparison.py`, `test_api_health.py`, `test_api_database_down.py`, `test_api_errors.py`, `test_api_readonly.py`) | F1–F8, F10, F11, SC-001 a SC-008 |
+| Ayudas de esas pruebas: cliente `httpx` contra la app y siembra de eventos y países SINTÉTICOS (`synthetic-…`) en `live` y `replay`; el rol de la API en la base temporal | tests/support/api_client.py, tests/support/api_seed.py, tests/support/temp_database.py (`api_user`, `api_pool()`) | F1–F8 |
+| La spec, el plan, la investigación, el modelo de datos, las tareas, la bitácora y el quickstart de la API; la sección «API de consulta» del README | specs/007-api/; README.md | F1–F8, F10, F11 |
+| Las evidencias de la API (pytest por tarea y bloque, recorrido real con `curl`, 503 real al parar PostgreSQL, errores 404/405/400, coherencia con SQL independiente, cierre) | docs/evidencias/api/ | F1–F8, F10, F11, SC-001 a SC-008 |
 | Los roles de base de datos y sus permisos | sql/002_roles.sql; specs/002-infra-compose/data-model.md | E5 (db-schema.md §1.1) |
 | Cómo se inicializa PostgreSQL (esquema y roles) la primera vez | scripts/postgres_init.sh | A5 |
 | Cómo se ejecutan las pruebas de integración (servicio `tests`, perfil `test`, etapa `test` del `Dockerfile`) y la evidencia del bloque 1 | compose.yaml (servicio `tests`; monta `tests/`, `sql/` y `scripts/` en solo lectura, este último para que `tests/scripts/` importe `scripts`); Dockerfile (etapa `test`); pyproject.toml (marcador `integration`); docs/evidencias/consumidor-idempotente/ | FR-033 |
@@ -93,20 +104,20 @@ Estado: features `contratos-y-modelo` (2026-11-02) e `infra-compose` (2026-11-04
 | La spec, el plan, la investigación, el modelo de datos, las tareas, la bitácora y el quickstart de historico-2025; la sección «Histórico 2025» del README con los comandos de descarga, carga y hueco | specs/006-historico-2025/; README.md | B12, B17, B18 |
 | Nota sobre las evidencias del histórico: `docs/evidencias/historico-2025/` también contiene archivos de otras features (`bloque3_*`, `bloque4_*`, `geografia_*`, `roles_consumidor.out`) que las pruebas de integración generaron al redirigir la evidencia; no son del histórico y no se han borrado. Las propias son `T0*`, `carga*.out`, `descarga_2025*.log`, `historico_*.out`, `hueco_ensayo.out`, `verificacion*` | docs/evidencias/historico-2025/ | — |
 | Los apuntes para la memoria y la defensa del histórico (por qué lote, instantánea, hueco >24 h, decisiones y límites) | docs/borradores/historico-2025.md | B12, B16, B18 |
-| Qué devuelve la API de eventos | api/routers/events.py, api/queries.py | F1–F3 |
+| Qué devuelve la API de eventos | api/routers/events.py, api/queries.py (ya real, ver la fila de la API de consulta) | F1–F3 |
 | Cómo el panel consume la API | frontend/src/app/core/api.service.ts | G1, G9 |
 
 ## Flujo actual (productor en vivo y consumidor idempotente)
 USGS -> producer/usgs_client.py -> common/usgs_feed.py -> producer/ingest_store.py (original y estado) -> common/ingest_decision.py -> common/live_message.py
      -> producer/cycle.py -> producer/publisher.py -> Kafka (`earthquakes.live`) -> (ack) producer/ingest_store.py (`mark_published`)
-     -> consumer/loop.py -> consumer/pipeline.py -> common/{decode,validation,transform,quarantine_row}.py -> consumer/writer.py -> PostgreSQL ; API: api/routers/health.py -> api/queries.py -> PostgreSQL (rol de solo lectura)
+     -> consumer/loop.py -> consumer/pipeline.py -> common/{decode,validation,transform,quarantine_row}.py -> consumer/writer.py -> PostgreSQL ; API: api/routers/{events,stats,health}.py -> api/{params,sql_filters,queries,stats_queries}.py -> api/db_access.py -> PostgreSQL (rol de solo lectura)
 
 Con `geografia-pais`, `consumer/pipeline.py` llama al localizador (`common/geo.py::assign_country`) tras validar y antes de escribir; al arrancar, `consumer/loop.py::prepare_database` comprueba el esquema (`consumer/schema_check.py`) y carga el catálogo (`consumer/catalog_loader.py`).
 
 ## Flujo previsto de un evento (de USGS al mapa)
 (Histórico 2025, por lote) USGS -> historical/download_main -> data/historical/ -> historical/load_main -> historical/loader.py -> consumer/pipeline.py (process_record, sin Kafka)
 Kafka -> consumer/pipeline.py -> common/validation.py -> common/geo.py (ya real)
-     -> consumer/writer.py -> PostgreSQL -> api/queries.py (prevista) -> frontend/features/map (previsto)
+     -> consumer/writer.py -> PostgreSQL -> api/queries.py (ya real) -> frontend/features/map (previsto)
 
 ## Convenciones
 Reglas completas en `docs/planificacion/03-procedimiento-ejecucion.md` §7.3. Resumen:
@@ -125,3 +136,4 @@ Reglas completas en `docs/planificacion/03-procedimiento-ejecucion.md` §7.3. Re
 | productor-live | Productor que consulta el feed de USGS cada `POLL_SECONDS`, guarda el GeoJSON original con hash y retención (`ingest.raw_response`, `ingest.ingest_run`), excluye lo que no es `earthquake` con motivo (`live.exclusion`), decide con estado persistente (`ingest.ingest_state`) por `id` + `updated`, publica con clave `id` y marca solo tras el ack; backoff ante fallos de USGS; variables nuevas; permiso `SELECT, DELETE` sobre `raw_response`; sintéticos retirados del productor; evidencias en `docs/evidencias/productor-live/` (B1–B12; pruebas 1 hasta PostgreSQL y 2) | 2026-11-05 |
 | geografia-pais | País por geometría: `common/geo.py` (catálogo de 177 `ADM0_A3` únicos, `STRtree`, borde incluido, empate por `ADM0_A3` menor, sin polígono = `NULL`), `country_id` en `current_event`, comprobación de esquema y carga repetible de `public.country` al arrancar (`consumer/schema_check.py`, `consumer/catalog_loader.py`), dependencia `shapely`, reglas de validez con casos sintéticos `synthetic-geo-…`, `scripts/geo_real_day.py` (181 eventos reales de un día: 153 con país, 28 sin país), escenario `geo` de `verify_consumer.py` (16/16); evidencias en `docs/evidencias/geografia-pais/` (C9–C12, C13; pruebas 5 y 7; 534 unitarias y 73 de integración; sin recálculo retroactivo; `type != earthquake` solo se excluye en el productor) | 2026-11-05 |
 | historico-2025 | Descarga de 2025 (M≥4, mundial, por meses, con división si un mes pasa de 20000 y comprobación contra el `count` anual) en `historical/` con manifiesto y sha256, deduplicación por `id`/`updated`, carga por lote con `process_record` (`source=usgs_historical`, `MessageRef` con `None` en el offset), verificación `\|U\| − \|Q\|` y huellas, procedimiento de hueco con `--start/--end`; 18302 eventos únicos, recarga sin cambios; evidencias en `docs/evidencias/historico-2025/` (B12–B18; 609 unitarias y 85 de integración) | 2026-11-05 |
+| api | API de consulta de solo lectura (rol `observatory_api`): `/api/eventos` (GeoJSON, filtros `start`/`end`/`min_mag`/`country_id`/`mode`, paginación por cursor), `/api/estadisticas` (por hora, por país, histogramas y comparación con 2025, en SQL, coherente con eventos) y `/api/salud`; transacción `REPEATABLE READ`, error único sin 422, 503 en menos de 10 s sin reiniciar; `API_MAX_EVENTS` y `API_DB_TIMEOUT_SECONDS`; evidencias en `docs/evidencias/api/` (F1–F8, F10, F11, F12 parcial; CORS en `despliegue`) | 2026-11-05 |

@@ -40,3 +40,7 @@
 | api | Paginación por cursor (event_time, event_id) en base64url | OFFSET/LIMIT | Estable ante inserciones concurrentes |
 | api | Errores reintentables de BD y errores SQL no previstos devuelven 503 | Distinguir 500 para SQL imprevisto | Simplicidad; límite conocido |
 | api | El modo replay lee `replay.current_event` (vacío hasta la feature replay) | Dejarlo sin implementar | Evita reescribir la API después |
+| api | Fábrica `create_app()` en `api/main.py` | Instancia global única | Permite crear la aplicación con configuración propia en las pruebas |
+| api | Comparación de dos periodos en una sola consulta con dos `FILTER` | Dos consultas separadas | Una sola lectura coherente dentro de la misma transacción |
+| api | `API_MAX_EVENTS` y `API_DB_TIMEOUT_SECONDS` con defecto `${VAR:-valor}` en `compose.yaml` | Exigirlas en `.env` | El arranque no falla si faltan; los valores por defecto están documentados |
+| api | Los 7 archivos de `docs/evidencias/consumidor-idempotente/` reescritos por la suite de integración se excluyen del commit | Commitearlos | Cambios accidentales ajenos a la feature (igual que en historico-2025) |

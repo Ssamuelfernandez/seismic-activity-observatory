@@ -1,0 +1,3 @@
+PASS  .env.example coincide: 21 variables, 20 leídas por el código, sin secretos reales.
+exit=0
+docker compose config: OK

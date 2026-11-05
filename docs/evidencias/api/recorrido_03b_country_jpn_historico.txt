@@ -1,0 +1,8 @@
+# curl -i jpn con rango 2025-2026 (los 24 h de vivo no traen M4+ en Japon)
+HTTP/1.1 200 OK
+date: Thu, 05 Nov 2026 12:57:12 GMT
+server: uvicorn
+content-length: 1032
+content-type: application/json
+
+{"type":"FeatureCollection","metadata":{"generated":1793883433338,"last_ingestion":1793883382276,"mode":"live","count":2,"total":129,"truncated":true,"next_cursor":"eyJ0IjoxNzY3MDQyMDI4NzU4LCJpZCI6InVzNzAwMHJxd2oifQ","null_mag_excluded":0},"features":[{"type":"Feature","id":"us7000rlqg","geometry":{"type":"Point","coordinates":[141.7717,39.8024,65.308]},"properties":{"mag":4.3,"magType":"mb","place":"5 km SSW of Iwaizumi, Japan","time":1767192605279,"updated":1775083727040,"country_id":"JPN","country_name":"Japón","is_synthetic":false,"status":"reviewed","url":"https://earthquake.usgs.gov/earthquakes/eventpage/us7000rlqg","sig":284}},{"type":"Feature","id":"us7000rqwj","geometry":{"type":"Point","coordinates":[140.3545,36.6356,10.0]},"properties":{"mag":4.0,"magType":"mb","place":"11 km NNW of Ōmiya, Japan","time":1767042028758,"updated":1775083745040,"country_id":"JPN","country_name":"Japón","is_synthetic":false,"status":"reviewed","url":"https://earthquake.usgs.gov/earthquakes/eventpage/us7000rqwj","sig":246}}]}

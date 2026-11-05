@@ -14,9 +14,10 @@ Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
 | `productor-live` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: productor real que consulta USGS cada `POLL_SECONDS` y publica en `earthquakes.live` sin duplicar (B1–B12, A10; pruebas 1, hasta PostgreSQL, y 2). Evidencias en `docs/evidencias/productor-live/`. Sin diferidas; B2, B11 y B12 pendientes de pasar `docs/borradores/productor-live.md` a la memoria |
 | `geografia-pais` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: país por geometría (`ADM0_A3`), catálogo de 177 países cargado al arrancar, comprobación de esquema y reglas de validez (C9–C12, C13; pruebas 5 y 7). Evidencias en `docs/evidencias/geografia-pais/`. Sin tareas diferidas; apuntes en `docs/borradores/geografia-pais.md` |
 | `historico-2025` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: descarga de 2025 (M≥4, mundial, por meses), deduplicación, carga en la base con el procesamiento común y procedimiento de hueco (B12–B18). Evidencias en `docs/evidencias/historico-2025/`; apuntes en `docs/borradores/historico-2025.md` |
+| `api` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: API de consulta de solo lectura (`/api/eventos`, `/api/estadisticas`, `/api/salud`; F1–F8, F10, F11, F12 parcial). Evidencias en `docs/evidencias/api/`; CORS (F9) queda en `despliegue` |
 | Resto de features | No empezadas |
 
-La API es por ahora **mínima**: solo responde `GET /api/salud`. El productor ya es el **productor en vivo** (ver su sección más abajo). El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
+La API es la **API de consulta** (ver su sección más abajo). El productor ya es el **productor en vivo** (ver su sección más abajo). El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
 
 El orden de las fases está en [`docs/planificacion/02-roadmap-implementacion.md`](docs/planificacion/02-roadmap-implementacion.md).
 
@@ -31,7 +32,7 @@ El orden de las fases está en [`docs/planificacion/02-roadmap-implementacion.md
 | [`common/`](common/) | Código compartido por todos los servicios Python (configuración, reintentos, latido, conexión a PostgreSQL, temas de Kafka, evento sintético) |
 | [`producer/`](producer/) | Productor mínimo: publica un evento sintético cada intervalo configurable |
 | [`consumer/`](consumer/) | Consumidor idempotente: valida, guarda en PostgreSQL y envía a cuarentena |
-| [`api/`](api/) | API FastAPI mínima: solo `GET /api/salud` |
+| [`api/`](api/) | API FastAPI de consulta, solo lectura: `/api/eventos`, `/api/estadisticas` y `/api/salud` |
 | [`sql/`](sql/) | `001_schema.sql` (esquema) y `002_roles.sql` (roles y permisos) |
 | [`scripts/`](scripts/) | `postgres_init.sh` (inicialización de la base), `verify_stack.py` y `check_env_example.py` (verificación) y `explore_usgs.py` (exploración del feed) y `verify_consumer.py` (escenarios del consumidor; usa `down -v`) |
 | [`tests/`](tests/) | Pruebas unitarias de `common/`, `producer/` y `consumer/` (pytest) y pruebas de integración con PostgreSQL real (`tests/integration/`, servicio `tests`) |
@@ -243,6 +244,36 @@ MSYS_NO_PATHCONV=1 docker compose run --rm --no-deps -v ./data/historical:/app/d
 ```
 
 Guía completa: [`specs/006-historico-2025/quickstart.md`](specs/006-historico-2025/quickstart.md). Evidencias: [`docs/evidencias/historico-2025/`](docs/evidencias/historico-2025/).
+
+## API de consulta
+
+API de solo lectura (rol `observatory_api`) sobre `live.current_event` y `replay.current_event`. Contrato: [`specs/001-contratos-y-modelo/contracts/api.md`](specs/001-contratos-y-modelo/contracts/api.md). Solo se publica en `127.0.0.1:8000`. Guía de validación: [`specs/007-api/quickstart.md`](specs/007-api/quickstart.md).
+
+| Endpoint | Qué devuelve |
+|---|---|
+| `GET /api/eventos` | `FeatureCollection` GeoJSON con `metadata` (`count`, `total`, `truncated`, `next_cursor`, `null_mag_excluded`…) |
+| `GET /api/estadisticas` | Total, eventos por hora y por país, histogramas de magnitud y profundidad y comparación con 2025, calculados en SQL |
+| `GET /api/salud` | `status`, `last_ingestion` y `generated` |
+
+**Parámetros** (eventos y estadísticas): `start` y `end` (ISO 8601, intervalo `[start, end)`; sin ellos, las últimas 24 h; sin zona se entiende UTC), `min_mag`, `country_id` (`jpn` o `JPN`; `none` = sin país), `mode` (`live` por defecto o `replay`). Solo eventos: `limit` (entre 1 y `API_MAX_EVENTS`) y `cursor` (el `next_cursor` de la respuesta anterior). Un parámetro inválido da 400 con `{"error": {"code", "message"}}`; sin base de datos, 503 `database_unavailable` en menos de 10 s; ruta inexistente 404 y método distinto de GET 405. No hay `/docs` ni `/openapi.json`.
+
+**Variables** (en `.env.example` y en el servicio `api` de `compose.yaml`):
+
+| Variable | Defecto | Significado |
+|---|---|---|
+| `API_MAX_EVENTS` | 5000 | Máximo de eventos por respuesta; si hay más, `truncated` es `true` y se pagina con `next_cursor` |
+| `API_DB_TIMEOUT_SECONDS` | 5 | Espera máxima para obtener una conexión (de 1 a 9, para responder 503 en menos de 10 s) |
+
+```bash
+curl "http://127.0.0.1:8000/api/eventos?min_mag=4&country_id=jpn&limit=20"
+curl "http://127.0.0.1:8000/api/estadisticas?start=2025-03-01&end=2025-04-01"
+curl http://127.0.0.1:8000/api/salud
+uv run pytest -m "not integration" -q                                              # unitarias
+docker compose up -d postgres && docker compose --profile test build tests
+docker compose --profile test run --rm tests pytest -m integration -q              # integración (rol real)
+```
+
+**Límites conocidos.** Sin CORS: el panel en otro origen no podrá consultar la API hasta la feature `despliegue` (F9); `OPTIONS` responde 405. El modo `replay` lee `replay.current_event`, vacío hasta la feature de replay. Un cursor reutilizado con otros filtros no se detecta; los parámetros desconocidos se ignoran; un error SQL no previsto sale como 503; un año completo en `by_hour` son unas 8 760 entradas. Si PostgreSQL está parado al arrancar, la API reintenta y no atiende hasta que vuelva. Evidencias: [`docs/evidencias/api/`](docs/evidencias/api/).
 
 ## Configuración de Git: el hook `commit-msg`
 
