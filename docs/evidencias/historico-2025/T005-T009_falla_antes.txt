@@ -1,0 +1,5 @@
+E   ModuleNotFoundError: No module named 'historical.fetch_interval'
+=========================== short test summary info ===========================
+ERROR tests/historical/test_fetch_interval.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.19s

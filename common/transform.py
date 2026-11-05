@@ -7,7 +7,7 @@ import json
 from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 
-from common.records import DateRow, EventRows, MessageRef, ValidEvent
+from common.records import DateRow, EventRows, MessageRef, ValidEvent, kafka_columns
 
 # Rango admitido de `time`/`updated` (research.md §6): 1000-01-01T00:00:00Z <= instante < 3000-01-01T00:00:00Z.
 MIN_EPOCH_MS = -30610224000000
@@ -91,6 +91,7 @@ def _build_current(valid: ValidEvent, times: tuple[datetime, datetime, date],
 
 def _build_version(valid: ValidEvent, current: dict, original: str, ref: MessageRef, now: datetime) -> dict:
     """Columnas de `event_version`; `received_at` es el reloj del consumidor, no el del evento."""
+    kafka_topic, kafka_partition, kafka_offset = kafka_columns(ref)
     return {
         "event_id": valid.event_id,
         "updated_ms": valid.updated_ms,
@@ -102,9 +103,9 @@ def _build_version(valid: ValidEvent, current: dict, original: str, ref: Message
         "source": valid.source,
         "is_synthetic": valid.is_synthetic,
         "received_at": now,
-        "kafka_topic": ref.topic,
-        "kafka_partition": ref.partition,
-        "kafka_offset": ref.offset,
+        "kafka_topic": kafka_topic,
+        "kafka_partition": kafka_partition,
+        "kafka_offset": kafka_offset,
     }
 
 

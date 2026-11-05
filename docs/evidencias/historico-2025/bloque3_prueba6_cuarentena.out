@@ -1,0 +1,32 @@
+-- [1] un caso por motivo
+SELECT 'live' AS schema, reason, kafka_topic, kafka_partition, kafka_offset, original_sha256 FROM live.quarantine UNION ALL SELECT 'replay', reason, kafka_topic, kafka_partition, kafka_offset, original_sha256 FROM replay.quarantine ORDER BY 1, 5
+
+schema | reason                   | kafka_topic        | kafka_partition | kafka_offset | original_sha256                                                 
+-------+--------------------------+--------------------+-----------------+--------------+-----------------------------------------------------------------
+live   | invalid_json             | earthquakes.live   | 0               | 0            | 6c822e5b47f6bb15caa4be057b20f24d09dc72dc1776200d73c0342e78e44d1d
+live   | invalid_envelope         | earthquakes.live   | 0               | 1            | 67262fb2491f58c074e7c26e79d766cdfe291e127dda4a3fea5af3373aa0b25f
+live   | mode_topic_mismatch      | earthquakes.live   | 0               | 2            | c57e7b116f02633d27b40c7447b055534f5485f0db9be82812d4336a4efebd48
+live   | missing_id               | earthquakes.live   | 0               | 4            | 40758ce266b62248732a0d203cda4610bce2691d407d8092402a1f731be13f39
+live   | missing_time             | earthquakes.live   | 0               | 5            | 57e39837074dffd74337003a141c84b5edcaa0588f9f22b634b3b6ca06d31a6d
+live   | missing_updated          | earthquakes.live   | 0               | 6            | b4b85855f734cbf3f3a53108eba74c51c1b0ba11dd7caa1de03df987b4225e7d
+live   | invalid_geometry         | earthquakes.live   | 0               | 7            | 7c7d4d2e3f44d602005083ecb1ccd72b333056c20a56de5d9d47221da3376f53
+live   | coordinates_out_of_range | earthquakes.live   | 0               | 8            | 04ea12de50c3111bf687192b277fa697e5a6dd82966e648ef5e316be7719bbac
+live   | mag_out_of_range         | earthquakes.live   | 0               | 9            | e38ff933d6f5ef36a13fd482401a6cc483e54101470ec81535dc12a0dd996c77
+live   | depth_out_of_range       | earthquakes.live   | 0               | 10           | a32e4f6039b041db2fc19a967740859879cd367e9fc715f1c5a959b39f9c4b77
+live   | invalid_field_type       | earthquakes.live   | 0               | 11           | d2f0f773fada09379b45dfb055e84dd264eaf668a3de4909dc40b6cfa4e2c8e1
+live   | value_out_of_range       | earthquakes.live   | 0               | 12           | e6deb0f3c8a2501139b61952308a4c108782e23610b26aac4d3f60a5a5d8e0d6
+live   | db_constraint_violation  | earthquakes.live   | 0               | 13           | 05ca0bb69a93cfa5c9379e288af0c05a2799255606a7d43cbc0ae003e722418b
+replay | replay_at_missing        | earthquakes.replay | 0               | 3            | 9074c5d3a6e65dbb5982975c4fe6902ab6350bd3431ee536f87e23dc1ecf9b87
+(14 filas)
+
+-- [2] latitud 145 (prueba 6)
+SELECT reason, event_id, kafka_topic, kafka_partition, kafka_offset, original_sha256 FROM live.quarantine
+
+reason                   | event_id           | kafka_topic      | kafka_partition | kafka_offset | original_sha256                                                 
+-------------------------+--------------------+------------------+-----------------+--------------+-----------------------------------------------------------------
+coordinates_out_of_range | synthetic-faq12-e1 | earthquakes.live | 0               | 7            | 04ea12de50c3111bf687192b277fa697e5a6dd82966e648ef5e316be7719bbac
+(1 filas)
+
+-- [3] NUL forzado
+NUL forzado en place -> CharacterNotInRepertoireError sqlstate=22021
+

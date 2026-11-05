@@ -1,0 +1,12 @@
+usage: historical.download_main [-h] [--force] [--start START] [--end END]
+                                [--output-dir OUTPUT_DIR]
+
+Descarga el histórico 2025 de USGS.
+
+options:
+  -h, --help            show this help message and exit
+  --force               vuelve a pedir todo aunque los archivos sean válidos
+  --start START         inicio UTC de un hueco a recuperar (requiere --end)
+  --end END             fin UTC de un hueco a recuperar (requiere --start)
+  --output-dir OUTPUT_DIR
+                        carpeta de salida

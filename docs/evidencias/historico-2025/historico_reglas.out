@@ -1,0 +1,4 @@
+-- [1] no retrocede
+antes: source=usgs_feed updated_ms=1793787000000
+después de cargar un histórico con updated menor: source=usgs_feed updated_ms=1793787000000
+

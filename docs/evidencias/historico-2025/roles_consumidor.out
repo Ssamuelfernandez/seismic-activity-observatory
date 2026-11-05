@@ -1,0 +1,15 @@
+-- [1] aserción (a)
+SELECT en live.quarantine -> sqlstate 42501
+
+-- [2] aserción (b)
+sentencia de producción (sin destino): primera vez -> INSERT 0 1; duplicado -> INSERT 0 0
+
+-- [3] aserción (c)
+variante con destino (original_sha256, reason) -> 42501
+
+-- [4] aserción (d)
+INSERT en ingest.ingest_state -> sqlstate 42501
+
+-- [5] aserción (e)
+event_version: INSERT ok (filas leídas con SELECT: 1); UPDATE -> sqlstate 42501; current_event UPDATE -> UPDATE 1; date_dim INSERT -> INSERT 0 1 y INSERT 0 0; country INSERT -> INSERT 0 1, UPDATE -> INSERT 0 1
+

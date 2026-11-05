@@ -1,0 +1,26 @@
+-- [1] current_event: únicos - cuarentena, origen y marca sintética
+SELECT count(*), count(*) FILTER (WHERE source = 'usgs_historical'), count(*) FILTER (WHERE is_synthetic), count(*) FILTER (WHERE replay_at IS NULL), count(DISTINCT ingested_at), min(ingested_at) FROM live.current_event
+
+count | count | count | count | count | min                      
+------+-------+-------+-------+-------+--------------------------
+26    | 26    | 26    | 26    | 1     | 2026-01-02 03:04:05+00:00
+(1 filas)
+
+-- [2] event_version y cuarentena: una fila por (id, updated); kafka_* nulos
+SELECT (SELECT count(*) FROM live.event_version), (SELECT count(*) FROM live.event_version WHERE kafka_topic IS NOT NULL OR kafka_partition IS NOT NULL OR kafka_offset IS NOT NULL), (SELECT count(*) FROM live.quarantine), (SELECT count(*) FROM live.quarantine WHERE kafka_topic IS NOT NULL OR kafka_partition IS NOT NULL OR kafka_offset IS NOT NULL)
+
+count | count | count | count
+------+-------+-------+------
+26    | 0     | 3     | 0    
+(1 filas)
+
+-- [3] cuarentena por evento inválido
+SELECT event_id, reason FROM live.quarantine ORDER BY event_id
+
+event_id               | reason                  
+-----------------------+-------------------------
+synthetic-hist-bad-lat | coordinates_out_of_range
+synthetic-hist-bad-lon | coordinates_out_of_range
+synthetic-hist-bad-mag | mag_out_of_range        
+(3 filas)
+

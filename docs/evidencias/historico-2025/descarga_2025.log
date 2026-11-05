@@ -1,0 +1,26 @@
+2026-11-05 12:40:17,555 INFO historical.fetch_interval query interval=2025-01-01T00:00:00/2025-02-01T00:00:00 usgs_count=1413 records=1413
+2026-11-05 12:40:17,569 INFO historical.download file name=usgs_2025-01.geojson records=1413 sha256=e8b26593eb116bb545e098fc76ea3405566d850367cb813e344d1dfc4181fccb
+2026-11-05 12:40:19,075 INFO historical.fetch_interval query interval=2025-02-01T00:00:00/2025-03-01T00:00:00 usgs_count=1394 records=1394
+2026-11-05 12:40:19,160 INFO historical.download file name=usgs_2025-02.geojson records=1394 sha256=4bb037d807ad3fc0330e80ee85c790b77008e4439311efda55f5dc7f68d576b0
+2026-11-05 12:40:20,195 INFO historical.fetch_interval query interval=2025-03-01T00:00:00/2025-04-01T00:00:00 usgs_count=1178 records=1178
+2026-11-05 12:40:20,225 INFO historical.download file name=usgs_2025-03.geojson records=1178 sha256=98d1a859b684e294236e02ab672095ac4370543e7c73efc208752c985c396bad
+2026-11-05 12:40:21,934 INFO historical.fetch_interval query interval=2025-04-01T00:00:00/2025-05-01T00:00:00 usgs_count=1316 records=1316
+2026-11-05 12:40:21,981 INFO historical.download file name=usgs_2025-04.geojson records=1316 sha256=f1b6695bcc800b74d33bbf6e8f94138d08a5088a33aa4856f96f7fe53e738745
+2026-11-05 12:40:23,420 INFO historical.fetch_interval query interval=2025-05-01T00:00:00/2025-06-01T00:00:00 usgs_count=1228 records=1228
+2026-11-05 12:40:23,452 INFO historical.download file name=usgs_2025-05.geojson records=1228 sha256=006ac38448b987ccce1389930463c5ab25ffd665f0b86ed002423f74f1cf5e7e
+2026-11-05 12:40:24,655 INFO historical.fetch_interval query interval=2025-06-01T00:00:00/2025-07-01T00:00:00 usgs_count=1156 records=1156
+2026-11-05 12:40:24,675 INFO historical.download file name=usgs_2025-06.geojson records=1156 sha256=258c717921d6fb19c44124510ef64e7d03f3918f364b45233bfc7559f89396a9
+2026-11-05 12:40:26,463 INFO historical.fetch_interval query interval=2025-07-01T00:00:00/2025-08-01T00:00:00 usgs_count=2684 records=2684
+2026-11-05 12:40:26,515 INFO historical.download file name=usgs_2025-07.geojson records=2684 sha256=0b9fc1560e7311aa934530058cb3f411d5ba328ef3ea432ce563f452d887de9c
+2026-11-05 12:40:28,084 INFO historical.fetch_interval query interval=2025-08-01T00:00:00/2025-09-01T00:00:00 usgs_count=2222 records=2222
+2026-11-05 12:40:28,130 INFO historical.download file name=usgs_2025-08.geojson records=2222 sha256=6715d38e0503b178419be6e8d7acd2cdcca613cb9d3721a3a49c944bf004ff59
+2026-11-05 12:40:29,123 INFO historical.fetch_interval query interval=2025-09-01T00:00:00/2025-10-01T00:00:00 usgs_count=1604 records=1604
+2026-11-05 12:40:29,159 INFO historical.download file name=usgs_2025-09.geojson records=1604 sha256=788ea98b05abf5b4807b79585d80944554969d7e2f0b6417ca69f0fa1cf23b70
+2026-11-05 12:40:30,688 INFO historical.fetch_interval query interval=2025-10-01T00:00:00/2025-11-01T00:00:00 usgs_count=1509 records=1509
+2026-11-05 12:40:30,723 INFO historical.download file name=usgs_2025-10.geojson records=1509 sha256=8c124bb8e458662caf9a9fb0feb07c23081172c832c89088a15d1ab1b03a167d
+2026-11-05 12:40:31,610 INFO historical.fetch_interval query interval=2025-11-01T00:00:00/2025-12-01T00:00:00 usgs_count=1321 records=1321
+2026-11-05 12:40:31,637 INFO historical.download file name=usgs_2025-11.geojson records=1321 sha256=a01618fe52e41da1f367b5858ecd2e291689c10b8da89e4ac45f8d1573942cc8
+2026-11-05 12:40:33,372 INFO historical.fetch_interval query interval=2025-12-01T00:00:00/2026-01-01T00:00:00 usgs_count=1277 records=1277
+2026-11-05 12:40:33,397 INFO historical.download file name=usgs_2025-12.geojson records=1277 sha256=788b974d6ca39aec1559a29dbd5a5210127ccfb83a9ef58f9221e8353a9bdc69
+2026-11-05 12:40:34,985 INFO historical.download dedup duplicates=0 unique=18302 usgs_count_year=18302
+2026-11-05 12:40:35,008 INFO historical.download download_summary files=12 gaps=0 unique=18302 duplicates=0 usgs_count_year=18302

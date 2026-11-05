@@ -60,3 +60,26 @@ def test_placeholders_match_column_count() -> None:
     sql = queries.current_event_upsert("live")
     assert f"${len(queries.CURRENT_COLUMNS)}" in sql
     assert f"${len(queries.CURRENT_COLUMNS) + 1}" not in sql
+
+
+HISTORICAL_STATEMENTS = (queries.HISTORICAL_LOADED_COUNT, queries.HISTORICAL_SOURCE_COUNT, queries.FINGERPRINT_CURRENT,
+                         queries.FINGERPRINT_VERSION, queries.FINGERPRINT_QUARANTINE)
+
+
+def test_historical_verification_queries_use_only_live_schema() -> None:
+    for sql in HISTORICAL_STATEMENTS:
+        assert "live." in sql
+        assert "replay." not in sql and "public." not in sql
+
+
+def test_historical_counts_use_the_id_set_parameter() -> None:
+    assert "event_id = ANY($1)" in queries.HISTORICAL_LOADED_COUNT
+    assert "source = 'usgs_historical'" in queries.HISTORICAL_SOURCE_COUNT
+
+
+def test_fingerprints_are_ordered_hashes_and_quarantine_skips_identity_id() -> None:
+    for sql in HISTORICAL_STATEMENTS[2:]:
+        assert "md5(string_agg(" in sql and "ORDER BY" in sql
+    assert "FROM live.quarantine" in queries.FINGERPRINT_QUARANTINE
+    assert " id::text" not in queries.FINGERPRINT_QUARANTINE
+    assert "received_at::text" in queries.FINGERPRINT_VERSION

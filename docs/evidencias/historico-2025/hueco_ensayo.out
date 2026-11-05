@@ -1,0 +1,48 @@
+2026-11-05 12:47:12,602 INFO historical.fetch_interval query interval=2025-12-30T00:00:00/2025-12-31T00:00:00 usgs_count=30 records=30
+2026-11-05 12:47:12,609 INFO historical.download gap name=usgs_gap_20251230T000000_20251231T000000.geojson records=30 sha256=911eddf654f6647310f8aa68bde75f59c2c73275033f6db078fae76088109d52
+2026-11-05 12:47:12,610 INFO historical.download download_summary files=12 gaps=1 unique=18302 duplicates=0 usgs_count_year=18302
+--- carga
+2026-11-05 11:47:14,595 INFO [consumer.catalog_loader] catalog loaded total=177 inserted=0 updated=0
+2026-11-05 11:48:33,984 INFO [historical.load] verify unique=18302 quarantined=0 expected=18302 loaded=18302 historical_rows=18302
+2026-11-05 11:48:33,984 INFO [historical.load] historical_summary unique=18302 new=0 newer=0 unchanged=18302 late_old=0 quarantined=0 ok=true
+2026-11-05 11:48:34,162 INFO [historical.load] fingerprint table=current_event count=18305 md5=7525caecfae2ea16bbff59a25f0806a7
+2026-11-05 11:48:34,162 INFO [historical.load] fingerprint table=event_version count=18305 md5=a847b48d8b03d75082324850e42f6616
+--- verificacion
+ historical_current 
+--------------------
+              18302
+(1 row)
+--
+ historical_quarantine 
+-----------------------
+                     0
+(1 row)
+--
+   n   |      fingerprint_historical      
+-------+----------------------------------
+ 18302 | cb3875e9826e1c96fc2cdc9db0ed03b6
+(1 row)
+--
+   n   |       fingerprint_versions       
+-------+----------------------------------
+ 18302 | cb3875e9826e1c96fc2cdc9db0ed03b6
+(1 row)
+--- gaps
+[
+ {
+  "name": "usgs_gap_20251230T000000_20251231T000000.geojson",
+  "sha256": "911eddf654f6647310f8aa68bde75f59c2c73275033f6db078fae76088109d52",
+  "records": 30,
+  "extracted_at": "2026-11-05T11:47:12Z",
+  "queries": [
+   {
+    "url": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2025-12-30T00%3A00%3A00&endtime=2025-12-31T00%3A00%3A00&minmagnitude=4&eventtype=earthquake&orderby=time-asc",
+    "start": "2025-12-30T00:00:00",
+    "end": "2025-12-31T00:00:00",
+    "usgs_count": 30,
+    "records": 30
+   }
+  ]
+ }
+]
+{'records': 18302, 'duplicates_discarded': 0, 'unique': 18302, 'usgs_count_year': 18302}

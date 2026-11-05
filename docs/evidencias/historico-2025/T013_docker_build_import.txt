@@ -1,0 +1,12 @@
+NOTA: 'docker compose build consumer' termina con exit 0 pero no reconstruye nada (la imagen compartida solo tiene 'build' en el servicio producer); se usa 'docker compose build producer'.
+#21 DONE 0.0s
+ seismic-observatory-python:0.1.0  Built
+build consumer exit=0
+import ok
+Carga el histórico en PostgreSQL.
+
+options:
+  -h, --help            show this help message and exit
+  --input-dir INPUT_DIR
+                        carpeta con manifest.json
+grep localhost exit=1 (1 = sin coincidencias)

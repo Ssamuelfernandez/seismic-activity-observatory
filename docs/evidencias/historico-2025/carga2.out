@@ -1,0 +1,17 @@
+2026-11-05 11:45:24,312 INFO [consumer.catalog_loader] catalog loaded total=177 inserted=0 updated=0
+2026-11-05 11:46:43,992 INFO [historical.loader] historical_load file=usgs_2025-01.geojson events=1413
+2026-11-05 11:46:43,992 INFO [historical.loader] historical_load file=usgs_2025-02.geojson events=1394
+2026-11-05 11:46:43,992 INFO [historical.loader] historical_load file=usgs_2025-03.geojson events=1178
+2026-11-05 11:46:43,992 INFO [historical.loader] historical_load file=usgs_2025-04.geojson events=1316
+2026-11-05 11:46:43,993 INFO [historical.loader] historical_load file=usgs_2025-05.geojson events=1228
+2026-11-05 11:46:43,993 INFO [historical.loader] historical_load file=usgs_2025-06.geojson events=1156
+2026-11-05 11:46:43,993 INFO [historical.loader] historical_load file=usgs_2025-07.geojson events=2684
+2026-11-05 11:46:43,993 INFO [historical.loader] historical_load file=usgs_2025-08.geojson events=2222
+2026-11-05 11:46:43,993 INFO [historical.loader] historical_load file=usgs_2025-09.geojson events=1604
+2026-11-05 11:46:43,993 INFO [historical.loader] historical_load file=usgs_2025-10.geojson events=1509
+2026-11-05 11:46:43,993 INFO [historical.loader] historical_load file=usgs_2025-11.geojson events=1321
+2026-11-05 11:46:43,993 INFO [historical.loader] historical_load file=usgs_2025-12.geojson events=1277
+2026-11-05 11:46:44,055 INFO [historical.load] verify unique=18302 quarantined=0 expected=18302 loaded=18302 historical_rows=18302
+2026-11-05 11:46:44,055 INFO [historical.load] historical_summary unique=18302 new=0 newer=0 unchanged=18302 late_old=0 quarantined=0 ok=true
+2026-11-05 11:46:44,289 INFO [historical.load] fingerprint table=current_event count=18305 md5=7525caecfae2ea16bbff59a25f0806a7
+2026-11-05 11:46:44,289 INFO [historical.load] fingerprint table=event_version count=18305 md5=a847b48d8b03d75082324850e42f6616

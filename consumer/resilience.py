@@ -73,7 +73,7 @@ def _log_retry(attempt: int, delay: float, context: OpContext, error: BaseExcept
     sqlstate = getattr(error, "sqlstate", None) or NO_VALUE
     ref = context.ref
     logger.warning(
-        'retry attempt=%d wait_s=%g op=%s event_id=%s topic=%s partition=%d offset=%d '
+        'retry attempt=%d wait_s=%g op=%s event_id=%s topic=%s partition=%s offset=%s '
         'error=%s sqlstate=%s detail="%s"',
         attempt, delay, context.op, context.event_id or NO_VALUE, ref.topic, ref.partition, ref.offset,
         type(error).__name__, sqlstate, detail,

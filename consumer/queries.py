@@ -25,6 +25,26 @@ JSONB_COLUMNS = frozenset({"original"})
 UPSERT_FIXED_COLUMNS = frozenset({"event_id"})
 
 
+def fingerprint_query(table: str, columns: tuple[str, ...], order: str) -> str:
+    """Recuento y md5 agregado de una tabla fija (huella para comprobar «0 diferencias»).
+
+    `table`, `columns` y `order` son constantes de este módulo; nunca texto externo.
+    """
+    values = ", ".join(f"{name}::text" for name in columns)
+    return (f"SELECT count(*), coalesce(md5(string_agg(concat_ws('|', {values}), '#' ORDER BY {order})), '') "
+            f"FROM {table}")
+
+
+# Verificación de la carga histórica (data-model §6): solo el esquema `live`.
+HISTORICAL_LOADED_COUNT = "SELECT count(*) FROM live.current_event WHERE event_id = ANY($1)"
+# Q (cuarentena) no se consulta: el rol del consumidor solo puede INSERTAR en `live.quarantine`.
+HISTORICAL_SOURCE_COUNT = "SELECT count(*) FROM live.current_event WHERE source = 'usgs_historical'"
+FINGERPRINT_CURRENT = fingerprint_query("live.current_event", CURRENT_COLUMNS, "event_id")
+FINGERPRINT_VERSION = fingerprint_query("live.event_version", VERSION_COLUMNS, "event_id, updated_ms")
+# Sin la columna `id` de la cuarentena (identidad): la clave natural es (hash, motivo).
+FINGERPRINT_QUARANTINE = fingerprint_query("live.quarantine", QUARANTINE_COLUMNS, "original_sha256, reason")
+
+
 def schema_for_mode(mode: str) -> str:
     """Devuelve el esquema destino de un modo (`live` o `replay`); otro texto lanza ValueError."""
     try:

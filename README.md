@@ -13,6 +13,7 @@ Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
 | `consumidor-idempotente` | Implementada y verificada (2026-11-04), pendiente de la revisión del alumno: consumidor con validación, cuarentena, versiones, reintentos y contadores (C1–C8, C13; pruebas 2, 3, 4, 6 y 8). Evidencias en `docs/evidencias/consumidor-idempotente/`. Queda diferida la prueba de caída de PostgreSQL/Kafka con Docker (ver «Diferidas» en `specs/003-consumidor-idempotente/tasks.md`); el catálogo de países y la comprobación de esquema al arrancar los resuelve `geografia-pais` |
 | `productor-live` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: productor real que consulta USGS cada `POLL_SECONDS` y publica en `earthquakes.live` sin duplicar (B1–B12, A10; pruebas 1, hasta PostgreSQL, y 2). Evidencias en `docs/evidencias/productor-live/`. Sin diferidas; B2, B11 y B12 pendientes de pasar `docs/borradores/productor-live.md` a la memoria |
 | `geografia-pais` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: país por geometría (`ADM0_A3`), catálogo de 177 países cargado al arrancar, comprobación de esquema y reglas de validez (C9–C12, C13; pruebas 5 y 7). Evidencias en `docs/evidencias/geografia-pais/`. Sin tareas diferidas; apuntes en `docs/borradores/geografia-pais.md` |
+| `historico-2025` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: descarga de 2025 (M≥4, mundial, por meses), deduplicación, carga en la base con el procesamiento común y procedimiento de hueco (B12–B18). Evidencias en `docs/evidencias/historico-2025/`; apuntes en `docs/borradores/historico-2025.md` |
 | Resto de features | No empezadas |
 
 La API es por ahora **mínima**: solo responde `GET /api/salud`. El productor ya es el **productor en vivo** (ver su sección más abajo). El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
@@ -43,6 +44,9 @@ El orden de las fases está en [`docs/planificacion/02-roadmap-implementacion.md
 | [`specs/003-consumidor-idempotente/`](specs/003-consumidor-idempotente/) | Spec, plan, investigación, tareas, bitácora, modelo de datos, [quickstart](specs/003-consumidor-idempotente/quickstart.md) y contrato de ejecución del consumidor (`contracts/consumer-runtime.md`) |
 | [`specs/005-geografia-pais/`](specs/005-geografia-pais/) | Spec, plan, investigación, modelo de datos, tareas, bitácora y quickstart de la asignación de país |
 | `data/catalogo/` | Catálogo de países (`paises.geojson`) |
+| [`historical/`](historical/) | Descarga y carga del histórico 2025 (módulos `historical.download_main` y `historical.load_main`) |
+| `data/historical/` | Archivos GeoJSON de USGS de 2025, `manifest.json` y el archivo del ensayo de hueco (14 MB, versionados) |
+| [`specs/006-historico-2025/`](specs/006-historico-2025/) | Spec, plan, investigación, modelo de datos, tareas, bitácora y quickstart del histórico |
 | `CODEMAP.md` | Mapa de dónde está cada cosa |
 | `.specify/`, `.claude/` | Configuración y plantillas de Spec Kit; agentes, habilidades y `settings.json` de Claude Code |
 
@@ -205,6 +209,40 @@ docker compose exec postgres psql -U <POSTGRES_USER> -d <POSTGRES_DB> -c "GRANT 
 - El periodo real entre consultas es algo mayor que `POLL_SECONDS`, porque la espera se suma a la duración del ciclo.
 - Si USGS tarda más del tiempo de espera, el ciclo cuenta como fallo aunque el servicio funcione.
 - Los eventos que USGS elimine del feed no se detectan: salir de la ventana de 24 h no equivale a ser eliminado, y la reconciliación exhaustiva es una ampliación. La recuperación de un hueco tras una parada de más de 24 h con el catálogo histórico está explicada, sin automatizar, en [`docs/borradores/productor-live.md`](docs/borradores/productor-live.md) (B2, B11 y B12).
+
+## Histórico 2025
+
+El histórico (2025, mundial, M≥4, `eventtype=earthquake`, por meses) se carga **por lote**, no por Kafka, con la misma función de procesamiento que el consumidor (`consumer.pipeline.process_record`), así que las reglas de validación, versión, cuarentena y país son idénticas. Es una **instantánea a la fecha de extracción**: no se reconcilian revisiones posteriores de USGS. Los eventos quedan con `source=usgs_historical` y `mode=live`.
+
+**Dónde quedan los archivos.** `data/historical/` contiene 12 archivos `usgs_2025-MM.geojson`, `manifest.json` (consultas, fecha de extracción, registros y sha256 de cada archivo) y `usgs_gap_20251230T000000_20251231T000000.geojson` (ensayo del hueco). Ocupan unos 14 MB y están en el repositorio, así que **un clon no necesita descargar**; la carga comprueba el sha256 de cada archivo y se detiene si falta o cambió alguno.
+
+**Descargar** (solo si se quiere rehacer; necesita red y no usa la base):
+
+```bash
+uv run python -m historical.download_main            # reutiliza lo ya descargado y verificado (0 peticiones)
+uv run python -m historical.download_main --force    # vuelve a pedir todo
+```
+
+Qué esperar: línea `download_summary files=12 … unique=18302 … usgs_count_year=18302`. Si el total único no coincide con el `count` anual de USGS, termina con código distinto de 0 con ambas cifras.
+
+**Cargar** (repetible; la imagen es compartida, por eso se construye con `producer`):
+
+```bash
+docker compose build producer
+docker compose up -d postgres
+MSYS_NO_PATHCONV=1 docker compose run --rm --no-deps -v ./data/historical:/app/data/historical:ro consumer python -m historical.load_main
+```
+
+(`MSYS_NO_PATHCONV=1` solo hace falta en Git Bash de Windows.) Qué esperar: `historical_summary unique=18302 new=… quarantined=0 ok=true`. Repetir el comando da `new=0 newer=0 unchanged=18302` y las mismas huellas; los datos sobreviven a `docker compose restart postgres`. Comprobación SQL en `docs/evidencias/historico-2025/verificacion.sql`.
+
+**Hueco de más de 24 h** (parada del productor): descargar el intervalo perdido y volver a cargar; lo ya presente no se duplica ni retrocede.
+
+```bash
+uv run python -m historical.download_main --start 2025-12-30T00:00:00 --end 2025-12-31T00:00:00
+MSYS_NO_PATHCONV=1 docker compose run --rm --no-deps -v ./data/historical:/app/data/historical:ro consumer python -m historical.load_main
+```
+
+Guía completa: [`specs/006-historico-2025/quickstart.md`](specs/006-historico-2025/quickstart.md). Evidencias: [`docs/evidencias/historico-2025/`](docs/evidencias/historico-2025/).
 
 ## Configuración de Git: el hook `commit-msg`
 
