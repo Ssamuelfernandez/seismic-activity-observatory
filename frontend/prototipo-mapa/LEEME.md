@@ -1,0 +1,7 @@
+# Prototipo del mapa (TEMPORAL, se borra en T007)
+Dos páginas con los 5 000 eventos sintéticos de `mock/truncated.json`, un contador de tiempo hasta pintar y clic para abrir una ficha. Necesita Internet (teselas OSM y textura del globo).
+Primera vez: `cd frontend/prototipo-mapa` y `npm ci`. Copia sola los datos a `public/data/` (no toca los originales).
+Globo 3D (react-globe.gl): `node node_modules/vite/bin/vite.js --config globe/vite.config.js` y abre http://127.0.0.1:5181
+Mapa 2D (MapLibre GL JS): `node node_modules/vite/bin/vite.js --config maplibre/vite.config.js` y abre http://127.0.0.1:5182 (ambas a la vez, en dos terminales; `npm run dev:globe` y `npm run dev:maplibre` hacen lo mismo, pero `npm run` usa aquí Node 20.13.1 y puede fallar).
+Medidas: `docs/evidencias/panel-base-mock/prototipo-mapa.md`. Para repetirlas: `build:globe`, `build:maplibre` y `node scripts/measure.mjs <carpeta>`.
+Prisma hexagonal y celdas (T022, también TEMPORAL): `node node_modules/vite/bin/vite.js --config globe-hex/vite.config.js` y abre http://127.0.0.1:5183 (fondo negro, sin Internet). Panel de la página: resolución de celdas (3/4), anchura del prisma, clic exacto o «más cercano» con tolerancia, y luces. Parámetros también por URL (`?res=4&w=0.6&near=1&tol=12&light=alta`). Medidas: `node node_modules/vite/bin/vite.js build --config globe-hex/vite.config.js` y `node scripts/measure-hex.mjs <carpeta> [all|clicks|colors]`; resultado en `docs/evidencias/panel-base-mock/prototipo-hexagonal.md`.

@@ -11,6 +11,7 @@ Convención: **[OBL]** obligatorio · **[EVAL]** puntúa en rúbrica · **[OPC]*
 - 1-nov-2026 (rev. 3): reconciliación con 02 y 03. Añadidos `country_name` y detalles del contrato (F1–F5, F12), nota de identificadores en inglés (C5, E3), columna "Feature" en la tabla de pruebas (I), requisitos M7–M9, puntos por confirmar nuevos (§5) y **§7 de trazabilidad ID → feature de Spec Kit**.
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet. Se decide en el plan de `panel-base-mock`. Afecta a §0, G0, G2, G11, G16, M2, §5 y la introducción del bloque G (frontend).
 - 5-nov-2026 (rev. 5): nuevo requisito **G17** (diseño responsive, decisión propia del alumno), asignado a `panel-base-mock`.
+- 6-nov-2026 (rev. 6): cambio de diseño visual del alumno (globo HUD con prismas hexagonales y ficha en panel lateral en `panel-base-mock`; `react-globe.gl` queda implícita para el globo). Nuevo requisito **G18** (vista de mapa 2D con MapLibre), asignado a la feature nueva `panel-mapa-2d`. Los textos de G0, G2 y de §0 que dicen «candidata» o «popup» se reconcilian al cerrar `panel-base-mock`.
 
 ---
 
@@ -172,6 +173,7 @@ El frontend no viene hecho: hay que crear el proyecto React (Vite + TypeScript +
 | G15 | **Mock del contrato**: JSON de ejemplo conforme a `CONTRATO-API.md` (con nulos, sin país, truncado y modo replay), partiendo del ejemplo del propio contrato, y selector en `config.json` (`mock` / `api`); **datos del mock marcados como sintéticos** | Se puede desarrollar el panel sin backend | Decisión propia | ☐ |
 | G16 | Accesibilidad mínima: tabla como alternativa, no depender solo del color, foco de teclado en el panel lateral; la vista de globo no sustituye a la tabla accesible | Revisado | Enunc. §8 | ☐ |
 | G17 | **Diseño responsive:** el panel es sobre todo para PC, pero es usable en móvil (breakpoints de Tailwind; mapa, ficha y leyenda sin scroll horizontal a 375 px de ancho) | Captura a 375 px sin scroll horizontal | Decisión propia | ☐ |
+| G18 | **Vista de mapa 2D (MapLibre):** el botón «Ver en mapa 2D» de la ficha abre una vista plana con los eventos **ya cargados** (sin nuevas peticiones), con la misma paleta de profundidad y tamaño por magnitud que el globo, y un aviso visible si `truncated`. En `panel-base-mock` el botón está presente pero marcado como no disponible | Captura del mapa 2D con eventos del mock (y del caso `truncated` con su aviso); sin peticiones nuevas en la pestaña de red | Decisión propia | ☐ |
 
 ### H. Despliegue y defensa
 
@@ -345,6 +347,7 @@ Fuente de verdad de las features: `03-procedimiento-ejecucion.md` §4. Se usa el
 | G3, G4, G5, G5b | `panel-graficos-comparacion` |
 | G7, G9; G12 (`last_ingestion`) | `panel-estado-fallos` |
 | G1 | `panel-conexion-api` |
+| G18 | `panel-mapa-2d` |
 | J1–J8, G10, F12; G12 (`metadata.mode`) | `replay` |
 | Tabla I (las 11 pruebas) | `pruebas-aceptacion` (se prueban antes en `productor-live`, `consumidor-idempotente`, `geografia-pais`, `replay` y `despliegue-tunel`) |
 | G13, H1–H4; pruebas 9 y 10 | `despliegue-tunel` |

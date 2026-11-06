@@ -1,6 +1,6 @@
 # Research: Panel base con mock y mapa
 
-Formato: decisión, motivo, alternativas. Decisiones del alumno aplicadas el 2026-11-05. Solo la elección final de la librería del mapa (R7) sigue abierta, en `T007`.
+Formato: decisión, motivo, alternativas. Decisiones del alumno aplicadas el 2026-11-05; cambio de diseño HUD del alumno aplicado el 2026-11-06 (R6, R7, R8, R11). La librería del globo (R7) la decidió el alumno el 2026-11-06; su instalación está en `T007` (no ejecutada).
 
 ## R1. Versiones (comprobadas con `npm view <paquete> version`, 2026-11-05)
 
@@ -35,19 +35,28 @@ Formato: decisión, motivo, alternativas. Decisiones del alumno aplicadas el 202
 
 ## R6. Escalas y símbolos
 
-- **Decisión**: V1–V4 de la spec tal cual (radio 3 + 1,5 × clamp(M, 0, 8); viridis de cinco clases con cortes 10/35/70/300; ND magnitud = contorno sin relleno de 5 px; ND profundidad = gris `#9CA3AF`).
-- **Motivo**: son los valores por defecto de la spec y coinciden con los cortes de histograma de la API (`api.md` §5.1). Si la librería elegida no admite el contorno discontinuo o el hueco, se usa el equivalente más cercano y se anota en la tarea.
+- **Decisión (revisada el 2026-11-06)**: V1–V4 de la spec vigente (altura del prisma máx(0,010; 0,0125 × clamp(M, 0, 8)); rampa cálida de cinco clases con cortes 10/35/70/300; ND = gris `#8A93A0`, de altura mínima fija si falta la magnitud). Sustituye a la versión del 2026-11-05 (radio en píxeles, viridis, ND hueco).
+- **Motivo**: son los valores por defecto de la spec y coinciden con los cortes de histograma de la API (`api.md` §5.1). Los colores se eligieron por luminancia descendente y contraste ≥ 3 : 1 sobre negro (calculados con la fórmula de WCAG). Se comprueba el color visible bajo la luz de la escena en `T022`.
 
-## R7. Prototipo del mapa (D1) — candidatas decididas; elección final del alumno en `T007`
+## R7. Prototipo del mapa (D1) — Decidido por el alumno, 2026-11-06: `react-globe.gl` (instalación en `T007`)
+
+*Nota 2026-11-06*: el cambio de diseño (globo HUD) lleva a `react-globe.gl` y MapLibre pasa a la feature `panel-mapa-2d`; el alumno lo confirmó el 2026-11-06 (P6). `T022` añade un prototipo corto del prisma hexagonal.
+
 
 - **Criterios** (los de la spec, mismos para cada candidata, con `truncated.json`): tiempo hasta pintar 5 000 círculos (ref. ≤ 3 s), fluidez al mover/ampliar, pulsar un círculo pequeño y abrir la ficha, uso en 375 px, atribución legible, peso del build (kB comprimidos).
 - **Ejecución**: carpeta temporal `frontend/prototipo-mapa/` con su propio `package.json`, **fuera del lock del proyecto**, que se borra tras decidir. Candidatas confirmadas por el alumno (2026-11-05): A (`react-globe.gl`) y B (MapLibre GL JS).
 - **Resultado**: tabla en `docs/evidencias/panel-base-mock/prototipo-mapa.md` y decisión del alumno anotada en `plan.md`.
 - **Alternativa**: decidir sin prototipo (descartada: la spec pide probar con 5 000 eventos).
 
-## R8. Fondo del mapa y atribución
+## R8. Fondo del globo y atribución (revisada el 2026-11-06)
 
-- **Decisión**: se fija con la elección final de D1 en `T007` (depende de la librería). Requisitos fijos: sin clave, atribución visible siempre fuera de la tarjeta de leyenda (V5), Natural Earth para fronteras. Q4/Q2/P5 resueltas: sin cambios aquí. Si se usan teselas OSM, respetar su política de uso (sin carga masiva; es una práctica de clase).
+- **Decisión**: fondo negro, sin textura ni teselas ni atmósfera (dirección HUD del alumno). Atribución fija fuera de la leyenda y de la ficha (V5): Natural Earth, la librería del globo y «Fondo: negro, sin textura». Sin clave y sin Internet para el fondo. Sustituye a «la fuente del fondo se fija en `T007`» (teselas OSM o textura de la NASA, que ya no se usan).
+
+## R11. Prisma hexagonal y celdas hexagonales (añadida el 2026-11-06)
+
+- **Decisión provisional**: `pointsData` con `pointResolution = 6` para los sismos y `hexPolygonsData` para los continentes (sin `ADM0_A3 = ATA`), según la documentación de `react-globe.gl` 2.38.0 / `three-globe` 2.45.6 leída en el prototipo. Criterio del alumno (2026-11-06): si el prisma de 6 caras se ve bien de cerca, es bueno aunque a escala de globo no se distinga como hexágono. Se confirma con `T022`.
+- **Motivo**: son las capas que ofrece la librería; `pointResolution` es el número de segmentos del cilindro. La documentación no dice «hexágono», así que se comprueba con el prototipo.
+- **Alternativas**: `customLayerData` con malla propia (más trabajo, solo si el cilindro de 6 lados queda claramente mal de cerca); `pointsMerge: true` (descartada: impide pulsar cada punto).
 
 ## R9. Capturas y comprobación a 375 px
 

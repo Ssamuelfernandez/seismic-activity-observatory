@@ -1,0 +1,105 @@
+{
+  "edge": "Edge 156 headless (puppeteer-core)",
+  "results": [
+    {
+      "candidate": "globe",
+      "viewport": "1280",
+      "paintMs": [
+        293,
+        486,
+        407
+      ],
+      "count": 5000,
+      "webgl": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Ti (0x00002489) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "scrollOk": true,
+      "attribution": {
+        "visible": true,
+        "fontPx": "11px",
+        "height": 16
+      },
+      "pan": {
+        "frames": 113,
+        "meanMs": 26.815044247787615,
+        "p95Ms": 30.100000000000364
+      },
+      "clickCenterHits": "5/5",
+      "clickOffset6pxHits": "0/4",
+      "clickedMag": -0.5
+    },
+    {
+      "candidate": "globe",
+      "viewport": "375",
+      "paintMs": [
+        517,
+        426,
+        423
+      ],
+      "count": 5000,
+      "webgl": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Ti (0x00002489) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "scrollOk": true,
+      "attribution": {
+        "visible": true,
+        "fontPx": "11px",
+        "height": 40
+      },
+      "pan": {
+        "frames": 138,
+        "meanMs": 21.95724637681159,
+        "p95Ms": 30
+      },
+      "clickCenterHits": "5/5",
+      "clickOffset6pxHits": "0/4",
+      "clickedMag": -0.5
+    },
+    {
+      "candidate": "maplibre",
+      "viewport": "1280",
+      "paintMs": [
+        562,
+        398,
+        405
+      ],
+      "count": 5000,
+      "webgl": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Ti (0x00002489) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "scrollOk": true,
+      "attribution": {
+        "visible": true,
+        "fontPx": "11px",
+        "height": 16
+      },
+      "pan": {
+        "frames": 301,
+        "meanMs": 10.000332225913619,
+        "p95Ms": 10.099999999999454
+      },
+      "clickCenterHits": "5/5",
+      "clickOffset6pxHits": "4/4",
+      "clickedMag": -0.5
+    },
+    {
+      "candidate": "maplibre",
+      "viewport": "375",
+      "paintMs": [
+        386,
+        367,
+        366
+      ],
+      "count": 5000,
+      "webgl": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Ti (0x00002489) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "scrollOk": true,
+      "attribution": {
+        "visible": true,
+        "fontPx": "11px",
+        "height": 28
+      },
+      "pan": {
+        "frames": 301,
+        "meanMs": 10,
+        "p95Ms": 10.100000000000364
+      },
+      "clickCenterHits": "3/5",
+      "clickOffset6pxHits": "1/4",
+      "clickedMag": -0.5
+    }
+  ]
+}

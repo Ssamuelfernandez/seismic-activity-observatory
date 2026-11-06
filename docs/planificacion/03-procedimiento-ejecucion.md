@@ -9,6 +9,7 @@ Los IDs (A1, B6, C4, F8, G5…) remiten al checklist; las fases (F0–F13) remit
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet; se decide en el plan de `panel-base-mock`. Afecta a §0, §3 (árbol de carpetas), §4.2, §6 y §7.5.
 - Nov-2026 (rev. 5): el profesor permite cambiar el frontend; decisión del alumno: **React + TypeScript + Vite + Tailwind** en lugar de Angular (mapa `react-globe.gl`, plan B MapLibre o Leaflet; TanStack Query; Chart.js; store único de filtros). Afecta a §0, §3, §4.2, §5 y §7.5. El alcance de las features no cambia.
 - 5-nov-2026 (rev. 6): se añade el requisito G17 (diseño responsive) a la fila `008-panel-base-mock` de §4.
+- 6-nov-2026 (rev. 7): se añade a §4 la feature `panel-mapa-2d` (F8f, G18): vista de mapa 2D con MapLibre, nacida del cambio de diseño visual de `008-panel-base-mock` (globo HUD). Se identifica por su nombre y no por número (los números de §4 son orientativos), sin renumerar las demás.
 
 ---
 
@@ -169,6 +170,7 @@ Una feature = un ciclo completo de Spec Kit = una rama. Spec Kit numera las carp
 | `015-despliegue-tunel` | F11 | G13, H1–H4 | 9 y 10 (cerrar y reabrir túnel) |
 | `016-mediciones-costes` | F12 | K1–K8, E6 | — |
 | `017-memoria-defensa` | F13 | Bloque L, D y C14 (calidad), M, H5 | — |
+| `panel-mapa-2d` | F8f | G18 | — (captura del mapa 2D con eventos ya cargados y aviso de truncado; sin peticiones nuevas) |
 
 Notas:
 - `006` es independiente y puede ir en paralelo a `003`–`005` (el roadmap lo permite desde F1). `008` puede empezar en cuanto exista `002`, porque solo necesita el contrato.

@@ -1,0 +1,25 @@
+{
+  "name": "prototipo-mapa",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "description": "TEMPORAL (T005-T006, se borra en T007): prototipo de la libreria del mapa.",
+  "scripts": {
+    "prepare:data": "node scripts/copy-data.mjs",
+    "dev:globe": "node node_modules/vite/bin/vite.js --config globe/vite.config.js",
+    "dev:maplibre": "node node_modules/vite/bin/vite.js --config maplibre/vite.config.js",
+    "build:globe": "node node_modules/vite/bin/vite.js build --config globe/vite.config.js",
+    "build:maplibre": "node node_modules/vite/bin/vite.js build --config maplibre/vite.config.js"
+  },
+  "dependencies": {
+    "maplibre-gl": "6.16.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-globe.gl": "2.38.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "6.2.1",
+    "puppeteer-core": "25.16.0",
+    "vite": "8.3.6"
+  }
+}

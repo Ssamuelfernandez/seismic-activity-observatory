@@ -16,9 +16,9 @@ Reglas que el panel aplica:
 
 | Valor | Regla |
 |---|---|
-| `mag` nula | Símbolo ND de magnitud (V3); ficha «ND». Nunca 0 |
-| `mag` negativa | Válida; radio mínimo (3 px); la ficha muestra el valor real |
-| profundidad nula | Color ND (V4); ficha «ND» |
+| `mag` nula | Barra gris de altura mínima fija (V3); ficha «ND». Nunca 0 |
+| `mag` negativa | Válida; altura mínima (0,010); la ficha muestra el valor real |
+| profundidad nula | Gris ND (V4); ficha «ND» |
 | profundidad negativa | Válida; clase 1; la ficha muestra el valor real |
 | `magType` nulo | Ficha «ND» |
 | `place` nulo | Ficha «Sin descripción» |
@@ -47,38 +47,38 @@ Resultado de validar: `{ ok: true, config }` o `{ ok: false, field, message }`.
 | Estado | Contenido | Pantalla |
 |---|---|---|
 | `loading` | — | indicador de carga |
-| `ready` | `EventsResponse` con ≥ 1 feature | mapa |
-| `empty` | `EventsResponse` con `features: []` | mapa con fronteras + «Sin eventos en el intervalo» |
+| `ready` | `EventsResponse` con ≥ 1 feature | globo |
+| `empty` | `EventsResponse` con `features: []` | globo con continentes + «Sin eventos en el intervalo» |
 | `error` | mensaje | mensaje visible (mock ilegible) |
 | `api-unavailable` | — | «Modo api: la conexión con la API todavía no está disponible»; sin eventos |
 
 Transiciones: `loading` → `ready` \| `empty` \| `error`; con `mode: "api"` se pasa directo a `api-unavailable`.
 
-**DepthClass** (V2, lógica pura): 
+**DepthClass** (V2, lógica pura; valores revisados el 2026-11-06, fuente: la spec):
 
 | Clase | Rango (km) | Color |
 |---|---|---|
-| 1 | < 10 (incluye negativas) | `#FDE725` |
-| 2 | 10 a < 35 | `#5EC962` |
-| 3 | 35 a < 70 | `#21918C` |
-| 4 | 70 a < 300 | `#3B528B` |
-| 5 | ≥ 300 | `#440154` |
-| ND | nula | `#9CA3AF` |
+| 1 | < 10 (incluye negativas) | `#FFF1A6` |
+| 2 | 10 a < 35 | `#FDB347` |
+| 3 | 35 a < 70 | `#F26A5A` |
+| 4 | 70 a < 300 | `#D2468C` |
+| 5 | ≥ 300 | `#7C4DCB` |
+| ND | nula | `#8A93A0` |
 
-**Símbolo de evento** (resultado de `symbolFor(properties, depth)`): `{ radius, fill | null, stroke, strokeWidth }`. Radio: 3 + 1,5 × clamp(mag, 0, 8); magnitud nula: radio 5, `fill: null`, contorno de 2 px con el color de profundidad (o gris si ambas faltan). Cada evento deriva su símbolo; no se guarda.
+**Símbolo de evento** (resultado de `symbolFor(properties, depth)`): `{ altitude, radiusDeg, color, isNd }`. Altura: máx(0,010; 0,0125 × clamp(mag, 0, 8)); magnitud nula: altura 0,010 y color gris ND; profundidad nula: color gris ND y altura por magnitud. Anchura fija `radiusDeg` 0,45 (revisable en `T022`). Cada evento deriva su símbolo; no se guarda.
 
-**MapView (contrato de aislamiento, 03 §7.5)**
+**GlobeView (contrato de aislamiento, 03 §7.5; antes `MapView`)**
 
 | Dirección | Elemento | Tipo |
 |---|---|---|
 | Entrada | `events` | `EventFeature[]` |
-| Entrada | `selectedId` | texto o `null` (para resaltar el círculo) |
+| Entrada | `selectedId` | texto o `null` (para resaltar el prisma en naranja) |
 | Salida | `onSelect` | recibe el `EventFeature` pulsado, o `null` al pulsar fuera |
 
-El mapa no lee config, mock, ficha ni leyenda. El orden de dibujo (magnitud descendente, nulas al final de debajo) se hace dentro y no altera `events`.
+El globo no lee config, mock, ficha ni leyenda. La lista de países con la que dibuja las celdas se obtiene de `paises.geojson` sin `ADM0_A3 = ATA`; no altera `events`.
 
-**Evento seleccionado**: estado local de `App` (`EventFeature | null`). No es un filtro y no va al store de D2.
+**Evento seleccionado**: estado local de `App` (`EventFeature | null`). No es un filtro y no va al store de D2. La ficha (panel lateral / cajón) se muestra mientras sea distinto de `null`.
 
 ## Relaciones
 
-`AppConfig` + `Scenario` → capa de datos → `DataState` → (`EventsResponse.features` → `MapView`) y (`metadata` → contadores). El evento seleccionado va de `MapView` a la ficha.
+`AppConfig` + `Scenario` → capa de datos → `DataState` → (`EventsResponse.features` → `GlobeView`) y (`metadata` → contadores). El evento seleccionado va de `GlobeView` a la ficha. El botón «Ver en mapa 2D» de la ficha no emite nada en esta feature; la feature `panel-mapa-2d` reutilizará este mismo evento y `EventsResponse` ya cargados, sin pedir datos nuevos.

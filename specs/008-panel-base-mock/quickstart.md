@@ -4,7 +4,7 @@ Guía de validación al cerrar la feature. Rutas relativas a la raíz del reposi
 
 ## Requisitos
 
-- Node 24.18.0 (`frontend/.nvmrc`) y npm. Internet (el fondo del mapa lo necesita).
+- Node 24.18.0 (`frontend/.nvmrc`) y npm. Sin Internet para el fondo: desde el 2026-11-06 es negro, sin textura ni teselas.
 - Sin claves ni variables de entorno.
 
 ## 1. Instalación y build (G0, SC-001)
@@ -32,12 +32,12 @@ Abrir, con `mode: "mock"` en `public/config.json`:
 
 | URL | Esperado |
 |---|---|
-| `/` (caso `base`) | Fronteras, ~30 círculos de tamaños y colores distintos, leyenda, atribuciones y banner «DATOS SINTÉTICOS (MOCK)» |
-| `/?scenario=truncated` | 5 000 círculos en ≤ 3 s; ficha abre; `metadata.total` 6 213 en el JSON |
+| `/` (caso `base`) | Globo negro con continentes en celdas hexagonales (sin Antártida), ~30 prismas de largos y colores distintos, cabecera, leyenda, atribución, banner «DATOS SINTÉTICOS (MOCK)», y a 1280 px las dos columnas reservadas vacías |
+| `/?scenario=truncated` | 5 000 prismas en ≤ 3 s y ≥ 30 fps al mover; ficha abre; `metadata.total` 6 213 en el JSON |
 | `/?scenario=replay` | Se pinta como el resto; sin texto de modo |
-| `/?scenario=empty` | Mapa con fronteras y «Sin eventos en el intervalo» |
+| `/?scenario=empty` | Globo con continentes y «Sin eventos en el intervalo» |
 
-Pulsar: el evento con `mww` (ficha «Magnitud 5,4 (mww)»), el de `magType` nulo («ND»), el de magnitud nula (símbolo hueco; «ND»), el del mar («Sin país asignado») y el de magnitud −0,06 / profundidad −0,01 (valores tal cual). Esc cierra la ficha. Consola del navegador: cero errores en el recorrido; ninguna pantalla muestra «NaN» ni «undefined».
+Pulsar: el evento con `mww` (panel lateral de ficha «Magnitud 5,4 (mww)»), el de `magType` nulo («ND»), el de magnitud nula (barra gris de altura mínima; «ND»), el del mar («Sin país asignado») y el de magnitud −0,06 / profundidad −0,01 (valores tal cual). En todas las fichas «Ver en mapa 2D» está visible y muestra «próximamente». A 375 px la ficha es un cajón inferior. Esc cierra la ficha. Consola del navegador: cero errores en el recorrido; ninguna pantalla muestra «NaN» ni «undefined».
 
 ## 4. Configuración en tiempo de ejecución (G15, SC-011)
 
@@ -64,7 +64,7 @@ Con las herramientas del navegador, emular 375 × 667, 768 y 1280 de ancho. Para
 document.documentElement.scrollWidth <= window.innerWidth
 ```
 
-Esperado: `true`. Capturas en `docs/evidencias/panel-base-mock/` (mínimo: `base` a 1280 px, `base` a 375 px con ficha, `truncated` a 375 px, `empty`, mensaje api). Las dos atribuciones se leen sin pulsar nada.
+Esperado: `true`. Capturas en `docs/evidencias/panel-base-mock/` (mínimo: `base` a 1280 px, `base` a 375 px con ficha, `truncated` a 375 px, `empty`, mensaje api). La atribución (Natural Earth, librería, «Fondo: negro, sin textura») se lee sin pulsar nada. Las columnas reservadas solo aparecen desde 1024 px.
 
 ## 7. Pruebas automáticas (SC-008, SC-013)
 
@@ -76,4 +76,4 @@ Comprobar que `frontend/` no contiene Dockerfile, compose, filtros, tabla, gráf
 
 ## Límites conocidos
 
-El fondo necesita Internet; `truncated` no avisa del truncado; `refreshSeconds` y `timeoutMs` no se aplican; fronteras 1:110 m simplificadas.
+Con 5 000 prismas el globo rinde menos que un mapa 2D y el prisma pequeño es difícil de pulsar; `truncated` no avisa del truncado; `refreshSeconds` y `timeoutMs` no se aplican; fronteras 1:110 m simplificadas.

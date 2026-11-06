@@ -6,6 +6,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 - 31-oct-2026 (rev. 2): el frontend se construye desde cero; F1 pasa a ser exploración de USGS; F8 se divide en F8a–F8e; mock del contrato.
 - 1-nov-2026 (rev. 3): **reconciliación con `03-procedimiento-ejecucion.md`.** Cada fase indica su feature de Spec Kit (la tabla única vive en 03 §4; las "semillas de spec" se movieron allí). Se añade **F1b** (feature `contratos-y-modelo`, antes de la infraestructura). Identificadores de BD, topics, scripts y módulos en inglés. Estructura del repo alineada con 03 §3. Panel: la parte de replay pasa a F9; F8d queda en estado y fallos. Calendario orientativo hasta el 19-nov (§5).
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet; se decide en el plan de `panel-base-mock` tras un prototipo corto. Afecta a §0, §1 (Frontend: mapa), F8a y riesgos (§4).
+- 6-nov-2026 (rev. 5): cambio de diseño visual del alumno en F8a (globo HUD con prismas hexagonales y ficha en panel lateral; `react-globe.gl` implícita) y nueva fase **F8f** (mapa 2D con MapLibre, feature `panel-mapa-2d`, G18). El texto de F8a («popup», «círculos») se reconcilia al cerrar `panel-base-mock`.
 
 ---
 
@@ -211,6 +212,10 @@ El panel se construye en cinco bloques. Primero se trabaja contra el **mock del 
 **F8e — Conexión con la API real (feature `012-panel-conexion-api`)**
 - Cambiar `config.json` a `mode: api` (dev: `http://localhost:8000`); contrastar respuestas reales con el mock y corregir diferencias (si el contrato y la API divergen, se arregla la API o el mock, nunca el contrato sin avisar).
 - **Verificación:** con datos reales ver mapa + tabla + gráficos coherentes al cambiar filtros; capturas con filtros visibles. **Cubre:** G1.
+
+**F8f — Vista de mapa 2D con MapLibre (feature `panel-mapa-2d`)**
+- Vista plana (MapLibre GL JS, versión fijada en su plan) que se abre desde el botón «Ver en mapa 2D» de la ficha del globo (presente, aunque no disponible, desde `008`). Usa **solo los eventos ya cargados** (sin nuevas peticiones a la API ni al mock), la paleta de profundidad y el tamaño por magnitud del globo y los tokens de `specs/008-panel-base-mock/diseno-visual.md`. Aviso visible si `metadata.truncated` (G12). Atribución propia del mapa base si usa teselas. Va después de `009` (necesita el aviso de truncado) y no bloquea a `010`–`013`.
+- **Verificación:** abrir el mapa 2D desde una ficha con el mock `base` y `truncated`; pestaña de red sin peticiones nuevas; captura. **Cubre:** G18.
 
 ### F9 — Replay histórico (feature `013-replay`)
 - `producer/replay.py`: lee una selección ordenada por fecha desde los archivos de F6 (p. ej. 20 eventos de una zona), publica en `earthquakes.replay` con `mode="replay"`, `replay_at`, velocidad configurable (p. ej. 1 evento / 2 s), incluyendo **duplicados y revisiones controlados** (se pueden fabricar y etiquetar como sintéticos o forzar con dos versiones reales).
