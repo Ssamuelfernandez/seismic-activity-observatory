@@ -144,7 +144,7 @@ export function FeedStatus({ metadata, error, health, healthError, period, updat
           {stale && (
             <Row
               k="Ingesta"
-              v={<span className="text-hud-bad">{lag === null ? 'Aún no hay ingesta' : `Atrasada ${Math.round(lag / 60)} min`}</span>}
+              v={<span className="text-hud-bad">{lag === null ? 'Aún no hay ingesta' : `hace ${Math.round(lag / 60)} min (calculado en el panel)`}</span>}
             />
           )}
           <Row k="Última ingesta de USGS" v={ingestion === null ? 'ND' : formatUtc(ingestion, true)} />
@@ -168,7 +168,7 @@ export function FeedStatus({ metadata, error, health, healthError, period, updat
             <li className="flex gap-2">
               <span aria-hidden>-</span>
               <span>
-                <span className="text-hud-text">Ingesta:</span> la última vez que el servidor descargó datos de USGS.
+                <span className="text-hud-text">Ingesta:</span> la última vez que el servidor descargó datos de USGS. El «hace X min» de una ingesta atrasada se calcula en el panel (respuesta generada − última ingesta).
               </span>
             </li>
             <li className="flex gap-2">
@@ -179,7 +179,6 @@ export function FeedStatus({ metadata, error, health, healthError, period, updat
             </li>
           </ul>
           <p className="mt-3 text-center text-[10px] uppercase tracking-[0.18em] text-hud-dim">Horas en UTC</p>
-          <p className="mt-1 text-center text-[9px] text-hud-dim">Sismos: USGS · Fronteras: Natural Earth</p>
         </div>
       )}
     </div>

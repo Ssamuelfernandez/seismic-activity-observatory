@@ -1,0 +1,96 @@
+npm notice run observatorio-sismico-panel@0.1.0 npx
+npm notice run vitest run tests/_tmp_t036.test.ts --disableConsoleIntercept
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
++  0.0s eventos: data=sin lectura | error=no | state=loading | dataUpdatedAt=-Z || salud: sin lectura | error=no
++  0.1s eventos: data=sin lectura | error=no | state=loading | dataUpdatedAt=-Z || salud: ok last_ingestion=1794338357146 | error=no
++  0.1s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:02Z || salud: ok last_ingestion=1794338357146 | error=no
++  1.1s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:03Z || salud: ok last_ingestion=1794338357146 | error=no
++  2.1s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:04Z || salud: ok last_ingestion=1794338357146 | error=no
++  3.1s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:05Z || salud: ok last_ingestion=1794338357146 | error=no
++  4.2s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:06Z || salud: ok last_ingestion=1794338357146 | error=no
++  5.2s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:07Z || salud: ok last_ingestion=1794338357146 | error=no
++  6.2s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:08Z || salud: ok last_ingestion=1794338357146 | error=no
++  7.3s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:09Z || salud: ok last_ingestion=1794338357146 | error=no
++  8.3s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:09Z || salud: ok last_ingestion=1794338357146 | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."}
++  8.3s eventos: data=207 eventos (total 207) | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."} | state=error | dataUpdatedAt=19:20:09Z || salud: ok last_ingestion=1794338357146 | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."}
++ 41.7s eventos: data=207 eventos (total 207) | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."} | state=error | dataUpdatedAt=19:20:09Z || salud: ok last_ingestion=1794338417238 | error=no
++ 41.7s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:44Z || salud: ok last_ingestion=1794338417238 | error=no
++ 42.7s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:45Z || salud: ok last_ingestion=1794338417238 | error=no
++ 43.7s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:46Z || salud: ok last_ingestion=1794338417238 | error=no
++ 44.7s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:47Z || salud: ok last_ingestion=1794338417238 | error=no
++ 45.8s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:48Z || salud: ok last_ingestion=1794338417238 | error=no
++ 46.8s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:49Z || salud: ok last_ingestion=1794338417238 | error=no
++ 47.8s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:50Z || salud: ok last_ingestion=1794338417238 | error=no
++ 48.8s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:51Z || salud: ok last_ingestion=1794338417238 | error=no
++ 49.9s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:52Z || salud: ok last_ingestion=1794338417238 | error=no
++ 50.9s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:53Z || salud: ok last_ingestion=1794338417238 | error=no
++ 51.9s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:54Z || salud: ok last_ingestion=1794338417238 | error=no
++ 53.0s eventos: data=208 eventos (total 208) | error=no | state=ready | dataUpdatedAt=19:20:55Z || salud: ok last_ingestion=1794338417238 | error=no
++ 54.0s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:56Z || salud: ok last_ingestion=1794338417238 | error=no
++ 55.0s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:57Z || salud: ok last_ingestion=1794338417238 | error=no
++ 56.0s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:58Z || salud: ok last_ingestion=1794338417238 | error=no
++ 57.1s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:20:59Z || salud: ok last_ingestion=1794338417238 | error=no
++ 58.1s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:21:00Z || salud: ok last_ingestion=1794338417238 | error=no
++ 59.1s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:21:01Z || salud: ok last_ingestion=1794338417238 | error=no
++ 60.1s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:21:02Z || salud: ok last_ingestion=1794338417238 | error=no
++ 61.2s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:21:03Z || salud: ok last_ingestion=1794338417238 | error=no
++ 62.2s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:21:04Z || salud: ok last_ingestion=1794338417238 | error=no
++ 67.2s eventos: data=207 eventos (total 207) | error=no | state=ready | dataUpdatedAt=19:21:04Z || salud: ok last_ingestion=1794338417238 | error=ApiError{status:503, code:database_unavailable, message:"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."}
++ 67.2s eventos: data=207 eventos (total 207) | error=ApiError{status:503, code:database_unavailable, message:"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."} | state=error | dataUpdatedAt=19:21:04Z || salud: ok last_ingestion=1794338417238 | error=ApiError{status:503, code:database_unavailable, message:"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."}
++ 98.1s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:40Z || salud: ok last_ingestion=1794338417238 | error=ApiError{status:503, code:database_unavailable, message:"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."}
++ 98.1s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:40Z || salud: ok last_ingestion=1794338417238 | error=no
++ 99.2s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:41Z || salud: ok last_ingestion=1794338417238 | error=no
++100.2s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:42Z || salud: ok last_ingestion=1794338417238 | error=no
++101.2s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:43Z || salud: ok last_ingestion=1794338417238 | error=no
++102.3s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:44Z || salud: ok last_ingestion=1794338417238 | error=no
++103.3s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:45Z || salud: ok last_ingestion=1794338417238 | error=no
++104.3s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:46Z || salud: ok last_ingestion=1794338417238 | error=no
++105.3s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:47Z || salud: ok last_ingestion=1794338417238 | error=no
++106.4s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:48Z || salud: ok last_ingestion=1794338417238 | error=no
++107.4s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:49Z || salud: ok last_ingestion=1794338417238 | error=no
++108.4s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:50Z || salud: ok last_ingestion=1794338417238 | error=no
++109.5s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:51Z || salud: ok last_ingestion=1794338417238 | error=no
++110.5s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:52Z || salud: ok last_ingestion=1794338417238 | error=no
++111.5s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:53Z || salud: ok last_ingestion=1794338417238 | error=no
++112.5s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:54Z || salud: ok last_ingestion=1794338417238 | error=no
++113.6s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:54Z || salud: ok last_ingestion=1794338514960 | error=no
++113.6s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:55Z || salud: ok last_ingestion=1794338514960 | error=no
++114.6s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:56Z || salud: ok last_ingestion=1794338514960 | error=no
++115.6s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:57Z || salud: ok last_ingestion=1794338514960 | error=no
++116.7s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:21:59Z || salud: ok last_ingestion=1794338514960 | error=no
++117.7s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:00Z || salud: ok last_ingestion=1794338514960 | error=no
++118.7s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:01Z || salud: ok last_ingestion=1794338514960 | error=no
++119.7s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:02Z || salud: ok last_ingestion=1794338514960 | error=no
++120.8s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:03Z || salud: ok last_ingestion=1794338514960 | error=no
++121.8s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:04Z || salud: ok last_ingestion=1794338514960 | error=no
++122.8s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:05Z || salud: ok last_ingestion=1794338514960 | error=no
++123.9s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:06Z || salud: ok last_ingestion=1794338514960 | error=no
++124.9s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:07Z || salud: ok last_ingestion=1794338514960 | error=no
++125.9s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:08Z || salud: ok last_ingestion=1794338514960 | error=no
++127.0s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:09Z || salud: ok last_ingestion=1794338514960 | error=no
++128.0s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:10Z || salud: ok last_ingestion=1794338514960 | error=no
++129.0s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:11Z || salud: ok last_ingestion=1794338514960 | error=no
++130.0s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:12Z || salud: ok last_ingestion=1794338514960 | error=no
++131.1s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:13Z || salud: ok last_ingestion=1794338514960 | error=no
++132.1s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:14Z || salud: ok last_ingestion=1794338514960 | error=no
++133.1s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:15Z || salud: ok last_ingestion=1794338514960 | error=no
++134.2s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:16Z || salud: ok last_ingestion=1794338514960 | error=no
++135.2s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:17Z || salud: ok last_ingestion=1794338514960 | error=no
++136.2s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:18Z || salud: ok last_ingestion=1794338514960 | error=no
++137.2s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:19Z || salud: ok last_ingestion=1794338514960 | error=no
++138.3s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:20Z || salud: ok last_ingestion=1794338514960 | error=no
++139.3s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:21Z || salud: ok last_ingestion=1794338514960 | error=no
++140.3s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:22Z || salud: ok last_ingestion=1794338514960 | error=no
++141.3s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:23Z || salud: ok last_ingestion=1794338514960 | error=no
++142.4s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:24Z || salud: ok last_ingestion=1794338514960 | error=no
++143.4s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:25Z || salud: ok last_ingestion=1794338514960 | error=no
++144.4s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:26Z || salud: ok last_ingestion=1794338514960 | error=no
++145.4s eventos: data=206 eventos (total 206) | error=no | state=ready | dataUpdatedAt=19:22:27Z || salud: ok last_ingestion=1794338514960 | error=no
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  20:20:02
+   Duration  145.72s (tests 100%)
+

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { AppShell } from '@/components/AppShell';
+import { Attribution } from '@/components/Attribution';
 import { MobileLayout } from '@/components/mobile/MobileLayout';
 import { useIsMobile } from '@/shared/hooks/useMediaQuery';
 import { FiltersBar } from '@/components/FiltersBar';
@@ -103,6 +104,8 @@ export function App() {
             onSelect={setSelected}
             onShowAll={() => setShowTable(true)}
             unavailable={!response}
+            loading={data.state === 'loading'}
+            total={response?.metadata.total ?? null}
           />
         </div>
         {showTable && (
@@ -114,6 +117,7 @@ export function App() {
             settings={settings}
             onSelect={setSelected}
             onClose={() => setShowTable(false)}
+            total={response?.metadata.total ?? null}
           />
         )}
         {/* Centro arriba: barra de filtros y, debajo, los avisos (replay, fallos de la API, datos antiguos o sintéticos). */}
@@ -127,6 +131,7 @@ export function App() {
             updatedAt={data.updatedAt}
             hasData={Boolean(response)}
             hasSynthetic={events.some((e) => e.properties.is_synthetic)}
+            state={data.state}
           />
         </div>
         {/* Columna derecha: estado del feed arriba, mucho aire y debajo la ficha (si hay). */}
@@ -147,6 +152,8 @@ export function App() {
         </div>
         {/* Cajón inferior: una flechita sube las estadísticas desde abajo. */}
         <StatsDrawer className="z-20" stats={data.stats} error={data.statsError} />
+        {/* Atribución fija abajo a la derecha, por encima del cajón. */}
+        <Attribution />
       </div>
     </AppShell>
   );

@@ -1,0 +1,7 @@
+$ grep -rn "text-\[9px\]\|Natural Earth" src (atribución)
+src/components/Attribution.tsx:2:export const ATTRIBUTION_TEXT = 'Sismos: USGS · Fronteras: Natural Earth (dominio público) · Globo: react-globe.gl y three (MIT) · Sin textura';
+src/components/EventsTable.tsx:164:                    {p.is_synthetic && <span className="ml-2 text-[9px] uppercase tracking-[0.12em] text-hud-dim">(sintético)</span>}
+--- la linea de 9 px de FeedStatus:
+exit=1
+--- 9px/10px en Attribution:
+exit=1

@@ -1,0 +1,6 @@
+NAME                             IMAGE                              COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+seismic-observatory-api-1        seismic-observatory-python:0.1.0   "uvicorn api.main:ap…"   api        15 minutes ago   Up 3 minutes (healthy)    127.0.0.1:8000->8000/tcp
+seismic-observatory-consumer-1   seismic-observatory-python:0.1.0   "python -m consumer.…"   consumer   15 minutes ago   Up 15 minutes (healthy)   
+seismic-observatory-kafka-1      apache/kafka:4.1.2                 "/__cacert_entrypoin…"   kafka      5 days ago       Up 5 days (healthy)       9092/tcp
+seismic-observatory-postgres-1   postgres:16.15-bookworm            "docker-entrypoint.s…"   postgres   5 days ago       Up 2 minutes (healthy)    127.0.0.1:5433->5432/tcp
+seismic-observatory-producer-1   seismic-observatory-python:0.1.0   "python -m producer.…"   producer   15 minutes ago   Up 15 minutes (healthy)   

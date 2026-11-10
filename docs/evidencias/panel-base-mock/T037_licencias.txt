@@ -1,0 +1,20 @@
+== react-globe.gl
+  "name": "react-globe.gl",
+  "version": "2.38.0",
+  "license": "MIT",
+    "name": "Vasco Asturiano",
+== three
+  "name": "three",
+  "version": "0.187.0",
+  "license": "MIT",
+
+== FUENTES-Y-LICENCIAS.md (Natural Earth)
+4-
+5:`frontend/public/datos/paises.geojson`: copia sin modificar de Natural Earth, Admin 0 Countries, escala 1:110.000.000, 177 entidades en esta copia.
+6-
+7-- Descargado: 27 de octubre de 2026.
+--
+12-- El repositorio fuente puede cambiar: usa la copia entregada para reproducibilidad.
+13:- `ADM0_A3` identifica la entidad Natural Earth; no asumir que todos los códigos son ISO oficiales. `NAME_ES`, `ADMIN`, `CONTINENT` y `SUBREGION` contienen atributos útiles.
+14-- Fronteras simplificadas y convenciones cartográficas del proveedor; no sirve para delimitar jurisdicción legal ni para asignar con precisión eventos costeros. No incluye todos los pequeños territorios. El mar no es un país.
+15-

@@ -3,6 +3,7 @@ import type { ObservatoryData } from '@/shared/hooks/useObservatory';
 import { useViewport } from '@/shared/hooks/useMediaQuery';
 import type { Appearance } from '@/shared/lib/appearance';
 import type { EventFeature } from '@/shared/types/contract';
+import { Attribution } from '../Attribution';
 import { EventCard } from '../EventCard';
 import { FeedStatus } from '../FeedStatus';
 import { FiltersBar } from '../FiltersBar';
@@ -114,6 +115,7 @@ export function MobileLayout({
           updatedAt={data.updatedAt}
           hasData={Boolean(response)}
           hasSynthetic={hasSynthetic}
+          state={data.state}
         />
 
         {selected && !panel && !listOpen && (
@@ -134,6 +136,8 @@ export function MobileLayout({
                 setListOpen(true);
               }}
               unavailable={!response}
+              loading={data.state === 'loading'}
+              total={response?.metadata.total ?? null}
             />
           </Sheet>
         )}
@@ -148,7 +152,7 @@ export function MobileLayout({
           </Sheet>
         )}
 
-        {listOpen && <MobileEventsList events={events} selected={selected} settings={settings} onSelect={pick} onClose={() => setListOpen(false)} />}
+        {listOpen && <MobileEventsList events={events} selected={selected} settings={settings} onSelect={pick} onClose={() => setListOpen(false)} total={response?.metadata.total ?? null} />}
       </div>
 
       {/* Barra inferior */}
@@ -167,6 +171,8 @@ export function MobileLayout({
           </button>
         ))}
       </nav>
+      {/* Franja de atribución en el pie, fuera de las hojas. */}
+      <Attribution variant="mobile" />
     </div>
   );
 }

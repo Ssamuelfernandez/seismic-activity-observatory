@@ -113,11 +113,12 @@ export function StatsPanel({ stats, error }: StatsPanelProps) {
             />
           ))}
         </div>
-        <div className="mt-1 flex justify-between text-[9px] tabular-nums text-hud-dim">
-          <span>{formatUtcTime(buckets[0].hour_start)}</span>
-          <span>máx. {maxHour}</span>
-          <span>{formatUtcTime(buckets[buckets.length - 1].hour_start)}</span>
-        </div>
+        {buckets.length > 0 && (
+          <div className="mt-1 flex justify-between text-[9px] tabular-nums text-hud-dim">
+            <span>{formatUtcTime(buckets[0].hour_start)}</span>
+            <span>{formatUtcTime(buckets[buckets.length - 1].hour_start)}</span>
+          </div>
+        )}
         <p className="mt-1 text-[10px] text-hud-dim">La última barra (más tenue) puede estar incompleta.</p>
       </Block>
 
@@ -139,7 +140,7 @@ export function StatsPanel({ stats, error }: StatsPanelProps) {
           ))}
         </ul>
         {stats.by_country.items.length > countries.length && (
-          <p className="mt-2 text-[10px] text-hud-dim">+{stats.by_country.items.length - countries.length} países más</p>
+          <p className="mt-2 text-[10px] text-hud-dim">mostrados {countries.length} de {stats.by_country.items.length} países</p>
         )}
       </Block>
 

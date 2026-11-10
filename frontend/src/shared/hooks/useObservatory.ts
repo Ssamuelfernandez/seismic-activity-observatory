@@ -1,29 +1,18 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import type { ApiError } from '@/shared/api/client';
 import { fetchEvents, fetchHealth, fetchStats } from '@/shared/api/dataSource';
+import { buildRequest, resolveFilters } from '@/shared/api/requests';
 import { getConfig } from '@/shared/api/runtimeConfig';
-import type { ApiFilters, EventsResponse, HealthResponse, StatsResponse } from '@/shared/types/contract';
-import { useFilters, type Filters } from '@/store/filters';
+import { deriveDataState, type DataState } from '@/shared/lib/dataState';
+import type { EventsResponse, HealthResponse, StatsResponse } from '@/shared/types/contract';
+import { useFilters } from '@/store/filters';
 
-const HOUR_MS = 3_600_000;
-const DAY_MS = 24 * HOUR_MS;
-const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
-
-/** Filtros válidos para la API; un país mal escrito se omite en vez de provocar un 400. */
-function buildFilters(s: Filters): { mode: ApiFilters['mode']; min_mag?: number; country_id?: string; hours: number; custom: { from: string; to: string } | null } {
-  const c = s.country.trim();
-  const validCountry = /^([a-z]{3}|none)$/i.test(c) ? c : undefined;
-  return {
-    mode: s.mode,
-    min_mag: s.minMag > 0 ? s.minMag : undefined,
-    country_id: validCountry,
-    hours: s.hours === 0 ? 24 : s.hours,
-    // Rango por fechas solo si es válido; si no, se usan las últimas 24 h.
-    custom: s.hours === 0 && DAY_RE.test(s.dateFrom) && DAY_RE.test(s.dateTo) && s.dateFrom <= s.dateTo ? { from: s.dateFrom, to: s.dateTo } : null,
-  };
-}
+/** Cada cuánto se consulta /salud (ms). */
+const HEALTH_REFRESH_MS = 30_000;
 
 export interface ObservatoryData {
+  /** `loading` | `ready` | `empty` | `error`; `error` puede convivir con la última lectura buena (`response`). */
+  state: DataState;
   response: EventsResponse | null;
   /** Error de la API (eventos), si lo hay. */
   error: ApiError | null;
@@ -38,46 +27,47 @@ export interface ObservatoryData {
 
 /**
  * Qué hace:
- *     Pide eventos, estadísticas y salud con los filtros del store y los refresca periódicamente.
+ *     Pide eventos, estadísticas y salud con los filtros del store y los refresca cada `refreshSeconds`.
  * Recibe:
- *     Nada (lee el store de filtros).
+ *     Nada (lee el store de filtros y la config cargada).
  * Devuelve:
- *     Los datos, el estado de carga y los errores.
+ *     Los datos, el estado derivado (`loading`/`ready`/`empty`/`error`) y los errores.
  * Por qué existe:
- *     Es la única puerta de datos del panel; no calcula estadísticas (G1, G6, G9).
+ *     Es la única puerta de datos del panel; no calcula estadísticas (G1, G6, G9). TanStack Query no lanza otra
+ *     consulta mientras una sigue en vuelo, así que el refresco no se solapa; `retry: false` evita reintentos
+ *     ocultos y `keepPreviousData` mantiene la última lectura buena (`updatedAt` la marca como antigua).
  */
 export function useObservatory(): ObservatoryData {
   const { mode, hours, dateFrom, dateTo, minMag, country } = useFilters();
-  const f = buildFilters({ mode, hours, dateFrom, dateTo, minMag, country });
+  const filters = resolveFilters({ mode, hours, dateFrom, dateTo, minMag, country });
   const refetchInterval = getConfig().refreshSeconds * 1000;
 
-  // El inicio relativo se calcula al pedir, no en la clave, para que la clave no cambie cada segundo.
-  const range = () =>
-    f.custom
-      ? { start: `${f.custom.from}T00:00:00.000Z`, end: new Date(Date.parse(`${f.custom.to}T00:00:00.000Z`) + DAY_MS).toISOString() }
-      : { start: new Date(Date.now() - f.hours * HOUR_MS).toISOString() };
-  const common = { mode: f.mode, min_mag: f.min_mag, country_id: f.country_id };
-
+  // La clave lleva los filtros resueltos (sin «ahora»): el `start` relativo se calcula al pedir, no cada segundo.
   const events = useQuery({
-    queryKey: ['events', f],
-    queryFn: ({ signal }) => fetchEvents({ ...common, ...range() }, signal),
+    queryKey: ['events', filters],
+    queryFn: ({ signal }) => fetchEvents(buildRequest(filters, Date.now()), signal),
     refetchInterval,
+    retry: false,
     placeholderData: keepPreviousData,
   });
   const stats = useQuery({
-    queryKey: ['stats', f],
-    queryFn: ({ signal }) => fetchStats({ ...common, ...range() }, signal),
+    queryKey: ['stats', filters],
+    queryFn: ({ signal }) => fetchStats(buildRequest(filters, Date.now()), signal),
     refetchInterval,
+    retry: false,
     placeholderData: keepPreviousData,
   });
   const health = useQuery({
     queryKey: ['health'],
     queryFn: ({ signal }) => fetchHealth(signal),
-    refetchInterval: 30_000,
+    refetchInterval: HEALTH_REFRESH_MS,
+    retry: false,
   });
 
+  const response = events.data ?? null;
   return {
-    response: events.data ?? null,
+    state: deriveDataState(response ? response.features.length : null, events.error !== null),
+    response,
     error: events.error as ApiError | null,
     isFetching: events.isFetching,
     updatedAt: events.dataUpdatedAt,

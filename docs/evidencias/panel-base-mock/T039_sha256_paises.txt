@@ -1,0 +1,4 @@
+6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f *C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend/public/datos/paises.geojson
+6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f *C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/data/catalogo/paises.geojson
+6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f *public/datos/paises.geojson
+esperado 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f

@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import type { ApiError } from '@/shared/api/client';
 import { useNow } from '@/shared/hooks/useNow';
 import { formatAge, formatUtc } from '@/shared/lib/format';
+import type { DataState } from '@/shared/lib/dataState';
 import { ingestionLag } from '@/shared/lib/feedHealth';
 import type { HealthResponse, Metadata } from '@/shared/types/contract';
 
@@ -16,6 +17,8 @@ interface StatusBannersProps {
   /** Hay una lectura de eventos (buena o antigua) en pantalla. */
   hasData: boolean;
   hasSynthetic: boolean;
+  /** Estado derivado de los datos: `empty` produce el aviso de «sin eventos» (nunca es un error). */
+  state: DataState;
   className?: string;
   /** `mobile`: una sola línea plegable («● Aviso +1»), sobre fondo opaco. */
   variant?: 'desktop' | 'mobile';
@@ -43,15 +46,15 @@ function Banner({ tone, title, children }: { tone: Tone; title: string; children
 
 /**
  * Qué hace:
- *     Muestra los avisos: reproducción, fallo de la API con la última lectura marcada como antigua, ingesta desactualizada y datos sintéticos.
+ *     Muestra los avisos: reproducción, resultado truncado, vacío, fallo de la API con la última lectura marcada como antigua, ingesta desactualizada y datos sintéticos.
  * Recibe:
- *     metadata, error, health, healthError, updatedAt, hasData, hasSynthetic y variante.
+ *     metadata, error, health, healthError, updatedAt, hasData, hasSynthetic, state y variante.
  * Devuelve:
  *     Los avisos que correspondan, o nada.
  * Por qué existe:
  *     Un error nunca debe presentarse como «0 eventos» (G7, G9, G10).
  */
-export function StatusBanners({ metadata, error, health, healthError, updatedAt, hasData, hasSynthetic, className = '', variant = 'desktop' }: StatusBannersProps) {
+export function StatusBanners({ metadata, error, health, healthError, updatedAt, hasData, hasSynthetic, state, className = '', variant = 'desktop' }: StatusBannersProps) {
   const now = useNow(15_000);
   const [open, setOpen] = useState(false);
   const { lagSeconds, stale } = ingestionLag(health, metadata?.mode);
@@ -59,7 +62,22 @@ export function StatusBanners({ metadata, error, health, healthError, updatedAt,
 
   const items: { key: string; tone: Tone; title: string; body: ReactNode }[] = [];
   if (metadata?.mode === 'replay') {
-    items.push({ key: 'replay', tone: 'info', title: 'Modo reproducción', body: 'Datos históricos reproducidos, no son en vivo.' });
+    items.push({ key: 'replay', tone: 'info', title: 'REPRODUCCIÓN', body: 'Datos históricos reproducidos, no son en vivo.' });
+  }
+  if (metadata?.truncated) {
+    items.push({
+      key: 'truncated',
+      tone: 'warn',
+      title: `Mostrando ${metadata.count} de ${metadata.total} eventos`,
+      body: 'Resultado truncado. Las estadísticas cubren todos los eventos del filtro.',
+    });
+  }
+  if (state === 'empty') {
+    items.push(
+      metadata?.mode === 'replay'
+        ? { key: 'empty', tone: 'info', title: 'Sin eventos reproducidos', body: 'La reproducción no tiene eventos con estos filtros. No es un error.' }
+        : { key: 'empty', tone: 'info', title: 'Sin eventos en el intervalo', body: 'La API no devolvió eventos con estos filtros. No es un error.' },
+    );
   }
   if (error && hasData) {
     items.push({
@@ -85,7 +103,7 @@ export function StatusBanners({ metadata, error, health, healthError, updatedAt,
       key: 'stale',
       tone: 'bad',
       title: 'Datos desactualizados',
-      body: lagSeconds === null ? 'Aún no hay ninguna ingesta de USGS.' : `La última ingesta de USGS iba ${Math.round(lagSeconds / 60)} min por detrás de la respuesta.`,
+      body: lagSeconds === null ? 'Aún no hay ninguna ingesta de USGS.' : `La última ingesta de USGS fue hace ${Math.round(lagSeconds / 60)} min (calculado en el panel: respuesta generada − última ingesta).`,
     });
   }
   if (hasSynthetic) {

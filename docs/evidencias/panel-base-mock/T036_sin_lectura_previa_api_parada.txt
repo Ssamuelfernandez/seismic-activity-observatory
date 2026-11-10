@@ -1,0 +1,26 @@
+npm notice run observatorio-sismico-panel@0.1.0 npx
+npm notice run vitest run tests/_tmp_t036.test.ts --disableConsoleIntercept
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
++  0.0s eventos: data=sin lectura | error=no | state=loading | dataUpdatedAt=-Z || salud: sin lectura | error=no
++  0.0s eventos: data=sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."} | state=error | dataUpdatedAt=-Z || salud: sin lectura | error=no
++  0.0s eventos: data=sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."} | state=error | dataUpdatedAt=-Z || salud: sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."}
++  1.1s eventos: data=sin lectura | error=no | state=loading | dataUpdatedAt=-Z || salud: sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."}
++  1.1s eventos: data=sin lectura | error=no | state=loading | dataUpdatedAt=-Z || salud: sin lectura | error=no
++  1.1s eventos: data=sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."} | state=error | dataUpdatedAt=-Z || salud: sin lectura | error=no
++  1.1s eventos: data=sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."} | state=error | dataUpdatedAt=-Z || salud: sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."}
++  2.1s eventos: data=sin lectura | error=no | state=loading | dataUpdatedAt=-Z || salud: sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."}
++  2.1s eventos: data=sin lectura | error=no | state=loading | dataUpdatedAt=-Z || salud: sin lectura | error=no
++  2.1s eventos: data=sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."} | state=error | dataUpdatedAt=-Z || salud: sin lectura | error=no
++  2.1s eventos: data=sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."} | state=error | dataUpdatedAt=-Z || salud: sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."}
++  3.1s eventos: data=sin lectura | error=no | state=loading | dataUpdatedAt=-Z || salud: sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."}
++  3.1s eventos: data=sin lectura | error=no | state=loading | dataUpdatedAt=-Z || salud: sin lectura | error=no
++  3.1s eventos: data=sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."} | state=error | dataUpdatedAt=-Z || salud: sin lectura | error=no
++  3.1s eventos: data=sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."} | state=error | dataUpdatedAt=-Z || salud: sin lectura | error=ApiError{status:0, code:network, message:"No se pudo conectar con la API."}
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  20:20:27
+   Duration  3.27s (tests 99%, import 1%)
+

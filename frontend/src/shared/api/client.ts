@@ -1,24 +1,9 @@
+import type { ApiErrorCode, ApiFilters, EventsResponse, HealthResponse, StatsResponse } from '@/shared/types/contract';
+import { ApiError } from './apiError';
+import { parseEvents, parseHealth, parseStats } from './parse';
 import { getConfig } from './runtimeConfig';
-import type {
-  ApiErrorCode,
-  ApiFilters,
-  EventsResponse,
-  HealthResponse,
-  StatsResponse,
-} from '@/shared/types/contract';
 
-/** Error de la API o de red, con el código del contrato cuando existe. */
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    /** Estado HTTP; 0 si no hubo respuesta (red caída, API apagada). */
-    readonly status: number,
-    readonly code: ApiErrorCode | 'network' | 'timeout' | 'unknown',
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
-}
+export { ApiError } from './apiError';
 
 /** URL base de la API (`apiBaseUrl` de config.json). En desarrollo `/api` se reenvía por el proxy de Vite. */
 const baseUrl = () => getConfig().apiBaseUrl.replace(/\/$/, '');
@@ -33,8 +18,11 @@ function toQuery(params: Record<string, string | number | undefined>): string {
   return s ? `?${s}` : '';
 }
 
-/** GET con timeout y el cuerpo de error del contrato: `{"error": {"code", "message"}}`. */
-async function get<T>(path: string, params: Record<string, string | number | undefined>, signal?: AbortSignal): Promise<T> {
+/**
+ * GET con timeout (`timeoutMs`), cuerpo de error del contrato (`{"error": {"code", "message"}}`)
+ * y comprobación de la forma de la respuesta con `parser` antes de devolverla.
+ */
+async function get<T>(path: string, params: Record<string, string | number | undefined>, parser: (raw: unknown) => T, signal?: AbortSignal): Promise<T> {
   const timeout = AbortSignal.timeout(getConfig().timeoutMs);
   const sig = signal ? AbortSignal.any([signal, timeout]) : timeout;
   try {
@@ -53,7 +41,14 @@ async function get<T>(path: string, params: Record<string, string | number | und
       }
       throw new ApiError(message, res.status, code);
     }
-    return (await res.json()) as T;
+    let body: unknown;
+    try {
+      body = await res.json();
+    } catch (e) {
+      if (e instanceof SyntaxError) throw new ApiError('La API respondió con un cuerpo que no es JSON.', res.status, 'invalid_response');
+      throw e;
+    }
+    return parser(body);
   } catch (e) {
     if (e instanceof ApiError) throw e;
     if (e instanceof DOMException && e.name === 'TimeoutError') {
@@ -70,12 +65,12 @@ async function get<T>(path: string, params: Record<string, string | number | und
  * Recibe:
  *     filters: filtros y límite opcional. signal: cancelación opcional.
  * Devuelve:
- *     La respuesta de eventos.
+ *     La respuesta de eventos ya comprobada (`ApiError` `invalid_response` si la forma no cuadra).
  * Por qué existe:
  *     Es el único punto de acceso HTTP a /eventos (G1); el origen lo elige `dataSource.ts`.
  */
 export const apiEvents = (filters: ApiFilters & { limit?: number; cursor?: string }, signal?: AbortSignal) =>
-  get<EventsResponse>('/eventos', { ...filters }, signal);
+  get<EventsResponse>('/eventos', { ...filters }, parseEvents, signal);
 
 /**
  * Qué hace:
@@ -83,11 +78,11 @@ export const apiEvents = (filters: ApiFilters & { limit?: number; cursor?: strin
  * Recibe:
  *     filters: filtros. signal: cancelación opcional.
  * Devuelve:
- *     La respuesta de estadísticas.
+ *     La respuesta de estadísticas ya comprobada.
  * Por qué existe:
  *     Las estadísticas las calcula la API (G1, G3).
  */
-export const apiStats = (filters: ApiFilters, signal?: AbortSignal) => get<StatsResponse>('/estadisticas', { ...filters }, signal);
+export const apiStats = (filters: ApiFilters, signal?: AbortSignal) => get<StatsResponse>('/estadisticas', { ...filters }, parseStats, signal);
 
 /**
  * Qué hace:
@@ -95,8 +90,8 @@ export const apiStats = (filters: ApiFilters, signal?: AbortSignal) => get<Stats
  * Recibe:
  *     signal: cancelación opcional.
  * Devuelve:
- *     La respuesta de salud.
+ *     La respuesta de salud ya comprobada.
  * Por qué existe:
  *     Alimenta el estado del feed y el aviso de datos desactualizados (G7).
  */
-export const apiHealth = (signal?: AbortSignal) => get<HealthResponse>('/salud', {}, signal);
+export const apiHealth = (signal?: AbortSignal) => get<HealthResponse>('/salud', {}, parseHealth, signal);

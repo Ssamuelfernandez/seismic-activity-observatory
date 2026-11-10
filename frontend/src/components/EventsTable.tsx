@@ -60,6 +60,8 @@ interface EventsTableProps {
   settings: Appearance;
   onSelect: (event: EventFeature | null) => void;
   onClose: () => void;
+  /** `metadata.total` de la API; si falta no se muestra total. */
+  total?: number | null;
   className?: string;
   style?: CSSProperties;
 }
@@ -68,13 +70,13 @@ interface EventsTableProps {
  * Qué hace:
  *     Muestra todos los campos del contrato en una tabla ordenable; pulsar una fila selecciona el evento.
  * Recibe:
- *     events, evento seleccionado, apariencia, onSelect, onClose y estilo opcional.
+ *     events, evento seleccionado, apariencia, onSelect, onClose, total de la API y estilo opcional.
  * Devuelve:
  *     La tabla.
  * Por qué existe:
  *     Es la alternativa accesible al globo y al color (G8, G12).
  */
-export function EventsTable({ events, selected, settings, onSelect, onClose, className = '', style }: EventsTableProps) {
+export function EventsTable({ events, selected, settings, onSelect, onClose, total = null, className = '', style }: EventsTableProps) {
   const [sort, setSort] = useState<{ key: SortKey; dir: 'asc' | 'desc' }>({ key: 'time', dir: 'desc' });
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -100,7 +102,7 @@ export function EventsTable({ events, selected, settings, onSelect, onClose, cla
       <div className="mb-2 flex items-baseline justify-between text-[11px] uppercase tracking-[0.2em]">
         <span className="text-hud-accent">Todos los eventos</span>
         <span className="flex items-baseline gap-4">
-          <span className="text-[10px] tracking-[0.12em] text-hud-dim">{events.length} eventos</span>
+          <span className="text-[10px] tracking-[0.12em] text-hud-dim">mostrados {events.length}{total === null ? '' : ` · total ${total} (API)`}</span>
           <button ref={closeRef} onClick={onClose} className="text-hud-dim hover:text-hud-accent">
             Cerrar ✕
           </button>

@@ -17,6 +17,10 @@ interface RecentEventsProps {
   onShowAll: () => void;
   /** No hay lectura de la API (error): no se muestra «0 eventos». */
   unavailable?: boolean;
+  /** Aún no ha llegado la primera lectura. */
+  loading?: boolean;
+  /** `metadata.total` de la API; si falta no se muestra total. */
+  total?: number | null;
   className?: string;
 }
 
@@ -24,13 +28,13 @@ interface RecentEventsProps {
  * Qué hace:
  *     Lista los eventos más recientes, de más nuevo a más antiguo; un clic equivale a pinchar su pilar.
  * Recibe:
- *     events, selected, settings, onSelect, onShowAll, unavailable y className.
+ *     events, selected, settings, onSelect, onShowAll, unavailable, loading, total (de la API) y className.
  * Devuelve:
  *     La lista flotante con el acceso a la tabla.
  * Por qué existe:
  *     Da una lectura rápida de lo último que ha pasado (G2, G8).
  */
-export function RecentEvents({ events, selected, settings, onSelect, onShowAll, unavailable = false, className = '' }: RecentEventsProps) {
+export function RecentEvents({ events, selected, settings, onSelect, onShowAll, unavailable = false, loading = false, total = null, className = '' }: RecentEventsProps) {
   // Ordenar por fecha es presentación, no estadística.
   const recent = useMemo(
     () => [...events].sort((a, b) => b.properties.time - a.properties.time).slice(0, MAX_ROWS),
@@ -43,7 +47,7 @@ export function RecentEvents({ events, selected, settings, onSelect, onShowAll, 
       <div className="mb-2 flex items-baseline justify-between text-[11px] uppercase tracking-[0.2em]">
         <span className="text-hud-accent">Eventos recientes</span>
         <span className="flex items-baseline gap-3 text-[10px] tracking-[0.12em] text-hud-dim">
-          {unavailable ? 'Sin datos' : `${recent.length} de ${events.length}`}
+          {unavailable ? (loading ? 'Cargando…' : 'Sin datos') : `mostrados ${recent.length}${total === null ? '' : ` · total ${total} (API)`}`}
           <button onClick={onShowAll} className="uppercase text-hud-accent underline-offset-2 hover:underline">
             Ver todos
           </button>

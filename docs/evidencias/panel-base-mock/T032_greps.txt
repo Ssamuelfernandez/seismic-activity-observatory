@@ -1,0 +1,17 @@
+== usos de .length/events.length con rotulo
+src/components/EventsTable.tsx:105:          <span className="text-[10px] tracking-[0.12em] text-hud-dim">mostrados {events.length}{total === null ? '' : ` · total ${total} (API)`}</span>
+src/components/mobile/MobileEventsList.tsx:41:        <span className="text-[11px] uppercase tracking-[0.15em] text-hud-accent">Todos · mostrados {events.length}{total === null ? '' : ` · total ${total} (API)`}</span>
+src/components/RecentEvents.tsx:50:          {unavailable ? (loading ? 'Cargando…' : 'Sin datos') : `mostrados ${recent.length}${total === null ? '' : ` · total ${total} (API)`}`}
+src/components/StatsPanel.tsx:142:        {stats.by_country.items.length > countries.length && (
+src/components/StatsPanel.tsx:143:          <p className="mt-2 text-[10px] text-hud-dim">mostrados {countries.length} de {stats.by_country.items.length} países</p>
+src/components/StatusBanners.tsx:114:    if (items.length === 0) return null;
+src/components/StatusBanners.tsx:124:          {items.length > 1 && <span className="text-hud-dim">+{items.length - 1}</span>}
+== 'mostrados' presentes
+src/components/EventsTable.tsx:105:          <span className="text-[10px] tracking-[0.12em] text-hud-dim">mostrados {events.length}{total === null ? '' : ` · total ${total} (API)`}</span>
+src/components/mobile/MobileEventsList.tsx:41:        <span className="text-[11px] uppercase tracking-[0.15em] text-hud-accent">Todos · mostrados {events.length}{total === null ? '' : ` · total ${total} (API)`}</span>
+src/components/RecentEvents.tsx:50:          {unavailable ? (loading ? 'Cargando…' : 'Sin datos') : `mostrados ${recent.length}${total === null ? '' : ` · total ${total} (API)`}`}
+src/components/StatsPanel.tsx:143:          <p className="mt-2 text-[10px] text-hud-dim">mostrados {countries.length} de {stats.by_country.items.length} países</p>
+src/components/StatusBanners.tsx:99:    items.push({ key: 'backend', tone: 'bad', title: 'Backend sin respuesta', body: 'No responde al comprobar su estado; los datos mostrados pueden no estar al día.' });
+== 'máx.' / 'países más'
+== shared importa components
+== source en store

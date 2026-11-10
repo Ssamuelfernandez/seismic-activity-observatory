@@ -49,6 +49,7 @@ El orden de las fases está en [`docs/planificacion/02-roadmap-implementacion.md
 | `data/historical/` | Archivos GeoJSON de USGS de 2025, `manifest.json` y el archivo del ensayo de hueco (14 MB, versionados) |
 | [`specs/006-historico-2025/`](specs/006-historico-2025/) | Spec, plan, investigación, modelo de datos, tareas, bitácora y quickstart del histórico |
 | [`specs/007-api/`](specs/007-api/) | Spec, plan, investigación, modelo de datos, tareas, bitácora y quickstart de la API de consulta |
+| [`frontend/`](frontend/README.md) | Panel web (globo 3D, filtros, tabla, estadísticas): cómo ejecutarlo, configuración, mock y material reutilizado en [`frontend/README.md`](frontend/README.md) |
 | `CODEMAP.md` | Mapa de dónde está cada cosa |
 | `.specify/`, `.claude/` | Configuración y plantillas de Spec Kit; agentes, habilidades y `settings.json` de Claude Code |
 

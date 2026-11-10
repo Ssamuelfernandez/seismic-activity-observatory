@@ -1,0 +1,11 @@
+### curl directo con api parada
+exit=0
+### curl proxy con api parada
+HTTP/1.1 502 Bad Gateway
+Vary: Origin
+Content-Type: text/plain
+Date: Tue, 10 Nov 2026 19:20:34 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked
+

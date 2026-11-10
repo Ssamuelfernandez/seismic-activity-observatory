@@ -48,7 +48,7 @@ export function FiltersBar({ variant = 'desktop' }: { variant?: 'desktop' | 'mob
     : f.country === 'none'
       ? NO_COUNTRY_TEXT
       : (countries.find((c) => c.id.toLowerCase() === f.country.toLowerCase())?.name ?? f.country);
-  const period = f.hours === 0 ? (f.dateFrom && f.dateTo ? `${f.dateFrom} → ${f.dateTo} UTC` : 'Fechas…') : (PERIODS[f.hours] ?? `${f.hours} h`);
+  const period = f.mode === 'replay' ? '2025' : f.hours === 0 ? (f.dateFrom && f.dateTo ? `${f.dateFrom} → ${f.dateTo} UTC` : 'Fechas…') : (PERIODS[f.hours] ?? `${f.hours} h`);
   const parts = [
     f.mode === 'live' ? 'En vivo' : 'Reproducción',
     period,

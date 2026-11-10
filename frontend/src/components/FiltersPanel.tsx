@@ -162,8 +162,19 @@ export function FiltersPanel() {
       </div>
       <div>
         <Chips label="Modo" options={MODES} value={f.mode} onChange={(mode) => f.set({ mode })} />
-        <Chips label="Periodo (hacia atrás desde ahora)" options={HOURS} value={f.hours} onChange={choosePeriod} />
-        {f.hours === 0 && <DateRange />}
+        {f.mode === 'replay' ? (
+          // En reproducción el periodo es fijo (2025, api.md §5): el selector queda desactivado.
+          <div className="py-1.5" role="group" aria-label="Periodo">
+            <div className={`mb-1 ${LABEL}`}>Periodo</div>
+            <button disabled aria-disabled="true" className="cursor-not-allowed border border-hud-line px-2 py-0.5 text-[11px] text-hud-dim opacity-70">
+              2025
+            </button>
+            <p className="mt-1 text-[10px] leading-snug text-hud-dim">La reproducción cubre todo 2025; el periodo no se puede cambiar.</p>
+          </div>
+        ) : (
+          <Chips label="Periodo (hacia atrás desde ahora)" options={HOURS} value={f.hours} onChange={choosePeriod} />
+        )}
+        {f.mode === 'live' && f.hours === 0 && <DateRange />}
       </div>
       <div>
         <Chips label="Magnitud mínima" options={MAGS} value={f.minMag} onChange={(minMag) => f.set({ minMag })} />

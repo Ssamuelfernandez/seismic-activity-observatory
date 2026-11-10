@@ -47,47 +47,47 @@
 
 ## Bloque 3 — Capa de datos (G6, G7, G9, G11, G12)
 
-- [ ] T030 **Petición, parseo y cliente**: `src/shared/api/requests.ts` (pura: filtros del store → parámetros; `live` con ventana de horas o rango UTC; **`replay` con `start=2025-01-01T00:00:00.000Z` y `end=2026-01-01T00:00:00.000Z`**; `country_id` solo `none` o tres letras), `src/shared/api/parse.ts` (pura: guarda de forma de `EventsResponse`, `StatsResponse` y `HealthResponse`; los nulos se conservan; `ApiError` con código `invalid_response`) y `src/shared/api/client.ts` (`apiBaseUrl` y `timeoutMs` de la config, cuerpo de error del contrato).
+- [x] T030 **Petición, parseo y cliente**: `src/shared/api/requests.ts` (pura: filtros del store → parámetros; `live` con ventana de horas o rango UTC; **`replay` con `start=2025-01-01T00:00:00.000Z` y `end=2026-01-01T00:00:00.000Z`**; `country_id` solo `none` o tres letras), `src/shared/api/parse.ts` (pura: guarda de forma de `EventsResponse`, `StatsResponse` y `HealthResponse`; los nulos se conservan; `ApiError` con código `invalid_response`) y `src/shared/api/client.ts` (`apiBaseUrl` y `timeoutMs` de la config, cuerpo de error del contrato).
   - **Prueba**: pruebas de T038 (parseo y nulos, ventana de replay).
   - **Cubre**: G1, G6, G12; FR-010, FR-011, FR-014; SC-009.
 
-- [ ] T031 **Hook de datos**: `src/shared/hooks/useObservatory.ts` con TanStack Query: refresco cada `refreshSeconds` sin solapar peticiones, `retry: false`, última lectura conservada y marcada como antigua (`updatedAt`), estados `loading`/`ready`/`empty`/`error`; replay con `features: []` es `empty`, no error; cambiar un filtro limpia la selección; store `src/store/filters.ts` con `mode`, `hours`, `dateFrom`, `dateTo`, `minMag`, `country` (sin `source`). En `mode=replay` el selector de periodo queda desactivado y muestra «2025».
+- [x] T031 **Hook de datos**: `src/shared/hooks/useObservatory.ts` con TanStack Query: refresco cada `refreshSeconds` sin solapar peticiones, `retry: false`, última lectura conservada y marcada como antigua (`updatedAt`), estados `loading`/`ready`/`empty`/`error`; replay con `features: []` es `empty`, no error; cambiar un filtro limpia la selección; store `src/store/filters.ts` con `mode`, `hours`, `dateFrom`, `dateTo`, `minMag`, `country` (sin `source`). En `mode=replay` el selector de periodo queda desactivado y muestra «2025».
   - **Prueba**: con el mock `realistic`, un cambio de filtro cambia globo, tabla y estadísticas a la vez; `replay` vacío muestra el estado vacío sin error.
   - **Cubre**: G6, G7, G9, G11; FR-012, FR-013, FR-014.
 
-- [ ] T032 [P] **Auditoría de cálculos en el cliente**: rehacer la lista del plan sobre el código ya portado (buscar `length`, `reduce`, `Math.`, restas de timestamps, `filter` y recuentos en `src/`), aplicar las acciones (rótulo «mostrados», totales de la API, quitar `máx.` y «+N países más» o rotularlos) y escribir `docs/evidencias/panel-base-mock/auditoria-calculos-cliente.md` con la lista final y el veredicto de cada línea. La fila 7 (retraso de ingesta) **queda aceptada (P3)**: se calcula en el panel con `generated` y `last_ingestion`, se rotula «hace X min» con la nota «calculado en el panel» (en el desplegable del estado y en el aviso de desactualizado) y no hay cambio de contrato.
+- [x] T032 [P] **Auditoría de cálculos en el cliente**: rehacer la lista del plan sobre el código ya portado (buscar `length`, `reduce`, `Math.`, restas de timestamps, `filter` y recuentos en `src/`), aplicar las acciones (rótulo «mostrados», totales de la API, quitar `máx.` y «+N países más» o rotularlos) y escribir `docs/evidencias/panel-base-mock/auditoria-calculos-cliente.md` con la lista final y el veredicto de cada línea. La fila 7 (retraso de ingesta) **queda aceptada (P3)**: se calcula en el panel con `generated` y `last_ingestion`, se rotula «hace X min» con la nota «calculado en el panel» (en el desplegable del estado y en el aviso de desactualizado) y no hay cambio de contrato.
   - **Prueba**: ningún recuento propio sin «mostrados»; los totales visibles salen de `metadata` o `stats`; la lista está guardada.
   - **Cubre**: G12; FR-029; SC-011.
 
-- [ ] T033 [P] **Avisos y banner de replay**: en `StatusBanners` añadir el aviso de **truncado** («Mostrando N de M eventos», con `metadata.count` y `metadata.total`), poner **REPRODUCCIÓN** como texto del aviso de modo replay, y el mensaje «Sin eventos reproducidos» para un replay vacío; la tabla y las listas muestran «mostrados» (T032).
+- [x] T033 [P] **Avisos y banner de replay**: en `StatusBanners` añadir el aviso de **truncado** («Mostrando N de M eventos», con `metadata.count` y `metadata.total`), poner **REPRODUCCIÓN** como texto del aviso de modo replay, y el mensaje «Sin eventos reproducidos» para un replay vacío; la tabla y las listas muestran «mostrados» (T032).
   - **Prueba**: escenarios `truncated`, `replay` y `empty` del mock; captura de cada aviso.
   - **Cubre**: G12 (`truncated`), G10 (parcial), J7 (parcial); FR-015, FR-024.
 
 ## Bloque 4 — Conexión con la API real y atribución (G1, G7, G9, G11, G14)
 
-- [ ] T034 **Levantar el stack y conectar**: `docker compose up -d` (sin cambiar el contrato ni la API), comprobar `GET /api/salud`, `GET /api/eventos` y `GET /api/estadisticas` con `curl`, `npm run dev` en el 4200 con `mode: "api"`; contrastar las respuestas reales con el mock (campos, nulos, orden, `truncated`, `comparison`) en `docs/evidencias/panel-base-mock/contraste-mock-api.md` y corregir el mock o el front (**nunca el contrato**; si el contrato y la API divergen, se avisa al alumno). Si el stack no arranca o no hay eventos, se detiene y se pregunta.
+- [x] T034 **Levantar el stack y conectar**: `docker compose up -d` (sin cambiar el contrato ni la API), comprobar `GET /api/salud`, `GET /api/eventos` y `GET /api/estadisticas` con `curl`, `npm run dev` en el 4200 con `mode: "api"`; contrastar las respuestas reales con el mock (campos, nulos, orden, `truncated`, `comparison`) en `docs/evidencias/panel-base-mock/contraste-mock-api.md` y corregir el mock o el front (**nunca el contrato**; si el contrato y la API divergen, se avisa al alumno). Si el stack no arranca o no hay eventos, se detiene y se pregunta.
   - **Prueba**: el panel muestra eventos reales con el proxy de Vite; el documento de contraste está guardado.
   - **Cubre**: G1; FR-010; SC-007.
 
-- [ ] T035 **Verificación con datos reales**: cambiar periodo, magnitud y país y comprobar que globo, lista, tabla, estadísticas y estado cambian a la vez y que `stats.total` coincide con `metadata.total` con los mismos filtros; truncado visible si lo hay; comparación con 2025 si el histórico (`006`) está cargado (si no, se anota); replay con la API real (vacío esperado, sin error y con el banner). Capturas con los filtros visibles.
+- [x] T035 **Verificación con datos reales**: cambiar periodo, magnitud y país y comprobar que globo, lista, tabla, estadísticas y estado cambian a la vez y que `stats.total` coincide con `metadata.total` con los mismos filtros; truncado visible si lo hay; comparación con 2025 si el histórico (`006`) está cargado (si no, se anota); replay con la API real (vacío esperado, sin error y con el banner). Capturas con los filtros visibles.
   - **Prueba**: capturas y una tabla `filtros → total del globo, de la tabla y de las estadísticas` en `docs/evidencias/panel-base-mock/`.
   - **Cubre**: G3, G4, G5, G5b, G6, G8, G12; FR-021, FR-022; SC-007, SC-009.
 
-- [ ] T036 **Fallo provocado, recuperación y refresco**: con la API levantada, parar el servicio `api` y, aparte, PostgreSQL (503 `database_unavailable`); comprobar en un ciclo de refresco el aviso, la última lectura marcada como antigua con su hora, que nunca sale «0 eventos», que con la API apagada desde el arranque dice «sin datos», y que al volver se recupera sin recargar; medir que no hay peticiones solapadas y que el timeout corta a `timeoutMs`.
+- [x] T036 **Fallo provocado, recuperación y refresco**: con la API levantada, parar el servicio `api` y, aparte, PostgreSQL (503 `database_unavailable`); comprobar en un ciclo de refresco el aviso, la última lectura marcada como antigua con su hora, que nunca sale «0 eventos», que con la API apagada desde el arranque dice «sin datos», y que al volver se recupera sin recargar; medir que no hay peticiones solapadas y que el timeout corta a `timeoutMs`.
   - **Prueba**: capturas y pestaña de red guardadas.
   - **Cubre**: G7, G9, G11, G12 (`last_ingestion`); FR-023; SC-008.
 
-- [ ] T037 [P] **Atribución visible**: componente `src/components/Attribution.tsx` con «Sismos: USGS · Fronteras: Natural Earth (dominio público) · Globo: react-globe.gl y three (MIT) · Sin textura», de al menos 11 px y contraste ≥ 4,5 : 1; escritorio abajo a la derecha por encima del cajón de estadísticas; móvil en franja fija en el pie, fuera de las hojas; quitar la línea de 9 px del desplegable del estado.
+- [x] T037 [P] **Atribución visible**: componente `src/components/Attribution.tsx` con «Sismos: USGS · Fronteras: Natural Earth (dominio público) · Globo: react-globe.gl y three (MIT) · Sin textura», de al menos 11 px y contraste ≥ 4,5 : 1; escritorio abajo a la derecha por encima del cajón de estadísticas; móvil en franja fija en el pie, fuera de las hojas; quitar la línea de 9 px del desplegable del estado.
   - **Prueba**: capturas a 375 y 1280 px donde se lee sin pulsar nada.
   - **Cubre**: G11, G14; FR-025; SC-010.
 
 ## Bloque 5 — Tests, evidencias y cierre
 
-- [ ] T038 **Pruebas automáticas**: en `frontend/tests/`: parseo y nulos (`parse.ts`), validación de config (`validateConfig.ts`), clases de profundidad y altura (`symbology.ts`: cortes 10/35/70/300, negativas, nula, magnitud nula), ventana de replay y parámetros (`requests.ts`), `format.ts` (sin Madrid), y conformidad de los **cinco** escenarios con el validador de T004 (más el archivo estropeado, que debe fallar).
+- [x] T038 **Pruebas automáticas**: en `frontend/tests/`: parseo y nulos (`parse.ts`), validación de config (`validateConfig.ts`), clases de profundidad y altura (`symbology.ts`: cortes 10/35/70/300, negativas, nula, magnitud nula), ventana de replay y parámetros (`requests.ts`), `format.ts` (sin Madrid), y conformidad de los **cinco** escenarios con el validador de T004 (más el archivo estropeado, que debe fallar).
   - **Prueba**: `npm test` en 0 desde un clon limpio.
   - **Cubre**: FR-009, FR-030; SC-004, SC-005, SC-009, SC-015.
 
-- [ ] T039 **Verificación y evidencias**: desde un clon limpio, `npm ci`, `npm run build` y `npm test` con sus códigos de salida; `dist/` de producción sin mock (SC-003); `sha256sum` de `paises.geojson` (SC-014); recorrido con el mock (cinco escenarios) y con la API real a 375, 768 y 1280 px con una ficha abierta: `scrollWidth <= innerWidth` y cero errores en la consola (corregir lo que falle); capturas en `docs/evidencias/panel-base-mock/`.
+- [x] T039 **Verificación y evidencias**: desde un clon limpio, `npm ci`, `npm run build` y `npm test` con sus códigos de salida; `dist/` de producción sin mock (SC-003); `sha256sum` de `paises.geojson` (SC-014); recorrido con el mock (cinco escenarios) y con la API real a 375, 768 y 1280 px con una ficha abierta: `scrollWidth <= innerWidth` y cero errores en la consola (corregir lo que falle); capturas en `docs/evidencias/panel-base-mock/`.
   - **Prueba**: archivos de evidencia guardados; SC-001 a SC-003, SC-012 y SC-013 cumplidos.
   - **Cubre**: G0, G15, G17; FR-001, FR-026; SC-001, SC-003, SC-012, SC-013, SC-014.
 

@@ -1,0 +1,54 @@
+npm notice run observatorio-sismico-panel@0.1.0 npx
+npm notice run vitest run tests/tmp_T030_T033.test.ts --reporter=verbose
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
+ ✓ tests/tmp_T030_T033.test.ts > T030 requests > live: ventana de horas, sin end, sin min_mag ni country 2ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 requests > live: rango UTC con end = dia final + 1 dia 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 requests > rango invalido (incompleto o desde > hasta) -> ultimas 24 h 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 requests > replay: 2025 fijo ignorando el periodo del filtro 1ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 requests > min_mag solo si > 0; country_id solo none o 3 letras 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > acepta los cinco escenarios y no toca la respuesta 2ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > conserva los nulos (nunca 0) 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > rechaza: sin type FeatureCollection 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > rechaza: sin metadata 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > rechaza: metadata sin truncated 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > rechaza: metadata.total texto 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > rechaza: features no es lista 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > rechaza: geometry no Point 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > rechaza: coordenada texto 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > rechaza: falta mag (campo ausente) 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > rechaza: falta magType 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > rechaza: is_synthetic no booleano 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > rechaza null, texto, array y numero 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T030 parse > stats y salud: aceptan lo valido y rechazan lo malo 335ms
+stdout | tests/tmp_T030_T033.test.ts > T031 mock: un cambio de filtro cambia los parametros y el resultado > realistic
+totales realistic 24h: 48 | minMag 5: 4 | JPN: 6
+
+ ✓ tests/tmp_T030_T033.test.ts > T031 mock: un cambio de filtro cambia los parametros y el resultado > realistic 308ms
+stdout | tests/tmp_T030_T033.test.ts > T033 avisos (render estatico) > truncado: Mostrando N de M eventos
+truncated ->  Mostrando 5000 de 6213 eventos Resultado truncado. Las estadísticas cubren todos los eventos del filtro. 
+
+stdout | tests/tmp_T030_T033.test.ts > T033 avisos (render estatico) > replay: REPRODUCCION
+replay ->  REPRODUCCIÓN Datos históricos reproducidos, no son en vivo. 
+
+stdout | tests/tmp_T030_T033.test.ts > T033 avisos (render estatico) > replay vacio: Sin eventos reproducidos, sin error ni cifras
+replay vacio ->  REPRODUCCIÓN Datos históricos reproducidos, no son en vivo. Sin eventos reproducidos La reproducción no tiene eventos con estos filtros. No es un error. 
+
+stdout | tests/tmp_T030_T033.test.ts > T033 avisos (render estatico) > live vacio (escenario empty): Sin eventos en el intervalo, sin error
+empty ->  Sin eventos en el intervalo La API no devolvió eventos con estos filtros. No es un error. 
+
+ ✓ tests/tmp_T030_T033.test.ts > T031 mock: un cambio de filtro cambia los parametros y el resultado > estados derivados 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T031 mock: un cambio de filtro cambia los parametros y el resultado > una consulta en vuelo no se duplica (TanStack Query) 61ms
+ ✓ tests/tmp_T030_T033.test.ts > T033 avisos (render estatico) > truncado: Mostrando N de M eventos 5ms
+ ✓ tests/tmp_T030_T033.test.ts > T033 avisos (render estatico) > no truncado: sin aviso 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T033 avisos (render estatico) > replay: REPRODUCCION 1ms
+ ✓ tests/tmp_T030_T033.test.ts > T033 avisos (render estatico) > replay vacio: Sin eventos reproducidos, sin error ni cifras 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T033 avisos (render estatico) > live vacio (escenario empty): Sin eventos en el intervalo, sin error 0ms
+ ✓ tests/tmp_T030_T033.test.ts > T033 avisos (render estatico) > error sin datos no es vacio 0ms
+
+ Test Files  1 passed (1)
+      Tests  28 passed (28)
+   Start at  20:14:03
+   Duration  1.04s (tests 76%, import 14%, transform 9%)
+

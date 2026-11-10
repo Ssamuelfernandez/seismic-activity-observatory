@@ -1,0 +1,30 @@
+### GET http://localhost:4300/api/salud
+HTTP/1.1 200 OK
+Vary: Origin
+date: Tue, 10 Nov 2026 19:17:56 GMT
+server: uvicorn
+content-length: 72
+content-type: application/json
+connection: close
+
+{"status":"ok","last_ingestion":1794338236995,"generated":1794338276958}
+### GET http://localhost:4300/api/eventos?limit=3
+HTTP/1.1 200 OK
+Vary: Origin
+date: Tue, 10 Nov 2026 19:17:56 GMT
+server: uvicorn
+content-length: 1490
+content-type: application/json
+connection: close
+
+{"type":"FeatureCollection","metadata":{"generated":1794338277222,"last_ingestion":1794338236995,"mode":"live","count":3,"total":205,"truncated":true,"next_cursor":"eyJ0IjoxNzk0MzM2ODExMDc5LCJpZCI6Im9rMjAyNndiaHYifQ","null_mag_excluded":0},"features":[{"type":"Feature","id":"nc75464922","geometry":{"type":"Point","coordinates":[-122.814498901367,38.829833984375,1.55999994277954]},"properties":{"mag":1.24,"magType":"md","place":"8 km NW of The Geysers, CA","time":1794337533470,"updated":1794337627764,"country_id":"USA","country_name":"Estados Unidos","is_synthetic":false,"status":"automatic","url":"https://earthquake.usgs.gov/earthquakes/eventpage/nc75464922","sig":24}},{"type":"Feature","id":"aka2026whowcd","geometry":{"type":"Point","coordinates":[-154.955,58.287,5.0]},"properties":{"mag":1.0,"magType":"ml","place":"85 km NNW of Karluk, Alaska","time":1794337186200,"updated":1794337232947,"country_id":"USA","country_name":"Estados Unidos","is_synthetic":false,"status":"automatic","url":"https://earthquake.usgs.gov/earthquakes/eventpage/aka2026whowcd","sig":15}},{"type":"Feature","id":"ok2026wbhv","geometry":{"type":"Point","coordinates":[-97.97066667,35.06433333,10.22]},"properties":{"mag":1.62,"magType":"ml","place":"3 km WNW of Chickasha, Oklahoma","time":1794336811079,"updated":1794337313139,"country_id":"USA","country_name":"Estados Unidos","is_synthetic":false,"status":"reviewed","url":"https://earthquake.usgs.gov/earthquakes/eventpage/ok2026wbhv","sig":40}}]}
+### GET http://localhost:4300/api/estadisticas
+HTTP/1.1 200 OK
+Vary: Origin
+date: Tue, 10 Nov 2026 19:17:56 GMT
+server: uvicorn
+content-length: 2868
+content-type: application/json
+connection: close
+
+{"metadata":{"generated":1794338277484,"last_ingestion":1794338236995,"mode":"live"},"period":{"start":1794251877484,"end":1794338277484},"filters":{"min_mag":null,"country_id":null},"total":205,"by_hour":{"unit":"events","no_value":0,"buckets":[{"hour_start":1794250800000,"count":7},{"hour_start":1794254400000,"count":9},{"hour_start":1794258000000,"count":4},{"hour_start":1794261600000,"count":8},{"hour_start":1794265200000,"count":5},{"hour_start":1794268800000,"count":6},{"hour_start":1794272400000,"count":16},{"hour_start":1794276000000,"count":10},{"hour_start":1794279600000,"count":10},{"hour_start":1794283200000,"count":9},{"hour_start":1794286800000,"count":8},{"hour_start":1794290400000,"count":10},{"hour_start":1794294000000,"count":13},{"hour_start":1794297600000,"count":8},{"hour_start":1794301200000,"count":8},{"hour_start":1794304800000,"count":8},{"hour_start":1794308400000,"count":6},{"hour_start":1794312000000,"count":14},{"hour_start":1794315600000,"count":10},{"hour_start":1794319200000,"count":6},{"hour_start":1794322800000,"count":7},{"hour_start":1794326400000,"count":5},{"hour_start":1794330000000,"count":10},{"hour_start":1794333600000,"count":7},{"hour_start":1794337200000,"count":1}]},"by_country":{"unit":"events","no_value":37,"items":[{"country_id":"USA","country_name":"Estados Unidos","subregion":"Northern America","count":158},{"country_id":null,"country_name":null,"subregion":null,"count":37},{"country_id":"CAN","country_name":"Canadá","subregion":"Northern America","count":3},{"country_id":"IDN","country_name":"Indonesia","subregion":"South-Eastern Asia","count":2},{"country_id":

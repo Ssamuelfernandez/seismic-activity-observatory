@@ -9,7 +9,7 @@ import { COLUMNS, sortEvents, type SortKey } from '../EventsTable';
  * Qué hace:
  *     Muestra una tarjeta por evento con todos los campos del contrato, ordenable, sin scroll horizontal.
  * Recibe:
- *     events, evento seleccionado, apariencia y onSelect.
+ *     events, evento seleccionado, apariencia, onSelect, onClose y total de la API.
  * Devuelve:
  *     La lista de tarjetas.
  * Por qué existe:
@@ -21,7 +21,10 @@ export function MobileEventsList({
   settings,
   onSelect,
   onClose,
+  total = null,
 }: {
+  /** `metadata.total` de la API; si falta no se muestra total. */
+  total?: number | null;
   events: EventFeature[];
   selected: EventFeature | null;
   settings: Appearance;
@@ -35,7 +38,7 @@ export function MobileEventsList({
   return (
     <section aria-label="Todos los eventos" className="absolute inset-0 z-30 flex flex-col bg-hud-bg text-xs">
       <div className="flex shrink-0 items-center justify-between gap-3 border-b border-hud-line px-3 py-2">
-        <span className="text-[11px] uppercase tracking-[0.15em] text-hud-accent">Todos · {events.length}</span>
+        <span className="text-[11px] uppercase tracking-[0.15em] text-hud-accent">Todos · mostrados {events.length}{total === null ? '' : ` · total ${total} (API)`}</span>
         <button onClick={onClose} className="px-2 py-1 text-[11px] uppercase tracking-[0.1em] text-hud-dim">
           Cerrar ✕
         </button>
