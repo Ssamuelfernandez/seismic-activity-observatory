@@ -38,3 +38,6 @@ ngrok.yml
 Thumbs.db
 .idea/
 .vscode/
+
+# Front externo pendiente de integrar (material de referencia, no se commitea)
+_import-front/

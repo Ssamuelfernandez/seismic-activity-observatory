@@ -1,0 +1,109 @@
+# Fecha: 2026-11-06 19:48
+# Comprobaciones previas: netstat sin LISTENING en 5181-5183; git status --short frontend/prototipo-mapa vacio; 21 archivos versionados
+# git status --short (global)
+ M ../CODEMAP.md
+ M package-lock.json
+ M package.json
+ D prototipo-mapa/.gitignore
+ D prototipo-mapa/LEEME.md
+ D prototipo-mapa/globe-hex/index.html
+ D prototipo-mapa/globe-hex/main.jsx
+ D prototipo-mapa/globe-hex/style.css
+ D prototipo-mapa/globe-hex/symbology.js
+ D prototipo-mapa/globe-hex/vite.config.js
+ D prototipo-mapa/globe/index.html
+ D prototipo-mapa/globe/main.jsx
+ D prototipo-mapa/globe/vite.config.js
+ D prototipo-mapa/maplibre/index.html
+ D prototipo-mapa/maplibre/main.js
+ D prototipo-mapa/maplibre/vite.config.js
+ D prototipo-mapa/package-lock.json
+ D prototipo-mapa/package.json
+ D prototipo-mapa/scripts/copy-data.mjs
+ D prototipo-mapa/scripts/gzip-size.mjs
+ D prototipo-mapa/scripts/measure-hex.mjs
+ D prototipo-mapa/scripts/measure.mjs
+ D prototipo-mapa/shared/style.css
+ D prototipo-mapa/shared/symbology.js
+ M ../specs/008-panel-base-mock/bitacora.md
+ M ../specs/008-panel-base-mock/plan.md
+ M ../specs/008-panel-base-mock/spec.md
+ M ../specs/008-panel-base-mock/tasks.md
+?? ../docs/evidencias/panel-base-mock/T007_instalacion.txt
+?? ../docs/evidencias/panel-base-mock/T007_prototipo_borrado.txt
+?? ../docs/evidencias/panel-base-mock/T007_prototipo_no_borrado.txt
+?? ../docs/evidencias/panel-base-mock/T007_verificacion.txt
+
+# (a) ls frontend/prototipo-mapa
+ls: cannot access 'prototipo-mapa': No such file or directory
+# (b) git ls-files --deleted frontend/prototipo-mapa | wc -l
+21
+# (c) git ls-files frontend/prototipo-mapa | wc -l
+21
+# Nota: la salida vacia de git ls-files solo se dara tras el commit del alumno; hasta entonces los 21 archivos siguen en el indice (no se uso git rm/add).
+
+# package.json (una sola libreria de mapa)
+{
+  "name": "observatorio-sismico-panel",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": "24.18.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "5.106.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-globe.gl": "2.38.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.4",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.2.1",
+    "tailwindcss": "4.3.4",
+    "typescript": "6.0.3",
+    "vite": "8.3.6",
+    "vitest": "5.1.0"
+  }
+}
+
+# npm ci
+
+added 112 packages, and audited 119 packages in 5s
+
+20 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+# tsc --noEmit
+rc=0
+# build
+[36mvite v8.3.6 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 16 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.40 kB │ gzip:  0.27 kB
+dist/assets/index-BmKPt8yE.css    4.43 kB │ gzip:  1.49 kB
+dist/assets/index-BXpAgDMp.js   219.58 kB │ gzip: 68.63 kB
+
+[32m✓ built in 134ms[39m
+# test
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  16 passed (16)
+   Start at  19:48:33
+   Duration  247ms (tests 43%, transform 37%, import 13%, worker 7%)
+

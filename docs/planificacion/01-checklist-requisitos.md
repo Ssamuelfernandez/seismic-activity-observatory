@@ -12,6 +12,7 @@ Convención: **[OBL]** obligatorio · **[EVAL]** puntúa en rúbrica · **[OPC]*
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet. Se decide en el plan de `panel-base-mock`. Afecta a §0, G0, G2, G11, G16, M2, §5 y la introducción del bloque G (frontend).
 - 5-nov-2026 (rev. 5): nuevo requisito **G17** (diseño responsive, decisión propia del alumno), asignado a `panel-base-mock`.
 - 6-nov-2026 (rev. 6): cambio de diseño visual del alumno (globo HUD con prismas hexagonales y ficha en panel lateral en `panel-base-mock`; `react-globe.gl` queda implícita para el globo). Nuevo requisito **G18** (vista de mapa 2D con MapLibre), asignado a la feature nueva `panel-mapa-2d`. Los textos de G0, G2 y de §0 que dicen «candidata» o «popup» se reconcilian al cerrar `panel-base-mock`.
+- 10-nov-2026 (rev. 7): **enmienda de alcance de `panel-base-mock`** (decisión del alumno): adopta el front externo con correcciones y absorbe las features `panel-filtros-tabla`, `panel-graficos-comparacion`, `panel-estado-fallos` y `panel-conexion-api` (§7). **G18** queda aplazada (`panel-mapa-2d`). **G16** (accesibilidad) queda **no cubierta, decisión propia**: la tabla existe (G8) pero no se trabaja el foco de teclado ni el no depender solo del color. La apariencia del globo y del layout es la del front externo (G2 se lee con ese diseño; **G5b se reformula** como decisión propia: la comparación va en el cajón de estadísticas, no en un panel lateral).
 
 ---
 
@@ -160,7 +161,7 @@ El frontend no viene hecho: hay que crear el proyecto React (Vite + TypeScript +
 | G3 | **[OBL]** Recuentos por país/subregión (incl. "Sin país asignado") y por **hora UTC fija según tiempo del evento** | Gráfico/tabla | Enunc. §8 | ☐ |
 | G4 | **[OBL]** Distribuciones de magnitud y profundidad indicando registros sin valor | — | Enunc. §8 | ☐ |
 | G5 | **[OBL]** Comparación histórica: últimas 24 h M≥4 vs media diaria 2025 con **mismos filtros**, denominador con **días a cero**; aviso de periodo reciente incompleto; si media=0 → ND | Cifras + fórmula | Enunc. §8 · FAQ 23 | ☐ |
-| G5b | **Decisión de diseño:** la comparación se muestra en un **panel lateral** junto al mapa (roadmap F8c, feature `panel-graficos-comparacion`). Se compara contra la **media diaria de 2025 en la misma zona/país y con M≥4**, no contra un día concreto del año pasado | Panel visible con cifra reciente, media 2025, diferencia y % | Decisión propia | ☐ |
+| G5b | **Decisión propia (reformulada el 10-nov-2026, no prioritaria):** la comparación se muestra en el **cajón inferior de estadísticas** del panel, donde ya está en el front (antes: panel lateral junto al mapa; roadmap F8c, absorbida por `panel-base-mock`). Se compara contra la **media diaria de 2025 en la misma zona/país y con M≥4**, no contra un día concreto del año pasado | Panel visible con cifra reciente, media 2025, diferencia y % | Decisión propia | ☐ |
 | G6 | **[OBL]** Filtros de fecha, magnitud y país/región, **coherentes** entre mapa y gráficos | Un único store de filtros compartido | Enunc. §8 | ☐ |
 | G7 | **[OBL]** Estado del sistema: último acceso correcto a la API, última ingesta correcta de USGS, periodo consultado, aviso si datos desactualizados o backend caído | Distinguir "última consulta del panel / respuesta generada / última ingesta" | Enunc. §8 · FAQ 31 | ☐ |
 | G8 | **[OBL]** Tabla consultable de eventos (alternativa accesible al mapa y al color) | — | Enunc. §8 | ☐ |
@@ -342,12 +343,12 @@ Fuente de verdad de las features: `03-procedimiento-ejecucion.md` §4. Se usa el
 | C9–C12 | `geografia-pais` |
 | B13–B18 | `historico-2025` |
 | F1–F11 (F12 con `replay`) | `api` |
-| G0, G2, G11, G14, G15, G17; G12 (`magType`) | `panel-base-mock` |
-| G6, G8, G16; G12 (`country_id`, `country_name`, `truncated`) | `panel-filtros-tabla` |
-| G3, G4, G5, G5b | `panel-graficos-comparacion` |
-| G7, G9; G12 (`last_ingestion`) | `panel-estado-fallos` |
-| G1 | `panel-conexion-api` |
-| G18 | `panel-mapa-2d` |
+| G0, G1, G2, G3, G4, G5, G5b, G6, G7, G8, G9, G11, G14, G15, G17; G12 (`magType`, `country_id`, `country_name`, `truncated`, `last_ingestion`) | `panel-base-mock` (enmendada el 10-nov-2026: absorbe las cuatro features siguientes) |
+| G6, G8, G16; G12 (`country_id`, `country_name`, `truncated`) | `panel-filtros-tabla` — **absorbida por `panel-base-mock`** (G16 no cubierta, decisión propia) |
+| G3, G4, G5, G5b | `panel-graficos-comparacion` — **absorbida por `panel-base-mock`** |
+| G7, G9; G12 (`last_ingestion`) | `panel-estado-fallos` — **absorbida por `panel-base-mock`** |
+| G1 | `panel-conexion-api` — **absorbida por `panel-base-mock`** |
+| G18 | `panel-mapa-2d` — **aplazada** |
 | J1–J8, G10, F12; G12 (`metadata.mode`) | `replay` |
 | Tabla I (las 11 pruebas) | `pruebas-aceptacion` (se prueban antes en `productor-live`, `consumidor-idempotente`, `geografia-pais`, `replay` y `despliegue-tunel`) |
 | G13, H1–H4; pruebas 9 y 10 | `despliegue-tunel` |

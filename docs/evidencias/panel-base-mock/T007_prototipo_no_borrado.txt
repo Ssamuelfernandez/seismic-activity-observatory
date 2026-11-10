@@ -1,0 +1,8 @@
+# Puertos (netstat -ano | grep 5181/5182/5183)
+  TCP    127.0.0.1:5183         0.0.0.0:0              LISTENING       21600
+  TCP    127.0.0.1:5183         127.0.0.1:62501        ESTABLISHED     21600
+  TCP    127.0.0.1:62501        127.0.0.1:5183         ESTABLISHED     23232
+  TCP    127.0.0.1:64888        127.0.0.1:5183         TIME_WAIT       0
+# curl http://127.0.0.1:5183/ -> <title>
+<title>Prototipo T022 prisma hexagonal</title>
+# Resultado: NO se borra frontend/prototipo-mapa/ (servidor Vite del alumno en :5183 sirve el prototipo T022). Pendiente: el alumno para PID 21600 y se borra la carpeta y las filas TEMPORAL de CODEMAP.

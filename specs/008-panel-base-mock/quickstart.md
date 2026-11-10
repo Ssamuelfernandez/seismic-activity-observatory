@@ -1,13 +1,14 @@
-# Quickstart: validar el panel base con mock
+# Quickstart: validar el panel completo
 
-Guía de validación al cerrar la feature. Rutas relativas a la raíz del repositorio. Detalle de datos: `data-model.md`. Contrato: `specs/001-contratos-y-modelo/contracts/api.md`.
+Guía de validación al cerrar la feature. Rutas relativas a la raíz del repositorio. Detalle de datos: `data-model.md`. Contrato: `specs/001-contratos-y-modelo/contracts/api.md`. **Reescrito el 2026-11-10** por la enmienda de alcance.
 
 ## Requisitos
 
-- Node 24.18.0 (`frontend/.nvmrc`) y npm. Sin Internet para el fondo: desde el 2026-11-06 es negro, sin textura ni teselas.
-- Sin claves ni variables de entorno.
+- Node 24.18.0 (`frontend/.nvmrc`) y npm. Sin Internet para el fondo (sin textura) ni para el mock.
+- Para el apartado 4: Docker con el stack de Compose levantado (`docker compose up -d`), con eventos reales y, para la comparación, el histórico de 2025.
+- Sin claves ni variables de entorno (opcional: `API_PROXY_TARGET` para cambiar el destino del proxy de desarrollo).
 
-## 1. Instalación y build (G0, SC-001)
+## 1. Instalación, build y pruebas (G0, SC-001, SC-015)
 
 ```
 cd frontend
@@ -16,7 +17,7 @@ npm run build
 npm test
 ```
 
-Esperado: los tres terminan con código 0; existe `frontend/dist/` con `config.json`, `datos/paises.geojson` y los cuatro JSON del mock como archivos aparte en `dist/assets/`. Guardar la salida en `docs/evidencias/panel-base-mock/`.
+Esperado: los tres con código 0. Guardar la salida en `docs/evidencias/panel-base-mock/`.
 
 ## 2. Servidor de desarrollo (SC-001)
 
@@ -24,31 +25,46 @@ Esperado: los tres terminan con código 0; existe `frontend/dist/` con `config.j
 npm run dev
 ```
 
-Esperado: HTTP 200 en la URL que imprime Vite (por defecto `http://localhost:5173/`).
+Esperado: HTTP 200 en `http://localhost:4200/`. Un segundo `npm run dev` con el primero activo **falla** (`strictPort`) en vez de usar otro puerto.
 
-## 3. Casos del mock (G2, G15, SC-002, SC-005, SC-006, SC-007)
+## 3. Mock en desarrollo (G15, SC-004, SC-006, SC-009)
 
-Abrir, con `mode: "mock"` en `public/config.json`:
+Con `"mode": "mock"` en `frontend/public/config.json`:
 
 | URL | Esperado |
 |---|---|
-| `/` (caso `base`) | Globo negro con continentes en celdas hexagonales (sin Antártida), ~30 prismas de largos y colores distintos, cabecera, leyenda, atribución, banner «DATOS SINTÉTICOS (MOCK)», y a 1280 px las dos columnas reservadas vacías |
-| `/?scenario=truncated` | 5 000 prismas en ≤ 3 s y ≥ 30 fps al mover; ficha abre; `metadata.total` 6 213 en el JSON |
-| `/?scenario=replay` | Se pinta como el resto; sin texto de modo |
-| `/?scenario=empty` | Globo con continentes y «Sin eventos en el intervalo» |
+| `/` (`base`) | ~30 prismas con colores de las cinco clases, leyenda de cinco clases, banner de datos sintéticos, atribución visible |
+| `/?scenario=realistic` | ~400 eventos; al cambiar periodo, magnitud o país cambian globo, tabla y estadísticas |
+| `/?scenario=truncated` | 5 000 eventos y aviso «Mostrando 5000 de 6213» |
+| `/?scenario=replay` | Eventos de 2025 y banner **REPRODUCCIÓN** |
+| `/?scenario=empty` | Globo vacío y «Sin eventos en el intervalo» |
 
-Pulsar: el evento con `mww` (panel lateral de ficha «Magnitud 5,4 (mww)»), el de `magType` nulo («ND»), el de magnitud nula (barra gris de altura mínima; «ND»), el del mar («Sin país asignado») y el de magnitud −0,06 / profundidad −0,01 (valores tal cual). En todas las fichas «Ver en mapa 2D» está visible y muestra «próximamente». A 375 px la ficha es un cajón inferior. Esc cierra la ficha. Consola del navegador: cero errores en el recorrido; ninguna pantalla muestra «NaN» ni «undefined».
+Pulsar un evento con `mww` («Magnitud 5,4 (mww)»), uno de magnitud nula (barra gris sin anillo ni etiqueta; «ND»), uno sin país («Sin país asignado») y uno de magnitud −0,06 y profundidad −0,01 (valores tal cual). Consola: cero errores; ninguna pantalla muestra «NaN» ni «undefined». La interfaz no ofrece ningún control para cambiar mock/API. Restaurar `config.json` a `"mode": "api"`.
 
-## 4. Configuración en tiempo de ejecución (G15, SC-011)
+## 4. Con la API real (G1, G3–G9, G12, SC-007, SC-008)
+
+```
+docker compose up -d
+curl http://localhost:8000/api/salud
+npm run dev          # en frontend/, con "mode": "api" y "apiBaseUrl": "/api"
+```
+
+1. Globo, lista, tabla, estadísticas y estado muestran datos reales. Cambiar periodo, magnitud y país: todo cambia a la vez y `stats.total` coincide con `metadata.total` (anotar los valores en una tabla).
+2. Replay: sin datos reproducidos la pantalla muestra «Sin eventos reproducidos» y el banner REPRODUCCIÓN, sin error.
+3. Fallo: `docker compose stop api` → en un ciclo de refresco aparece el aviso y la última lectura queda marcada como antigua con su hora; nunca «0 eventos». `docker compose start api` → se recupera sin recargar. Repetir parando solo PostgreSQL (503 `database_unavailable`).
+4. En la pestaña de red: peticiones a `/api/eventos`, `/api/estadisticas` y `/api/salud` cada `refreshSeconds`, sin solaparse; ninguna a `earthquake.usgs.gov`.
+
+## 5. Configuración y producción (G15, SC-002, SC-003)
 
 ```
 npm run build
 npm run preview
 ```
 
-Editar `frontend/dist/config.json`: `"mode": "api"` y recargar → mensaje de modo api no disponible y ningún evento. Poner `"mode": "otro"` → mensaje que nombra `mode` y sin mapa. Restaurar el archivo.
+- Editar `frontend/dist/config.json`: `"mode": "otro"` → mensaje que nombra `mode`; `"refreshSeconds": 0` → mensaje que nombra `refreshSeconds`; `"mode": "mock"` → «mock no disponible en este build». Restaurar.
+- `grep -r __MOCK_BACKEND__ frontend/dist` y `grep -r "Sintético:" frontend/dist` no devuelven nada; `frontend/dist/assets` no contiene los JSON del mock.
 
-## 5. Fronteras y copia del catálogo (G14, SC-009)
+## 6. Fronteras y copia del catálogo (G14, SC-014)
 
 ```
 sha256sum data/catalogo/paises.geojson frontend/public/datos/paises.geojson
@@ -56,24 +72,21 @@ sha256sum data/catalogo/paises.geojson frontend/public/datos/paises.geojson
 
 Esperado: ambos `6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f`.
 
-## 6. Responsive (G17, SC-003, SC-010)
+## 7. Responsive y atribución (G17, SC-010, SC-012)
 
-Con las herramientas del navegador, emular 375 × 667, 768 y 1280 de ancho. Para cada caso, con la leyenda abierta y con una ficha abierta, ejecutar en la consola:
+Con las herramientas del navegador, emular 375 × 667, 768 y 1280 de ancho, con el mock y con la API real, con una ficha abierta. En la consola:
 
 ```
 document.documentElement.scrollWidth <= window.innerWidth
 ```
 
-Esperado: `true`. Capturas en `docs/evidencias/panel-base-mock/` (mínimo: `base` a 1280 px, `base` a 375 px con ficha, `truncated` a 375 px, `empty`, mensaje api). La atribución (Natural Earth, librería, «Fondo: negro, sin textura») se lee sin pulsar nada. Las columnas reservadas solo aparecen desde 1024 px.
+Esperado: `true`. Capturas en `docs/evidencias/panel-base-mock/` (mínimo: 1280 px con filtros visibles, 375 px con ficha, cada aviso, la leyenda de cinco clases). La atribución (USGS, Natural Earth, `react-globe.gl` y `three`) se lee sin pulsar nada.
 
-## 7. Pruebas automáticas (SC-008, SC-013)
+## 8. Calidad del código (SC-011, SC-013)
 
-`npm test` incluye: validación de config, conformidad del mock (más un archivo estropeado que debe fallar), escalas de radio/color/ND y formato de ND y fechas UTC.
-
-## 8. Ausencias (SC-014)
-
-Comprobar que `frontend/` no contiene Dockerfile, compose, filtros, tabla, gráficos ni código de replay.
+- `grep -rn "formatMadrid\|h3-js" frontend/src frontend/tests frontend/package.json` sin resultados.
+- `docs/evidencias/panel-base-mock/auditoria-calculos-cliente.md` existe y no hay recuento propio sin «mostrados».
 
 ## Límites conocidos
 
-Con 5 000 prismas el globo rinde menos que un mapa 2D y el prisma pequeño es difícil de pulsar; `truncated` no avisa del truncado; `refreshSeconds` y `timeoutMs` no se aplican; fronteras 1:110 m simplificadas.
+G16 no cubierta; el rendimiento con 5 000 eventos no está medido; el periodo en replay es fijo (2025); sin datos de replay reales hasta `013-replay`; el CORS real es de `015-despliegue-tunel`.

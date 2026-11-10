@@ -1,6 +1,0 @@
-html, body, #root, #map { margin: 0; height: 100%; width: 100%; background: #0b1020; font-family: sans-serif; }
-#timer { position: fixed; top: 8px; left: 8px; z-index: 10; background: #fff; padding: 4px 8px; font-size: 13px; border-radius: 4px; }
-#card { position: fixed; z-index: 10; background: #fff; padding: 8px 12px; font-size: 13px; border-radius: 6px; right: 8px; top: 8px; width: 240px; display: none; }
-#card button { float: right; min-width: 44px; min-height: 44px; }
-#attrib { position: fixed; right: 0; bottom: 0; z-index: 10; background: rgba(255,255,255,.85); font-size: 11px; padding: 2px 6px; max-width: 70vw; }
-@media (max-width: 767px) { #card { right: 0; left: 0; top: auto; bottom: 28px; width: auto; border-radius: 6px 6px 0 0; } }

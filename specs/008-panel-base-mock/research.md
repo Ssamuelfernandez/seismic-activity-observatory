@@ -1,5 +1,7 @@
 # Research: Panel base con mock y mapa
 
+> **Histórico (2026-11-10).** Este documento recoge la investigación del diseño anterior (globo HUD con celdas hexagonales, mock estático, alcance cerrado). La enmienda del 2026-11-10 (ver `spec.md`) lo supera en: mapa 2D (retirado), celdas y prisma de 6 caras (sustituidos por la apariencia del front externo), mock (ahora con servidor simulado fuera de producción), Zustand (ahora instalado) y alcance. Siguen vigentes **R1 (versiones, ampliadas en `plan.md`)** y las medidas de T005, T006 y T022 como evidencia. Para lo demás manda `spec.md`, `plan.md` y `diseno-visual.md`.
+
 Formato: decisión, motivo, alternativas. Decisiones del alumno aplicadas el 2026-11-05; cambio de diseño HUD del alumno aplicado el 2026-11-06 (R6, R7, R8, R11). La librería del globo (R7) la decidió el alumno el 2026-11-06; su instalación está en `T007` (no ejecutada).
 
 ## R1. Versiones (comprobadas con `npm view <paquete> version`, 2026-11-05)

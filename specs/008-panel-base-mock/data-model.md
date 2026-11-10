@@ -1,31 +1,30 @@
-# Data Model: Panel base con mock y mapa
+# Data Model: Panel completo
 
-No hay base de datos. Son los tipos del frontend. Los de contrato se citan de `specs/001-contratos-y-modelo/contracts/api.md` (§3.2 y §3.4) y no se redefinen; aquí solo se anota lo que el panel hace con ellos. Ubicación (D3 opción C, decidida por el alumno el 2026-11-05): `src/shared/types/contract.ts` los de contrato; el resto, junto a quien los usa.
+No hay base de datos. Son los tipos del frontend. Los de contrato se citan de `specs/001-contratos-y-modelo/contracts/api.md` (§3.2, §3.4 y §5) y no se redefinen; aquí solo se anota lo que el panel hace con ellos. Ubicación: `src/shared/types/contract.ts` los de contrato; el resto, junto a quien los usa (D3: estructura del front externo, P1). **Reescrito el 2026-11-10** por la enmienda de alcance.
 
 ## Entidades del contrato (resumen, fuente: `api.md`)
 
-**EventsResponse** (`FeatureCollection`): `type`, `metadata`, `features: EventFeature[]`.
+- **EventsResponse** (`FeatureCollection`): `metadata` de ocho campos (`generated`, `last_ingestion`, `mode`, `count`, `total`, `truncated`, `next_cursor`, `null_mag_excluded`) y `features: EventFeature[]`.
+- **EventFeature**: `id`, `geometry` (`Point`, `[lon, lat, depth_km | null]`) y `properties` de once campos (`mag`, `magType`, `place`, `time`, `updated`, `country_id`, `country_name`, `is_synthetic`, `status`, `url`, `sig`).
+- **StatsResponse** (`api.md` §5): `metadata`, `period`, `filters`, `total`, `by_hour`, `by_country`, `histograms.magnitude` (ocho tramos), `histograms.depth` (**cinco** tramos `<10`, `10–35`, `35–70`, `70–300`, `≥300`) y `comparison` (o `null` en `mode=replay`).
+- **HealthResponse**: `status`, `last_ingestion`, `generated`.
+- **Error** (`api.md` §1): `{"error": {"code", "message"}}`.
 
-**Metadata** (ocho campos): `generated` (ms), `last_ingestion` (ms o `null`), `mode` (`live`/`replay`), `count`, `total`, `truncated`, `next_cursor` (texto o `null`), `null_mag_excluded`. El panel solo muestra `count` y `total` tal cual; el resto se conserva sin uso (lo usan `009`, `011` y `013`).
-
-**EventFeature**: `type: "Feature"`, `id` (texto), `geometry` (`Point`, `coordinates: [lon, lat, depth_km | null]`), `properties: EventProperties`.
-
-**EventProperties** (once campos): `mag` (número o `null`), `magType` (texto o `null`), `place` (texto o `null`), `time` (ms), `updated` (ms), `country_id` / `country_name` (texto o `null`), `is_synthetic` (booleano), `status` / `url` (texto o `null`), `sig` (entero o `null`).
-
-Reglas que el panel aplica:
+Reglas de visualización:
 
 | Valor | Regla |
 |---|---|
-| `mag` nula | Barra gris de altura mínima fija (V3); ficha «ND». Nunca 0 |
-| `mag` negativa | Válida; altura mínima (0,010); la ficha muestra el valor real |
-| profundidad nula | Gris ND (V4); ficha «ND» |
-| profundidad negativa | Válida; clase 1; la ficha muestra el valor real |
-| `magType` nulo | Ficha «ND» |
-| `place` nulo | Ficha «Sin descripción» |
-| `country_id`/`country_name` nulos | Ficha «Sin país asignado» |
-| `url` nula | Sin enlace; si existe, abre en pestaña nueva |
-| `is_synthetic` verdadero | Etiqueta «Sintético» en la ficha |
-| `time`, `updated` | Se formatean «AAAA-MM-DD HH:mm UTC»; el entero original no se altera |
+| `mag` nula | Barra ND gris de altura mínima, **sin anillo ni etiqueta**; ficha y tabla «ND». Nunca 0 |
+| `mag` negativa | Válida; altura mínima; se muestra el valor real |
+| profundidad nula | Gris ND con la altura de su magnitud; «ND» |
+| profundidad negativa | Válida; clase 1; valor real |
+| `magType`, `status`, `sig` nulos | «ND» |
+| `place` nulo | «Sin descripción» |
+| `country_id`/`country_name` nulos | «Sin país asignado» (en el filtro, el valor `none`) |
+| `url` nula | Sin enlace |
+| `is_synthetic` verdadero | Etiqueta de sintético y banner |
+| `time`, `updated`, `generated`, `last_ingestion` | «AAAA-MM-DD HH:mm UTC»; el entero original no se altera |
+| `variation_pct` nulo | «ND» |
 
 ## Entidades propias del panel
 
@@ -34,51 +33,47 @@ Reglas que el panel aplica:
 | Campo | Tipo | Validación |
 |---|---|---|
 | `mode` | `"mock"` \| `"api"` | cualquier otro valor: error que nombra `mode` |
-| `apiBaseUrl` | texto | obligatorio; puede ser vacío solo si `mode` es `mock` (decisión provisional) |
-| `refreshSeconds` | entero > 0 | se valida, no se aplica (P3) |
-| `timeoutMs` | entero > 0 | se valida, no se aplica (P3) |
+| `apiBaseUrl` | texto | en modo `api` no vacío y empieza por `/`, `http://` o `https://` |
+| `refreshSeconds` | entero > 0 | se aplica al refresco |
+| `timeoutMs` | entero > 0 | se aplica al tiempo máximo de cada petición |
 
 Resultado de validar: `{ ok: true, config }` o `{ ok: false, field, message }`.
 
-**Scenario**: `base` \| `truncated` \| `replay` \| `empty`. Origen: parámetro `?scenario=` de la URL, solo con `mode: "mock"`. Por defecto `base`. Un valor desconocido se trata como `base` y se avisa en consola de desarrollo (decidido por el alumno, 2026-11-05, Q2).
+**Filtros** (store único, Zustand): `mode` (`live`\|`replay`), `hours` (1, 6, 24, 168, 720, 8760 o `0` = rango de fechas), `dateFrom`/`dateTo` (`AAAA-MM-DD` UTC, el día final se incluye entero), `minMag` (0 = sin filtro) y `country` (`ADM0_A3`, `none` o vacío). No contiene el origen de los datos. Cambiar cualquiera limpia la selección.
 
-**DataState** (lo que devuelve `useEvents`): una de estas formas.
+**Petición** (resultado de `buildRequest(filters, now)`): `mode`, `min_mag?`, `country_id?` y el intervalo. `live`: `start` = ahora − horas (sin `end`) o `start`/`end` del rango de fechas. `replay`: `start = 2025-01-01T00:00:00.000Z`, `end = 2026-01-01T00:00:00.000Z` (el `reference_period` de `api.md` §5) y el periodo del filtro se ignora.
+
+**Escenario del mock**: `base` \| `truncated` \| `replay` \| `empty` \| `realistic`. Origen: `?scenario=` de la URL, solo con `mode: "mock"` y solo en desarrollo; por defecto `base`; un valor desconocido cae a `base` con aviso en la consola de desarrollo.
+
+**DataState** (lo que expone `useObservatory`):
 
 | Estado | Contenido | Pantalla |
 |---|---|---|
 | `loading` | — | indicador de carga |
-| `ready` | `EventsResponse` con ≥ 1 feature | globo |
-| `empty` | `EventsResponse` con `features: []` | globo con continentes + «Sin eventos en el intervalo» |
-| `error` | mensaje | mensaje visible (mock ilegible) |
-| `api-unavailable` | — | «Modo api: la conexión con la API todavía no está disponible»; sin eventos |
+| `ready` | `EventsResponse` con ≥ 1 feature | globo, lista, tabla |
+| `empty` | `EventsResponse` con `features: []` | globo vacío y «Sin eventos en el intervalo» (en replay: «Sin eventos reproducidos») |
+| `error` sin datos | `ApiError` | aviso «Sin datos»; nunca «0 eventos» |
+| `error` con datos | `ApiError` + última lectura | aviso «Datos antiguos» con la hora de `updatedAt` |
 
-Transiciones: `loading` → `ready` \| `empty` \| `error`; con `mode: "api"` se pasa directo a `api-unavailable`.
+`ApiError`: `status`, `code` (los del contrato más `network`, `timeout`, `invalid_response`, `unknown`) y `message`.
 
-**DepthClass** (V2, lógica pura; valores revisados el 2026-11-06, fuente: la spec):
+**DepthClass** (lógica pura, `shared/lib/symbology.ts`; colores por defecto, `spec.md`):
 
 | Clase | Rango (km) | Color |
 |---|---|---|
-| 1 | < 10 (incluye negativas) | `#FFF1A6` |
-| 2 | 10 a < 35 | `#FDB347` |
-| 3 | 35 a < 70 | `#F26A5A` |
-| 4 | 70 a < 300 | `#D2468C` |
-| 5 | ≥ 300 | `#7C4DCB` |
-| ND | nula | `#8A93A0` |
+| 1 | < 10 (incluye negativas) | `#ffd23f` |
+| 2 | 10 a < 35 | `#ff963a` |
+| 3 | 35 a < 70 | `#ff5a36` |
+| 4 | 70 a < 300 | `#d7539a` |
+| 5 | ≥ 300 | `#b04cff` |
+| ND | nula | `#8a93a0` |
 
-**Símbolo de evento** (resultado de `symbolFor(properties, depth)`): `{ altitude, radiusDeg, color, isNd }`. Altura: máx(0,010; 0,0125 × clamp(mag, 0, 8)); magnitud nula: altura 0,010 y color gris ND; profundidad nula: color gris ND y altura por magnitud. Anchura fija `radiusDeg` 0,45 (revisable en `T022`). Cada evento deriva su símbolo; no se guarda.
+**Altura del prisma**: máx(0,010; 0,0125 × clamp(mag, 0, 8)); magnitud nula o negativa → 0,010; el factor de escala visual (× 3,7) lo aplica `GlobeView`.
 
-**GlobeView (contrato de aislamiento, 03 §7.5; antes `MapView`)**
+**GlobeView (contrato de aislamiento, 03 §7.5)**: entrada `events`, `selectedId` y los ajustes visuales; salida `onSelect(EventFeature | null)`. No lee config, mock ni store.
 
-| Dirección | Elemento | Tipo |
-|---|---|---|
-| Entrada | `events` | `EventFeature[]` |
-| Entrada | `selectedId` | texto o `null` (para resaltar el prisma en naranja) |
-| Salida | `onSelect` | recibe el `EventFeature` pulsado, o `null` al pulsar fuera |
-
-El globo no lee config, mock, ficha ni leyenda. La lista de países con la que dibuja las celdas se obtiene de `paises.geojson` sin `ADM0_A3 = ATA`; no altera `events`.
-
-**Evento seleccionado**: estado local de `App` (`EventFeature | null`). No es un filtro y no va al store de D2. La ficha (panel lateral / cajón) se muestra mientras sea distinto de `null`.
+**Evento seleccionado**: estado local de `App` (`EventFeature | null`); no es un filtro.
 
 ## Relaciones
 
-`AppConfig` + `Scenario` → capa de datos → `DataState` → (`EventsResponse.features` → `GlobeView`) y (`metadata` → contadores). El evento seleccionado va de `GlobeView` a la ficha. El botón «Ver en mapa 2D» de la ficha no emite nada en esta feature; la feature `panel-mapa-2d` reutilizará este mismo evento y `EventsResponse` ya cargados, sin pedir datos nuevos.
+`AppConfig` → `dataSource` (mock o API) → `parse` → `DataState` (`EventsResponse`, `StatsResponse`, `HealthResponse`) → globo, lista, tabla, estadísticas, estado y avisos. `Filtros` → `buildRequest` → `dataSource`. `StatsResponse.total` debe coincidir con `EventsResponse.metadata.total` para los mismos filtros (SC-007).
