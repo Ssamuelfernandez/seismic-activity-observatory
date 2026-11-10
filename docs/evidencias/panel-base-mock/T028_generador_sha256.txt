@@ -1,0 +1,23 @@
+v24.18.0
+--- ejecucion 1
+escrito mock/base.json (30 features)
+escrito mock/truncated.json (5000 features)
+escrito mock/replay.json (6 features)
+escrito mock/empty.json (0 features)
+escrito mock/realistic.json (400 features)
+e4683cfd82672dbecaebdf96ce21b7cc0ca9b07bb88d985e124914a56bbf4fa0 *base.json
+98bb15d2a4d65127d9b14438000d6cbfb779fad013389cf9dbaff2cf077de607 *truncated.json
+8e11df7017a2ed8911ba97c4957e96b69a9e70fff91eaa3e0bb93569467556d6 *replay.json
+6dbb53a79d09f638c92d28d4028b86f79189aab0e544e7bccc2a9f2db21e0ffd *empty.json
+98d16c333747014818e1b183a202eb385d51298d711fe431020d8adf4f584efd *realistic.json
+--- ejecucion 2
+escrito mock/base.json (30 features)
+escrito mock/truncated.json (5000 features)
+escrito mock/replay.json (6 features)
+escrito mock/empty.json (0 features)
+escrito mock/realistic.json (400 features)
+e4683cfd82672dbecaebdf96ce21b7cc0ca9b07bb88d985e124914a56bbf4fa0 *base.json
+98bb15d2a4d65127d9b14438000d6cbfb779fad013389cf9dbaff2cf077de607 *truncated.json
+8e11df7017a2ed8911ba97c4957e96b69a9e70fff91eaa3e0bb93569467556d6 *replay.json
+6dbb53a79d09f638c92d28d4028b86f79189aab0e544e7bccc2a9f2db21e0ffd *empty.json
+98d16c333747014818e1b183a202eb385d51298d711fe431020d8adf4f584efd *realistic.json

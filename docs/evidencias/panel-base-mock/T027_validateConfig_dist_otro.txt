@@ -1,0 +1,8 @@
+dist/config.json editado a mode "otro":
+{
+  "mode": "otro",
+  "apiBaseUrl": "/api",
+  "refreshSeconds": 60,
+  "timeoutMs": 15000
+}
+{"ok":false,"field":"mode","message":"debe ser \"mock\" o \"api\""}

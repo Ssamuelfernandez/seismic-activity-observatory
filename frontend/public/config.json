@@ -1,0 +1,6 @@
+{
+  "mode": "api",
+  "apiBaseUrl": "/api",
+  "refreshSeconds": 60,
+  "timeoutMs": 15000
+}

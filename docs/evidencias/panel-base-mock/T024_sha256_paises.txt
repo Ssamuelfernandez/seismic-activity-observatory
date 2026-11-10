@@ -1,0 +1,4 @@
+paises.geojson copiado y verificado (SHA-256 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f)
+exit=0
+6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f *data/catalogo/paises.geojson
+6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f *frontend/public/datos/paises.geojson

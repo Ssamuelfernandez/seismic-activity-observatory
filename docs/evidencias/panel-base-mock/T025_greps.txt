@@ -1,0 +1,14 @@
+$ grep -rn "formatMadrid\|h3-js" frontend/src frontend/tests frontend/package.json
+(exit=1; 1 = sin resultados)
+
+$ grep -rn "showArcs\|showHexBin\|showHeatmap\|showMarkers" frontend/src
+(exit=1)
+
+$ grep -rln "components/" frontend/src/shared   (shared no importa de components)
+(exit=1)
+
+$ archivos que importan react-globe.gl o three
+src/components/GlobeView.tsx
+
+$ grep quake-marker|arcs|hexBin|heatmap|htmlElement en src
+(exit=1)

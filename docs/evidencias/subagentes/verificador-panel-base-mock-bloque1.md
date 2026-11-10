@@ -1,9 +1,18 @@
-# Verificación panel-base-mock, Bloque 1 (T001–T004) — G0, G15, G12 (magType)
-Pruebas ejecutadas por mí con Node 24.18.0 directo (`node node_modules/vite/bin/vite.js`, `node node_modules/vitest/vitest.mjs`; `npm run` usaría Node 20.13.1 por el paquete `node` de C:\Users\Samuel\node_modules).
-- T001 VERIFICADA: `npm ci` (0 vulnerabilidades), `tsc` 6.0.3, build OK (JS 219,6 kB), versiones exactas sin ^, `.nvmrc` y `engines` 24.18.0, alias `@/`, `assetsInlineLimit: 0`, `src/store/README.md` con la frase pedida, sin librería de mapa ni store. `npm run dev` HTTP 200 no reejecutado: me fío de `T001_dev_http.txt`.
-- T002 VERIFICADA: tipos de `contract.ts` coinciden con api.md §3.2/§3.4 (8 campos de metadata, 11 de properties); Vitest 16/16 en verde.
-- T003 VERIFICADA: regenerar el mock da SHA-256 idénticos; 4 JSON con base=30, truncated=5000/6213/truncated true/next_cursor no nulo, replay mode=replay (6), empty=0; ids `mock-`, `is_synthetic` true, place «Sintético:» (o null, permitido). Vite emitiendo JSON aparte: el archivo temporal se retiró y no lo reproduje; me fío de `T003_build_node24.txt` (JS principal sin eventos).
-- T004 VERIFICADA: `mock.test.ts` pasa con los 4 archivos y falla con `bad-response.json` (mode, count, is_synthetic) y con un nulo ilegal.
-- Alcance: `git diff --stat` solo toca CODEMAP.md (+5 filas, correctas); contratos, enunciado y sql/001_schema.sql sin cambios. Evidencia en docs/evidencias/panel-base-mock/. Sin secretos ni atribución a Claude.
-- Hallazgos bloqueantes/importantes: ninguno.
-- Límite conocido: T003 (emisión de JSON en dist) se apoya en evidencia del implementador; la reproducirá T009.
+# Verificación Bloque 1 (T024–T026) de panel-base-mock
+
+Ejecutado en una copia limpia (sin node_modules) fuera del repo; Node v24.18.0.
+- (1) `npm ci` 0, `tsc --noEmit` 0, `npm run build` 0 (solo aviso de chunk >500 kB), `npm test` 0: 2 ficheros, 19 tests pasan.
+- (2) El puerto 4200 ya lo ocupaba el PID 28544 (un dev server previo): `curl` a `/` y a `/datos/paises.geojson` da 200, y mi arranque falló con "Port 4200 is already in use" (strictPort confirmado). No pude probar un primer arranque limpio.
+- (3) SHA-256 de `public/datos/paises.geojson` = 6866c877…c977f. Con una copia alterada, `copy-countries.mjs` sale con código 1 y muestra esperado/obtenido.
+- (4) `package.json`: versiones exactas; zustand 5.0.8, three y @types/three 0.187.0; sin `h3-js` directo (solo transitivo de react-globe.gl→three-globe, ok); sin `node` ni `tsc` ajenos en package.json, lock ni node_modules (`npx tsc` bajó `tsc@2.0.4` solo a la caché de npx).
+- (5) Greps: `formatMadrid|h3-js` y `showArcs|showHexBin|showHeatmap|showMarkers|quake-marker` sin resultados; solo `GlobeView` importa react-globe.gl/three; `shared/` no importa de `components/`.
+- (6) Diff con globo-lab: solo capas borradas, `mag ?? 0` sustituido por `hasMag`/`MagPoint`, ND en tooltip/color, ruta del geojson y docstrings. APPEARANCE, rama hex, anillos, etiquetas y pilar intactos.
+- (7) Simbología (script temporal): 9.99→#ffd23f, 10→#ff963a, 34.99→#ff963a, 35→#ff5a36, 69.99→#ff5a36, 70→#d7539a, 299.99→#d7539a, 300→#b04cff, −0.01→#ffd23f, null→#8a93a0. Correcto. Anillos y etiquetas filtran con `hasMag`.
+- (8) Docstrings con la plantilla §7.4 en las funciones muestreadas (symbology, GlobeView, copy-countries). (9) Todas las rutas de CODEMAP existen salvo `frontend/mock/backend.ts`, que figura como "previsto". (10) `git diff --stat` de enunciado, contratos y `sql/001_schema.sql` vacío.
+- Hallazgos bloqueantes o importantes: ninguno.
+- Incidencia mía: mi primer `npm ci` dentro de `frontend/` falló con EPERM porque el dev server del 4200 tenía archivos abiertos, y dejó `frontend/node_modules` incompleto (está ignorado por git). Solución: parar el dev server y ejecutar `npm ci`.
+- Pendiente del alumno (sin navegador): captura «antes» de T024, captura «después» de T025, y leyenda y barra ND de magnitud nula de T026. Quedan sin verificar visualmente: el aspecto del globo tras quitar las capas, los cinco colores en la leyenda y el prisma gris mínimo.
+
+T024: verificada
+T025: verificada
+T026: verificada

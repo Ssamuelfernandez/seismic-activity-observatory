@@ -35,6 +35,28 @@ export function formatDecimal(value: number | null | undefined): string {
 }
 
 /**
+ * Formatea un número con un número fijo de decimales, coma decimal y signo menos tipográfico.
+ *
+ * Qué hace:
+ *     Convierte `50.14246575342466` en «50,14» y `-37.1424` en «−37,14». Un nulo o no finito da «ND».
+ * Recibe:
+ *     value: número a mostrar, o null/undefined si no hay dato.
+ *     decimals: decimales a mostrar (por defecto 2).
+ * Devuelve:
+ *     El texto listo para la interfaz; un valor que redondea a cero no lleva signo («0,00», no «−0,00»).
+ * Por qué existe:
+ *     Las cifras que calcula la API (medias, diferencias) traen muchos decimales y se muestran redondeadas.
+ */
+export function formatFixed(value: number | null | undefined, decimals = 2): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return ND;
+  }
+  const rounded = Number(value.toFixed(decimals));
+  const text = (rounded === 0 ? 0 : rounded).toFixed(decimals);
+  return text.replace('-', MINUS_SIGN).replace('.', ',');
+}
+
+/**
  * Formatea milisegundos Unix como «AAAA-MM-DD HH:mm UTC».
  *
  * Qué hace:
@@ -46,12 +68,34 @@ export function formatDecimal(value: number | null | undefined): string {
  * Por qué existe:
  *     La ficha muestra `time` y `updated` sin alterar el entero original (FR-014).
  */
-export function formatUtc(ms: number | null | undefined): string {
+export function formatUtc(ms: number | null | undefined, seconds = false): string {
   if (ms === null || ms === undefined || !Number.isFinite(ms)) {
     return ND;
   }
   const iso = new Date(ms).toISOString();
-  return `${iso.slice(0, 10)} ${iso.slice(11, 16)} UTC`;
+  return `${iso.slice(0, 10)} ${iso.slice(11, seconds ? 19 : 16)} UTC`;
+}
+
+/** Solo la hora UTC, «HH:mm» (para ejes de gráficos). */
+export function formatUtcTime(ms: number | null | undefined): string {
+  if (ms === null || ms === undefined || !Number.isFinite(ms)) {
+    return ND;
+  }
+  return new Date(ms).toISOString().slice(11, 16);
+}
+
+/**
+ * Texto relativo de una antigüedad: «hace 45 s», «hace 3 min», «hace 1 h 10 min».
+ *
+ * Recibe:
+ *     ms: antigüedad en milisegundos (si es negativa se trata como 0).
+ */
+export function formatAge(ms: number): string {
+  const s = Math.max(0, Math.round(ms / 1000));
+  if (s < 60) return `hace ${s} s`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `hace ${m} min`;
+  return `hace ${Math.floor(m / 60)} h ${m % 60} min`;
 }
 
 /**

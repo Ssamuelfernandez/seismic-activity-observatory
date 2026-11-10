@@ -1,0 +1,16 @@
+# Comprobación provisional de symbology.ts (la prueba formal es T038; este archivo temporal se borró)
+# profundidades [-5,0,9.99,10,34.99,35,69.99,70,299.99,300,700,null] -> clases [1,1,1,2,2,3,3,4,4,5,5,ND]
+npm notice run observatorio-sismico-panel@0.1.0 npx
+npm notice run vitest run tests/_t026_tmp.test.ts
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:34:03
+   Duration  103ms (import 38%, transform 35%, worker 14%, tests 13%, environment 1%)
+
+
+$ grep -rn "?? 0\|magOf" frontend/src (solo queda el filtro del mock)
+src/shared/api/mock.ts:183:  const minMagApplied = Math.max(f.min_mag ?? 0, 4);

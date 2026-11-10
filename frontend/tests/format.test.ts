@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   formatCountry,
   formatDecimal,
+  formatFixed,
   formatMagnitude,
   formatPlace,
   formatUtc,
@@ -18,6 +19,24 @@ describe('formatDecimal', () => {
     expect(formatDecimal(-0.06)).toBe('\u22120,06');
     expect(formatDecimal(5.4)).toBe('5,4');
     expect(formatDecimal(0)).toBe('0');
+  });
+});
+
+describe('formatFixed', () => {
+  it('redondea a dos decimales con coma', () => {
+    expect(formatFixed(50.14246575342466)).toBe('50,14');
+    expect(formatFixed(13)).toBe('13,00');
+  });
+
+  it('usa el signo menos tipografico y no deja -0,00', () => {
+    expect(formatFixed(-37.14246575342466)).toBe('\u221237,14');
+    expect(formatFixed(-0.001)).toBe('0,00');
+  });
+
+  it('muestra ND para nulo', () => {
+    expect(formatFixed(null)).toBe('ND');
+    expect(formatFixed(undefined)).toBe('ND');
+    expect(formatFixed(Number.NaN)).toBe('ND');
   });
 });
 

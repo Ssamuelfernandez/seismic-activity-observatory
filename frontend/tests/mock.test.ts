@@ -8,7 +8,7 @@ const read = (rel: string): EventsResponse =>
   JSON.parse(readFileSync(fileURLToPath(new URL(rel, import.meta.url)), 'utf8'));
 
 const mock = (name: string) => read(`../mock/${name}.json`);
-const CASES = ['base', 'truncated', 'replay', 'empty'];
+const CASES = ['base', 'truncated', 'replay', 'empty', 'realistic'];
 
 describe('conformidad del mock con api.md', () => {
   it.each(CASES)('%s cumple el contrato', (name) => {
