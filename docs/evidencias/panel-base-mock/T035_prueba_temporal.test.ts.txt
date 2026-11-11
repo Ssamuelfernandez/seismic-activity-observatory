@@ -1,0 +1,54 @@
+// PRUEBA TEMPORAL de T035 (no queda en el repo): filtros -> totales contra la API real, con buildRequest.
+import { writeFileSync } from 'node:fs';
+import { describe, it } from 'vitest';
+import { apiEvents, apiStats } from '../src/shared/api/client';
+import { setConfig } from '../src/shared/api/runtimeConfig';
+import { buildRequest, resolveFilters, type RequestFilters } from '../src/shared/api/requests';
+import { deriveDataState } from '../src/shared/lib/dataState';
+
+const F: RequestFilters = { mode: 'live', hours: 24, dateFrom: '', dateTo: '', minMag: 0, country: '' };
+const rows: string[] = [];
+const out: string[] = [];
+
+describe('T035', () => {
+  it('tabla', async () => {
+    setConfig({ mode: 'api', apiBaseUrl: process.env.T035_BASE!, refreshSeconds: 60, timeoutMs: 15000 });
+    const now = Date.now();
+    const d = (n: number) => new Date(now - n * 86400e3).toISOString().slice(0, 10);
+    const cases: [string, Partial<RequestFilters>][] = [
+      ['1 h', { hours: 1 }], ['24 h', { hours: 24 }], ['7 d', { hours: 168 }], ['30 d', { hours: 720 }], ['1 año', { hours: 8760 }],
+      [`rango ${d(10)}..${d(8)}`, { hours: 0, dateFrom: d(10), dateTo: d(8) }], [`rango ${d(5)}..${d(3)}`, { hours: 0, dateFrom: d(5), dateTo: d(3) }],
+      ['24 h, min_mag 0', { minMag: 0 }], ['24 h, min_mag 2', { minMag: 2 }], ['24 h, min_mag 4', { minMag: 4 }],
+      ['7 d, min_mag 4', { hours: 168, minMag: 4 }],
+      ['24 h, country USA', { country: 'USA' }], ['24 h, country none', { country: 'none' }], ['24 h, country ZZZ (inexistente)', { country: 'ZZZ' }],
+      ['7 d, USA, min_mag 2', { hours: 168, country: 'USA', minMag: 2 }],
+      ['30 d (límite de truncado: limit=50)', { hours: 720 }],
+    ];
+    for (const [label, p] of cases) {
+      const req = buildRequest(resolveFilters({ ...F, ...p }), now);
+      const lim = label.includes('limit=50') ? { limit: 50 } : {};
+      const ev = await apiEvents({ ...req, ...lim });
+      const st = await apiStats(req);
+      const m = ev.metadata;
+      const ok = m.total === st.total ? 'OK' : 'DIFIERE';
+      rows.push(`| ${label} | \`${JSON.stringify(req).replace(/\|/g, '/')}\` | ${m.total} | ${st.total} | ${m.count} | ${m.truncated} | ${m.null_mag_excluded} (hist: ${st.histograms.magnitude.no_value}) | ${ok} |`);
+    }
+    // comparación y replay
+    const st0 = await apiStats(buildRequest(resolveFilters(F), now));
+    out.push(`comparison (24 h, sin filtros): ${JSON.stringify(st0.comparison)}`);
+    for (const mm of [0, 2, 4, 5]) {
+      const s = await apiStats(buildRequest(resolveFilters({ ...F, minMag: mm }), now));
+      out.push(`comparison con min_mag=${mm}: min_mag_applied=${s.comparison?.min_mag_applied} n_recent=${s.comparison?.n_recent} n_2025=${s.comparison?.n_2025} variation_pct=${s.comparison?.variation_pct}`);
+    }
+    const rq = buildRequest(resolveFilters({ ...F, mode: 'replay' }), now);
+    const rev = await apiEvents(rq);
+    const rst = await apiStats(rq);
+    out.push(`replay request=${JSON.stringify(rq)}`);
+    out.push(`replay eventos: metadata=${JSON.stringify(rev.metadata)} features=${rev.features.length}`);
+    out.push(`replay stats: metadata=${JSON.stringify(rst.metadata)} total=${rst.total} comparison=${JSON.stringify(rst.comparison)} by_hour=${rst.by_hour.buckets.length} buckets`);
+    out.push(`deriveDataState(replay features=${rev.features.length}, sin error) = ${deriveDataState(rev.features.length, false)}`);
+    writeFileSync(process.env.T035_OUT!, [
+      '| Filtros | Parámetros enviados (buildRequest) | metadata.total (eventos) | stats.total | count | truncated | null_mag_excluded (hist magnitud no_value) | Coincide |',
+      '|---|---|---|---|---|---|---|---|', ...rows, '', ...out].join('\n') + '\n');
+  });
+});

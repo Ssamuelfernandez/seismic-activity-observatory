@@ -8,6 +8,10 @@ Los IDs (A1, B6, C4, F8, G5…) remiten al checklist; las fases (F0–F13) remit
 - 1-nov-2026 (rev. 3): reconciliación de los tres documentos. **El frontend se construye desde cero** (el proyecto Angular del paquete es solo un ejemplo): la feature del panel se divide en cinco. Tabla de features única (§4) con las semillas de spec integradas (antes estaban en el roadmap). Identificadores de código, BD y topics en inglés. Constitución ampliada (§5). Comandos de Spec Kit con nota de versión. Se añade la fuente de verdad por tema (§0).
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet; se decide en el plan de `panel-base-mock`. Afecta a §0, §3 (árbol de carpetas), §4.2, §6 y §7.5.
 - Nov-2026 (rev. 5): el profesor permite cambiar el frontend; decisión del alumno: **React + TypeScript + Vite + Tailwind** en lugar de Angular (mapa `react-globe.gl`, plan B MapLibre o Leaflet; TanStack Query; Chart.js; store único de filtros). Afecta a §0, §3, §4.2, §5 y §7.5. El alcance de las features no cambia.
+- 5-nov-2026 (rev. 6): se añade el requisito G17 (diseño responsive) a la fila `008-panel-base-mock` de §4.
+- 6-nov-2026 (rev. 7): se añade a §4 la feature `panel-mapa-2d` (F8f, G18): vista de mapa 2D con MapLibre, nacida del cambio de diseño visual de `008-panel-base-mock` (globo HUD). Se identifica por su nombre y no por número (los números de §4 son orientativos), sin renumerar las demás.
+- 10-nov-2026 (rev. 8): **enmienda de alcance de `008-panel-base-mock`** (decisión del alumno): adopta el front externo con correcciones y absorbe las features `009-panel-filtros-tabla`, `010-panel-graficos-comparacion`, `011-panel-estado-fallos` y `012-panel-conexion-api` (§4 y §4.2). `panel-mapa-2d` queda aplazada. `013-replay` no cambia. Se aplica la fusión que §4 ya preveía como recurso si el tiempo apretaba.
+- 10-nov-2026 (rev. 9): **estructura de `src/` del frontend** (§7.5): se conserva la del front externo (`components/`, `shared/{api,hooks,lib,types}`, `store/`) en lugar de `api/`, `config/`, `features/`; el mock vive en `frontend/mock/` fuera del build de producción. Decisión del alumno al contestar la pregunta P1 de `008-panel-base-mock`.
 
 ---
 
@@ -158,16 +162,17 @@ Una feature = un ciclo completo de Spec Kit = una rama. Spec Kit numera las carp
 | `005-geografia-pais` | F5 | C9–C12 | 5 (magnitud nula), 7 (evento marítimo) |
 | `006-historico-2025` | F6 | B13–B18 | — (conteos cuadran con los archivos) |
 | `007-api` | F7 | F1–F12 (F12 se completa con `013`) | — (tests con httpx, 503 con BD parada) |
-| `008-panel-base-mock` | F8a | G0, G2, G11, G14, G15; parte de G12 (`magType`) | — (capturas con el mock) |
-| `009-panel-filtros-tabla` | F8b | G6, G8, G16; parte de G12 (`country_id`, `country_name`, `truncated`) | — (capturas con filtros visibles) |
-| `010-panel-graficos-comparacion` | F8c | G3, G4, G5, G5b | — (capturas con filtros visibles) |
-| `011-panel-estado-fallos` | F8d | G7, G9; parte de G12 (`last_ingestion`) | — (fallo simulado en el mock) |
-| `012-panel-conexion-api` | F8e | G1 | — (contraste mock vs API real) |
+| `008-panel-base-mock` (**enmendada el 10-nov-2026**: adopta el front externo y absorbe `009`–`012`) | F8a–F8e | G0, G1, G2, G3, G4, G5, G5b, G6, G7, G8, G9, G11, G14, G15, G17; G12 (`magType`, `country_id`, `country_name`, `truncated`, `last_ingestion`). G16 **no cubierta** (decisión propia). G10 y G12 (`metadata.mode`) se cierran en `013-replay` (el banner y la vista de replay viajan en `008`) | — (capturas con el mock y con la API real, filtros visibles, fallo provocado, una captura a 375 px) |
+| `009-panel-filtros-tabla` | F8b | **ABSORBIDA por `008-panel-base-mock`**: G6, G8, G16 (no cubierta); parte de G12 (`country_id`, `country_name`, `truncated`) | — |
+| `010-panel-graficos-comparacion` | F8c | **ABSORBIDA por `008-panel-base-mock`**: G3, G4, G5, G5b | — |
+| `011-panel-estado-fallos` | F8d | **ABSORBIDA por `008-panel-base-mock`**: G7, G9; parte de G12 (`last_ingestion`) | — |
+| `012-panel-conexion-api` | F8e | **ABSORBIDA por `008-panel-base-mock`**: G1 | — |
 | `013-replay` | F9 | J1–J8, G10, F12; parte de G12 (`metadata.mode`) | 11 |
 | `014-pruebas-aceptacion` | F10 | Tabla I completa | Las 11 (formalización y evidencia) |
 | `015-despliegue-tunel` | F11 | G13, H1–H4 | 9 y 10 (cerrar y reabrir túnel) |
 | `016-mediciones-costes` | F12 | K1–K8, E6 | — |
 | `017-memoria-defensa` | F13 | Bloque L, D y C14 (calidad), M, H5 | — |
+| `panel-mapa-2d` | F8f | G18 | **APLAZADA** (10-nov-2026): no se ejecuta salvo que sobre tiempo. — (captura del mapa 2D con eventos ya cargados y aviso de truncado; sin peticiones nuevas) |
 
 Notas:
 - `006` es independiente y puede ir en paralelo a `003`–`005` (el roadmap lo permite desde F1). `008` puede empezar en cuanto exista `002`, porque solo necesita el contrato.
@@ -204,11 +209,11 @@ Regla: **el contrato se cambia antes que el código**. Si una feature necesita o
 | `geografia-pais` | Carga del catálogo, regla de frontera/empates, `NULL` = sin país, unicidad de `ADM0_A3` |
 | `historico-2025` | Particionado temporal, manifiesto, dedup, carga, procedimiento de hueco >24 h |
 | `api` | Endpoints, parámetros, esquemas de respuesta, errores, CORS, paginación/truncado |
-| `panel-base-mock` | Proyecto React (Vite + TS + Tailwind), `config.json` (`mode: mock|api`), mock del contrato, mapa, fronteras, leyenda, atribución OSM, decisión de la librería de mapa tras un prototipo corto |
-| `panel-filtros-tabla` | Estado único de filtros, tabla accesible, truncado, uso de `country_id`/`country_name` |
-| `panel-graficos-comparacion` | Gráficos (hora UTC, país, distribuciones), panel lateral de comparación histórica |
-| `panel-estado-fallos` | Estado del sistema, refresco sin solape, timeout, última lectura conservada, aviso de desactualizado |
-| `panel-conexion-api` | Paso de mock a API real, contraste de respuestas, corrección de divergencias |
+| `panel-base-mock` (enmendada 10-nov-2026) | Adoptar el front externo con correcciones: proyecto React (Vite + TS + Tailwind, puerto 4200), `config.json` en tiempo de ejecución (`mode: mock|api`), mock con escenarios fuera del build de producción, globo `react-globe.gl`, leyenda de 5 clases, atribución visible, filtros, tabla, estadísticas y comparación, estado del feed y fallos, vista de replay sobre 2025, conexión con la API real. **Absorbe las cuatro filas siguientes.** |
+| `panel-filtros-tabla` (absorbida por `panel-base-mock`) | Estado único de filtros, tabla, truncado, uso de `country_id`/`country_name` |
+| `panel-graficos-comparacion` (absorbida por `panel-base-mock`) | Gráficos (hora UTC, país, distribuciones), comparación histórica |
+| `panel-estado-fallos` (absorbida por `panel-base-mock`) | Estado del sistema, refresco sin solape, timeout, última lectura conservada, aviso de desactualizado |
+| `panel-conexion-api` (absorbida por `panel-base-mock`) | Paso de mock a API real, contraste de respuestas, corrección de divergencias |
 | `replay` | Selección, velocidad, aislamiento (topic y esquema), etiquetado y banner, casos controlados, selector de modo en el panel |
 | `pruebas-aceptacion` | Las 11 pruebas con procedimiento y evidencia |
 | `despliegue-tunel` | ngrok, Netlify, CORS, procedimiento de activación, pruebas del túnel |
@@ -395,16 +400,24 @@ Reglas del docstring: siempre incluye **por qué existe** y el **ID del checklis
 ```
 frontend/
   public/config.json     # mode (mock|api), apiBaseUrl, refreshSeconds, timeoutMs. Sin secretos
-  mock/                  # JSON conforme al contrato, SINTÉTICO y etiquetado
-  src/
-    api/                 # cliente HTTP y hooks de TanStack Query
-    config/              # lectura de config.json en tiempo de ejecución
-    store/               # store único de filtros
-    features/            # map, events-table, charts, filters, system-status, historical-panel
-    shared/              # tipos, utilidades, componentes reutilizables
+  public/datos/          # paises.geojson (copia verificada con SHA-256)
+  mock/                  # JSON conforme al contrato y servidor simulado (backend.ts); SINTÉTICO, solo desarrollo, fuera del build de producción
+  scripts/               # generate-mock.mjs, copy-countries.mjs
+  tests/                 # Vitest
+  src/                   # estructura del front externo (decisión del alumno, 10-nov-2026)
+    main.tsx, App.tsx, index.css
+    components/          # GlobeView, filtros, tabla, estadísticas, estado, avisos, ficha, leyenda, atribución
+      mobile/            # diseño móvil (< 1024 px)
+    shared/
+      api/               # cliente HTTP, construcción de la petición (pura), parseo (puro) y origen de datos
+      hooks/             # useObservatory (TanStack Query), useCountries, useMediaQuery, useNow
+      lib/               # format, symbology, appearance, color, tokens, feedHealth, validateConfig
+      types/             # contract.ts
+    store/               # store único de filtros (Zustand)
 ```
 
 - Un único store de filtros compartido (G6), no uno por componente.
+- `shared/` no importa de `components/`; `components/` usa `shared/` y `store/`. Solo `GlobeView` importa la librería del globo y `three`.
 - Los componentes muestran; el cálculo vive en la API (el frontend no calcula estadísticas).
 - El mapa vive en un componente aislado (entrada: lista de eventos; salida: evento seleccionado) para poder cambiar de librería.
 - Mock fiel al contrato, con casos límite: magnitud nula, sin país, truncado, modo replay, intervalo vacío.

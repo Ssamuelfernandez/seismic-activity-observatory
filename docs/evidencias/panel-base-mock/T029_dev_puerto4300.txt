@@ -1,0 +1,14 @@
+vite dev (copia fuera del repo) en el puerto 4300
+/config.json -> 200 application/json
+/mock/backend.ts -> 200 text/javascript
+/src/shared/api/dataSource.ts -> 200 text/javascript
+/mock/realistic.json -> 200 application/json
+/src/main.tsx -> 200 text/javascript
+--- backend.ts transformado (glob):
+"./base.json": () => import("/mock/base.json?import").then(m => m["default"])
+"./empty.json": () => import("/mock/empty.json?import").then(m => m["default"])
+"./realistic.json": () => import("/mock/realistic.json?import").then(m => m["default"])
+"./replay.json": () => import("/mock/replay.json?import").then(m => m["default"])
+"./truncated.json": () => import("/mock/truncated.json?import").then(m => m["default"])});
+--- alias en dev:
+import("/mock/backend.ts")

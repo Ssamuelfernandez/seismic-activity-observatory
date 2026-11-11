@@ -1,0 +1,15 @@
+npm notice run observatorio-sismico-panel@0.1.0 npx
+npm notice run vitest run tests/_tmp_t037.test.ts --disableConsoleIntercept
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
+desktop: <p class="pointer-events-none absolute bottom-1 right-3 z-30 max-w-[calc(50%-5rem)] bg-hud-bg/90 px-2 py-0.5 text-right text-[11px] leading-snug text-hud-dim ">Sismos: USGS · Fronteras: Natural Earth (dominio público) · Globo: react-globe.gl y three (MIT) · Sin textura</p>
+mobile: <p class="shrink-0 border-t border-hud-line bg-hud-bg px-3 py-1 text-center text-[11px] leading-snug text-hud-dim ">Sismos: USGS · Fronteras: Natural Earth (dominio público) · Globo: react-globe.gl y three (MIT) · Sin textura</p>
+contraste #9ca3af sobre #000000 (hud-bg): 8.27 : 1
+contraste #9ca3af sobre #0b0d10 (hud-panel): 7.66 : 1
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  20:23:41
+   Duration  152ms (transform 47%, import 41%, tests 9%, worker 3%)
+

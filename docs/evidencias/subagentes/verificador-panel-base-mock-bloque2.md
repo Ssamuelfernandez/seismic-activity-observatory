@@ -1,0 +1,13 @@
+# Verificación Bloque 2 (T027–T029) — panel-base-mock
+
+Ejecutado en copia limpia (Node 24.18.0, `npm ci`): `tsc --noEmit` 0 errores; `npm run build` OK; `npm test` 20/20. Hallazgos bloqueantes/importantes: ninguno.
+- T027: `config.json` correcto (api, /api, 60, 15000). `validateConfig` probado con vitest temporal: mode inválido/ausente -> `mode`; api vacío o `api` sin barra -> `apiBaseUrl`; 0, -1, 1.5, "60" -> `refreshSeconds`; `timeoutMs` ausente -> `timeoutMs`; campos antiguos (`refreshIntervalSeconds`…) -> `refreshSeconds`; extra `dataSource` ignorado (OK); `mock` con apiBaseUrl vacío -> OK. `ConfigGate` muestra el campo. No hay `src/config.json` ni los nombres antiguos en `src/`; `STALE_THRESHOLD_SECONDS = 300`; `apiBaseUrl`/`timeoutMs` se usan en `client.ts` y `refreshSeconds` en `useObservatory.ts`.
+- T028: generador ejecutado dos veces: SHA-256 de los cinco JSON idénticos entre sí y a los del árbol de trabajo. Los cinco pasan `validateEventsResponse`; todo `is_synthetic`, ids `mock-`, place «Sintético: …» (salvo nulo). `replay` (6 eventos): time y updated dentro de 2025. `truncated`: 5000/6213/true/cursor no nulo. `empty`: 0. `realistic`: 400. Entre base y realistic existen mag nula y negativa, profundidad nula y negativa, place nulo, magType nulo, sin país.
+- T029: `backend.ts` con `__MOCK_BACKEND__`; salud/estadísticas con la forma de api.md (profundidad 5 tramos <10, 10–35, 35–70, 70–300, ≥300; magnitud 8; comparison null en replay); `realistic` filtra bien por `min_mag`, `country_id` y `start`/`end` (vitest temporal). `dataSource.ts` solo importa el mock con `mode === 'mock'`; alias por modo en `vite.config.ts`; `mock/` en `tsconfig.json`. En `dist/`: sin `__MOCK_BACKEND__`, sin «Sintético:», sin ids `mock-`, sin JSON del mock (solo `paises.geojson`); queda el chunk `mockUnavailable` (mensaje «mock no disponible en este build»). Sin selector `source`/Mock en `components/` ni `store/`; el banner sintético depende de `is_synthetic`. §7: en modo api no hay camino al mock.
+- Orden/contratos: `git diff --stat` vacío en contratos, `docs/enunciado/` y `sql/001_schema.sql`; `CODEMAP.md` cita rutas existentes (`requests.ts`/`parse.ts` marcados «previstos»); docstrings con plantilla en lo muestreado.
+- Desviaciones: `import.meta.glob` perezoso en vez de `?url` es válido (los JSON quedan fuera de `dist/`); histogramas de `truncated` sobre los 5000 devueltos con `total` 6213, y escenarios fijos sin filtros: no incumplen requisito ni contrato (es un mock; FR-006 solo exige filtros en `realistic`).
+- Pendiente del alumno (visual, no es fallo): mensaje de config inválida en navegador, `mode: "mock"` en build de producción, los cinco escenarios con `?scenario=`.
+
+T027: verificada
+T028: verificada
+T029: verificada

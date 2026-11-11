@@ -6,6 +6,8 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 - 31-oct-2026 (rev. 2): el frontend se construye desde cero; F1 pasa a ser exploración de USGS; F8 se divide en F8a–F8e; mock del contrato.
 - 1-nov-2026 (rev. 3): **reconciliación con `03-procedimiento-ejecucion.md`.** Cada fase indica su feature de Spec Kit (la tabla única vive en 03 §4; las "semillas de spec" se movieron allí). Se añade **F1b** (feature `contratos-y-modelo`, antes de la infraestructura). Identificadores de BD, topics, scripts y módulos en inglés. Estructura del repo alineada con 03 §3. Panel: la parte de replay pasa a F9; F8d queda en estado y fallos. Calendario orientativo hasta el 19-nov (§5).
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet; se decide en el plan de `panel-base-mock` tras un prototipo corto. Afecta a §0, §1 (Frontend: mapa), F8a y riesgos (§4).
+- 6-nov-2026 (rev. 5): cambio de diseño visual del alumno en F8a (globo HUD con prismas hexagonales y ficha en panel lateral; `react-globe.gl` implícita) y nueva fase **F8f** (mapa 2D con MapLibre, feature `panel-mapa-2d`, G18). El texto de F8a («popup», «círculos») se reconcilia al cerrar `panel-base-mock`.
+- 10-nov-2026 (rev. 6): **enmienda de alcance de `008-panel-base-mock`.** El alumno aporta un front ya desarrollado y lo adopta con correcciones: `008-panel-base-mock` absorbe F8b, F8c, F8d y F8e (features `009`, `010`, `011` y `012`, que ya no se ejecutan por separado). F8f (`panel-mapa-2d`, G18) queda aplazada. F9 (replay) sigue siendo su feature. Detalle en `specs/008-panel-base-mock/spec.md` y en `inventario-front-externo.md`.
 
 ---
 
@@ -124,7 +126,7 @@ Clave = `event.id`.
 Cada fase indica la **feature de Spec Kit** que la ejecuta (tabla única en 03 §4; usar el nombre, no el número).
 
 Dependencias de backend: `F0 → F1 → F1b → F2 → F3 → F4 → F5 → F7`. `F6` (histórico) puede empezar tras F1 y debe estar listo antes de F8c. `F9` (replay) tras F5. `F12` (mediciones) tras F7 con datos cargados.
-Dependencias de frontend: `F8a` (esqueleto + mapa contra mock) solo necesita el `CONTRATO-API.md` y `002-infra-compose`; `F8b–F8d` siguen contra el mock; `F8e` **reconecta a la API real** al terminar F7. La memoria se redacta **a medida que avanzas**, no al final.
+Dependencias de frontend (enmienda del 10-nov-2026): `F8a–F8e` son **una sola feature** (`008-panel-base-mock`). Sus bloques 1–3 (portar, configuración y mock, capa de datos) solo necesitan el `CONTRATO-API.md` y `002-infra-compose`; el bloque 4 (**conexión con la API real**) necesita F7 hecha y el stack de Compose levantado con datos. `F8f` queda aplazada. La memoria se redacta **a medida que avanzas**, no al final.
 
 ### F0 — Repositorio, documentación y Spec Kit (sin feature, a mano)
 - Seguir 03 §2 (paso 0 y arranque): repo privado con acceso al profesor; `docs/enunciado/` (paquete completo, solo lectura), `docs/planificacion/` (01, 02 y 03), `data/catalogo/paises.geojson` (sin modificar), `.gitignore` (node_modules, `.env`, `data/raw/`, `.venv/`, `__pycache__/`, volúmenes, token ngrok), `README.md` mínimo. **No** crear aún carpetas de servicio ni copiar el frontend de ejemplo.
@@ -184,33 +186,38 @@ Dependencias de frontend: `F8a` (esqueleto + mapa contra mock) solo necesita el 
 - **Pendiente heredado de `002-infra-compose`:** los 404 (`not_found`) y 405 (`method_not_allowed`) deben devolver el cuerpo de error común `{"error": {"code", "message"}}` de `contracts/api.md` §6; hoy usan el cuerpo por defecto de FastAPI (`{"detail": …}`, comprobado en `docs/evidencias/infra-compose/pendiente_404_405.txt`). Añadir manejadores globales en `api/main.py`.
 - **Verificación:** tests con `httpx`; `curl` de cada endpoint; parar PG y comprobar el 503; evento con mag nula excluido por `min_mag` pero contado aparte. **Cubre:** F1–F11.
 
-### F8 — Frontend React desde cero (cinco features)
+### F8 — Frontend React desde cero (una feature: `008-panel-base-mock`, que absorbe F8b–F8e)
 
-El panel se construye en cinco bloques. Primero se trabaja contra el **mock del contrato** (G15) y al final se reconecta a la API real. Estructura de carpetas en 03 §7.5.
+**Enmienda del 10-nov-2026.** El alumno aportó un front ya desarrollado (`globo-lab`) que quiere conservar tal como se ve. `008-panel-base-mock` pasa a ser «adoptar el front externo con correcciones» y absorbe F8b, F8c, F8d y F8e; las features `009`, `010`, `011` y `012` ya no se ejecutan por separado (sus IDs se cubren en `008`). F8f queda aplazada. Los textos de F8b–F8e de abajo se conservan como **descripción de lo que hay que cubrir**, no como features. Estructura de carpetas en 03 §7.5.
 
-**F8a — Esqueleto + mapa contra mock (feature `008-panel-base-mock`)**
-- Crear el proyecto React + TypeScript + Vite + Tailwind en `frontend/` (versiones fijadas en el plan, lock, `npm ci && npm run dev` y `npm run build` funcionando). Estructura en `src/`: `api/` (cliente y hooks de TanStack Query), `config/` (lectura de `config.json`), `store/` (store único de filtros), `features/` (map, events-table, charts, filters, system-status, historical-panel), `shared/`.
-- `public/config.json` con `mode: mock|api`, `apiBaseUrl`, `refreshSeconds`, `timeoutMs`; se lee en tiempo de ejecución.
-- Mock en `frontend/mock/` conforme a `CONTRATO-API.md` (casos: mag nula, sin país, truncado, modo replay, intervalo vacío), **marcado como sintético**.
-- Mapa o globo con la librería elegida: fondo con atribución de su fuente, capa de fronteras (`paises.geojson` desde `data/catalogo/`), círculos (tamaño ∝ magnitud, color ∝ profundidad, ND para nulos), popup con ficha (incluye `magType`), leyenda.
-- **Verificación:** ver el mapa con los casos del mock en el navegador; captura. **Cubre:** G0, G2, G11, G14, G15, G12 (`magType`).
+**F8a — Panel completo adoptando el front externo (feature `008-panel-base-mock`; absorbe F8b–F8e)**
+- Proyecto React + TypeScript + Vite + Tailwind en `frontend/` (versiones fijadas, lock, `npm ci && npm run dev` en el puerto 4200 con `strictPort` y proxy a la API, y `npm run build`). Estructura en `src/` (la del front externo, decisión del alumno del 10-nov-2026; ver 03 §7.5): `components/` (con `mobile/`), `shared/` (`api/`, `hooks/`, `lib/`, `types/`) y `store/` (store único de filtros).
+- `public/config.json` con `mode: mock|api`, `apiBaseUrl`, `refreshSeconds`, `timeoutMs`; se lee en tiempo de ejecución y se valida.
+- Mock en `frontend/mock/` con carga bajo demanda y escenarios (`base`, `truncated`, `replay`, `empty`, `realistic`) conformes a `CONTRATO-API.md` (mag nula y negativa, `place` nulo, sin país, truncado, vacío), **etiquetado como sintético**, fuera del build de producción y sin selector en la interfaz.
+- Globo `react-globe.gl` (países extruidos, prismas de 7 lados, atmósfera, grano, anillos), ficha, leyenda con 5 clases de profundidad (cortes de la API) y atribución visible de USGS, Natural Earth, `react-globe.gl` y `three`.
+- Filtros, tabla, estadísticas (hora UTC, país, distribuciones, comparación con 2025), estado del feed y avisos de fallo, banner REPRODUCCIÓN, conexión con la API real y vista de replay sobre el intervalo de 2025.
+- **Verificación:** casos del mock en el navegador y, con el stack levantado, los mismos paneles contra la API real al cambiar filtros, con un fallo provocado y su recuperación; capturas a 375, 768 y 1280 px. **Cubre:** G0, G1, G2, G3, G4, G5, G5b, G6, G7, G8, G9, G11, G12 (`magType`, `country_id`, `country_name`, `truncated`, `last_ingestion`), G14, G15, G17. **No cubre:** G16 (decisión propia), G10 (cierre en `replay`), G13 (`despliegue-tunel`) ni G18 (aplazada).
 
-**F8b — Filtros, tabla y estado único (feature `009-panel-filtros-tabla`)**
+**F8b — Filtros, tabla y estado único (feature `009-panel-filtros-tabla`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026)**
 - Store único de filtros (fechas, magnitud mínima, país/región) compartido por todas las vistas; tabla de eventos ordenable y accesible; uso de `country_id`, `country_name` y `truncated` (aviso, sin estadísticas sobre muestra truncada).
 - **Verificación:** al cambiar un filtro, mapa y tabla cambian a la vez; truncado visible. **Cubre:** G6, G8, G16, G12 (`country_id`, `country_name`, `truncated`).
 
-**F8c — Gráficos y panel lateral de comparación histórica (feature `010-panel-graficos-comparacion`)**
-- Chart.js (versión fijada). Primer componente: gráfico de dos barras (reciente vs media 2025) dentro del **panel lateral de comparación histórica** (decisión del alumno): columna fija a la derecha del mapa (debajo en pantallas estrechas) con nº de eventos M≥4 en las últimas 24 h para la zona/país y filtros activos, media diaria 2025 (`n_2025 / 365`, incluyendo días con cero), diferencia absoluta, variación % (ND si la media es 0) y aviso "el periodo reciente puede estar incompleto". Se actualiza al cambiar los filtros; es un panel anclado (no ventana flotante) porque no tapa el mapa y es accesible con teclado. Los datos salen de `/api/estadisticas`; el frontend no calcula nada.
-- Reutilizar el componente de gráfico para: recuento por hora UTC, recuento por país (con "Sin país asignado"), distribuciones de magnitud y profundidad con registros sin valor.
+**F8c — Gráficos y panel lateral de comparación histórica (feature `010-panel-graficos-comparacion`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026; el front externo los dibuja con barras propias en el cajón de estadísticas, sin Chart.js)**
+- **Sin Chart.js** (decisión del alumno, 10-nov-2026): las barras son HTML y CSS. La **comparación histórica** va dentro del **cajón inferior de estadísticas** (decisión propia, no un panel lateral): nº de eventos M≥4 en las últimas 24 h con los filtros activos, media diaria 2025 (`n_2025 / 365`, incluyendo días con cero), diferencia absoluta, variación % (ND si la media es 0) y aviso "el periodo reciente puede estar incompleto". Se actualiza al cambiar los filtros. Los datos salen de `/api/estadisticas`; el frontend no calcula nada.
+- Mismo cajón: recuento por hora UTC, recuento por país (con "Sin país asignado"), distribuciones de magnitud y profundidad con registros sin valor.
 - **Verificación:** gráficos coherentes con la tabla al cambiar filtros; capturas con filtros visibles. **Cubre:** G3, G4, G5, G5b.
 
-**F8d — Estado del sistema y fallos (feature `011-panel-estado-fallos`)**
+**F8d — Estado del sistema y fallos (feature `011-panel-estado-fallos`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026)**
 - Barra de **estado del sistema**: última lectura correcta de la API, `generated`, `last_ingestion`, periodo consultado, aviso de desactualización por umbral y error de backend; refresco ~60 s sin solapar peticiones, timeout, conservación e identificación de la última lectura (no presentarla como reciente).
 - **Verificación:** simular API caída en el mock (y luego con ngrok real en F11) y comprobar aviso + recuperación. **Cubre:** G7, G9, G12 (`last_ingestion`).
 
-**F8e — Conexión con la API real (feature `012-panel-conexion-api`)**
+**F8e — Conexión con la API real (feature `012-panel-conexion-api`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026)**
 - Cambiar `config.json` a `mode: api` (dev: `http://localhost:8000`); contrastar respuestas reales con el mock y corregir diferencias (si el contrato y la API divergen, se arregla la API o el mock, nunca el contrato sin avisar).
 - **Verificación:** con datos reales ver mapa + tabla + gráficos coherentes al cambiar filtros; capturas con filtros visibles. **Cubre:** G1.
+
+**F8f — Vista de mapa 2D con MapLibre (feature `panel-mapa-2d`; APLAZADA el 10-nov-2026: `008` ya no incluye el botón «Ver en mapa 2D»)**
+- Vista plana (MapLibre GL JS, versión fijada en su plan) que se abriría desde la ficha del globo (el botón no existe todavía; se añadiría con esta feature). Usa **solo los eventos ya cargados** (sin nuevas peticiones a la API ni al mock), la paleta de profundidad y el tamaño por magnitud del globo y los tokens de `specs/008-panel-base-mock/diseno-visual.md`. Aviso visible si `metadata.truncated` (G12). Atribución propia del mapa base si usa teselas. Va después de `009` (necesita el aviso de truncado) y no bloquea a `010`–`013`.
+- **Verificación:** abrir el mapa 2D desde una ficha con el mock `base` y `truncated`; pestaña de red sin peticiones nuevas; captura. **Cubre:** G18.
 
 ### F9 — Replay histórico (feature `013-replay`)
 - `producer/replay.py`: lee una selección ordenada por fecha desde los archivos de F6 (p. ej. 20 eventos de una zona), publica en `earthquakes.replay` con `mode="replay"`, `replay_at`, velocidad configurable (p. ej. 1 evento / 2 s), incluyendo **duplicados y revisiones controlados** (se pueden fabricar y etiquetar como sintéticos o forzar con dos versiones reales).
@@ -291,8 +298,8 @@ Reparto de la documentación entre herramientas: la **constitución** recoge los
 |---|---|
 | 1–3 nov | F0, F1, F1b (`001`), F2 (`002`) |
 | 4–7 nov | F4 (`003`), F3 (`004`), F5 (`005`); F6 (`006`) en paralelo |
-| 8–11 nov | F7 (`007`), F8a (`008`), F8b (`009`) |
-| 12–15 nov | F8c (`010`), F8d (`011`), F8e (`012`), F9 (`013`) |
+| 8–11 nov | F7 (`007`), F8a–F8e (`008`, que absorbe `009`–`012`) |
+| 12–15 nov | F9 (`013`); holgura para `008` |
 | 16–18 nov | F10 (`014`), F11 (`015`), F12 (`016`); memoria (`017`) en continuo |
 | 19 nov | Entrega: revisión final con la lista del checklist §6 y ensayo de la defensa |
 

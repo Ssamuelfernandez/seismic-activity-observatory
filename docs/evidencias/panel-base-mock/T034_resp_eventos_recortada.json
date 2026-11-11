@@ -1,0 +1,140 @@
+{
+ "type": "FeatureCollection",
+ "metadata": {
+  "generated": 1794338300489,
+  "last_ingestion": 1794338297030,
+  "mode": "live",
+  "count": 206,
+  "total": 206,
+  "truncated": false,
+  "next_cursor": null,
+  "null_mag_excluded": 0
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "id": "nc75464922",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -122.814498901367,
+     38.829833984375,
+     1.55999994277954
+    ]
+   },
+   "properties": {
+    "mag": 1.24,
+    "magType": "md",
+    "place": "8 km NW of The Geysers, CA",
+    "time": 1794337533470,
+    "updated": 1794337627764,
+    "country_id": "USA",
+    "country_name": "Estados Unidos",
+    "is_synthetic": false,
+    "status": "automatic",
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/nc75464922",
+    "sig": 24
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "aka2026whowcd",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -154.955,
+     58.287,
+     5
+    ]
+   },
+   "properties": {
+    "mag": 1,
+    "magType": "ml",
+    "place": "85 km NNW of Karluk, Alaska",
+    "time": 1794337186200,
+    "updated": 1794337232947,
+    "country_id": "USA",
+    "country_name": "Estados Unidos",
+    "is_synthetic": false,
+    "status": "automatic",
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/aka2026whowcd",
+    "sig": 15
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "uu80164026",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.914,
+     38.5176666666667,
+     3.89
+    ]
+   },
+   "properties": {
+    "mag": 1.18,
+    "magType": "md",
+    "place": null,
+    "time": 1794336845610,
+    "updated": 1794338200080,
+    "country_id": "USA",
+    "country_name": "Estados Unidos",
+    "is_synthetic": false,
+    "status": "reviewed",
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/uu80164026",
+    "sig": 21
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "aka2026whohxp",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -151.016,
+     61.005,
+     1
+    ]
+   },
+   "properties": {
+    "mag": 2.1,
+    "magType": "ml",
+    "place": "9 km SE of Tyonek, Alaska",
+    "time": 1794336215182,
+    "updated": 1794336296259,
+    "country_id": null,
+    "country_name": null,
+    "is_synthetic": false,
+    "status": "automatic",
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/aka2026whohxp",
+    "sig": 68
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "us7000txc3",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     68.4755,
+     -20.7528,
+     10
+    ]
+   },
+   "properties": {
+    "mag": 5.2,
+    "magType": "mww",
+    "place": "Mid-Indian Ridge",
+    "time": 1794332188861,
+    "updated": 1794333330040,
+    "country_id": null,
+    "country_name": null,
+    "is_synthetic": false,
+    "status": "reviewed",
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000txc3",
+    "sig": 416
+   }
+  }
+ ]
+}

@@ -1,0 +1,95 @@
+// PRUEBA TEMPORAL de T036 (no queda en el repo). Fases por variable de entorno T036_PHASE:
+//  cycle    : ciclo de refresco (QueryObserver con las mismas opciones que useObservatory) durante T036_SECONDS s, registrando cada cambio.
+//  cold     : sin lectura previa, con la API apagada: error sin datos.
+//  proxy    : una llamada del cliente a través del proxy de Vite.
+//  local    : timeout y no-solapamiento contra un servidor local mínimo temporal.
+(globalThis as { window?: unknown }).window = globalThis; // TanStack desactiva refetchInterval si no hay `window`
+import { createServer } from 'node:http';
+import { describe, expect, it } from 'vitest';
+
+const PHASE = process.env.T036_PHASE!;
+const BASE = process.env.T036_BASE ?? 'http://127.0.0.1:8000/api';
+const t0 = Date.now();
+const ts = () => `+${String(((Date.now() - t0) / 1000).toFixed(1)).padStart(5)}s`;
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+describe(`T036 ${PHASE}`, () => {
+  it('fase', async () => {
+    const { QueryClient, QueryObserver, keepPreviousData } = await import('@tanstack/react-query');
+    const { apiEvents, apiHealth, ApiError } = await import('../src/shared/api/client');
+    const { setConfig } = await import('../src/shared/api/runtimeConfig');
+    const { deriveDataState } = await import('../src/shared/lib/dataState');
+    const cfg = (base: string, timeoutMs = 15000) => setConfig({ mode: 'api', apiBaseUrl: base, refreshSeconds: 1, timeoutMs });
+    const describeErr = (e: unknown) => (e instanceof ApiError ? `ApiError{status:${e.status}, code:${e.code}, message:"${e.message}"}` : String(e));
+
+    if (PHASE === 'cycle' || PHASE === 'cold') {
+      cfg(BASE);
+      const qc = new QueryClient();
+      const mk = (key: string, fn: (s: AbortSignal) => Promise<unknown>) =>
+        new QueryObserver(qc, { queryKey: [key], queryFn: ({ signal }) => fn(signal), refetchInterval: 1000, retry: false, placeholderData: keepPreviousData });
+      const ev = mk('events', (s) => apiEvents({ mode: 'live', start: new Date(Date.now() - 24 * 3600e3).toISOString() }, s));
+      const he = mk('health', (s) => apiHealth(s));
+      let lastLine = '';
+      const show = () => {
+        const e = ev.getCurrentResult();
+        const h = he.getCurrentResult();
+        const data = e.data as { features: unknown[]; metadata: { total: number } } | undefined;
+        const n = data ? data.features.length : null;
+        const hd = h.data as { last_ingestion: number | null; generated: number } | undefined;
+        const line = `eventos: data=${n === null ? 'sin lectura' : n + ' eventos (total ' + data!.metadata.total + ')'} | error=${e.error ? describeErr(e.error) : 'no'} | state=${deriveDataState(n, e.error !== null)} | dataUpdatedAt=${e.dataUpdatedAt ? new Date(e.dataUpdatedAt).toISOString().slice(11, 19) : '-'}Z || salud: ${hd ? 'ok last_ingestion=' + hd.last_ingestion : 'sin lectura'} | error=${h.error ? describeErr(h.error) : 'no'}`;
+        if (line !== lastLine) console.log(`${ts()} ${line}`);
+        lastLine = line;
+      };
+      const u1 = ev.subscribe(show); const u2 = he.subscribe(show);
+      const secs = Number(process.env.T036_SECONDS ?? 10);
+      for (let i = 0; i < secs * 4; i++) { await sleep(250); show(); }
+      u1(); u2();
+      if (PHASE === 'cold') {
+        const e = ev.getCurrentResult();
+        expect(e.data).toBeUndefined();
+        expect(deriveDataState(null, e.error !== null)).toBe('error');
+      }
+    }
+
+    if (PHASE === 'proxy') {
+      cfg('http://localhost:4300/api');
+      for (const [n, f] of [['eventos', () => apiEvents({ mode: 'live' })], ['salud', () => apiHealth()]] as const) {
+        try { const r = await f(); console.log(`proxy ${n}: OK`, JSON.stringify(r).slice(0, 80)); } catch (e) { console.log(`proxy ${n}:`, describeErr(e)); }
+      }
+    }
+
+    if (PHASE === 'local') {
+      // (d) servidor que acepta y no contesta: el cliente corta a timeoutMs.
+      const mute = createServer(() => { /* nunca responde */ });
+      await new Promise<void>((r) => mute.listen(0, '127.0.0.1', r));
+      const port = (mute.address() as { port: number }).port;
+      cfg(`http://127.0.0.1:${port}/api`, 400);
+      const a = Date.now();
+      let err: unknown;
+      try { await apiHealth(); } catch (e) { err = e; }
+      const dt = Date.now() - a;
+      console.log(`(d) timeoutMs=400, servidor mudo: ${describeErr(err)} tras ${dt} ms`);
+      expect(err).toBeInstanceOf(ApiError);
+      expect((err as InstanceType<typeof ApiError>).code).toBe('timeout');
+      expect(dt).toBeGreaterThanOrEqual(380); expect(dt).toBeLessThan(1500);
+      mute.closeAllConnections(); await new Promise((r) => mute.close(r));
+
+      // (e) servidor lento (900 ms) con refetchInterval de 200 ms: nunca hay más de 1 petición en vuelo.
+      let inflight = 0, maxInflight = 0, total = 0;
+      const slow = createServer((req, res) => {
+        total++; inflight++; maxInflight = Math.max(maxInflight, inflight);
+        setTimeout(() => { inflight--; res.setHeader('content-type', 'application/json'); res.end(JSON.stringify({ status: 'ok', last_ingestion: null, generated: Date.now() })); }, 900);
+      });
+      await new Promise<void>((r) => slow.listen(0, '127.0.0.1', r));
+      cfg(`http://127.0.0.1:${(slow.address() as { port: number }).port}/api`, 5000);
+      const qc = new QueryClient();
+      const obs = new QueryObserver(qc, { queryKey: ['health'], queryFn: ({ signal }) => apiHealth(signal), refetchInterval: 200, retry: false, placeholderData: keepPreviousData });
+      const unsub = obs.subscribe(() => {});
+      await sleep(4000);
+      unsub(); await sleep(1000);
+      console.log(`(e) servidor 900 ms, refetchInterval 200 ms, 4 s: peticiones recibidas=${total}, máximo en vuelo=${maxInflight}`);
+      expect(maxInflight).toBe(1);
+      slow.closeAllConnections(); await new Promise((r) => slow.close(r));
+    }
+  }, 180000);
+});

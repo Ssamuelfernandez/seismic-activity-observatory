@@ -1,0 +1,9 @@
+# Primer arranque: npm run dev en el 4200 (consultas con curl a http://localhost:4200)
+GET / -> 200 563 bytes
+GET /datos/paises.geojson -> 200 838726 bytes
+GET /src/main.tsx -> 200 3097 bytes
+SHA-256 servido:
+6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f *-
+SHA-256 esperado: 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f
+
+# Segundo arranque (ver T024_dev_segundo_arranque.txt): exit=1, 'Port 4200 is already in use'

@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Tokens de diseño del HUD: único sitio donde se definen colores y tipografía. */
+@theme {
+  --color-hud-bg: #000000;
+  --color-hud-panel: #0b0d10;
+  --color-hud-land: #151a20;
+  --color-hud-line: #3a3f47;
+  --color-hud-line-strong: #6b7280;
+  --color-hud-text: #e5e7eb;
+  --color-hud-dim: #9ca3af;
+  --color-hud-accent: #ff7a1a;
+  --color-hud-ok: #4ade80;
+  --color-hud-bad: #f87171;
+  --font-family-hud: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  background: var(--color-hud-bg);
+  color: var(--color-hud-text);
+  font-family: var(--font-family-hud);
+  overflow: hidden;
+}

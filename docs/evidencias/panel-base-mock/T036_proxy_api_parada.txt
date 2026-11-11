@@ -1,0 +1,13 @@
+npm notice run observatorio-sismico-panel@0.1.0 npx
+npm notice run vitest run tests/_tmp_t036.test.ts --disableConsoleIntercept
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
+proxy eventos: ApiError{status:502, code:unknown, message:"Error HTTP 502"}
+proxy salud: ApiError{status:502, code:unknown, message:"Error HTTP 502"}
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  20:20:31
+   Duration  184ms (tests 69%, import 21%, transform 8%, worker 2%)
+

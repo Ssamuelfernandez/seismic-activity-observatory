@@ -1,0 +1,13 @@
+npm notice run observatorio-sismico-panel@0.1.0 predev
+npm notice run node scripts/copy-countries.mjs
+paises.geojson copiado y verificado (SHA-256 6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f)
+npm notice run observatorio-sismico-panel@0.1.0 dev
+npm notice run vite
+[31merror when starting dev server:
+Error: Port 4200 is already in use
+    at httpServerStart (file:///C:/Users/Samuel/AppData/Local/Temp/claude/b47516950f424450/d4476bd2-de8b-4302-ae3a-d8bbb42f24ed/scratchpad/clone/frontend/node_modules/vite/dist/node/chunks/node.js:14669:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async startServer (file:///C:/Users/Samuel/AppData/Local/Temp/claude/b47516950f424450/d4476bd2-de8b-4302-ae3a-d8bbb42f24ed/scratchpad/clone/frontend/node_modules/vite/dist/node/chunks/node.js:25069:30)
+    at async Object.listen (file:///C:/Users/Samuel/AppData/Local/Temp/claude/b47516950f424450/d4476bd2-de8b-4302-ae3a-d8bbb42f24ed/scratchpad/clone/frontend/node_modules/vite/dist/node/chunks/node.js:24875:4)
+    at async CAC.<anonymous> (file:///C:/Users/Samuel/AppData/Local/Temp/claude/b47516950f424450/d4476bd2-de8b-4302-ae3a-d8bbb42f24ed/scratchpad/clone/frontend/node_modules/vite/dist/node/cli.js:734:3)[39m
+exit=1

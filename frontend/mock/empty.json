@@ -1,0 +1,14 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "generated": 1793700000000,
+    "last_ingestion": 1793699970000,
+    "mode": "live",
+    "count": 0,
+    "total": 0,
+    "truncated": false,
+    "next_cursor": null,
+    "null_mag_excluded": 0
+  },
+  "features": []
+}

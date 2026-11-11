@@ -1,0 +1,12 @@
+npm notice run observatorio-sismico-panel@0.1.0 test
+npm notice run vitest run
+
+ RUN  v5.1.0 C:/Users/Samuel/AppData/Local/Temp/claude/b47516950f424450/d4476bd2-de8b-4302-ae3a-d8bbb42f24ed/scratchpad/clone/frontend
+
+
+ Test Files  8 passed (8)
+      Tests  70 passed (70)
+   Start at  20:30:23
+   Duration  3.08s (tests 86%, transform 10%, import 2%, worker 1%)
+
+exit=0

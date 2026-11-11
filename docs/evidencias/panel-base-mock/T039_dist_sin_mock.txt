@@ -1,0 +1,10 @@
+== grep -r __MOCK_BACKEND__ dist
+(exit=1)
+== grep -r 'Sintético:' dist
+(exit=1)
+== ls dist/assets
+index-8L0h55SK.css
+index-ZcVYX9xK.js
+mockUnavailable-BcBc69qo.js
+== json en dist
+dist/config.json

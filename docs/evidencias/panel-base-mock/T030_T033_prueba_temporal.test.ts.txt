@@ -1,0 +1,182 @@
+// PRUEBA TEMPORAL de T030-T033 (no queda en el repo; las formales las escribe T038).
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { QueryClient } from '@tanstack/react-query';
+import { describe, expect, it } from 'vitest';
+import { mockEvents, mockStats } from '../mock/backend';
+import { ApiError } from '../src/shared/api/apiError';
+import { parseEvents, parseHealth, parseStats } from '../src/shared/api/parse';
+import { REPLAY_END, REPLAY_START, buildRequest, resolveFilters, type RequestFilters } from '../src/shared/api/requests';
+import { StatusBanners } from '../src/components/StatusBanners';
+import { deriveDataState } from '../src/shared/lib/dataState';
+import base from '../mock/base.json';
+import truncated from '../mock/truncated.json';
+import replay from '../mock/replay.json';
+import empty from '../mock/empty.json';
+import realistic from '../mock/realistic.json';
+
+const NOW = Date.parse('2026-11-10T12:00:00.000Z');
+const F: RequestFilters = { mode: 'live', hours: 24, dateFrom: '', dateTo: '', minMag: 0, country: '' };
+const req = (p: Partial<RequestFilters>) => buildRequest(resolveFilters({ ...F, ...p }), NOW);
+const text = (h: string) => h.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+
+describe('T030 requests', () => {
+  it('live: ventana de horas, sin end, sin min_mag ni country', () => {
+    expect(req({ hours: 6 })).toEqual({ mode: 'live', start: '2026-11-10T06:00:00.000Z', min_mag: undefined, country_id: undefined });
+    expect(req({ hours: 6 }).end).toBeUndefined();
+  });
+  it('live: rango UTC con end = dia final + 1 dia', () => {
+    const r = req({ hours: 0, dateFrom: '2026-11-01', dateTo: '2026-11-03' });
+    expect(r.start).toBe('2026-11-01T00:00:00.000Z');
+    expect(r.end).toBe('2026-11-04T00:00:00.000Z');
+  });
+  it('rango invalido (incompleto o desde > hasta) -> ultimas 24 h', () => {
+    for (const p of [{ dateFrom: '', dateTo: '' }, { dateFrom: '2026-11-03', dateTo: '' }, { dateFrom: '2026-11-05', dateTo: '2026-11-01' }]) {
+      const r = req({ hours: 0, ...p });
+      expect(r.start).toBe('2026-11-09T12:00:00.000Z');
+      expect(r.end).toBeUndefined();
+    }
+  });
+  it('replay: 2025 fijo ignorando el periodo del filtro', () => {
+    expect(REPLAY_START).toBe('2025-01-01T00:00:00.000Z');
+    expect(REPLAY_END).toBe('2026-01-01T00:00:00.000Z');
+    for (const p of [{ hours: 1 }, { hours: 0, dateFrom: '2026-11-01', dateTo: '2026-11-03' }, { hours: 8760 }]) {
+      expect(req({ mode: 'replay', ...p })).toMatchObject({ mode: 'replay', start: REPLAY_START, end: REPLAY_END });
+    }
+    expect(resolveFilters({ ...F, mode: 'replay', hours: 1 })).toEqual(resolveFilters({ ...F, mode: 'replay', hours: 720 }));
+  });
+  it('min_mag solo si > 0; country_id solo none o 3 letras', () => {
+    expect(req({ minMag: 0 }).min_mag).toBeUndefined();
+    expect(req({ minMag: 4 }).min_mag).toBe(4);
+    const cases: [string, boolean][] = [['none', true], ['ESP', true], ['esp', true], ['  jpn ', true], ['', false], ['ES', false], ['ESPA', false], ['E1P', false]];
+    for (const [c, ok] of cases) expect(req({ country: c }).country_id !== undefined).toBe(ok);
+    expect(req({ country: 'esp' }).country_id).toBe('esp');
+  });
+});
+
+describe('T030 parse', () => {
+  it('acepta los cinco escenarios y no toca la respuesta', () => {
+    for (const s of [base, truncated, replay, empty, realistic]) expect(parseEvents(s)).toBe(s);
+  });
+  it('conserva los nulos (nunca 0)', () => {
+    const out = parseEvents(realistic);
+    expect(out.features.some((f) => f.properties.mag === null)).toBe(true);
+    expect(out.features.some((f) => f.properties.magType === null)).toBe(true);
+    expect(out.features.some((f) => f.properties.place === null)).toBe(true);
+    expect(out.features.some((f) => f.geometry.coordinates[2] === null)).toBe(true);
+    expect(out.features.some((f) => f.properties.country_id === null && f.properties.country_name === null)).toBe(true);
+    const before = realistic.features.filter((f) => f.properties.mag === 0).length;
+    expect(out.features.filter((f) => f.properties.mag === 0).length).toBe(before);
+  });
+  const clone = () => JSON.parse(JSON.stringify(base));
+  const bad: [string, (r: any) => void][] = [
+    ['sin type FeatureCollection', (r) => { r.type = 'X'; }],
+    ['sin metadata', (r) => { delete r.metadata; }],
+    ['metadata sin truncated', (r) => { delete r.metadata.truncated; }],
+    ['metadata.total texto', (r) => { r.metadata.total = '5'; }],
+    ['features no es lista', (r) => { r.features = {}; }],
+    ['geometry no Point', (r) => { r.features[0].geometry.type = 'Polygon'; }],
+    ['coordenada texto', (r) => { r.features[0].geometry.coordinates[0] = 'a'; }],
+    ['falta mag (campo ausente)', (r) => { delete r.features[0].properties.mag; }],
+    ['falta magType', (r) => { delete r.features[0].properties.magType; }],
+    ['is_synthetic no booleano', (r) => { r.features[0].properties.is_synthetic = 1; }],
+  ];
+  for (const [name, mutate] of bad) {
+    it(`rechaza: ${name}`, () => {
+      const r = clone();
+      mutate(r);
+      let err: unknown = null;
+      try { parseEvents(r); } catch (e) { err = e; }
+      expect(err).toBeInstanceOf(ApiError);
+      expect((err as ApiError).code).toBe('invalid_response');
+    });
+  }
+  it('rechaza null, texto, array y numero', () => {
+    for (const v of [null, 'x', [], 5]) expect(() => parseEvents(v)).toThrow(ApiError);
+  });
+  it('stats y salud: aceptan lo valido y rechazan lo malo', async () => {
+    const s = await mockStats({ mode: 'live' }, 'realistic');
+    expect(parseStats(s)).toBe(s);
+    const sr = await mockStats({ mode: 'replay' }, 'replay');
+    expect(parseStats(sr).comparison).toBeNull();
+    expect(() => parseStats({ ...s, total: 'x' })).toThrow(ApiError);
+    expect(() => parseStats({ ...s, comparison: {} })).toThrow(ApiError);
+    expect(parseHealth({ status: 'ok', last_ingestion: null, generated: 1 }).last_ingestion).toBeNull();
+    expect(() => parseHealth({ status: 'ko', last_ingestion: 1, generated: 1 })).toThrow(ApiError);
+  });
+});
+
+describe('T031 mock: un cambio de filtro cambia los parametros y el resultado', () => {
+  it('realistic', async () => {
+    const a = req({ hours: 24 });
+    const b = req({ hours: 24, minMag: 5 });
+    const c = req({ hours: 24, country: 'jpn' });
+    expect(a).not.toEqual(b);
+    expect(a).not.toEqual(c);
+    const [ra, rb, rc] = await Promise.all([mockEvents(a, 'realistic'), mockEvents(b, 'realistic'), mockEvents(c, 'realistic')]);
+    console.log('totales realistic 24h:', ra.metadata.total, '| minMag 5:', rb.metadata.total, '| JPN:', rc.metadata.total);
+    expect(rb.metadata.total).toBeLessThan(ra.metadata.total);
+    expect(rc.features.every((f) => f.properties.country_id === 'JPN')).toBe(true);
+    const st = await mockStats(b, 'realistic');
+    expect(st.total).toBe(rb.metadata.total);
+  });
+  it('estados derivados', () => {
+    expect(deriveDataState(null, false)).toBe('loading');
+    expect(deriveDataState(3, false)).toBe('ready');
+    expect(deriveDataState(0, false)).toBe('empty');
+    expect(deriveDataState(null, true)).toBe('error');
+    expect(deriveDataState(3, true)).toBe('error');
+    expect(deriveDataState(0, true)).toBe('error');
+  });
+  it('una consulta en vuelo no se duplica (TanStack Query)', async () => {
+    const qc = new QueryClient();
+    let calls = 0;
+    const fn = () => new Promise<number>((res) => { calls += 1; setTimeout(() => res(1), 50); });
+    await Promise.all([qc.fetchQuery({ queryKey: ['k'], queryFn: fn, staleTime: 0 }), qc.fetchQuery({ queryKey: ['k'], queryFn: fn, staleTime: 0 })]);
+    expect(calls).toBe(1);
+  });
+});
+
+describe('T033 avisos (render estatico)', () => {
+  const props = { error: null, health: null, healthError: null, updatedAt: 0, hasData: true, hasSynthetic: false };
+  const html = (metadata: any, state: any, variant: 'desktop' | 'mobile' = 'desktop') =>
+    renderToStaticMarkup(createElement(StatusBanners, { ...props, metadata, state, variant }));
+  it('truncado: Mostrando N de M eventos', () => {
+    const out = html(truncated.metadata, 'ready');
+    console.log('truncated ->', text(out));
+    expect(truncated.metadata.truncated).toBe(true);
+    const msg = `Mostrando ${truncated.metadata.count} de ${truncated.metadata.total} eventos`;
+    expect(out).toContain(msg);
+    expect(html(truncated.metadata, 'ready', 'mobile')).toContain(msg);
+  });
+  it('no truncado: sin aviso', () => {
+    expect(html(base.metadata, 'ready')).not.toContain('Mostrando');
+  });
+  it('replay: REPRODUCCION', () => {
+    const out = html(replay.metadata, 'ready');
+    console.log('replay ->', text(out));
+    expect(out).toContain('REPRODUCCIÓN');
+    expect(html(replay.metadata, 'ready', 'mobile')).toContain('REPRODUCCIÓN');
+  });
+  it('replay vacio: Sin eventos reproducidos, sin error ni cifras', () => {
+    const meta = { ...replay.metadata, count: 0, total: 0, truncated: false };
+    const out = html(meta, 'empty');
+    console.log('replay vacio ->', text(out));
+    expect(out).toContain('Sin eventos reproducidos');
+    expect(out).toContain('REPRODUCCIÓN');
+    expect(out).not.toContain('role="alert"');
+    expect(out).not.toMatch(/\b0 eventos/);
+  });
+  it('live vacio (escenario empty): Sin eventos en el intervalo, sin error', () => {
+    const out = html(empty.metadata, deriveDataState(empty.features.length, false));
+    console.log('empty ->', text(out));
+    expect(out).toContain('Sin eventos en el intervalo');
+    expect(out).not.toContain('role="alert"');
+    expect(out).not.toContain('Sin eventos reproducidos');
+  });
+  it('error sin datos no es vacio', () => {
+    const out = renderToStaticMarkup(createElement(StatusBanners, { ...props, hasData: false, metadata: null, state: 'error', error: new ApiError('caída', 0, 'network') }));
+    expect(out).toContain('Sin datos');
+    expect(out).not.toContain('Sin eventos');
+  });
+});

@@ -1,0 +1,9 @@
+dist-globe: \assets\index-DHS1LGSt.css 0.6 kB -> 0.3 kB gzip
+dist-globe: \assets\index-DusnSwHN.js 2170.4 kB -> 611.7 kB gzip
+dist-globe: \index.html 0.5 kB -> 0.4 kB gzip
+dist-globe: TOTAL 2171.6 kB sin comprimir, 612.4 kB gzip
+dist-maplibre: \assets\index-JZYygJFx.css 70.3 kB -> 10.1 kB gzip
+dist-maplibre: \assets\index-WBq10Ly2.js 1041.2 kB -> 280.5 kB gzip
+dist-maplibre: \assets\maplibre-gl-worker-CMkqA50c.mjs 507.2 kB -> 144.9 kB gzip
+dist-maplibre: \index.html 0.6 kB -> 0.4 kB gzip
+dist-maplibre: TOTAL 1619.3 kB sin comprimir, 435.8 kB gzip

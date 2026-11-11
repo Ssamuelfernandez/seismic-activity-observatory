@@ -1,0 +1,66 @@
+$ npx vitest run  (copia fuera del repo; incluye tests/tmp_t027_t029.test.ts temporal)
+npm notice run observatorio-sismico-panel@0.1.0 npx
+npm notice run vitest run --reporter=verbose
+
+ RUN  v5.1.0 C:/Users/Samuel/AppData/Local/Temp/claude/b47516950f424450/d4476bd2-de8b-4302-ae3a-d8bbb42f24ed/scratchpad/run/frontend
+
+ ✓ tests/format.test.ts > formatDecimal > muestra ND para nulo y nunca 0 1ms
+ ✓ tests/format.test.ts > formatDecimal > usa coma decimal y signo menos tipografico 0ms
+ ✓ tests/format.test.ts > formatFixed > redondea a dos decimales con coma 0ms
+ ✓ tests/format.test.ts > formatFixed > usa el signo menos tipografico y no deja -0,00 0ms
+ ✓ tests/format.test.ts > formatFixed > muestra ND para nulo 0ms
+ ✓ tests/format.test.ts > formatUtc > formatea ms conocidos en UTC 1ms
+ ✓ tests/format.test.ts > formatUtc > da ND si falta 0ms
+ ✓ tests/format.test.ts > textos fijos > sin pais y sin descripcion 0ms
+ ✓ tests/format.test.ts > textos fijos > magnitud con su tipo y ND en lo que falte 0ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > base cumple el contrato 2ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > truncated cumple el contrato 10ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > replay cumple el contrato 0ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > empty cumple el contrato 0ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > realistic cumple el contrato 1ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > el 100 % de las features es sintético con id mock- y place Sintético: 45ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > el archivo estropeado falla 1ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > un nulo donde no se permite se detecta 0ms
+ ✓ tests/mock.test.ts > casos del mock (FR-008) > base: unas 30 features con los casos límite 0ms
+ ✓ tests/mock.test.ts > casos del mock (FR-008) > truncated: 5000 features, total 6213, truncado y cursor 6ms
+ ✓ tests/mock.test.ts > casos del mock (FR-008) > replay y empty 1ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > acepta la config por defecto 1ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > mode "otro" devuelve el campo mode 0ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > {"apiBaseUrl":""} falla en apiBaseUrl 0ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > {"apiBaseUrl":"api"} falla en apiBaseUrl 0ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > {"apiBaseUrl":5} falla en apiBaseUrl 0ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > {"refreshSeconds":0} falla en refreshSeconds 0ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > {"refreshSeconds":1.5} falla en refreshSeconds 0ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > {"timeoutMs":-1} falla en timeoutMs 0ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > {"timeoutMs":"15000"} falla en timeoutMs 0ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > en modo mock apiBaseUrl puede estar vacío 0ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > un objeto con los campos viejos falla en mode 0ms
+ ✓ tests/tmp_t027_t029.test.ts > validateConfig (T027) > no objeto 0ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > marcador presente 0ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > base: eventos conformes 168ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > truncated: eventos conformes 244ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > replay: eventos conformes 163ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > empty: eventos conformes 154ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > realistic: eventos conformes 162ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > fijos tal cual 630ms
+stderr | tests/tmp_t027_t029.test.ts > backend simulado (T029) > desconocido o ausente cae a base
+[mock] escenario desconocido «zzz»; se usa «base». Válidos: base, truncated, replay, empty, realistic.
+
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > desconocido o ausente cae a base 314ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > replay: todas las fechas en 2025 155ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > realistic: ~400 eventos, fechas relativas a ahora, filtros 1091ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > base: estadisticas con la forma de api.md 161ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > truncated: estadisticas con la forma de api.md 154ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > replay: estadisticas con la forma de api.md 153ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > empty: estadisticas con la forma de api.md 158ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > realistic: estadisticas con la forma de api.md 155ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > realistic: stats.total == metadata.total con los mismos filtros 156ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > realistic en replay: comparison null 157ms
+ ✓ tests/tmp_t027_t029.test.ts > backend simulado (T029) > salud 473ms
+
+ Test Files  3 passed (3)
+      Tests  50 passed (50)
+   Start at  19:45:07
+   Duration  4.80s (tests 98%, transform 1%, import 1%)
+
+exit 0

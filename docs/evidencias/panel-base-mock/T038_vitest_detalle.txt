@@ -1,0 +1,84 @@
+npm notice run observatorio-sismico-panel@0.1.0 npx
+npm notice run vitest run --reporter=verbose
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
+ ✓ tests/requests.test.ts > requests > replay usa 2025 fijo e ignora el periodo 2ms
+ ✓ tests/requests.test.ts > requests > live con ventana de horas: start = ahora - horas y sin end 1ms
+ ✓ tests/requests.test.ts > requests > live con rango de fechas: end = día final + 1 día (UTC) 0ms
+ ✓ tests/requests.test.ts > requests > rango inválido, invertido o incompleto -> 24 h 0ms
+ ✓ tests/requests.test.ts > requests > min_mag solo si es > 0 0ms
+ ✓ tests/requests.test.ts > requests > country_id solo none o tres letras 0ms
+ ✓ tests/requests.test.ts > requests > la clave resuelta no contiene instantes (estable para la caché) 0ms
+stderr | tests/backend.test.ts > mock/backend > escenario desconocido -> base
+[mock] escenario desconocido «xx»; se usa «base». Válidos: base, truncated, replay, empty, realistic.
+
+ ✓ tests/symbology.test.ts > clases de profundidad > 9.99 km -> clase 1 1ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 10 km -> clase 2 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 10.01 km -> clase 2 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 34.99 km -> clase 2 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 35 km -> clase 3 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 35.01 km -> clase 3 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 69.99 km -> clase 3 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 70 km -> clase 4 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 70.01 km -> clase 4 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 299.99 km -> clase 4 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 300 km -> clase 5 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 300.01 km -> clase 5 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 0 km -> clase 1 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > -1 km -> clase 1 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > -50 km -> clase 1 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > 700 km -> clase 5 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > profundidad nula -> ND (sin clase y gris) 0ms
+ ✓ tests/symbology.test.ts > clases de profundidad > hay cinco clases con color distinto 0ms
+ ✓ tests/symbology.test.ts > altura y color por magnitud > heightFor: nula, negativa y 0 dan la mínima; 8 es el tope 0ms
+ ✓ tests/symbology.test.ts > altura y color por magnitud > magnitud nula -> gris ND (no el color de M 0) 0ms
+ ✓ tests/format.test.ts > formatDecimal > muestra ND para nulo y nunca 0 1ms
+ ✓ tests/format.test.ts > formatDecimal > usa coma decimal y signo menos tipografico 0ms
+ ✓ tests/format.test.ts > formatFixed > redondea a dos decimales con coma 0ms
+ ✓ tests/format.test.ts > formatFixed > usa el signo menos tipografico y no deja -0,00 0ms
+ ✓ tests/format.test.ts > formatFixed > muestra ND para nulo 0ms
+ ✓ tests/format.test.ts > formatUtc > formatea ms conocidos en UTC 1ms
+ ✓ tests/format.test.ts > formatUtc > da ND si falta 0ms
+ ✓ tests/format.test.ts > textos fijos > sin pais y sin descripcion 0ms
+ ✓ tests/format.test.ts > textos fijos > magnitud con su tipo y ND en lo que falte 0ms
+ ✓ tests/validateConfig.test.ts > validateConfig > una config buena se devuelve tal cual 1ms
+ ✓ tests/validateConfig.test.ts > validateConfig > mode inválido o ausente 0ms
+ ✓ tests/validateConfig.test.ts > validateConfig > apiBaseUrl en modo api: vacío, sin / ni http(s):// 0ms
+ ✓ tests/validateConfig.test.ts > validateConfig > apiBaseUrl vacío es válido en modo mock 0ms
+ ✓ tests/validateConfig.test.ts > validateConfig > refreshSeconds: 0, negativo, decimal, texto y ausente 0ms
+ ✓ tests/validateConfig.test.ts > validateConfig > timeoutMs: 0, negativo, decimal, texto y ausente 0ms
+ ✓ tests/validateConfig.test.ts > validateConfig > no es un objeto 0ms
+ ✓ tests/dataState.test.ts > deriveDataState > estados 1ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > base cumple el contrato 2ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > truncated cumple el contrato 10ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > replay cumple el contrato 0ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > empty cumple el contrato 0ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > realistic cumple el contrato 1ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > el 100 % de las features es sintético con id mock- y place Sintético: 49ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > el archivo estropeado falla 1ms
+ ✓ tests/mock.test.ts > conformidad del mock con api.md > un nulo donde no se permite se detecta 0ms
+ ✓ tests/mock.test.ts > casos del mock (FR-008) > base: unas 30 features con los casos límite 0ms
+ ✓ tests/mock.test.ts > casos del mock (FR-008) > truncated: 5000 features, total 6213, truncado y cursor 6ms
+ ✓ tests/mock.test.ts > casos del mock (FR-008) > replay y empty 1ms
+ ✓ tests/backend.test.ts > mock/backend > escenario desconocido -> base 2ms
+ ✓ tests/parse.test.ts > parse: respuestas buenas > base: eventos, estadísticas y salud pasan la guarda 481ms
+ ✓ tests/backend.test.ts > mock/backend > realistic: min_mag y country_id filtran y el total coincide con las estadísticas 485ms
+ ✓ tests/backend.test.ts > mock/backend > el histograma de profundidad tiene cinco tramos con los cortes 10/35/70/300 161ms
+ ✓ tests/parse.test.ts > parse: respuestas buenas > truncated: eventos, estadísticas y salud pasan la guarda 563ms
+ ✓ tests/parse.test.ts > parse: respuestas buenas > replay: eventos, estadísticas y salud pasan la guarda 463ms
+ ✓ tests/parse.test.ts > parse: respuestas buenas > empty: eventos, estadísticas y salud pasan la guarda 466ms
+ ✓ tests/parse.test.ts > parse: respuestas buenas > realistic: eventos, estadísticas y salud pasan la guarda 483ms
+ ✓ tests/parse.test.ts > parse: los nulos se conservan > base trae nulos y salen iguales (nunca 0) 1ms
+ ✓ tests/parse.test.ts > parse: los nulos se conservan > un evento con todos los campos anulables a null es válido 1ms
+ ✓ tests/parse.test.ts > parse: formas malas -> invalid_response > no es un objeto 0ms
+ ✓ tests/parse.test.ts > parse: formas malas -> invalid_response > eventos: tipo, metadata, geometría y nulo no permitido 1ms
+ ✓ tests/parse.test.ts > parse: formas malas -> invalid_response > el archivo estropeado de tests/fixtures falla 0ms
+ ✓ tests/parse.test.ts > parse: formas malas -> invalid_response > salud: estado distinto de ok 0ms
+ ✓ tests/parse.test.ts > parse: formas malas -> invalid_response > estadísticas: falta un bloque 154ms
+
+ Test Files  8 passed (8)
+      Tests  70 passed (70)
+   Start at  20:31:26
+   Duration  2.78s (tests 91%, transform 6%, import 3%, worker 1%)
+

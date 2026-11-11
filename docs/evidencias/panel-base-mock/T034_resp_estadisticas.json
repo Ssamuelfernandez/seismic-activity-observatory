@@ -1,0 +1,273 @@
+{
+ "metadata": {
+  "generated": 1794338300515,
+  "last_ingestion": 1794338297030,
+  "mode": "live"
+ },
+ "period": {
+  "start": 1794251900534,
+  "end": 1794338300515
+ },
+ "filters": {
+  "min_mag": null,
+  "country_id": null
+ },
+ "total": 206,
+ "by_hour": {
+  "unit": "events",
+  "no_value": 0,
+  "buckets": [
+   {
+    "hour_start": 1794250800000,
+    "count": 7
+   },
+   {
+    "hour_start": 1794254400000,
+    "count": 9
+   },
+   {
+    "hour_start": 1794258000000,
+    "count": 4
+   },
+   {
+    "hour_start": 1794261600000,
+    "count": 8
+   },
+   {
+    "hour_start": 1794265200000,
+    "count": 5
+   },
+   {
+    "hour_start": 1794268800000,
+    "count": 6
+   },
+   {
+    "hour_start": 1794272400000,
+    "count": 16
+   },
+   {
+    "hour_start": 1794276000000,
+    "count": 10
+   },
+   {
+    "hour_start": 1794279600000,
+    "count": 10
+   },
+   {
+    "hour_start": 1794283200000,
+    "count": 9
+   },
+   {
+    "hour_start": 1794286800000,
+    "count": 8
+   },
+   {
+    "hour_start": 1794290400000,
+    "count": 10
+   },
+   {
+    "hour_start": 1794294000000,
+    "count": 13
+   },
+   {
+    "hour_start": 1794297600000,
+    "count": 8
+   },
+   {
+    "hour_start": 1794301200000,
+    "count": 8
+   },
+   {
+    "hour_start": 1794304800000,
+    "count": 8
+   },
+   {
+    "hour_start": 1794308400000,
+    "count": 6
+   },
+   {
+    "hour_start": 1794312000000,
+    "count": 14
+   },
+   {
+    "hour_start": 1794315600000,
+    "count": 10
+   },
+   {
+    "hour_start": 1794319200000,
+    "count": 6
+   },
+   {
+    "hour_start": 1794322800000,
+    "count": 7
+   },
+   {
+    "hour_start": 1794326400000,
+    "count": 5
+   },
+   {
+    "hour_start": 1794330000000,
+    "count": 10
+   },
+   {
+    "hour_start": 1794333600000,
+    "count": 8
+   },
+   {
+    "hour_start": 1794337200000,
+    "count": 1
+   }
+  ]
+ },
+ "by_country": {
+  "unit": "events",
+  "no_value": 37,
+  "items": [
+   {
+    "country_id": "USA",
+    "country_name": "Estados Unidos",
+    "subregion": "Northern America",
+    "count": 159
+   },
+   {
+    "country_id": null,
+    "country_name": null,
+    "subregion": null,
+    "count": 37
+   },
+   {
+    "country_id": "CAN",
+    "country_name": "Canadá",
+    "subregion": "Northern America",
+    "count": 3
+   },
+   {
+    "country_id": "IDN",
+    "country_name": "Indonesia",
+    "subregion": "South-Eastern Asia",
+    "count": 2
+   },
+   {
+    "country_id": "PRI",
+    "country_name": "Puerto Rico",
+    "subregion": "Caribbean",
+    "count": 2
+   },
+   {
+    "country_id": "DOM",
+    "country_name": "República Dominicana",
+    "subregion": "Caribbean",
+    "count": 1
+   },
+   {
+    "country_id": "ISL",
+    "country_name": "Islandia",
+    "subregion": "Northern Europe",
+    "count": 1
+   },
+   {
+    "country_id": "PNG",
+    "country_name": "Papúa Nueva Guinea",
+    "subregion": "Melanesia",
+    "count": 1
+   }
+  ]
+ },
+ "histograms": {
+  "magnitude": {
+   "unit": "dimensionless",
+   "no_value": 0,
+   "bins": [
+    {
+     "lower": null,
+     "upper": 1,
+     "count": 50
+    },
+    {
+     "lower": 1,
+     "upper": 2,
+     "count": 81
+    },
+    {
+     "lower": 2,
+     "upper": 3,
+     "count": 45
+    },
+    {
+     "lower": 3,
+     "upper": 4,
+     "count": 9
+    },
+    {
+     "lower": 4,
+     "upper": 5,
+     "count": 14
+    },
+    {
+     "lower": 5,
+     "upper": 6,
+     "count": 7
+    },
+    {
+     "lower": 6,
+     "upper": 7,
+     "count": 0
+    },
+    {
+     "lower": 7,
+     "upper": null,
+     "count": 0
+    }
+   ]
+  },
+  "depth": {
+   "unit": "km",
+   "no_value": 0,
+   "bins": [
+    {
+     "lower": null,
+     "upper": 10,
+     "count": 118
+    },
+    {
+     "lower": 10,
+     "upper": 35,
+     "count": 66
+    },
+    {
+     "lower": 35,
+     "upper": 70,
+     "count": 14
+    },
+    {
+     "lower": 70,
+     "upper": 300,
+     "count": 8
+    },
+    {
+     "lower": 300,
+     "upper": null,
+     "count": 0
+    }
+   ]
+  }
+ },
+ "comparison": {
+  "unit": "events",
+  "min_mag_applied": 4,
+  "recent_period": {
+   "start": 1794251900515,
+   "end": 1794338300515
+  },
+  "reference_period": {
+   "start": 1735689600000,
+   "end": 1767225600000
+  },
+  "n_recent": 21,
+  "n_2025": 18302,
+  "daily_mean_2025": 50.14246575342466,
+  "diff_abs": -29.14246575342466,
+  "variation_pct": -58.12,
+  "recent_incomplete": true
+ }
+}

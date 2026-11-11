@@ -1,0 +1,4 @@
+e4683cfd82672dbecaebdf96ce21b7cc0ca9b07bb88d985e124914a56bbf4fa0 *mock/base.json
+6dbb53a79d09f638c92d28d4028b86f79189aab0e544e7bccc2a9f2db21e0ffd *mock/empty.json
+8a1304a5eaf75a6c99bf39aef7ecfd1bb992104c51f3ba0e8c78ba3fb244113c *mock/replay.json
+98bb15d2a4d65127d9b14438000d6cbfb779fad013389cf9dbaff2cf077de607 *mock/truncated.json

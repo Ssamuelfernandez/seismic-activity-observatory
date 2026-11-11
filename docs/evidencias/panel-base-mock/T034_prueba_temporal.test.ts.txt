@@ -1,0 +1,68 @@
+// PRUEBA TEMPORAL de T034 (no queda en el repo): contrasta la API real con parse.ts y con el mock.
+import { writeFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import { mockEvents, mockStats } from '../mock/backend';
+import { parseEvents, parseHealth, parseStats } from '../src/shared/api/parse';
+import { setConfig } from '../src/shared/api/runtimeConfig';
+import { apiEvents, apiHealth, apiStats } from '../src/shared/api/client';
+
+const OUT = process.env.T034_OUT!;
+const BASES = { directo: 'http://127.0.0.1:8000/api', proxy: 'http://localhost:4300/api' };
+const log: string[] = [];
+const p = (s: string) => { log.push(s); };
+
+for (const [name, base] of Object.entries(BASES)) {
+  describe(`T034 ${name}`, () => {
+    it('parse sobre respuestas reales', async () => {
+      setConfig({ mode: 'api', apiBaseUrl: base, refreshSeconds: 60, timeoutMs: 15000 });
+      const h = await apiHealth();
+      const ev = await apiEvents({ mode: 'live', start: new Date(Date.now() - 24 * 3600e3).toISOString() });
+      const st = await apiStats({ mode: 'live', start: new Date(Date.now() - 24 * 3600e3).toISOString() });
+      // (apiX ya pasan por parseHealth/parseEvents/parseStats; se repite explícitamente)
+      parseHealth(h); parseEvents(ev); parseStats(st);
+      const f = ev.features;
+      const times = f.map((x) => x.properties.time);
+      const sortedDesc = times.every((t, i) => i === 0 || times[i - 1] >= t);
+      const props = new Set(f.flatMap((x) => Object.keys(x.properties)));
+      p(`== ${name} ==`);
+      p(`salud: ${JSON.stringify(h)}`);
+      p(`eventos: metadata=${JSON.stringify(ev.metadata)}`);
+      p(`eventos: features=${f.length}, orden time desc=${sortedDesc}, ids string=${f.every((x) => typeof x.id === 'string')}, coords len3=${f.every((x) => x.geometry.coordinates.length === 3)}`);
+      p(`eventos: claves de properties=${[...props].sort().join(',')} (${props.size})`);
+      p(`eventos: sin pais=${f.filter((x) => x.properties.country_id === null).length}, country_name null coherente=${f.every((x) => (x.properties.country_id === null) === (x.properties.country_name === null))}`);
+      p(`eventos: mag null=${f.filter((x) => x.properties.mag === null).length}, depth null=${f.filter((x) => x.geometry.coordinates[2] === null).length}, depth<0=${f.filter((x) => (x.geometry.coordinates[2] ?? 0) < 0).length}, mag<0=${f.filter((x) => (x.properties.mag ?? 0) < 0).length}, magType null=${f.filter((x) => x.properties.magType === null).length}, is_synthetic true=${f.filter((x) => x.properties.is_synthetic).length}, place null=${f.filter((x) => x.properties.place === null).length}`);
+      p(`eventos: count==features.length=${ev.metadata.count === f.length}; truncated==(count<total)=${ev.metadata.truncated === (ev.metadata.count < ev.metadata.total)}`);
+      p(`stats: metadata=${JSON.stringify(st.metadata)} period=${JSON.stringify(st.period)} filters=${JSON.stringify(st.filters)} total=${st.total}`);
+      const sum = (a: { count: number }[]) => a.reduce((s, x) => s + x.count, 0);
+      p(`stats: by_hour buckets=${st.by_hour.buckets.length} suma=${sum(st.by_hour.buckets)} no_value=${st.by_hour.no_value} unit=${st.by_hour.unit}`);
+      p(`stats: by_country items=${st.by_country.items.length} suma=${sum(st.by_country.items)} no_value=${st.by_country.no_value}; elemento sin pais=${JSON.stringify(st.by_country.items.find((i) => i.country_id === null) ?? null)}`);
+      p(`stats: orden by_country count desc=${st.by_country.items.every((x, i, a) => i === 0 || a[i - 1].count >= x.count)}`);
+      p(`stats: hist magnitude unit=${st.histograms.magnitude.unit} no_value=${st.histograms.magnitude.no_value} bins=${JSON.stringify(st.histograms.magnitude.bins.map((b) => [b.lower, b.upper, b.count]))} suma=${sum(st.histograms.magnitude.bins)}`);
+      p(`stats: hist depth unit=${st.histograms.depth.unit} no_value=${st.histograms.depth.no_value} bins=${JSON.stringify(st.histograms.depth.bins.map((b) => [b.lower, b.upper, b.count]))} suma=${sum(st.histograms.depth.bins)}`);
+      p(`stats: comparison=${JSON.stringify(st.comparison)}`);
+      p(`stats.total==metadata.total=${st.total === ev.metadata.total} (eventos pedidos con limit por defecto)`);
+      expect(ev.features.length).toBeGreaterThan(0);
+      if (name === 'directo') {
+        writeFileSync(`${OUT}/T034_resp_salud.json`, JSON.stringify(h, null, 1));
+        writeFileSync(`${OUT}/T034_resp_estadisticas.json`, JSON.stringify(st, null, 1));
+        const cut = { ...ev, features: [...f.slice(0, 3), ...f.filter((x) => x.properties.country_id === null).slice(0, 2)] };
+        writeFileSync(`${OUT}/T034_resp_eventos_recortada.json`, JSON.stringify(cut, null, 1));
+      }
+    });
+  });
+}
+
+describe('T034 mock', () => {
+  it('mismas comprobaciones sobre el mock base', async () => {
+    const ev = await mockEvents({ mode: 'live' } as never, 'base', undefined);
+    const st = await mockStats({ mode: 'live' } as never, 'base', undefined);
+    parseEvents(ev); parseStats(st);
+    const f = ev.features;
+    p('== mock base ==');
+    p(`eventos: metadata=${JSON.stringify(ev.metadata)}`);
+    p(`eventos: claves de properties=${[...new Set(f.flatMap((x) => Object.keys(x.properties)))].sort().join(',')}`);
+    p(`eventos: orden time desc=${f.every((x, i) => i === 0 || f[i - 1].properties.time >= x.properties.time)}, sin pais=${f.filter((x) => x.properties.country_id === null).length}, mag null=${f.filter((x) => x.properties.mag === null).length}, depth null=${f.filter((x) => x.geometry.coordinates[2] === null).length}`);
+    p(`stats: claves=${Object.keys(st).join(',')}; by_hour=${st.by_hour.buckets.length}; mag bins=${st.histograms.magnitude.bins.length}; depth bins=${st.histograms.depth.bins.length}; comparison=${JSON.stringify(st.comparison)}`);
+    writeFileSync(`${OUT}/T034_contraste_salida.txt`, log.join('\n') + '\n');
+  });
+});

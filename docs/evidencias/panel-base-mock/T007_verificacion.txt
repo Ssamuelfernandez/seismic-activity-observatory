@@ -1,0 +1,56 @@
+# npm ci
+
+added 112 packages, and audited 119 packages in 4s
+
+20 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+exit 0
+# tsc
+tsc exit 0
+# vite build
+vite exit 0
+✓ 16 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.40 kB │ gzip:  0.27 kB
+dist/assets/index-DFFwy-A4.css    4.77 kB │ gzip:  1.59 kB
+dist/assets/index-Cp_C-O27.js   219.58 kB │ gzip: 68.63 kB
+
+[32m✓ built in 140ms[39m
+# test
+vitest exit 0
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  16 passed (16)
+   Start at  19:30:54
+   Duration  236ms (tests 45%, transform 36%, import 13%, worker 6%)
+
+# dependencias
+{
+  '@tanstack/react-query': '5.106.1',
+  react: '19.3.1',
+  'react-dom': '19.3.1',
+  'react-globe.gl': '2.38.0'
+} {
+  '@tailwindcss/vite': '4.3.4',
+  '@types/node': '24.19.2',
+  '@types/react': '19.3.0',
+  '@types/react-dom': '19.3.0',
+  '@vitejs/plugin-react': '6.2.1',
+  tailwindcss: '4.3.4',
+  typescript: '6.0.3',
+  vite: '8.3.6',
+  vitest: '5.1.0'
+}
+# prototipo
+21
+prototipo-mapa
+ M frontend/package-lock.json
+ M frontend/package.json
+?? docs/evidencias/panel-base-mock/T007_instalacion.txt
+?? docs/evidencias/panel-base-mock/T007_verificacion.txt

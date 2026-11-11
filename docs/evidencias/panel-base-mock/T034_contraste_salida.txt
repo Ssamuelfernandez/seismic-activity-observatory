@@ -1,0 +1,37 @@
+== directo ==
+salud: {"status":"ok","last_ingestion":1794338297030,"generated":1794338300480}
+eventos: metadata={"generated":1794338300489,"last_ingestion":1794338297030,"mode":"live","count":206,"total":206,"truncated":false,"next_cursor":null,"null_mag_excluded":0}
+eventos: features=206, orden time desc=true, ids string=true, coords len3=true
+eventos: claves de properties=country_id,country_name,is_synthetic,mag,magType,place,sig,status,time,updated,url (11)
+eventos: sin pais=37, country_name null coherente=true
+eventos: mag null=0, depth null=0, depth<0=2, mag<0=0, magType null=0, is_synthetic true=0, place null=1
+eventos: count==features.length=true; truncated==(count<total)=true
+stats: metadata={"generated":1794338300515,"last_ingestion":1794338297030,"mode":"live"} period={"start":1794251900534,"end":1794338300515} filters={"min_mag":null,"country_id":null} total=206
+stats: by_hour buckets=25 suma=206 no_value=0 unit=events
+stats: by_country items=8 suma=206 no_value=37; elemento sin pais={"country_id":null,"country_name":null,"subregion":null,"count":37}
+stats: orden by_country count desc=true
+stats: hist magnitude unit=dimensionless no_value=0 bins=[[null,1,50],[1,2,81],[2,3,45],[3,4,9],[4,5,14],[5,6,7],[6,7,0],[7,null,0]] suma=206
+stats: hist depth unit=km no_value=0 bins=[[null,10,118],[10,35,66],[35,70,14],[70,300,8],[300,null,0]] suma=206
+stats: comparison={"unit":"events","min_mag_applied":4,"recent_period":{"start":1794251900515,"end":1794338300515},"reference_period":{"start":1735689600000,"end":1767225600000},"n_recent":21,"n_2025":18302,"daily_mean_2025":50.14246575342466,"diff_abs":-29.14246575342466,"variation_pct":-58.12,"recent_incomplete":true}
+stats.total==metadata.total=true (eventos pedidos con limit por defecto)
+== proxy ==
+salud: {"status":"ok","last_ingestion":1794338297030,"generated":1794338300544}
+eventos: metadata={"generated":1794338300555,"last_ingestion":1794338297030,"mode":"live","count":206,"total":206,"truncated":false,"next_cursor":null,"null_mag_excluded":0}
+eventos: features=206, orden time desc=true, ids string=true, coords len3=true
+eventos: claves de properties=country_id,country_name,is_synthetic,mag,magType,place,sig,status,time,updated,url (11)
+eventos: sin pais=37, country_name null coherente=true
+eventos: mag null=0, depth null=0, depth<0=2, mag<0=0, magType null=0, is_synthetic true=0, place null=1
+eventos: count==features.length=true; truncated==(count<total)=true
+stats: metadata={"generated":1794338300570,"last_ingestion":1794338297030,"mode":"live"} period={"start":1794251900602,"end":1794338300570} filters={"min_mag":null,"country_id":null} total=206
+stats: by_hour buckets=25 suma=206 no_value=0 unit=events
+stats: by_country items=8 suma=206 no_value=37; elemento sin pais={"country_id":null,"country_name":null,"subregion":null,"count":37}
+stats: orden by_country count desc=true
+stats: hist magnitude unit=dimensionless no_value=0 bins=[[null,1,50],[1,2,81],[2,3,45],[3,4,9],[4,5,14],[5,6,7],[6,7,0],[7,null,0]] suma=206
+stats: hist depth unit=km no_value=0 bins=[[null,10,118],[10,35,66],[35,70,14],[70,300,8],[300,null,0]] suma=206
+stats: comparison={"unit":"events","min_mag_applied":4,"recent_period":{"start":1794251900570,"end":1794338300570},"reference_period":{"start":1735689600000,"end":1767225600000},"n_recent":21,"n_2025":18302,"daily_mean_2025":50.14246575342466,"diff_abs":-29.14246575342466,"variation_pct":-58.12,"recent_incomplete":true}
+stats.total==metadata.total=true (eventos pedidos con limit por defecto)
+== mock base ==
+eventos: metadata={"generated":1793700000000,"last_ingestion":1793699970000,"mode":"live","count":30,"total":30,"truncated":false,"next_cursor":null,"null_mag_excluded":0}
+eventos: claves de properties=country_id,country_name,is_synthetic,mag,magType,place,sig,status,time,updated,url
+eventos: orden time desc=true, sin pais=9, mag null=2, depth null=2
+stats: claves=metadata,period,filters,total,by_hour,by_country,histograms,comparison; by_hour=30; mag bins=8; depth bins=5; comparison={"unit":"events","min_mag_applied":4,"recent_period":{"start":1793613600000,"end":1793700000000},"reference_period":{"start":1735689600000,"end":1767225600000},"n_recent":0,"n_2025":2336,"daily_mean_2025":6.4,"diff_abs":-6.4,"variation_pct":-100,"recent_incomplete":true}

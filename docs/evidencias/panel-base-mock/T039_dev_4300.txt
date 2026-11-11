@@ -1,0 +1,6 @@
+/ -> 200 563 bytes
+/config.json -> 200 90 bytes
+/datos/paises.geojson -> 200 838726 bytes
+tras detener: 200
+== tras detener (PID 48272, el vite de la copia)
+000

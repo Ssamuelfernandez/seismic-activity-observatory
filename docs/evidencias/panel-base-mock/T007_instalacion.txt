@@ -1,0 +1,11 @@
+# npm view
+2.38.0
+# install
+
+added 53 packages, and audited 119 packages in 4s
+
+20 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+exit 0

@@ -1,0 +1,13 @@
+npm notice run observatorio-sismico-panel@0.1.0 npx
+npm notice run vitest run tests/_tmp_t036.test.ts --disableConsoleIntercept
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
+(d) timeoutMs=400, servidor mudo: ApiError{status:0, code:timeout, message:"La API no respondió en 0 s."} tras 413 ms
+(e) servidor 900 ms, refetchInterval 200 ms, 4 s: peticiones recibidas=4, máximo en vuelo=1
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  20:19:47
+   Duration  5.61s (tests 99%)
+

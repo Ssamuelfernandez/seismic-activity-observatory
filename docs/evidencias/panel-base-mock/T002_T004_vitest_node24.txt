@@ -1,0 +1,11 @@
+v24.18.0
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  16 passed (16)
+   Start at  23:13:45
+   Duration  275ms (tests 51%, transform 32%, import 13%, worker 4%)
+
+exit=0

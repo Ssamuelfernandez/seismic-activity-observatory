@@ -1,0 +1,126 @@
+// Prueba TEMPORAL de T027 y T029 (no forma parte del repo; la ampliación completa es T038).
+import { describe, expect, it } from 'vitest';
+import { validateConfig } from '@/shared/lib/validateConfig';
+import * as backend from '@mock/backend';
+import { validateEventsResponse } from './support/validateEventsResponse';
+
+const ok = { mode: 'api', apiBaseUrl: '/api', refreshSeconds: 60, timeoutMs: 15000 };
+
+describe('validateConfig (T027)', () => {
+  it('acepta la config por defecto', () => {
+    expect(validateConfig(ok)).toEqual({ ok: true, config: ok });
+  });
+  it('mode "otro" devuelve el campo mode', () => {
+    expect(validateConfig({ ...ok, mode: 'otro' })).toMatchObject({ ok: false, field: 'mode' });
+  });
+  it.each([
+    [{ apiBaseUrl: '' }, 'apiBaseUrl'],
+    [{ apiBaseUrl: 'api' }, 'apiBaseUrl'],
+    [{ apiBaseUrl: 5 }, 'apiBaseUrl'],
+    [{ refreshSeconds: 0 }, 'refreshSeconds'],
+    [{ refreshSeconds: 1.5 }, 'refreshSeconds'],
+    [{ timeoutMs: -1 }, 'timeoutMs'],
+    [{ timeoutMs: '15000' }, 'timeoutMs'],
+  ])('%j falla en %s', (patch, field) => {
+    expect(validateConfig({ ...ok, ...patch })).toMatchObject({ ok: false, field });
+  });
+  it('en modo mock apiBaseUrl puede estar vacío', () => {
+    expect(validateConfig({ ...ok, mode: 'mock', apiBaseUrl: '' }).ok).toBe(true);
+  });
+  it('un objeto con los campos viejos falla en mode', () => {
+    expect(validateConfig({ apiBaseUrl: '/api', dataSource: 'api' })).toMatchObject({ ok: false, field: 'mode' });
+  });
+  it('no objeto', () => {
+    expect(validateConfig(null)).toMatchObject({ ok: false, field: 'config' });
+  });
+});
+
+describe('backend simulado (T029)', () => {
+  it('marcador presente', () => {
+    expect(backend.__MOCK_BACKEND__).toBe('mock-backend');
+  });
+  it.each(['base', 'truncated', 'replay', 'empty', 'realistic'])('%s: eventos conformes', async (s) => {
+    const r = await backend.mockEvents({}, s);
+    expect(validateEventsResponse(r, { requireMock: true })).toEqual([]);
+  });
+  it('fijos tal cual', async () => {
+    expect((await backend.mockEvents({ min_mag: 7, country_id: 'CHL' }, 'base')).features.length).toBe(30);
+    expect((await backend.mockEvents({}, 'truncated')).metadata).toMatchObject({ count: 5000, total: 6213, truncated: true });
+    expect((await backend.mockEvents({}, 'replay')).metadata.mode).toBe('replay');
+    expect((await backend.mockEvents({}, 'empty')).features).toEqual([]);
+  });
+  it('desconocido o ausente cae a base', async () => {
+    expect((await backend.mockEvents({}, 'zzz')).features.length).toBe(30);
+    expect((await backend.mockEvents({}, null)).features.length).toBe(30);
+  });
+  it('replay: todas las fechas en 2025', async () => {
+    const r = await backend.mockEvents({}, 'replay');
+    for (const f of r.features) {
+      expect(f.properties.time).toBeGreaterThanOrEqual(Date.UTC(2025, 0, 1));
+      expect(f.properties.time).toBeLessThan(Date.UTC(2026, 0, 1));
+    }
+  });
+  it('realistic: ~400 eventos, fechas relativas a ahora, filtros', async () => {
+    const now = Date.now();
+    const all = await backend.mockEvents({ start: new Date(now - 30 * 86400000).toISOString() }, 'realistic');
+    expect(all.features.length).toBeGreaterThan(380);
+    expect(Math.abs(all.metadata.generated - now)).toBeLessThan(5000);
+    expect(validateEventsResponse(all, { requireMock: true })).toEqual([]);
+    const day = await backend.mockEvents({}, 'realistic');
+    expect(day.features.every((e) => e.properties.time >= now - 86400000 - 5000)).toBe(true);
+    const mag = await backend.mockEvents({ start: new Date(now - 30 * 86400000).toISOString(), min_mag: 5 }, 'realistic');
+    expect(mag.features.length).toBeGreaterThan(0);
+    expect(mag.features.length).toBeLessThan(all.features.length);
+    expect(mag.features.every((e) => (e.properties.mag ?? -1) >= 5)).toBe(true);
+    expect(mag.metadata.null_mag_excluded).toBeGreaterThan(0);
+    const chl = await backend.mockEvents({ start: new Date(now - 30 * 86400000).toISOString(), country_id: 'chl' }, 'realistic');
+    expect(chl.features.length).toBeGreaterThan(0);
+    expect(chl.features.every((e) => e.properties.country_id === 'CHL')).toBe(true);
+    const none = await backend.mockEvents({ start: new Date(now - 30 * 86400000).toISOString(), country_id: 'none' }, 'realistic');
+    expect(none.features.length).toBeGreaterThan(0);
+    expect(none.features.every((e) => e.properties.country_id === null)).toBe(true);
+    const range = await backend.mockEvents({ start: new Date(now - 10 * 86400000).toISOString(), end: new Date(now - 5 * 86400000).toISOString() }, 'realistic');
+    expect(range.features.every((e) => e.properties.time >= now - 10 * 86400000 && e.properties.time < now - 5 * 86400000)).toBe(true);
+    const lim = await backend.mockEvents({ start: new Date(now - 30 * 86400000).toISOString(), limit: 10 }, 'realistic');
+    expect(lim.metadata).toMatchObject({ count: 10, truncated: true });
+  });
+  it.each(['base', 'truncated', 'replay', 'empty', 'realistic'])('%s: estadisticas con la forma de api.md', async (s) => {
+    const st = await backend.mockStats({ start: new Date(Date.now() - 30 * 86400000).toISOString() }, s);
+    expect(st.histograms.depth.bins.length).toBe(5);
+    expect(st.histograms.depth.bins.map((b) => [b.lower, b.upper])).toEqual([[null, 10], [10, 35], [35, 70], [70, 300], [300, null]]);
+    expect(st.histograms.magnitude.bins.length).toBe(8);
+    expect(st.by_hour.buckets.length).toBeGreaterThan(0);
+    const sumHours = st.by_hour.buckets.reduce((a, b) => a + b.count, 0);
+    const sumDepth = st.histograms.depth.bins.reduce((a, b) => a + b.count, 0) + st.histograms.depth.no_value;
+    if (s !== 'truncated') {
+      expect(sumHours).toBe(st.total);
+      expect(sumDepth).toBe(st.total);
+    }
+    expect(st.by_country.items.reduce((a, b) => a + b.count, 0)).toBe(sumHours);
+    if (s === 'replay') expect(st.comparison).toBeNull();
+    else expect(st.comparison).not.toBeNull();
+    if (s === 'base' || s === 'realistic') {
+      const none = st.by_country.items.find((i) => i.country_id === null);
+      expect(none).toBeDefined();
+      expect(st.by_country.no_value).toBe(none!.count);
+    }
+    if (s === 'truncated') expect(st.total).toBe(6213);
+  });
+  it('realistic: stats.total == metadata.total con los mismos filtros', async () => {
+    const f = { start: new Date(Date.now() - 7 * 86400000).toISOString(), min_mag: 3, country_id: 'JPN' };
+    const [ev, st] = await Promise.all([backend.mockEvents(f, 'realistic'), backend.mockStats(f, 'realistic')]);
+    expect(st.total).toBe(ev.metadata.total);
+  });
+  it('realistic en replay: comparison null', async () => {
+    const st = await backend.mockStats({ mode: 'replay', start: '2025-01-01T00:00:00.000Z', end: '2026-01-01T00:00:00.000Z' }, 'realistic');
+    expect(st.comparison).toBeNull();
+    expect(st.total).toBe(0);
+  });
+  it('salud', async () => {
+    for (const s of ['base', 'realistic', 'empty']) {
+      const h = await backend.mockHealth(s);
+      expect(h.status).toBe('ok');
+      expect(typeof h.generated).toBe('number');
+    }
+  });
+});

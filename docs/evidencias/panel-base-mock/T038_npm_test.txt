@@ -1,0 +1,12 @@
+npm notice run observatorio-sismico-panel@0.1.0 test
+npm notice run vitest run
+
+ RUN  v5.1.0 C:/Users/Samuel/Desktop/Proyectos Curso/seismic-activity-observatory/frontend
+
+
+ Test Files  8 passed (8)
+      Tests  70 passed (70)
+   Start at  20:31:17
+   Duration  2.80s (tests 91%, transform 5%, import 3%, worker 1%)
+
+exit=0

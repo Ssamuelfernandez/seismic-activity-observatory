@@ -1,0 +1,44 @@
+### 19:20:09 docker compose stop api
+ Container seismic-observatory-api-1 Stopping 
+ Container seismic-observatory-api-1 Stopped 
+### 19:20:22 estado con api parada
+NAME                             IMAGE                              COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+seismic-observatory-consumer-1   seismic-observatory-python:0.1.0   "python -m consumer.…"   consumer   12 minutes ago   Up 12 minutes (healthy)   
+seismic-observatory-kafka-1      apache/kafka:4.1.2                 "/__cacert_entrypoin…"   kafka      5 days ago       Up 5 days (healthy)       9092/tcp
+seismic-observatory-postgres-1   postgres:16.15-bookworm            "docker-entrypoint.s…"   postgres   5 days ago       Up 5 days (healthy)       127.0.0.1:5433->5432/tcp
+seismic-observatory-producer-1   seismic-observatory-python:0.1.0   "python -m producer.…"   producer   12 minutes ago   Up 12 minutes (healthy)   
+### 19:20:42 docker compose start api
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-api-1 Starting 
+ Container seismic-observatory-api-1 Started 
+### 19:20:50 api health=healthy
+{"status":"ok","last_ingestion":1794338417238,"generated":1794338450311}
+### 19:21:04 docker compose stop postgres
+ Container seismic-observatory-postgres-1 Stopping 
+ Container seismic-observatory-postgres-1 Stopped 
+### 19:21:17 curl con postgres parado
+-- /api/salud
+HTTP/1.1 503 Service Unavailable
+{"error":{"code":"database_unavailable","message":"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."}}
+-- /api/eventos?limit=1
+HTTP/1.1 503 Service Unavailable
+{"error":{"code":"database_unavailable","message":"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."}}
+-- /api/estadisticas
+HTTP/1.1 503 Service Unavailable
+{"error":{"code":"database_unavailable","message":"No se pudo consultar la base de datos. Inténtalo de nuevo más tarde."}}
+api Up 46 seconds (healthy)
+consumer Up 13 minutes (healthy)
+kafka Up 5 days (healthy)
+producer Up 13 minutes (healthy)
+### 19:21:37 docker compose start postgres
+ Container seismic-observatory-postgres-1 Starting 
+ Container seismic-observatory-postgres-1 Started 
+### 19:21:46 tras start postgres
+NAME                             IMAGE                              COMMAND                  SERVICE    CREATED          STATUS                        PORTS
+seismic-observatory-api-1        seismic-observatory-python:0.1.0   "uvicorn api.main:ap…"   api        13 minutes ago   Up About a minute (healthy)   127.0.0.1:8000->8000/tcp
+seismic-observatory-consumer-1   seismic-observatory-python:0.1.0   "python -m consumer.…"   consumer   13 minutes ago   Up 13 minutes (healthy)       
+seismic-observatory-kafka-1      apache/kafka:4.1.2                 "/__cacert_entrypoin…"   kafka      5 days ago       Up 5 days (healthy)           9092/tcp
+seismic-observatory-postgres-1   postgres:16.15-bookworm            "docker-entrypoint.s…"   postgres   5 days ago       Up 8 seconds (healthy)        127.0.0.1:5433->5432/tcp
+seismic-observatory-producer-1   seismic-observatory-python:0.1.0   "python -m producer.…"   producer   13 minutes ago   Up 13 minutes (healthy)       
+{"status":"ok","last_ingestion":1794338417238,"generated":1794338506472}
