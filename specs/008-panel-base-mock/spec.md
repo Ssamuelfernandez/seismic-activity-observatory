@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-05 · **Enmendada**: 2026-11-10 (decisión del alumno; sustituye al alcance anterior, incluido **SC-014**)
 
-**Status**: Enmienda redactada, pendiente de la revisión del alumno. T001–T007 y T022 (hechas con el diseño anterior) se conservan como histórico; las demás tareas se reescriben en `tasks.md`.
+**Status**: Implemented (T024–T039 verificadas; pendiente de la comprobación visual del alumno). T001–T007 y T022 (hechas con el diseño anterior) se conservan como histórico; las demás tareas se reescribieron en `tasks.md`.
 
 **Input**: El alumno aporta un front ya desarrollado (`globo-lab`, inventariado en `inventario-front-externo.md`) y decide conservarlo **tal como se ve**, con unas correcciones obligatorias. `008` pasa a «adoptar el front externo con correcciones» y absorbe las features de filtros y tabla (`009`), gráficos y comparación (`010`), estado y fallos (`011`) y conexión con la API (`012`). La vista 2D (`panel-mapa-2d`, G18) queda aplazada. Replay (J1–J8, G10, F12) sigue siendo su feature (`013`).
 
@@ -268,3 +268,15 @@ A 375 px se ve el diseño móvil del front (cabecera con filtros y estado, globo
 - **P4** sin Chart.js.
 - **P5** borrar las capas apagadas del globo (FR-031).
 - **P6** valores por defecto aceptados, sin choques con las normas.
+
+## Diferido y pendiente del alumno
+
+- **(a) T040, marcar los IDs del checklist** (G0, G1, G2, G3, G4, G5, G5b, G6, G7, G8, G9, G11, G12, G14, G15, G17; parcial G10/J7): lo hace el alumno con la lista del orquestador. Motivo: las casillas las marca el alumno, no el agente.
+- **(b) T040, borrar `_import-front/` y su línea de `.gitignore`**: carpeta sin versionar; el alumno la borra tras confirmar que el original `Proyectos Curso/globo-lab` sigue intacto. Motivo: es la única copia de trabajo del front externo hasta esa confirmación.
+- **(c) Comprobaciones visuales en navegador sin hacer** (no hubo navegador): capturas de T024/T025/T026, mensajes de config inválida y de mock en producción, los cinco escenarios con `?scenario=`, filtros contra la API real, ciclo de fallo y recuperación, atribución y recorrido a 375/768/1280 px (`scrollWidth <= innerWidth`). Detalle en `docs/evidencias/panel-base-mock/`: `T024_T026_capturas_pendientes.md`, `T027_T029_comprobaciones_pendientes.md`, `T030_T033_comprobaciones_pendientes.md`, `T034_T037_comprobaciones_pendientes.md` y `T038_T040_comprobaciones_pendientes.md`.
+
+## Evidencias
+
+- `docs/evidencias/panel-base-mock/` (por tarea `T0xx_*`; `contraste-mock-api.md`, `auditoria-calculos-cliente.md`, `T035_tabla_filtros_totales.md`).
+- `docs/evidencias/subagentes/`: `verificador-panel-base-mock-bloque1.md` a `bloque5.md`, `plan-reviewer-panel-base-mock.md` y `plan-reviewer-panel-base-mock-enmienda.md`.
+- Borrador de defensa: `docs/borradores/panel-base-mock.md`.

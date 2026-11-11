@@ -15,6 +15,10 @@ const BASE_TIME_MS = 1793600000000;
 const TRUNCATED_COUNT = 5000;
 const TRUNCATED_TOTAL = 6213;
 const BASE_COUNT = 30;
+// Mitad de 2025 (2025-06-15): con 6 eventos un día aparte quedan todos dentro de 2025.
+const REPLAY_BASE_MS = 1750000000000;
+const REALISTIC_COUNT = 400;
+const HOUR_MS = 3600000;
 // 2025-06-15: con seis eventos un día aparte quedan todos dentro de 2025.
 const REPLAY_BASE_MS = 1750000000000;
 const REALISTIC_COUNT = 400;
@@ -250,6 +254,7 @@ const files = {
   'truncated.json': [buildTruncated(), 0],
   'replay.json': [buildReplay(), 2],
   'empty.json': [buildEmpty(), 2],
+  'realistic.json': [buildRealistic(), 0],
   'realistic.json': [buildRealistic(), 0],
 };
 for (const [name, [data, indent]] of Object.entries(files)) {
