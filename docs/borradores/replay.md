@@ -1,6 +1,6 @@
 # Borrador: replay (J1–J8, G10, F12, G12 `metadata.mode`; prueba 11)
 
-Material para la memoria y la defensa. Feature `replay` (`specs/009-replay/`). Los resultados observados con contenedores y panel se rellenan en T057 (ver el final).
+Material para la memoria y la defensa. Feature `replay` (`specs/009-replay/`), estado Implemented. Resultados observados con contenedores y panel al final; evidencias en `docs/evidencias/replay/`.
 
 ## Qué hace
 
@@ -44,7 +44,7 @@ Tres capas: el productor de replay solo conoce `earthquakes.replay`; el consumid
 
 ## Límites conocidos
 
-No hay borrado de tablas de replay (recrear el volumen); velocidad fija, no proporcional; selección fija; grupo `consumer-live` con dos topics; `KAFKA_TOPIC` ya no suscribe al consumidor; bloque de 6 mensajes frente a los 5 de la FAQ 12; `config.md` de `002` no refleja la variable nueva.
+No hay borrado de tablas de replay (recrear el volumen); velocidad fija, no proporcional; selección fija; grupo `consumer-live` con dos topics; `KAFKA_TOPIC` ya no suscribe al consumidor; bloque de 6 mensajes frente a los 5 de la FAQ 12; `config.md` de `002` no refleja la variable nueva; `verify_stack.py` 14/16 por un `compose.override.yaml` local (puerto 5433) ajeno a la feature; `uv run` no funciona en el equipo (se usó `.venv` y el servicio `tests`); panel verificado solo con Edge headless por CDP, sin la extensión de Chrome; el replay no usa `usgs_gap_*` (research D10).
 
 ## Preguntas de defensa
 

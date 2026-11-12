@@ -81,6 +81,15 @@ Pruebas: `tests/common/test_replay_message.py`, `tests/producer/test_replay_sele
 
 `common/{decode,validation,processing,transform,geo}.py`, `consumer/{pipeline,writer,queries}.py`, `api/`, `frontend/`, `sql/`, contratos, `docs/enunciado/`.
 
+### Desviaciones respecto al diseño (comprobadas al cerrar)
+
+- El volumen `./data/historical:/app/data/historical:ro` también está en el servicio `tests` de `compose.yaml` (las pruebas de integración usan los archivos reales); no es un contrato ni un servicio nuevo.
+- La integración de la API con replay está en `tests/integration/test_api_replay_real.py` (archivo nuevo), no en una ampliación de `test_api_replay_events.py`.
+- Parámetro de velocidad: `--interval` (D3), no `--speed`.
+- `KAFKA_CONSUMER_TOPICS` se documenta en `.env.example` y README; `specs/002-infra-compose/contracts/config.md` no se editó.
+- El replay solo lee `manifest.files`; los archivos `usgs_gap_*` no se usan (D10).
+- `uv run` no funciona en el equipo: las pruebas sin Docker se ejecutaron con `.venv` y el servicio `tests`.
+
 ## Flujo
 
 ```

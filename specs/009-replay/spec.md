@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-12
 
-**Status**: Planned (specify, clarify, plan, tasks y analyze hechos; implementación no iniciada; pendiente la revisión del alumno)
+**Status**: Implemented (T041 a T058 hechas y comprobadas con contenedores y panel; pendiente la revisión del alumno; evidencias en `docs/evidencias/replay/`)
 
 **Input**: Feature `replay` (F9): reproducción acelerada de una selección histórica de 2025 por Kafka, aislada de `live` y etiquetada «REPRODUCCIÓN». Un productor de replay lee de `data/historical/` unos 20 eventos de una zona, ordenados por fecha, y los publica en `earthquakes.replay` con `mode = "replay"`, el tiempo original y `replay_at`, a velocidad configurable. Incluye duplicados y revisiones controlados (secuencia de la FAQ 12). El consumidor enruta por `mode` al esquema `replay` reutilizando `common/`. La API devuelve los datos de replay con `metadata.mode = "replay"`; el panel los muestra con el banner.
 

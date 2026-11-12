@@ -6,6 +6,8 @@
 
 Notación: «sin Docker» = `uv run pytest -m "not integration" <ruta>`; «integración» = servicio `tests` (perfil `test`). Cada ejecución se guarda en `docs/evidencias/replay/T0##_*.txt`.
 
+Estado al cierre: las 18 tareas están hechas y ninguna se difirió. Nota: T049 se resolvió en `tests/integration/test_api_replay_real.py` (archivo nuevo); `uv run` no funciona en el equipo, así que donde dice `uv run pytest` se usó `.venv/Scripts/python.exe -m pytest` o el servicio `tests`.
+
 ## Bloque 1 — Piezas puras y archivos de origen (J1, J2, J6, J7)
 
 - [x] T041 [US1][US2] **Mensaje y bloque controlado**: `common/replay_message.py` con `SOURCE_REPLAY = "replay_demo"`, `MODE_REPLAY = "replay"`, `ReplayItem`, `build_replay_message(item, replay_at)` (sobre de `kafka-message.md` §3; `event` sin tocar) y `build_controlled_block(started_at)` con los 6 elementos de `data-model.md` (E1 v1, E1 v1, E1 v2, E1 v1, E2, E1 intermedia; ids `synthetic-replay-e1/e2`, `is_synthetic = true`, fechas de enero de 2025, `ingested_at` = `started_at`). Tests en `tests/common/test_replay_message.py`.

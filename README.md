@@ -335,6 +335,10 @@ docker compose run --rm producer python -m producer.replay --interval 2 --zone c
 - El grupo del consumidor sigue llamándose `consumer-live` aunque ahora lee los dos topics (renombrarlo reprocesaría `live` entero).
 - El bloque controlado tiene 6 mensajes, una variante propia de la secuencia de la FAQ 12 (que tiene 5).
 - `specs/002-infra-compose/contracts/config.md` no recoge `KAFKA_CONSUMER_TOPICS`: la fuente es `.env.example` y este README.
+- `verify_stack.py` da 14/16 por un `compose.override.yaml` local (puerto 5433) ajeno a la feature.
+- `uv run` no funciona en el equipo: se usó `.venv` y el servicio `tests` de Docker.
+- El panel se verificó solo con Edge headless por CDP, sin la extensión de Chrome.
+- El replay no usa `usgs_gap_*` (research D10): solo lee los archivos mensuales del manifiesto.
 
 ## Panel web
 
