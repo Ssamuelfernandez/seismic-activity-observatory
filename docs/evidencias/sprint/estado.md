@@ -1,7 +1,7 @@
-# Estado del sprint — replay
+# Estado del sprint — despliegue-tunel
 
-- Feature: replay | Rama: 009-replay (desde main)
-- diseno: TERMINADA (commit "docs: diseño de replay")
-- implementar: TERMINADA (supervisor: CONTINUAR; commit "feat: replay")
-- cierre: TERMINADA (supervisor: CONTINUAR; commit "docs: cierre de replay")
-- Sin merge ni push. Checklist F9, J1–J8, G10, F12, G12 (metadata.mode), prueba 11 sin marcar: lo marca el alumno.
+- Feature: despliegue-tunel | Rama: 010-despliegue-tunel (desde main)
+- diseno: TERMINADA (supervisor: CONTINUAR; commit "docs: diseño de despliegue-tunel")
+- implementar: pendiente
+- cierre: pendiente
+- Sin merge ni push. Checklist sin marcar: lo marca el alumno.
