@@ -1,6 +1,6 @@
 {
   "mode": "api",
-  "apiBaseUrl": "/api",
+  "apiBaseUrl": "https://observatorio-api.ssamuelfernandez.net/api",
   "refreshSeconds": 60,
   "timeoutMs": 15000
 }

@@ -3,10 +3,11 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from api.errors import register_error_handlers
 from api.routers import events, health, stats
-from common.api_config import load_api_settings
+from common.api_config import load_api_settings, load_cors_origins
 from common.config import load_database_settings, load_log_level, load_retry_settings
 from common.db import create_pool_with_retry
 from common.logging_setup import configure_logging
@@ -23,9 +24,12 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 def create_app() -> FastAPI:
-    """Crea la aplicación sin documentación automática (constitución §10) y con errores comunes."""
+    """Crea la aplicación sin documentación automática (constitución §10), con errores comunes y CORS acotado (F9)."""
     application = FastAPI(title="Observatorio sísmico", lifespan=lifespan,
                           docs_url=None, redoc_url=None, openapi_url=None)
+    application.add_middleware(CORSMiddleware, allow_origins=list(load_cors_origins()),
+                               allow_methods=["GET", "OPTIONS"], allow_headers=["ngrok-skip-browser-warning"],
+                               allow_credentials=False)
     register_error_handlers(application)
     application.include_router(health.router)
     application.include_router(events.router)

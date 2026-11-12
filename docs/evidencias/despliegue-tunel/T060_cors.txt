@@ -1,0 +1,18 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.9, pytest-9.2.0, pluggy-1.7.0
+rootdir: C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collected 139 items
+
+tests\api\test_cors.py .......                                           [  5%]
+tests\api\test_cursor.py ..................                              [ 17%]
+tests\api\test_errors.py .....                                           [ 21%]
+tests\api\test_params.py ............................................... [ 55%]
+............                                                             [ 64%]
+tests\api\test_serializers.py ..........                                 [ 71%]
+tests\api\test_sql_filters.py ..........                                 [ 78%]
+tests\api\test_stats_builder.py ............                             [ 87%]
+tests\common\test_api_config.py ..................                       [100%]
+
+============================= 139 passed in 0.97s =============================

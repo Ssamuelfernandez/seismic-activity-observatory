@@ -30,6 +30,13 @@ compose.override.yaml
 ngrok.yml
 .ngrok/
 
+# cloudflared (credenciales y configuración del túnel; el token nunca va al repo)
+.cloudflared/
+cert.pem
+cloudflared*.yml
+cloudflared*.yaml
+cloudflared-credentials*.json
+
 # Claude Code: configuración personal
 .claude/settings.local.json
 

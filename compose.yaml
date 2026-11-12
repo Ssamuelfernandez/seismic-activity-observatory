@@ -163,6 +163,8 @@ services:
       # Límites de la API de consulta (common/api_config.py); los valores por defecto coinciden con los del código.
       API_MAX_EVENTS: ${API_MAX_EVENTS:-5000}
       API_DB_TIMEOUT_SECONDS: ${API_DB_TIMEOUT_SECONDS:-5}
+      # Orígenes CORS permitidos (F9); el defecto coincide con el del código.
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://observatorio.ssamuelfernandez.net,http://localhost:4200}
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:

@@ -169,7 +169,7 @@ Una feature = un ciclo completo de Spec Kit = una rama. Spec Kit numera las carp
 | `012-panel-conexion-api` | F8e | **ABSORBIDA por `008-panel-base-mock`**: G1 | — |
 | `013-replay` | F9 | J1–J8, G10, F12; parte de G12 (`metadata.mode`) | 11 |
 | `014-pruebas-aceptacion` | F10 | Tabla I completa | Las 11 (formalización y evidencia) |
-| `015-despliegue-tunel` | F11 | G13, H1–H4 | 9 y 10 (cerrar y reabrir túnel) |
+| `015-despliegue-tunel` (carpeta real `010-despliegue-tunel`) | F11 | G13, H1–H4 | 9 y 10 (cerrar y reabrir túnel) |
 | `016-mediciones-costes` | F12 | K1–K8, E6 | — |
 | `017-memoria-defensa` | F13 | Bloque L, D y C14 (calidad), M, H5 | — |
 | `panel-mapa-2d` | F8f | G18 | **APLAZADA** (10-nov-2026): no se ejecuta salvo que sobre tiempo. — (captura del mapa 2D con eventos ya cargados y aviso de truncado; sin peticiones nuevas) |
@@ -216,7 +216,7 @@ Regla: **el contrato se cambia antes que el código**. Si una feature necesita o
 | `panel-conexion-api` (absorbida por `panel-base-mock`) | Paso de mock a API real, contraste de respuestas, corrección de divergencias |
 | `replay` | Selección, velocidad, aislamiento (topic y esquema), etiquetado y banner, casos controlados, selector de modo en el panel |
 | `pruebas-aceptacion` | Las 11 pruebas con procedimiento y evidencia |
-| `despliegue-tunel` | ngrok, Netlify, CORS, procedimiento de activación, pruebas del túnel |
+| `despliegue-tunel` | túnel (Cloudflare Tunnel), Netlify, CORS, procedimiento de activación, pruebas del túnel |
 | `mediciones-costes` | Operaciones, tamaños, métricas, procedimiento, costes |
 | `memoria-defensa` | Índice de memoria, README, evidencias, recorrido de un evento, decisión propia |
 
@@ -489,12 +489,12 @@ curl http://127.0.0.1:8000/api/salud     # estado y última ingesta
 ### 8.4 Activar el panel para la defensa (H2)
 
 1. Compose arriba y datos cargados (8.1 y 8.2).
-2. Túnel: `ngrok http 8000` (en el equipo) o `ngrok http http://api:8000` (en contenedor). El authtoken solo en tu configuración local de ngrok.
-3. Poner la URL HTTPS de ngrok en `frontend/public/config.json` (con `mode: api`).
-4. Compilar y publicar en Netlify (directorio base `frontend`; directorio de publicación `frontend/dist`, comando `npm run build`; `netlify.toml` con la regla de SPA `/* /index.html 200`).
+2. Túnel (Cloudflare Tunnel): `cloudflared` en el equipo, con destino `http://localhost:8000`. El token solo en tu máquina, nunca en Git.
+3. Poner la URL HTTPS del túnel en `frontend/public/config.json` (con `mode: api`).
+4. Compilar y publicar en Netlify (directorio base `frontend`; directorio de publicación `dist`, relativo a la base, comando `npm run build`; `netlify.toml` con la regla de SPA `/* /index.html 200`).
 5. Comprobar CORS con el origen exacto de Netlify.
 6. Abrir el panel desde otro dispositivo.
-7. Si usas un dominio ngrok que cambia, repetir 3–4 en cada sesión.
+7. Si el túnel no tiene dominio propio y la URL cambia, repetir 3–4 en cada sesión.
 
 ### 8.5 Replay para la demo
 

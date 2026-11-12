@@ -1,0 +1,13 @@
+T066 (4) y recuentos antes/después. Rango amplio: start=2000-01-01T00:00:00Z&end=2100-01-01T00:00:00Z
+--- GET /api/eventos?...
+features= 5000 count= 5000 total= 18554 truncated= True next_cursor_presente= True
+--- GET /api/eventos?...&limit=999999
+ERROR invalid_parameter
+--- GET /api/eventos?...&limit=5000
+features= 5000 count= 5000 total= 18554 truncated= True next_cursor_presente= True
+--- GET /api/eventos?...&limit=5001
+ERROR invalid_parameter
+pagina2 count= 5000 truncated= True next_cursor_presente= True
+--- total estadisticas (recuento independiente)
+total= 18554
+recuento antes=18554 despues=18554 (nota: la ingesta live puede variar)

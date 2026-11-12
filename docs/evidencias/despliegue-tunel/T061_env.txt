@@ -1,0 +1,11 @@
+$ check_env_example.py
+PASS  .env.example coincide: 23 variables, 21 leídas por el código, sin secretos reales.
+exit=0
+$ docker compose config --services
+kafka
+postgres
+producer
+api
+consumer
+$ docker compose config | grep CORS
+18:      CORS_ALLOWED_ORIGINS: https://observatorio.ssamuelfernandez.net,http://localhost:4200

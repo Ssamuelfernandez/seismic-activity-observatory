@@ -1,0 +1,15 @@
+# Despliegue del panel en Netlify (G13). El sitio se construye desde frontend/ y es estático.
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Debe coincidir con frontend/.nvmrc (constitución §11); lo comprueba tests/scripts/test_netlify_config.py.
+  NODE_VERSION = "24.18.0"
+
+# Redirección de aplicación de página única: recargar una ruta interna no da 404.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

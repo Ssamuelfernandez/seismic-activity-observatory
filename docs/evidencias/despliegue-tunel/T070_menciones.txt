@@ -1,0 +1,29 @@
+# T070: menciones a ngrok tras la sustitucion
+## grep -rn -i ngrok docs/planificacion CODEMAP.md README.md
+docs/planificacion/01-checklist-requisitos.md:21:1. Pipeline en Docker Compose: USGS → **productor** (Python/aiokafka) → **Kafka** → **consumidor** (Python/aiokafka) → **PostgreSQL** → **API FastAPI** → ngrok (HTTPS) → **panel React + TypeScript 
+docs/planificacion/01-checklist-requisitos.md:57:| A8 | **[OBL]** Solo la API se expone (Kafka y PG nunca por el túnel) | Solo `127.0.0.1:8000:8000` publicado (o ngrok en la red Compose) | Enunc. §9 | [x] |
+docs/planificacion/01-checklist-requisitos.md:58:| A9 | **[OBL]** Uvicorn en `0.0.0.0:8000` dentro del contenedor (ngrok termina el HTTPS; la API recibe HTTP local) | Comprobado | Enunc. §9 · CONTRATO | [x] |
+docs/planificacion/01-checklist-requisitos.md:61:| A12 | El panel React **no** necesita contenedor (SPA en Netlify); ngrok en host o contenedor | — | Guía 1.2 | [x] |
+docs/planificacion/01-checklist-requisitos.md:147:| F9 | **[OBL]** CORS: origen exacto de Netlify + `http://localhost:4200`; métodos GET y OPTIONS; cabecera `ngrok-skip-browser-warning`; sin cookies | Preflight OK | CONTRATO · Enunc. §9 | ☐ |
+docs/planificacion/01-checklist-requisitos.md:172:| G13 | **[OBL]** Netlify: `config.json` con la URL HTTPS de ngrok **antes de compilar**; no secretos en config | Build y deploy OK | Enunc. §9 | ☐ |
+docs/planificacion/01-checklist-requisitos.md:184:| H2 | **[OBL]** Procedimiento breve de activación para la defensa (Compose → datos/ingesta → ngrok → URL en el panel → panel → replay) | En README | Guía 3.2 | ☐ |
+docs/planificacion/01-checklist-requisitos.md:185:| H3 | **[OBL]** ngrok: `ngrok http 8000` (host) o `ngrok http http://api:8000` (contenedor); authtoken fuera de Git y del frontend | — | Enunc. §9 | ☐ |
+docs/planificacion/01-checklist-requisitos.md:260:| M3 | **[OBL]** README reproducible (requisitos y versiones, `.env`, build/up, tablas y carga histórica, estado/logs, frontend dev y publicación, ngrok y URL, pruebas y replay, parar y qué datos persisten, 
+docs/planificacion/01-checklist-requisitos.md:262:| M5 | **[OBL]** NO subir `node_modules`, secretos, authtoken ngrok, volúmenes de BD ni descargas grandes regenerables (`data/raw/`); documentar dónde van los originales y cómo regenerarlos | ☐ |
+docs/planificacion/01-checklist-requisitos.md:281:Límites del material de ejemplo (de `VALIDACION.md`): nunca se probó visualmente en navegador ni con Netlify/ngrok reales. Aplica también a lo que tomes de él como idea: compruébalo tú.
+docs/planificacion/01-checklist-requisitos.md:302:5. **Dominio ngrok**: el gratuito puede cambiar entre sesiones y `config.json` se compila en el build → comprobar si tu cuenta permite un dominio estático para no recompilar Netlify cada vez.
+docs/planificacion/02-roadmap-implementacion.md:185:- CORS exacto + `localhost:4200` + cabecera ngrok; BD caída → 503 con mensaje (no `[]`).
+docs/planificacion/02-roadmap-implementacion.md:270:| CORS falla aunque la URL abre | Origen exacto de Netlify, preflight OPTIONS, cabecera ngrok |
+docs/planificacion/02-roadmap-implementacion.md:271:| El panel recibe HTML | Página de aviso del túnel (ngrok la muestra; Cloudflare Tunnel no) o URL con `/api` duplicado |
+README.md:166:- **(a) Cloudflare Tunnel con dominio propio.** La API queda en una URL estable (`https://observatorio-api.ssamuelfernandez.net`), sin página intermedia de aviso y sin la cuota mensual de peticiones (20 000 al mes) del plan gratuito de ngrok. ng
+
+## git diff --stat (rutas prohibidas, esperado vacio)
+(fin)
+
+## Restos justificados
+- README: explicacion de 'ngrok equivalente' y cuota (decision a).
+- 01-checklist-requisitos.md (L21,57,58,61,147,172,184,185,260,262,281,302): no se edita (lo marca el alumno, pregunta 3). Dudoso/pendiente: H3, G13, H2 y M3 siguen diciendo ngrok hasta que el alumno adopte la propuesta.
+- 02 L185 y 270: cabecera 'ngrok-skip-browser-warning' exigida por contrato (se mantiene).
+- 02 L271: contraste "ngrok muestra pagina de aviso; Cloudflare Tunnel no" (explicacion, no instruccion).
+- .gitignore, api/main.py, tests/api/test_cors.py: cabecera por contrato y ficheros de authtoken de ngrok (se mantienen).
+- CODEMAP.md: sin menciones; se actualiza en T072.

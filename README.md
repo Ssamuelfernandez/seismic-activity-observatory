@@ -18,7 +18,8 @@ Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
 | `panel-base-mock` | **Completada** (2026-11-10), pendiente de la comprobación visual del alumno: panel React con el front externo del alumno adoptado y corregido, conectado a la API real, con mock sintético de cinco escenarios y 70 pruebas Vitest. Ver [`frontend/README.md`](frontend/README.md) y [`docs/evidencias/panel-base-mock/`](docs/evidencias/panel-base-mock/) |
 | `009` filtros y tabla, `010` gráficos y comparación, `011` estado y fallos, `012` conexión con la API | Absorbidas por `panel-base-mock` (no se ejecutan por separado) |
 | `replay` (009) | Completada (implementada y comprobada de extremo a extremo): reproducción acelerada de una selección de 2025 por Kafka, aislada de `live` (J1–J8, F12, G10). Ver la sección «Replay»; apuntes en [`docs/borradores/replay.md`](docs/borradores/replay.md) |
-| `pruebas-aceptacion` (014), `despliegue-tunel` (015), `mediciones-costes` (016), `memoria-defensa` (017, incluye el README final) | Pendientes |
+| `despliegue-tunel` (010) | Implementada y verificada en local (2026-11-12), pendiente de la revisión del alumno: CORS, `netlify.toml`, build sin mock, revisión de exposición y procedimiento de activación; túnel, Netlify, DNS y pruebas 9 y 10 pendientes del alumno. Ver «Túnel público y panel» |
+| `pruebas-aceptacion` (014), `mediciones-costes` (016), `memoria-defensa` (017, incluye el README final) | Pendientes |
 
 La API es la **API de consulta** (ver su sección más abajo). El productor ya es el **productor en vivo** (ver su sección más abajo). El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
 
@@ -53,6 +54,7 @@ El orden de las fases está en [`docs/planificacion/02-roadmap-implementacion.md
 | [`specs/006-historico-2025/`](specs/006-historico-2025/) | Spec, plan, investigación, modelo de datos, tareas, bitácora y quickstart del histórico |
 | [`specs/007-api/`](specs/007-api/) | Spec, plan, investigación, modelo de datos, tareas, bitácora y quickstart de la API de consulta |
 | [`frontend/`](frontend/README.md) | Panel web (globo 3D, filtros, tabla, estadísticas): cómo ejecutarlo, configuración, mock y material reutilizado en [`frontend/README.md`](frontend/README.md) |
+| [`netlify.toml`](netlify.toml) | Compilación y publicación del panel en Netlify |
 | `CODEMAP.md` | Mapa de dónde está cada cosa |
 | `.specify/`, `.claude/` | Configuración y plantillas de Spec Kit; agentes, habilidades y `settings.json` de Claude Code |
 
@@ -155,9 +157,38 @@ Para activarlo, recrea solo ese servicio (se reinicia unos segundos; los datos e
 
 **Advertencias:** (1) es una herramienta local, **no forma parte de la arquitectura entregada** ni debe usarse en un despliegue; (2) como no viaja con el repositorio, en la nube no tendría efecto; (3) nunca publiques Postgres en `0.0.0.0` ni lo pases por un túnel. En un servidor propio, entra por SSH con `docker compose exec` o con un túnel SSH desde tu cliente.
 
-### ngrok
+### Túnel público y panel (Procedimiento de activación)
 
-ngrok **se ejecuta en el equipo anfitrión** (`ngrok http 8000`) y **queda fuera de Compose y de esta feature**. Publica la API, que ya está en `127.0.0.1:8000`. Su authtoken nunca va al repositorio ni al frontend (React).
+El túnel (Cloudflare Tunnel) **se ejecuta en el equipo anfitrión** con `cloudflared` y **queda fuera de Compose**: el repositorio no contiene configuración de túnel. Publica la API, que ya está en `127.0.0.1:8000` (único destino del túnel: `http://localhost:8000`). Evidencias y plantillas de las pruebas desde fuera: [`docs/evidencias/despliegue-tunel/`](docs/evidencias/despliegue-tunel/).
+
+**Decisiones.**
+
+- **(a) Cloudflare Tunnel con dominio propio.** La API queda en una URL estable (`https://observatorio-api.ssamuelfernandez.net`), sin página intermedia de aviso y sin la cuota mensual de peticiones (20 000 al mes) del plan gratuito de ngrok. ngrok u otro servicio equivalente serviría igual: en ese caso solo cambian la URL de `apiBaseUrl` y el origen permitido.
+- **(b) API pública y de solo lectura.** El panel es estático y llama directamente a la API desde el navegador. Los datos son públicos (feed de USGS) y la API solo admite `GET` y `OPTIONS`. CORS no es una barrera de seguridad (solo lo aplican los navegadores; `curl` lo ignora): la protección es que la API es de solo lectura, sin secretos en las respuestas y con límite de eventos (`API_MAX_EVENTS`). Kafka y PostgreSQL nunca pasan por el túnel.
+- **(c) DNS y Netlify, a mano.** En Cloudflare DNS, un CNAME `observatorio` hacia el sitio de Netlify con el **proxy desactivado** (nube gris, «solo DNS»). En Netlify, dominio personalizado `observatorio.ssamuelfernandez.net` y certificado HTTPS. La configuración de la compilación está en [`netlify.toml`](netlify.toml) (base `frontend`, `npm run build`, publicación `dist`, Node 24.18.0).
+
+**Orden de arranque.**
+
+1. **Compose.** Antes de abrir el túnel, retira `compose.override.yaml` si existe (publica Postgres en `127.0.0.1:5433`) y recrea la base: `docker compose up -d postgres`. Después `docker compose up -d` y `docker compose ps` con los cinco servicios `healthy`.
+2. **API sana.** `curl http://127.0.0.1:8000/api/salud` devuelve 200 con `status`, `last_ingestion` y `generated`.
+3. **`cloudflared`.** Con el túnel con nombre ya creado en tu cuenta, ejecútalo en el equipo, por ejemplo `cloudflared tunnel run --token <TOKEN>`. El token (marcador `<TOKEN>` en esta documentación) vive **solo en tu máquina**: nunca en Git, en `.env.example` ni en el frontend. `.gitignore` cubre los ficheros de credenciales habituales de `cloudflared`.
+4. **Comprobación por la URL pública.** `curl https://observatorio-api.ssamuelfernandez.net/api/salud` debe devolver 200 con el mismo cuerpo.
+5. **Panel público.** Abre `https://observatorio.ssamuelfernandez.net`; debe mostrar datos y recargar una ruta interna sin 404. Opcional: lanzar el replay (ver «Replay») para tener actividad que mostrar.
+
+**Orden de parada.** Cierra `cloudflared` (Ctrl+C o parar su servicio), luego `docker compose down` (conserva los datos; `-v` los borra).
+
+**Aviso de disponibilidad.** La URL pública de la API **solo existe mientras `cloudflared` y la API están encendidos en este PC**. Con el PC apagado, suspendido o sin red, el panel (que sigue en Netlify) no recibe datos: muestra el aviso de fallo y conserva la última lectura, y se recupera solo en el siguiente refresco cuando el túnel vuelve.
+
+**CORS.** La API acepta los orígenes de `CORS_ALLOWED_ORIGINS` (por defecto `https://observatorio.ssamuelfernandez.net` y `http://localhost:4200`; exactos, sin barra final; `*` se rechaza y la API no arranca). Para probar con un dominio temporal de Netlify (`https://<sitio>.netlify.app`), añádelo a la variable en `.env` y recrea la API con `docker compose up -d api`; quítalo después.
+
+**Configuración del panel.** `frontend/public/config.json` lleva `mode: "api"` y `apiBaseUrl` con la URL pública terminada en `/api`. Se lee en la compilación y se publica con el panel: **si cambia `config.json`, hay que volver a compilar y desplegar en Netlify**. Para desarrollo local con proxy, ver [`frontend/README.md`](frontend/README.md) (cambiar `apiBaseUrl` a `/api` solo en local, sin confirmarlo en Git).
+
+**Comprobaciones previas a la defensa.** Que el PC no se suspenda (ajustes de energía); que el CNAME resuelva (`nslookup observatorio.ssamuelfernandez.net`); que el dominio por defecto de Netlify siga disponible como alternativa; que no exista `compose.override.yaml`.
+
+| Elemento | Estado |
+|---|---|
+| CORS, `netlify.toml`, `config.json`, build sin mock, revisión de exposición | Implementado y comprobado en local (feature `despliegue-tunel`) |
+| Token y arranque del túnel, sitio y dominio de Netlify, DNS, `curl` público, H1, pruebas 9 y 10 | Pendiente del alumno (plantillas en `docs/evidencias/despliegue-tunel/`) |
 
 ## Consumidor idempotente
 
@@ -304,7 +335,7 @@ docker compose up -d postgres && docker compose --profile test build tests
 docker compose --profile test run --rm tests pytest -m integration -q              # integración (rol real)
 ```
 
-**Límites conocidos.** Sin CORS: el panel en otro origen no podrá consultar la API hasta la feature `despliegue` (F9); `OPTIONS` responde 405. El modo `replay` lee `replay.current_event`, que está vacío hasta que se lanza el replay (ver «Replay»). Un cursor reutilizado con otros filtros no se detecta; los parámetros desconocidos se ignoran; un error SQL no previsto sale como 503; un año completo en `by_hour` son unas 8 760 entradas. Si PostgreSQL está parado al arrancar, la API reintenta y no atiende hasta que vuelva. Evidencias: [`docs/evidencias/api/`](docs/evidencias/api/).
+**Límites conocidos.** CORS (F9) lo añade `despliegue-tunel` (ver «Túnel público y panel»). El modo `replay` lee `replay.current_event`, que está vacío hasta que se lanza el replay (ver «Replay»). Un cursor reutilizado con otros filtros no se detecta; los parámetros desconocidos se ignoran; un error SQL no previsto sale como 503; un año completo en `by_hour` son unas 8 760 entradas. Si PostgreSQL está parado al arrancar, la API reintenta y no atiende hasta que vuelva. Evidencias: [`docs/evidencias/api/`](docs/evidencias/api/).
 
 ## Replay
 

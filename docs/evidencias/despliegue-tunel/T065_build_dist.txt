@@ -1,0 +1,15 @@
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[32m✓ built in 443ms[39m
+dist: C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\frontend\dist
+ficheros revisados: 6
+ficheros del mock encontrados: 0
+OK: sin mock y config.json idéntico.
+exit=0
+--- negativa: copia temporal con base.json
+dist: C:\Users\Samuel\AppData\Local\Temp/dist_neg
+ficheros revisados: 7
+ficheros del mock encontrados: 1
+FALLO: fichero del mock en dist: C:\Users\Samuel\AppData\Local\Temp\dist_neg\base.json
+exit=1
