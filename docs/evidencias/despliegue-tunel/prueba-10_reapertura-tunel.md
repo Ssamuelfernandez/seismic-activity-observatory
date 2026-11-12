@@ -1,6 +1,6 @@
 # Prueba 10: reapertura del túnel
 
-**Estado: pendiente del alumno.** Cubre prueba 10, SC-006. Se hace a continuación de la prueba 9, con el panel aún abierto.
+**Estado: se verifica en vivo en la URL pública; su evidencia en vídeo irá en readme-video.** Cubre prueba 10, SC-006. Las capturas de `README.md` se tomaron desde la misma red del servidor y no sustituyen esta prueba. Se hace a continuación de la prueba 9, con el panel aún abierto.
 
 ## Pasos
 
@@ -15,10 +15,6 @@ El panel se recupera solo en el siguiente refresco, sin recargar: desaparece el 
 
 ## Registro
 
-| Campo | Valor |
-|---|---|
-| Hora de reapertura | (pendiente) |
-| Hora de la recuperación | (pendiente) |
-| Resultado | (pendiente) |
+Horas de reapertura y de recuperación: se ven en el vídeo.
 
-**Captura (URL visible, hora):** (pendiente del alumno)
+**Evidencia:** vídeo en `readme-video` (pendiente).

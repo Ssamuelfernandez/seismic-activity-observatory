@@ -1,6 +1,6 @@
 # H1: panel accesible desde otro dispositivo
 
-**Estado: pendiente del alumno.** Cubre H1, SC-006.
+**Estado: verificado a mano por el alumno (el panel público muestra datos reales); captura desde móvil con datos móviles pendiente.** Cubre H1, SC-006.
 
 ## Pasos
 

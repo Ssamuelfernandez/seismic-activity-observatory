@@ -7,6 +7,9 @@ Cierre de la feature (T072), 2026-11-12. Todo lo marcado «Cumplido» está comp
 - Pruebas y salidas: `T059_api_config.txt`, `T060_cors.txt`, `T061_env.txt`, `T062_cors_curl.txt`, `T063_netlify.txt`, `T064_vitest.txt`, `T065_build_dist.txt`, `T066_respuestas.txt`, `T066_respuestas_brutas.txt`, `T066_limite_y_recuentos.txt`, `T067_puertos_secretos.txt`, `T068_readme.txt`, `T070_menciones.txt`, `T071_*.txt` (regresión).
 - Revisión de exposición: [`exposicion.md`](exposicion.md).
 - Plantillas del alumno: [`H1_movil.md`](H1_movil.md), [`prueba-09_cierre-tunel.md`](prueba-09_cierre-tunel.md), [`prueba-10_reapertura-tunel.md`](prueba-10_reapertura-tunel.md).
+- Capturas en vivo (2026-11-12): **no se hicieron**. No había herramienta de navegador disponible (la conexión se cerró) y no se instaló nada. Quedan pendientes: el panel en `https://observatorio.ssamuelfernandez.net`, `/api/salud` y un fragmento de `/api/eventos` en la URL pública.
+- Verificación en vivo (alumno, a mano): panel y API desplegados (Cloudflare Tunnel y Netlify) y el panel muestra datos reales.
+- Pruebas 9 y 10: se verifican en vivo en la URL pública y su evidencia en vídeo irá en `readme-video`. Cualquier captura tomada desde la misma red del servidor no sustituye la prueba 9 desde fuera de la red (H1 con datos móviles sigue como captura pendiente).
 - Apuntes de defensa: `docs/borradores/despliegue-tunel.md`.
 
 ## Veredicto de SC-001 a SC-008

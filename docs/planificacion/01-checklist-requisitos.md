@@ -144,7 +144,7 @@ El contrato del profesor es **mínimo**: define el contenido de las respuestas (
 | F6 | **[OBL]** `GET /api/salud`: estado API + fecha de última ingesta, sin credenciales (forma propia, documentada) | — | CONTRATO | [x] |
 | F7 | **[OBL]** `GET /api/estadisticas`: conteos por hora UTC y por país, distribuciones, comparación histórica; con periodo, filtros, unidad y registros sin valor; **mismos filtros que el mapa** (forma propia, documentada) | — | CONTRATO | [x] |
 | F8 | **[OBL]** Fallo de BD → error explícito, **nunca** "0 eventos" como resultado válido | Prueba con PG parado | CONTRATO | [x] |
-| F9 | **[OBL]** CORS: origen exacto de Netlify + `http://localhost:4200`; métodos GET y OPTIONS; cabecera `ngrok-skip-browser-warning`; sin cookies | Preflight OK | CONTRATO · Enunc. §9 | ☐ |
+| F9 | **[OBL]** CORS: origen exacto de Netlify + `http://localhost:4200`; métodos GET y OPTIONS; cabecera `ngrok-skip-browser-warning`; sin cookies | Preflight OK | CONTRATO · Enunc. §9 | [x] |
 | F10 | **[OBL]** Sin rutas de administración ni secretos expuestos | — | Enunc. §9 | [x] |
 | F11 | La API consulta datos **ya procesados**; no depende de que el panel esté abierto | — | FAQ 2 | [x] |
 | F12 | Vista de reproducción: poder consultar el intervalo histórico y los datos aislados de replay, con `metadata.mode = "replay"` (parámetro de modo: **decisión propia**, no está en el contrato mínimo) | Parámetro/ruta de modo | FAQ 32 | [x] |
@@ -169,7 +169,7 @@ El frontend no viene hecho: hay que crear el proyecto React (Vite + TypeScript +
 | G10 | **[OBL]** Modo "REPRODUCCIÓN" claramente etiquetado | Banner visible (feature `replay`) | Enunc. §11 | [x] |
 | G11 | Refresco ~60 s sin solapar peticiones; timeout (p. ej. 15 s); **atribución de la fuente del mapa base o de la textura (OSM u otra)** y leyenda visibles | Implementado | README | [x] |
 | G12 | Usar en el panel los campos del contrato: `magType` (ficha), `country_id` y `country_name` (filtros, tabla, ficha), `truncated` (aviso), `last_ingestion` (estado), `metadata.mode` (modo) | Cada campo se muestra o condiciona la vista | CONTRATO | [x] |
-| G13 | **[OBL]** Netlify: `config.json` con la URL HTTPS de ngrok **antes de compilar**; no secretos en config | Build y deploy OK | Enunc. §9 | ☐ |
+| G13 | **[OBL]** Netlify: `config.json` con la URL HTTPS pública del túnel (incluido el prefijo `/api` si el cliente no lo añade) **antes de compilar**; no secretos en config | Build y deploy OK (marcado por el alumno; evidencia en repo: parte local, `config.json`, build sin mock, `netlify.toml`) | Enunc. §9 | [x] |
 | G14 | Fronteras de países en el mapa a partir de `paises.geojson` (catálogo entregado, copiado a los assets del frontend); documentarlo como material reutilizado | Capa visible; origen indicado en README/memoria | FUENTES | [x] |
 | G15 | **Mock del contrato**: JSON de ejemplo conforme a `CONTRATO-API.md` (con nulos, sin país, truncado y modo replay), partiendo del ejemplo del propio contrato, y selector en `config.json` (`mock` / `api`); **datos del mock marcados como sintéticos** | Se puede desarrollar el panel sin backend | Decisión propia | [x] |
 | G16 | Accesibilidad mínima: tabla como alternativa, no depender solo del color, foco de teclado en el panel lateral; la vista de globo no sustituye a la tabla accesible | Revisado | Enunc. §8 | ☐ |
@@ -180,9 +180,9 @@ El frontend no viene hecho: hay que crear el proyecto React (Vite + TypeScript +
 
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
-| H1 | **[OBL]** Panel Netlify accesible desde otro dispositivo | Probado | Guía 3.1 | ☐ |
-| H2 | **[OBL]** Procedimiento breve de activación para la defensa (Compose → datos/ingesta → ngrok → URL en el panel → panel → replay) | En README | Guía 3.2 | ☐ |
-| H3 | **[OBL]** ngrok: `ngrok http 8000` (host) o `ngrok http http://api:8000` (contenedor); authtoken fuera de Git y del frontend | — | Enunc. §9 | ☐ |
+| H1 | **[OBL]** Panel Netlify accesible desde otro dispositivo | Probado | Guía 3.1 | [x] |
+| H2 | **[OBL]** Procedimiento breve de activación para la defensa (Compose → API → túnel → comprobación de `/api/salud` pública → panel → replay) | En README | Guía 3.2 | [x] |
+| H3 | **[OBL]** Túnel HTTPS (Cloudflare Tunnel con nombre; ngrok u otro servicio equivalente según el enunciado) que expone solo `http://localhost:8000`; el token o authtoken del túnel queda fuera de Git y del frontend | — | Enunc. §9 | ☐ |
 | H4 | **[OBL]** Equipo, contenedores y túnel **encendidos** durante la demo | — | Enunc. §9 | ☐ |
 | H5 | **[OBL]** Explicación individual oral: recorrido de un evento USGS → panel + **una decisión técnica propia** justificada | Preparado (apoyo: `CODEMAP.md`) | Guía 3.3 | ☐ |
 
