@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-12
 
-**Status**: Draft (specify + clarify hechos; pendiente la revisión del alumno)
+**Status**: Implemented (2026-11-12; verificada en local, pendiente de la revisión del alumno y de los pasos manuales P1–P9)
 
 **Input**: Feature `despliegue-tunel` (F11): publicar la API de consulta por un túnel HTTPS y el panel como sitio estático, con CORS acotado, la configuración del panel apuntando a la API pública, una revisión de la exposición, el procedimiento de activación documentado y las evidencias de las pruebas 9 y 10. Datos ya decididos: API pública `https://observatorio-api.ssamuelfernandez.net` (Cloudflare Tunnel con nombre hacia `http://localhost:8000`, ya probado a mano); panel `https://observatorio.ssamuelfernandez.net` (Netlify con dominio propio; DNS en Cloudflare). El túnel ya no es ngrok: el enunciado permite «ngrok u otro servicio equivalente».
 
@@ -235,3 +235,11 @@ Todas **Resueltas** por el supervisor (decisiones en `docs/evidencias/sprint/dec
 - El preflight `OPTIONS` de una ruta con método `POST` devuelve 400 (la API es de solo lectura, no hay POST publicados).
 - Las pruebas 9 (túnel cerrado) y 10 (móvil real) y la hipótesis H1 son solo manuales: las ejecuta el alumno («pendiente del alumno»).
 - `contracts/api.md`, `CONTRATO-API.md` y el enunciado siguen citando ngrok; no se editan (pregunta 2).
+
+## Cierre
+
+**Tareas diferidas**: ninguna. Quedan los pasos manuales P1–P9 del alumno (`tasks.md`), que no son tareas de la feature.
+
+| Feature | Estado | Evidencias |
+|---|---|---|
+| despliegue-tunel (010) | Implemented (SC-004 y SC-006 pendientes del alumno; SC-007 real pendiente) | `docs/evidencias/despliegue-tunel/` (índice y veredicto en `README.md`; revisión en `exposicion.md`) |

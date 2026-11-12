@@ -68,7 +68,7 @@ Notación: «sin Docker» = `.venv/Scripts/python.exe -m pytest -m "not integrat
   - **Prueba**: todo en verde; salidas en `T071_*.txt`; `git status` sin archivos inesperados (solo los listados en el plan).
   - **Cubre**: F9, F10, F5; SC-001, SC-002; constitución §16.
 
-- [ ] T072 [US1][US2][US3][US4][US5] **Cierre y `CODEMAP.md`**: `docs/evidencias/despliegue-tunel/README.md` con el índice y el veredicto de SC-001 a SC-008 (SC-004, SC-006 y la parte real de SC-007 como «pendiente del alumno»); actualizar `CODEMAP.md` (filas nuevas: orígenes CORS y middleware, `netlify.toml`, `config.json`, `check-dist.mjs`, pruebas, evidencias, README; línea de estado y fila en el historial de features); marcar las tareas hechas aquí; anotar en `bitacora.md` las preguntas aún abiertas y la lista «pendiente del alumno». La feature se detiene aquí a la espera de revisión (constitución §19, sin commits).
+- [x] T072 [US1][US2][US3][US4][US5] **Cierre y `CODEMAP.md`**: `docs/evidencias/despliegue-tunel/README.md` con el índice y el veredicto de SC-001 a SC-008 (SC-004, SC-006 y la parte real de SC-007 como «pendiente del alumno»); actualizar `CODEMAP.md` (filas nuevas: orígenes CORS y middleware, `netlify.toml`, `config.json`, `check-dist.mjs`, pruebas, evidencias, README; línea de estado y fila en el historial de features); marcar las tareas hechas aquí; anotar en `bitacora.md` las preguntas aún abiertas y la lista «pendiente del alumno». La feature se detiene aquí a la espera de revisión (constitución §19, sin commits).
   - **Prueba**: cada SC con su fichero de evidencia; `CODEMAP.md` lista cada archivo nuevo (`ls` de cada ruta existe); `bitacora.md` actualizada.
   - **Cubre**: constitución §16; H2, M3 (parte); todos los SC.
 
