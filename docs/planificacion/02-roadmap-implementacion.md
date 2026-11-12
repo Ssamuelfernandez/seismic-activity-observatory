@@ -17,7 +17,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 
 **Objetivo.** Sistema que ingiere terremotos de USGS (feed reciente + histórico 2025 M≥4) y los integra con un catálogo de países, y responde: *¿dónde hay actividad sísmica y cómo se compara con un periodo histórico equivalente?*
 
-**Arquitectura obligatoria (Docker Compose, 5 servicios):** `producer` (Python+aiokafka) · `kafka` · `consumer` (Python+aiokafka) · `postgres` · `api` (FastAPI). Fuera de Compose: ngrok (HTTPS a la API) y el panel **React + TypeScript + Vite + Tailwind con mapa `react-globe.gl` (plan B MapLibre o Leaflet), construido desde cero**, en Netlify. El `paises.geojson` y el `CONTRATO-API.md` (contrato mínimo) del profesor son la única base entregada; el frontend de ejemplo del paquete es solo referencia.
+**Arquitectura obligatoria (Docker Compose, 5 servicios):** `producer` (Python+aiokafka) · `kafka` · `consumer` (Python+aiokafka) · `postgres` · `api` (FastAPI). Fuera de Compose: túnel (Cloudflare Tunnel, HTTPS a la API) y el panel **React + TypeScript + Vite + Tailwind con mapa `react-globe.gl` (plan B MapLibre o Leaflet), construido desde cero**, en Netlify. El `paises.geojson` y el `CONTRATO-API.md` (contrato mínimo) del profesor son la única base entregada; el frontend de ejemplo del paquete es solo referencia.
 
 **Reglas no negociables:** la fuente de verdad es la **constitución** (borrador en 03 §5; si difiere de esta lista, manda la constitución). Las más críticas:
 1. Procesamiento *al menos una vez* + escritura **idempotente**; offset de Kafka confirmado **después** del commit en PostgreSQL.
@@ -58,7 +58,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 | Gráficos | Chart.js (versión fijada); empezar por el gráfico de dos barras del panel lateral y reutilizar el componente para el resto | Primer gráfico simple para calibrar; el resto reutiliza el componente |
 | Forma de `/salud`, `/estadisticas`, paginación, límite de puntos, `mode` | Decisión propia, documentada en `specs/001-contratos-y-modelo/contracts/api.md` (el contrato mínimo del profesor no los define) | Ver 03 §4.1 |
 | Modalidad / fecha | Individual · entrega 19-nov-2026 (quedan ~18 días desde el 1-nov) | Priorizar núcleo en la primera semana y empezar el panel contra mock en paralelo; calendario en §5 |
-| ngrok | En el host (`ngrok http 8000`) con puerto `127.0.0.1:8000:8000` | Más simple; el token queda fuera del repo |
+| Túnel (Cloudflare Tunnel) | En el host (`cloudflared`) con puerto `127.0.0.1:8000:8000` | Más simple; el token queda fuera del repo |
 
 ### Estructura objetivo del repositorio (las carpetas nacen con su feature)
 
@@ -129,7 +129,7 @@ Dependencias de backend: `F0 → F1 → F1b → F2 → F3 → F4 → F5 → F7`.
 Dependencias de frontend (enmienda del 10-nov-2026): `F8a–F8e` son **una sola feature** (`008-panel-base-mock`). Sus bloques 1–3 (portar, configuración y mock, capa de datos) solo necesitan el `CONTRATO-API.md` y `002-infra-compose`; el bloque 4 (**conexión con la API real**) necesita F7 hecha y el stack de Compose levantado con datos. `F8f` queda aplazada. La memoria se redacta **a medida que avanzas**, no al final.
 
 ### F0 — Repositorio, documentación y Spec Kit (sin feature, a mano)
-- Seguir 03 §2 (paso 0 y arranque): repo privado con acceso al profesor; `docs/enunciado/` (paquete completo, solo lectura), `docs/planificacion/` (01, 02 y 03), `data/catalogo/paises.geojson` (sin modificar), `.gitignore` (node_modules, `.env`, `data/raw/`, `.venv/`, `__pycache__/`, volúmenes, token ngrok), `README.md` mínimo. **No** crear aún carpetas de servicio ni copiar el frontend de ejemplo.
+- Seguir 03 §2 (paso 0 y arranque): repo privado con acceso al profesor; `docs/enunciado/` (paquete completo, solo lectura), `docs/planificacion/` (01, 02 y 03), `data/catalogo/paises.geojson` (sin modificar), `.gitignore` (node_modules, `.env`, `data/raw/`, `.venv/`, `__pycache__/`, volúmenes, token del túnel), `README.md` mínimo. **No** crear aún carpetas de servicio ni copiar el frontend de ejemplo.
 - Comprobar herramientas: git, Python ≥3.11, uv, Node LTS, Docker Desktop. Primer commit manual, sin trailers de coautoría.
 - Instalar la CLI de Spec Kit, `specify init . --integration claude` (o `--ai claude` en versiones antiguas; ver `specify init --help`), revisar lo generado y commit.
 - `/speckit.constitution` con el borrador de 03 §5; crear `CLAUDE.md` (03 §9) y `CODEMAP.md` vacío (03 §7.6); configurar la no-atribución en `.claude/settings.json` y el hook `commit-msg` (03 §2); commit de prueba y `git log -1`.
@@ -209,7 +209,7 @@ Dependencias de frontend (enmienda del 10-nov-2026): `F8a–F8e` son **una sola 
 
 **F8d — Estado del sistema y fallos (feature `011-panel-estado-fallos`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026)**
 - Barra de **estado del sistema**: última lectura correcta de la API, `generated`, `last_ingestion`, periodo consultado, aviso de desactualización por umbral y error de backend; refresco ~60 s sin solapar peticiones, timeout, conservación e identificación de la última lectura (no presentarla como reciente).
-- **Verificación:** simular API caída en el mock (y luego con ngrok real en F11) y comprobar aviso + recuperación. **Cubre:** G7, G9, G12 (`last_ingestion`).
+- **Verificación:** simular API caída en el mock (y luego con el túnel real en F11) y comprobar aviso + recuperación. **Cubre:** G7, G9, G12 (`last_ingestion`).
 
 **F8e — Conexión con la API real (feature `012-panel-conexion-api`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026)**
 - Cambiar `config.json` a `mode: api` (dev: `http://localhost:8000`); contrastar respuestas reales con el mock y corregir diferencias (si el contrato y la API divergen, se arregla la API o el mock, nunca el contrato sin avisar).
@@ -229,10 +229,10 @@ Dependencias de frontend (enmienda del 10-nov-2026): `F8a–F8e` son **una sola 
 - Una prueba por caso de la tabla I del checklist. Cada una: procedimiento repetible (script o comandos), resultado esperado, observado, evidencia (SQL, log, captura). Automatizar con `pytest` lo que sea posible (1–8) y documentar a mano las del túnel (9–10).
 - **Evidencia:** `docs/evidencias/pruebas/NN-*.md` + tabla resumen en la memoria §8.
 
-### F11 — ngrok y Netlify (feature `015-despliegue-tunel`)
-- Reservar dominio ngrok si la cuenta lo permite; `ngrok http 8000`; actualizar `config.json` con la URL HTTPS; build de producción; deploy en Netlify (Base directory `frontend`, Build command `npm run build`, Publish directory `frontend/dist`); poner el dominio de Netlify en CORS.
+### F11 — Túnel (Cloudflare Tunnel) y Netlify (feature `010-despliegue-tunel`)
+- Túnel con nombre (Cloudflare Tunnel) con dominio propio, hacia `http://localhost:8000`; actualizar `config.json` con la URL HTTPS; build de producción; deploy en Netlify (Base directory `frontend`, Build command `npm run build`, Publish directory `dist`, relativo a la base); poner el dominio de Netlify en CORS (`CORS_ALLOWED_ORIGINS`).
 - Añadir `netlify.toml` y la regla de redirección para SPA (`/* /index.html 200`).
-- Probar desde otro dispositivo; probar cierre/reapertura del túnel (pruebas 9–10) y apagado de ngrok mientras el panel sigue abierto.
+- Probar desde otro dispositivo; probar cierre/reapertura del túnel (pruebas 9–10) y apagado del túnel mientras el panel sigue abierto.
 - Escribir el **procedimiento de activación** para la defensa (H2).
 - **Cubre:** G13, H1–H4, pruebas 9–10.
 
@@ -268,11 +268,11 @@ Reparto de la documentación entre herramientas: la **constitución** recoge los
 | Recuentos suben sin eventos nuevos | Contar desde `current_event`, no por mensaje; comprobar clave de upsert |
 | Replay "no muestra nada" | Consultar el intervalo 2025 y el esquema `replay`, no "últimas 24 h" |
 | CORS falla aunque la URL abre | Origen exacto de Netlify, preflight OPTIONS, cabecera ngrok |
-| El panel recibe HTML | Página de aviso de ngrok o URL con `/api` duplicado |
+| El panel recibe HTML | Página de aviso del túnel (ngrok la muestra; Cloudflare Tunnel no) o URL con `/api` duplicado |
 | Puntos en sitios raros | Orden lon/lat en GeoJSON vs el orden que exija la librería de mapa elegida; comprobarlo con un evento conocido |
 | Mes >20.000 resultados | Detectar `count` y subdividir; nunca truncar en silencio |
 | Sobrecarga de alcance | Prioridad: pipeline correcto → pruebas → memoria; ignorar "opcionales" |
-| URL ngrok cambia | Dominio estático o recompilar Netlify; documentarlo en H2 |
+| URL del túnel cambia (solo sin dominio propio) | Dominio estático o recompilar Netlify; documentarlo en H2 |
 | Frontend desde cero consume demasiado tiempo | Empezar por el mock del contrato (F8a) en paralelo al backend; priorizar solo los G marcados [OBL]; no pulir estilos hasta tener F8e |
 | Mock y API real divergen | El contrato manda; contrastar en F8e y corregir mock o API, no el contrato |
 | Versiones de React y de la librería de mapa incompatibles | Fijar versiones en el plan de `008`; si hay problemas con el envoltorio de React (`react-globe.gl`), usar `globe.gl` directamente o el plan B (Leaflet o MapLibre) |

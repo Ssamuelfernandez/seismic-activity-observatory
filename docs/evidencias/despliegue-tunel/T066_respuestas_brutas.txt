@@ -1,0 +1,67 @@
+## (1) GET 200 y 404
+--- GET /api/salud
+{"status":"ok","last_ingestion":1794508089387,"generated":1794508107808}
+HTTP 200
+--- GET /api/eventos
+{"type":"FeatureCollection","metadata":{"generated":1794508107887,"last_ingestion":1794508089387,"mode":"live","count":238,"total":238,"truncated":false,"next_cursor":null,"null_mag_excluded":0},"features":[{"type":"Feature","id":"aka2026wlftrg","geometry":{"type":"Point","coordinates":[-148.381,62.387,25.8]},"properties":{"mag":1.7,"magType":"ml","place":"65 km N of Chickaloon, Alaska","time":179
+HTTP 200
+--- GET /api/estadisticas
+{"metadata":{"generated":1794508107967,"last_ingestion":1794508089387,"mode":"live"},"period":{"start":1794421707967,"end":1794508107967},"filters":{"min_mag":null,"country_id":null},"total":238,"by_hour":{"unit":"events","no_value":0,"buckets":[{"hour_start":1794420000000,"count":3},{"hour_start":1794423600000,"count":12},{"hour_start":1794427200000,"count":9},{"hour_start":1794430800000,"count":
+HTTP 200
+--- GET /docs
+{"error":{"code":"not_found","message":"La ruta solicitada no existe."}}
+HTTP 404
+--- GET /redoc
+{"error":{"code":"not_found","message":"La ruta solicitada no existe."}}
+HTTP 404
+--- GET /openapi.json
+{"error":{"code":"not_found","message":"La ruta solicitada no existe."}}
+HTTP 404
+--- GET /admin
+{"error":{"code":"not_found","message":"La ruta solicitada no existe."}}
+HTTP 404
+--- GET /api/admin
+{"error":{"code":"not_found","message":"La ruta solicitada no existe."}}
+HTTP 404
+--- GET /api/eventos/123
+{"error":{"code":"not_found","message":"La ruta solicitada no existe."}}
+HTTP 404
+## (2) Métodos
+--- POST /api/salud
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+--- PUT /api/salud
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+--- PATCH /api/salud
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+--- DELETE /api/salud
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+--- POST /api/eventos
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+--- PUT /api/eventos
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+--- PATCH /api/eventos
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+--- DELETE /api/eventos
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+--- POST /api/estadisticas
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+--- PUT /api/estadisticas
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+--- PATCH /api/estadisticas
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+--- DELETE /api/estadisticas
+{"error":{"code":"method_not_allowed","message":"Método no permitido: esta ruta solo admite GET."}}
+HTTP 405
+## (4) limite
+--- limit=999999 amplio

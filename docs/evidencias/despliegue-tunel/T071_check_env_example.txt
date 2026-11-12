@@ -1,0 +1,1 @@
+PASS  .env.example coincide: 23 variables, 21 leídas por el código, sin secretos reales.

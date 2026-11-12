@@ -64,3 +64,9 @@ tests/                           pruebas Vitest
 - Rendimiento con 5 000 eventos **sin medir**.
 - En modo `replay` el periodo es fijo (2025) y el selector queda desactivado; el cierre de `replay` es de la feature `013-replay`.
 - El retraso de ingesta («hace X min») lo calcula el panel con `generated` y `last_ingestion`; se rotula «calculado en el panel».
+
+## Desarrollo con proxy y despliegue
+
+- `public/config.json` entrega `apiBaseUrl` = `https://observatorio-api.ssamuelfernandez.net/api` (API pública por el túnel). Para desarrollar con el proxy de Vite, cambia `apiBaseUrl` a `/api` **solo en local** y no lo confirmes en Git.
+- Si cambia `config.json`, hay que recompilar y volver a desplegar el panel (es un fichero estático).
+- Comprobación del build de producción (Node 24.18.0): `npm run build` y después `node scripts/check-dist.mjs`. Falla si `dist/` contiene el mock (ficheros de `mock/*.json` o sus marcas en el JS) o si `dist/config.json` difiere de `public/config.json`.

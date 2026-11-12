@@ -103,7 +103,7 @@ Cada fase la ejecuta una feature. En los prompts usa el **nombre**, no el númer
 | **F8e** | Panel: conexión a la API real | `panel-conexion-api` | G1 |
 | **F9** | Replay | `replay` | J1–J8, G10 |
 | **F10** | Pruebas de aceptación | `pruebas-aceptacion` | bloque I |
-| **F11** | ngrok y Netlify | `despliegue-tunel` | G13, H1–H4 |
+| **F11** | Túnel (Cloudflare Tunnel) y Netlify | `despliegue-tunel` | G13, H1–H4 |
 | **F12** | Mediciones y costes | `mediciones-costes` | K1–K8, E6 |
 | **F13** | Memoria final y defensa | `memoria-defensa` | bloque L, H5 |
 
@@ -249,7 +249,7 @@ specify -> clarify -> plan -> tasks -> analyze -> [PARAR Y LEER] -> implement ->
 | **ms Unix** | Fecha como milisegundos desde 1970; así vienen `time` y `updated` de USGS |
 | **`time` / `updated`** | Cuándo ocurrió el evento / cuándo se revisó por última vez |
 | **PG** | PostgreSQL |
-| **CORS** | Permiso del navegador para que el panel (Netlify) consulte tu API (ngrok) |
+| **CORS** | Permiso del navegador para que el panel (Netlify) consulte tu API (túnel) |
 | **Backoff** | Esperar cada vez más entre reintentos tras un error |
 | **SPA** | Aplicación web de una sola página (el panel React) |
 

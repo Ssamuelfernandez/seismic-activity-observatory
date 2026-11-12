@@ -12,3 +12,4 @@
 
 Las 7 de `spec.md` están **Resueltas** por el supervisor (decisiones en `docs/evidencias/sprint/decisiones.md`). Límites conocidos anotados en la spec: 500 sin cabeceras CORS, preflight POST devuelve 400, pruebas 9/10 y H1 solo manuales, `contracts/api.md` y enunciado siguen citando ngrok.
 | diseno | revisión (plan-reviewer) | 0 bloqueantes, 0 importantes | n/a (sin ronda de corrección) | cerrado |
+| implementar | bloques 1–5 (T059–T071) | 0 bloqueantes; desviación T066.3 (patrones sin .env) | ninguna ronda de corrección | cerrado |
