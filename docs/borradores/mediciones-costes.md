@@ -56,6 +56,17 @@ Se parte de cifras medidas hasta 100.000 filas; no se midió 10^8.
 5. Lotes: una transacción por mensaje serían 4,0 h solo de ida y vuelta; con lotes de 1.000, 14,5 s.
 6. Varios consumidores: con 12 consumidores la integración geográfica bajaría a 51 s; hacen falta al menos tantas particiones como consumidores (cambio de contrato, decisión del alumno).
 
-## Pendiente del alumno
+## Pendientes del alumno
 
-Rellenar las entradas PENDIENTE (alumno) de `costes.md`, `transferencia.md` (visitas por mes) y `equipo.md`; decidir sobre los índices y las propuestas de `escalado.md`.
+- (a) Rellenar `costes.md`, `equipo.md` y `transferencia.md`: horas de desarrollo, potencia del PC, modelo del equipo, €/kWh, precio y amortización del hardware, visitas por mes y cuotas gratuitas (Netlify, Cloudflare Tunnel) con la fecha de consulta.
+- (b) Reconstruir la imagen `tests` (`docker compose build tests`). El error de recogida de `tests/common/test_api_config.py` es preexistente, de la 010.
+- (c) Repetir el procedimiento desde un clon limpio (SC-007 parcial).
+- (d) Revisar las 6 decisiones provisionales de `specs/011-mediciones-costes/spec.md` y decidir sobre los índices y las propuestas de `escalado.md`.
+
+## Límites conocidos
+
+Mediciones en la VM de Docker, no en el anfitrión; `server_ms` de `search.pg_seq.100000.first` (7,057 ms) sin explicar; el ensayo reducido sobrescribe las tablas; imagen `tests` desactualizada.
+
+## Nota sobre la suite de integración
+
+La suite de integración completa reescribió 7 archivos de `docs/evidencias/consumidor-idempotente/` y creó otros ajenos a esta feature. No forman parte de `mediciones-costes` y no se han tocado.

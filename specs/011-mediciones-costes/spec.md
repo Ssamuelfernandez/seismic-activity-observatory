@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-13
 
-**Status**: Draft (specify, clarify, plan, tasks y analyze hechos; las 6 decisiones provisionales de «Preguntas para el alumno» están adoptadas; pendiente la revisión del alumno antes de implementar)
+**Status**: Implemented (2026-11-13; T073–T093 hechas y verificadas; pendiente la revisión del alumno; K8 fuera de alcance)
 
 **Input**: Feature `mediciones-costes` (roadmap F12): medir tiempo y memoria de tres operaciones con tres tamaños de entrada, justificar los índices con `EXPLAIN ANALYZE`, calcular los costes distinguiendo lo medido de lo supuesto y razonar el escalado a 100 millones de registros. K8 (ROI) **no se hace** y el ROI queda fuera de alcance (no hay un beneficio medible definido; no se inventa).
 
@@ -126,6 +126,10 @@ Se entrega una tabla de costes donde cada fila es MEDIDO o SUPUESTO con su fórm
 - La extrapolación a 100 M es un razonamiento, no una medición (se etiqueta SUPUESTO).
 - La memoria de Postgres no se mide como proceso; se informa por buffers y memoria del plan, y la del cliente por el pico de `tracemalloc` (no es el RSS del proceso).
 - Los costes dependen de cifras del alumno que esta feature no puede conocer.
+- Las mediciones se hicieron en la VM de Docker Desktop (WSL2), no en el equipo anfitrión.
+- `server_ms` de `search.pg_seq.100000.first` vale 7,057 ms, mayor que su mediana de cliente (0,175688 ms); no se ha explicado ni investigado y no se usa como cifra de comparación.
+- El ensayo reducido sobrescribe las tablas de `docs/evidencias/mediciones/`; la corrida completa las regenera.
+- La imagen `tests` está desactualizada (anterior a 010): `tests/common/test_api_config.py` da un error de recogida preexistente hasta ejecutar `docker compose build tests`.
 - Corrida completa cercana a 1 h por el bucle ingenuo a 100.000 puntos; los costes dependen de datos del alumno (modelo/potencia del PC, horas, tarifas: PENDIENTE (alumno)); los costes se miden sobre los datos reales del alumno, no sobre un entorno de producción.
 
 ## Requirements *(mandatory)*
@@ -200,7 +204,7 @@ Se entrega una tabla de costes donde cada fila es MEDIDO o SUPUESTO con su fórm
 - **SC-004**: 100 % de las filas de bench tienen `is_synthetic = true` y el prefijo `synthetic-bench-`; 100 % de las tablas y cifras derivadas de bench en los documentos llevan la etiqueta SINTÉTICO; la semilla real se verifica con 13 sha256 del manifiesto y da 18.302 eventos únicos.
 - **SC-005**: `costes.md` tiene 6 de 6 categorías, todas con etiqueta MEDIDO/SUPUESTO y fórmula; 0 cifras sin origen (las entradas del alumno figuran como «PENDIENTE (alumno)»); el almacenamiento es el medido con `pg_total_relation_size` y archivos.
 - **SC-006**: El apartado de 100 M tiene como mínimo 4 puntos de razonamiento (particionado por fecha, índices, lotes, varios consumidores) y cada propuesta de K7 cita una medición concreta por identificador; 0 propuestas sin cifra.
-- **SC-007**: Repetir el procedimiento desde un clon limpio, con el stack levantado, produce tablas con la misma estructura y el mismo ranking de estrategias por operación y tamaño (los valores absolutos pueden variar); las pruebas de los scripts pasan en verde y `CODEMAP.md` y las evidencias están actualizadas.
+- **SC-007** (parcial: pendiente de repetir desde un clon limpio (alumno)): Repetir el procedimiento desde un clon limpio, con el stack levantado, produce tablas con la misma estructura y el mismo ranking de estrategias por operación y tamaño (los valores absolutos pueden variar); las pruebas de los scripts pasan en verde y `CODEMAP.md` y las evidencias están actualizadas.
 
 ## Assumptions
 
@@ -234,3 +238,10 @@ Estado: las seis decisiones siguientes están reflejadas en `plan.md` y `tasks.m
 4. **Veredicto de índices (E6)** — *Decisión confirmada por supervisor; el alumno puede revisarla en la defensa*: solo se **recomienda** en la evidencia; no se edita `sql/001_schema.sql` ni `db-schema.md`. Si procede quitar un índice, se hace como cambio de contrato aparte, decidido por el alumno.
 5. **Stack durante la medición** — *Decisión confirmada por supervisor; el alumno puede revisarla en la defensa*: en marcha, sin pararlo; se declara como fuente de ruido que la dispersión recoge.
 6. **Presupuesto de tiempo del bucle ingenuo a 100.000 puntos** — *Decisión confirmada por supervisor; el alumno puede revisarla en la defensa*: presupuesto por combinación con N reducida (mínimo 3); el valor concreto está en `plan.md` (D6). Si ni 3 repeticiones caben en el tiempo razonable, se pregunta antes de reducir el tamaño.
+
+## Estado de cierre
+
+- **Estado**: Implemented. Decisiones: las 6 de «Preguntas para el alumno» quedan confirmadas (revisables en la defensa). Tareas diferidas: ninguna (K8 fuera de alcance).
+- **SC-001 a SC-006**: cumplidos según `docs/evidencias/mediciones/README.md`. **SC-007**: parcial; falta repetir el procedimiento desde un clon limpio (alumno).
+- **Evidencias**: `docs/evidencias/mediciones/` (veredicto en `README.md`; procedimiento en `procedimiento.md`; resultados en `resultados.json` y `tablas.md`).
+- **Pendiente del alumno**: entradas de `costes.md`, `equipo.md` y `transferencia.md`; reconstruir la imagen `tests`; clon limpio.
