@@ -98,6 +98,9 @@ services:
       DB_PASSWORD: ${DB_PRODUCER_PASSWORD:?Falta DB_PRODUCER_PASSWORD en .env}
       HEALTH_FILE: /tmp/producer.alive
       HEALTH_MAX_AGE_SECONDS: 120
+    volumes:
+      # Archivos del histórico 2025 que lee `python -m producer.replay` (solo lectura).
+      - ./data/historical:/app/data/historical:ro
     depends_on:
       kafka:
         condition: service_healthy
@@ -118,6 +121,8 @@ services:
       <<: *common-env
       KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS:?Falta KAFKA_BOOTSTRAP_SERVERS en .env}
       KAFKA_TOPIC: ${KAFKA_TOPIC:?Falta KAFKA_TOPIC en .env}
+      # Topics a los que se suscribe (live y replay); el defecto evita editar .env en clones antiguos.
+      KAFKA_CONSUMER_TOPICS: ${KAFKA_CONSUMER_TOPICS:-earthquakes.live,earthquakes.replay}
       KAFKA_GROUP_ID: ${KAFKA_GROUP_ID:?Falta KAFKA_GROUP_ID en .env}
       DB_HOST: ${DB_HOST:?Falta DB_HOST en .env}
       DB_PORT: ${DB_PORT:?Falta DB_PORT en .env}
@@ -205,6 +210,8 @@ services:
       # Solo para que tests/scripts/ pueda importar `scripts` dentro del contenedor.
       - ./scripts:/app/scripts:ro
       - ./data/catalogo:/app/data/catalogo:ro
+      # Archivos reales del histórico, para las pruebas de integración del replay.
+      - ./data/historical:/app/data/historical:ro
       # Lectura y escritura: solo para tests/support/evidence.py.
       - ./docs/evidencias/consumidor-idempotente:/app/evidence
     depends_on:

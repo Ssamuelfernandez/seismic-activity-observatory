@@ -147,7 +147,7 @@ El contrato del profesor es **mínimo**: define el contenido de las respuestas (
 | F9 | **[OBL]** CORS: origen exacto de Netlify + `http://localhost:4200`; métodos GET y OPTIONS; cabecera `ngrok-skip-browser-warning`; sin cookies | Preflight OK | CONTRATO · Enunc. §9 | ☐ |
 | F10 | **[OBL]** Sin rutas de administración ni secretos expuestos | — | Enunc. §9 | [x] |
 | F11 | La API consulta datos **ya procesados**; no depende de que el panel esté abierto | — | FAQ 2 | [x] |
-| F12 | Vista de reproducción: poder consultar el intervalo histórico y los datos aislados de replay, con `metadata.mode = "replay"` (parámetro de modo: **decisión propia**, no está en el contrato mínimo) | Parámetro/ruta de modo | FAQ 32 | ☐ |
+| F12 | Vista de reproducción: poder consultar el intervalo histórico y los datos aislados de replay, con `metadata.mode = "replay"` (parámetro de modo: **decisión propia**, no está en el contrato mínimo) | Parámetro/ruta de modo | FAQ 32 | [x] |
 
 ### G. Panel React (**construido desde cero**; el ejemplo del paquete solo sirve de referencia)
 
@@ -166,9 +166,9 @@ El frontend no viene hecho: hay que crear el proyecto React (Vite + TypeScript +
 | G7 | **[OBL]** Estado del sistema: último acceso correcto a la API, última ingesta correcta de USGS, periodo consultado, aviso si datos desactualizados o backend caído | Distinguir "última consulta del panel / respuesta generada / última ingesta" | Enunc. §8 · FAQ 31 | [x] |
 | G8 | **[OBL]** Tabla consultable de eventos (alternativa accesible al mapa y al color) | — | Enunc. §8 | [x] |
 | G9 | **[OBL]** Si falla la API: aviso claro, conservar/identificar la última lectura, no presentar datos viejos como recién obtenidos | Implementado y probado (pruebas 9–10) | FAQ 35 | [x] |
-| G10 | **[OBL]** Modo "REPRODUCCIÓN" claramente etiquetado | Banner visible (feature `replay`) | Enunc. §11 | ☐ |
+| G10 | **[OBL]** Modo "REPRODUCCIÓN" claramente etiquetado | Banner visible (feature `replay`) | Enunc. §11 | [x] |
 | G11 | Refresco ~60 s sin solapar peticiones; timeout (p. ej. 15 s); **atribución de la fuente del mapa base o de la textura (OSM u otra)** y leyenda visibles | Implementado | README | [x] |
-| G12 | Usar en el panel los campos del contrato: `magType` (ficha), `country_id` y `country_name` (filtros, tabla, ficha), `truncated` (aviso), `last_ingestion` (estado), `metadata.mode` (modo) | Cada campo se muestra o condiciona la vista | CONTRATO | ☐ |
+| G12 | Usar en el panel los campos del contrato: `magType` (ficha), `country_id` y `country_name` (filtros, tabla, ficha), `truncated` (aviso), `last_ingestion` (estado), `metadata.mode` (modo) | Cada campo se muestra o condiciona la vista | CONTRATO | [x] |
 | G13 | **[OBL]** Netlify: `config.json` con la URL HTTPS de ngrok **antes de compilar**; no secretos en config | Build y deploy OK | Enunc. §9 | ☐ |
 | G14 | Fronteras de países en el mapa a partir de `paises.geojson` (catálogo entregado, copiado a los assets del frontend); documentarlo como material reutilizado | Capa visible; origen indicado en README/memoria | FUENTES | [x] |
 | G15 | **Mock del contrato**: JSON de ejemplo conforme a `CONTRATO-API.md` (con nulos, sin país, truncado y modo replay), partiendo del ejemplo del propio contrato, y selector en `config.json` (`mock` / `api`); **datos del mock marcados como sintéticos** | Se puede desarrollar el panel sin backend | Decisión propia | [x] |
@@ -202,7 +202,7 @@ La columna "Feature" indica dónde se prueba por primera vez; la feature `prueba
 | 8 | Reiniciar consumidor | Reanuda sin duplicar efectos ya persistidos | Logs + SQL | `consumidor-idempotente` | [x] |
 | 9 | Cerrar el túnel | Panel muestra el fallo y conserva/identifica la última lectura | Captura del aviso | `despliegue-tunel` | ☐ |
 | 10 | Reabrir el túnel | Se recupera automáticamente en el siguiente refresco | Captura | `despliegue-tunel` | ☐ |
-| 11 | Reproducción histórica | Va por Kafka, aislada de live, etiquetada, con duplicados y revisiones controlados | Demo + SQL | `replay` | ☐ |
+| 11 | Reproducción histórica | Va por Kafka, aislada de live, etiquetada, con duplicados y revisiones controlados | Demo + SQL | `replay` | [x] |
 
 (Son **11** pruebas porque "cerrar" y "volver a abrir" el túnel son dos casos distintos; no falta ninguna.)
 
@@ -210,14 +210,14 @@ La columna "Feature" indica dónde se prueba por primera vez; la feature `prueba
 
 | ID | Requisito | Fuente | ☐ |
 |---|---|---|---|
-| J1 | **[OBL]** Reproducción acelerada de una selección histórica **ordenada por fecha** | Enunc. §11 | ☐ |
-| J2 | **[OBL]** Mantener el tiempo original **y** añadir el de reproducción | Enunc. §11 | ☐ |
-| J3 | **[OBL]** Topic y esquema/tablas **separados** (o aislamiento equivalente) | Enunc. §11 | ☐ |
-| J4 | **[OBL]** Etiqueta "REPRODUCCIÓN" | Enunc. §11 | ☐ |
-| J5 | **[OBL]** El productor de replay **reutiliza el procesamiento del consumidor** | Enunc. §11 | ☐ |
-| J6 | **[OBL]** Incluye duplicados y revisiones controlados (secuencia de FAQ 12) | Enunc. §11 | ☐ |
-| J7 | **[OBL]** No cambiar fechas originales; la vista de replay debe consultar el intervalo de 2025, no "últimas 24 h" | FAQ 32 | ☐ |
-| J8 | Documentar: selección, cómo iniciar, velocidad, aislamiento, cómo se ve el modo, resultado observado | Guía 2.9 | ☐ |
+| J1 | **[OBL]** Reproducción acelerada de una selección histórica **ordenada por fecha** | Enunc. §11 | [x] |
+| J2 | **[OBL]** Mantener el tiempo original **y** añadir el de reproducción | Enunc. §11 | [x] |
+| J3 | **[OBL]** Topic y esquema/tablas **separados** (o aislamiento equivalente) | Enunc. §11 | [x] |
+| J4 | **[OBL]** Etiqueta "REPRODUCCIÓN" | Enunc. §11 | [x] |
+| J5 | **[OBL]** El productor de replay **reutiliza el procesamiento del consumidor** | Enunc. §11 | [x] |
+| J6 | **[OBL]** Incluye duplicados y revisiones controlados (secuencia de FAQ 12) | Enunc. §11 | [x] |
+| J7 | **[OBL]** No cambiar fechas originales; la vista de replay debe consultar el intervalo de 2025, no "últimas 24 h" | FAQ 32 | [x] |
+| J8 | Documentar: selección, cómo iniciar, velocidad, aislamiento, cómo se ve el modo, resultado observado | Guía 2.9 | [x] |
 
 ### K. Complejidad, mediciones, costes
 

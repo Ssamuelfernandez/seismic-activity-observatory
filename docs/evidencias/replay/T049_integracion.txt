@@ -1,0 +1,5 @@
+tests/integration/test_api_replay_real.py::test_replay_mode_returns_22_events_with_original_times_and_synthetic_flags PASSED [ 25%]
+tests/integration/test_api_replay_real.py::test_without_mode_or_with_live_no_replay_event_appears PASSED [ 50%]
+tests/integration/test_api_replay_real.py::test_replay_statistics_have_null_comparison_and_the_same_total PASSED [ 75%]
+tests/integration/test_api_replay_real.py::test_empty_replay_schema_returns_an_empty_list_not_an_error PASSED [100%]
+============================== 4 passed in 4.56s ===============================

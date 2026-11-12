@@ -246,6 +246,7 @@ def test_start_consumer_uses_manual_commit_and_a_long_poll_interval(monkeypatch)
 
     class FakeAIOKafka:
         def __init__(self, *topics, **kwargs):
+            captured["topics"] = topics
             captured.update(kwargs)
 
         async def start(self):
@@ -259,8 +260,10 @@ def test_start_consumer_uses_manual_commit_and_a_long_poll_interval(monkeypatch)
     settings = loop.ConsumerSettings(
         kafka=SimpleNamespace(bootstrap_servers=BOOTSTRAP, topic=TOPIC), database=None,
         retry=RetrySettings(1, 30), health=None, group_id="consumer-live",
-        country_catalog_path="catalogo.geojson")
+        country_catalog_path="catalogo.geojson",
+        topics=("earthquakes.live", "earthquakes.replay"))
     asyncio.run(loop.start_consumer(settings))
+    assert captured["topics"] == ("earthquakes.live", "earthquakes.replay")
     assert captured["enable_auto_commit"] is False and captured["group_id"] == "consumer-live"
     assert captured["auto_offset_reset"] == "earliest"
     assert captured["max_poll_interval_ms"] == loop.MAX_POLL_INTERVAL_MS == 86_400_000
@@ -305,7 +308,7 @@ def run_consumer_with(monkeypatch, tmp_path, fail_at=None):
     settings = loop.ConsumerSettings(
         kafka=SimpleNamespace(bootstrap_servers=BOOTSTRAP, topic=TOPIC), database=None,
         retry=RetrySettings(1, 30), health=HealthSettings(str(tmp_path / "alive"), 60),
-        group_id="g", country_catalog_path="catalogo.geojson")
+        group_id="g", country_catalog_path="catalogo.geojson", topics=(TOPIC,))
     return spy, lambda: asyncio.run(loop.run_consumer(settings, asyncio.Event()))
 
 

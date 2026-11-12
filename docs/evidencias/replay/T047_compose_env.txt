@@ -1,0 +1,32 @@
+kafka
+postgres
+producer
+api
+consumer
+---
+kafka
+postgres
+producer
+tests
+api
+consumer
+---
+PASS  .env.example coincide: 22 variables, 21 leídas por el código, sin secretos reales.
+exit=0
+warning: in the working copy of 'CODEMAP.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'common/config.py', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'compose.yaml', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'consumer/loop.py', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'consumer/main.py', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'specs/009-replay/tasks.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/consumer/test_consumer_loop.py', CRLF will be replaced by LF the next time Git touches it
+ .env.example                         |  2 ++
+ CODEMAP.md                           |  2 ++
+ README.md                            |  4 ++--
+ common/config.py                     | 27 +++++++++++++++++++++++++++
+ compose.yaml                         |  5 +++++
+ consumer/loop.py                     |  5 +++--
+ consumer/main.py                     |  5 +++--
+ specs/009-replay/tasks.md            | 10 +++++-----
+ tests/consumer/test_consumer_loop.py |  7 +++++--
+ 9 files changed, 54 insertions(+), 13 deletions(-)

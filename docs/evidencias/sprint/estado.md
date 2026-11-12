@@ -1,9 +1,7 @@
-# Estado del sprint — api
+# Estado del sprint — replay
 
-- Feature: api | Rama: 007-api (desde main)
-- diseno: TERMINADA (commit "docs: diseño de api")
-- implementar: TERMINADA (supervisor: CONTINUAR; commit "feat: api")
-- cierre: TERMINADA (supervisor: CONTINUAR; commit "docs: cierre de api")
-- Aviso: 7 archivos de docs/evidencias/consumidor-idempotente/ reescritos por la suite de integración y 15 sin seguimiento (geografia_*, historico_*) excluidos de los commits.
-- Checklist F1–F8, F10, F11 sin marcar: lo marca el alumno.
-- Sin merge ni push.
+- Feature: replay | Rama: 009-replay (desde main)
+- diseno: TERMINADA (commit "docs: diseño de replay")
+- implementar: TERMINADA (supervisor: CONTINUAR; commit "feat: replay")
+- cierre: TERMINADA (supervisor: CONTINUAR; commit "docs: cierre de replay")
+- Sin merge ni push. Checklist F9, J1–J8, G10, F12, G12 (metadata.mode), prueba 11 sin marcar: lo marca el alumno.

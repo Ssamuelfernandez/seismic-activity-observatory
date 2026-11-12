@@ -1,0 +1,120 @@
+LEYENDA
+LARGO · MAGNITUD
+M2
+M4
+M6
+M8
+COLOR · PROFUNDIDAD
+< 10 km
+10–35 km
+35–70 km
+70–300 km
+≥ 300 km
+ND
+Ondas desde M ≥ 4 · radio según magnitud
+ahora
+24 h
+EVENTOS RECIENTES
+MOSTRADOS 12 · TOTAL 22 (API)
+VER TODOS
+3,1
+Sintético: bloque controlado del replay
+4,6
+Sintético: bloque controlado del replay
+4,2
+78 km W of Ollagüe, Chile
+4,4
+37 km SSW of Calama, Chile
+4,1
+75 km ENE of La Tirana, Chile
+4,3
+41 km W of Ollagüe, Chile
+5,3
+75 km ESE of Palca, Peru
+4,7
+37 km WSW of Ollagüe, Chile
+4,2
+60 km NNE of Calama, Chile
+4
+65 km W of Ollagüe, Chile
+4,1
+44 km ENE of Mejillones, Chile
+4,6
+44 km E of La Tirana, Chile
+REPRODUCCIÓN
+·
+2025
+·
+MAG. TODAS
+·
+TODOS LOS PAÍSES
+REPRODUCCIÓNDatos históricos reproducidos, no son en vivo.
+DATOS SINTÉTICOSDatos de prueba, no son sismos reales.
+ESTADO
+|
+REPLAY
+|
+ÚLTIMA INGESTA HACE 6 MIN
+ESTADÍSTICAS
+ESTADÍSTICAS
+−
+22
+EVENTOS EN EL PERIODO
+
+2025-01-01 00:00 UTC → 2026-01-01 00:00 UTC
+
+POR HORA · UTC
+(events)
+−
+00:00
+23:00
+
+La última barra (más tenue) puede estar incompleta.
+
+POR PAÍS
+(events)
+−
+Chile
+20
+Bolivia
+1
+Sin país asignado
+1
+MAGNITUD
+(dimensionless)
+−
+1
+19
+1
+1
+<1
+1–2
+2–3
+3–4
+4–5
+5–6
+6–7
+≥7
+
+Sin valor: 0
+
+PROFUNDIDAD
+(km)
+−
+3
+1
+18
+<10
+10–35
+35–70
+70–300
+≥300
+
+Sin valor: 0
+
+ÚLTIMAS 24 H VS 2025
+−
+
+No disponible en modo reproducción.
+
+Sismos: USGS · Fronteras: Natural Earth (dominio público) · Globo: react-globe.gl y three (MIT) · Sin textura

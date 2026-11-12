@@ -54,6 +54,7 @@ class ConsumerSettings:
     health: HealthSettings
     group_id: str
     country_catalog_path: str
+    topics: tuple[str, ...]
 
 
 @dataclass
@@ -82,7 +83,7 @@ async def start_consumer(settings: ConsumerSettings) -> AIOKafkaConsumer:
     async def attempt() -> AIOKafkaConsumer:
         await ensure_topics(settings.kafka.bootstrap_servers)
         consumer = AIOKafkaConsumer(
-            settings.kafka.topic,
+            *settings.topics,
             bootstrap_servers=settings.kafka.bootstrap_servers,
             group_id=settings.group_id,
             auto_offset_reset="earliest",
@@ -233,7 +234,7 @@ async def run_consumer(settings: ConsumerSettings, stop_event: asyncio.Event,
     clear_heartbeat(settings.health.heartbeat_file)
     pool, locate = await prepare_database(settings)
     consumer = await start_consumer(settings)
-    logger.info("Consumidor suscrito al tema %s.", settings.kafka.topic)
+    logger.info("Consumidor suscrito a los temas %s.", ", ".join(settings.topics))
     write_event, write_quarantine = bind_pool_writers(pool)
     control = RetryControl(settings.retry, stop_event)
     deps = PipelineDeps(write_event, write_quarantine, control, locate, after_db_commit=after_db_commit)

@@ -1,0 +1,17 @@
+# T054 tras repeticion
+     t      | count |               md5                
+------------+-------+----------------------------------
+ current    |   211 | 5a51932f2d257dd5724850ef206b65b7
+ version    |   211 | 69daf81f2efd2d07fcd22166511f3f97
+ quarantine |     0 | 
+(3 rows)
+
+     t      | count 
+------------+-------
+ current    |    22
+ version    |    24
+ quarantine |     0
+(3 rows)
+
+diff replay_at vs T053:
+IDENTICOS
