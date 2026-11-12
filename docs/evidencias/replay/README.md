@@ -23,3 +23,17 @@ Recorrido real con contenedores el 2026-11-12. Los recuentos esperados son N = 2
 ## Nota sobre T057_verify_stack
 
 Los 2 fallos («Solo la API publica un puerto» y «postgres no tiene puertos enlazados») vienen del `compose.override.yaml` local (ignorado por Git), que publica PostgreSQL en 127.0.0.1:5433 para un cliente gráfico. No tienen relación con el replay; sin el override pasarían.
+
+## Cobertura de IDs del checklist
+
+| ID | Evidencia |
+|---|---|
+| J1, J2 | `T042_pytest.txt` (orden por fecha), `T053_replay_at_base.txt` (tiempo original y `replay_at`) |
+| J3 | `T048_integracion.txt`, `T053_despues.out` (topic `earthquakes.replay`, esquema `replay`; `live` intacto) |
+| J4, G10 | `T056_panel.md`, `T056_reproduccion.png` |
+| J5 | `T046_pytest.txt`, `T048_integracion.txt`: el consumidor procesa los mensajes de replay con el mismo `pipeline`/`common` (`consumer/pipeline.py` sin cambios) |
+| J6 | `T053_consumer.log`, `T054_repeticion.out` |
+| J7, F12 | `T055_comprobacion.txt`, `T049_integracion.txt` |
+| J8 | README raíz «Replay», `docs/borradores/replay.md` |
+| G12 (`metadata.mode`) | `T055_eventos_replay.json`, `T056_reproduccion.png` (solo este campo; los demás campos de G12 son de `panel-base-mock`) |
+| Prueba 11 | `T052_antes.out`, `T053_despues.out`, `T054_*`, `T056_*` |

@@ -55,3 +55,4 @@
 | replay | `load_verified_features` lee solo `manifest.files`, sin `gaps` | Incluir los archivos `usgs_gap_*` | research D10: el replay no usa los huecos; la zona y el mes elegidos no los necesitan |
 | replay | Panel verificado con Edge headless por CDP y sin modificarlo | Esperar a la extensión de Chrome o cambiar `fadeByAge` | La extensión no conectó; los puntos de 2025 son legibles, no hay cambio justificado |
 | replay | `verify_stack.py` 14/16 aceptado: fallo por `compose.override.yaml` local (publica 5433, ignorado por git) | Corregir el script o borrar el override | Ajeno a la feature y al repositorio; se documenta como límite |
+| replay | `compose.override.yaml` es local (ignorado por `.gitignore`, línea 27) y no debe versionarse; publica PostgreSQL en 127.0.0.1:5433 y hace fallar 2 de 16 comprobaciones de `verify_stack.py` | Versionarlo o cambiar el script | Es una preferencia del equipo del alumno; ajeno a la feature |

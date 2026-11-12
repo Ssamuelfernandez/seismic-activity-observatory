@@ -500,7 +500,7 @@ curl http://127.0.0.1:8000/api/salud     # estado y última ingesta
 
 ```bash
 # comando definitivo se fija en la feature replay
-docker compose run --rm producer python -m producer.replay --speed 2
+docker compose run --rm producer python -m producer.replay --interval 2
 ```
 
 El panel debe mostrar el banner "REPRODUCCIÓN" y los datos live no deben cambiar.
