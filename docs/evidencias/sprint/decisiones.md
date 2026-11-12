@@ -44,3 +44,10 @@
 | api | Comparación de dos periodos en una sola consulta con dos `FILTER` | Dos consultas separadas | Una sola lectura coherente dentro de la misma transacción |
 | api | `API_MAX_EVENTS` y `API_DB_TIMEOUT_SECONDS` con defecto `${VAR:-valor}` en `compose.yaml` | Exigirlas en `.env` | El arranque no falla si faltan; los valores por defecto están documentados |
 | api | Los 7 archivos de `docs/evidencias/consumidor-idempotente/` reescritos por la suite de integración se excluyen del commit | Commitearlos | Cambios accidentales ajenos a la feature (igual que en historico-2025) |
+| replay | Un único consumidor suscrito a `earthquakes.live` y `earthquakes.replay` (`KAFKA_CONSUMER_TOPICS`, grupo `consumer-live`) | Segundo servicio consumidor para replay | El pipeline ya enruta por `topic_mode`; se mantienen los 5 servicios |
+| replay | `KAFKA_CONSUMER_TOPICS` con defecto `${VAR:-earthquakes.live,earthquakes.replay}` en compose, documentada en `.env.example` y README, sin editar `config.md` de 002 | Añadir fila en `config.md` | Ampliación con defecto, no cambio de contrato; mismo criterio que `API_MAX_EVENTS` |
+| replay | Velocidad con `--interval` en segundos (defecto 2) | `--speed` | `--speed 2` se leería como "el doble de rápido"; se actualiza 03 §8.5 |
+| replay | Duplicados/revisiones con 6 mensajes sintéticos etiquetados (`synthetic-replay-e1/e2`, `is_synthetic`); el sexto cubre una versión antigua tardía | Forzar versiones sobre eventos reales | Alterar un evento real lo haría sintético sin etiquetar (constitución §7); la FAQ 12 tiene 5 y el sexto es extra |
+| replay | Zona `chile-norte`, N=20 (2025-01-01..29, M4.0-6.1): 18 Chile, 1 Bolivia, 1 sin país | Zona global o más grande | Incluye caso sin país y frontera; tamaño manejable en demo |
+| replay | "Live no cambia" se comprueba con el productor live parado | Comprobarlo con el productor activo | USGS real seguiría ingiriendo y falsearía la comparación |
+| replay | Volumen de solo lectura `data/historical` en el productor; el panel no se toca salvo T056 | Copiar datos a la imagen; rediseñar el panel | Sin servicios nuevos ni ampliar alcance |
