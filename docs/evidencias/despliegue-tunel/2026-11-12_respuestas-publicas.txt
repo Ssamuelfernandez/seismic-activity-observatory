@@ -1,0 +1,7 @@
+# Respuestas públicas (2026-11-12, desde la red del servidor)
+
+$ curl -s https://observatorio-api.ssamuelfernandez.net/api/salud
+{"status":"ok","last_ingestion":1794511402140,"generated":1794511457612}
+
+$ curl -s "https://observatorio-api.ssamuelfernandez.net/api/eventos?limit=2"
+{"type":"FeatureCollection","metadata":{"generated":1794511457990,"last_ingestion":1794511402140,"mode":"live","count":2,"total":244,"truncated":true,"next_cursor":"eyJ0IjoxNzk0NTExMDI2NzMwLCJpZCI6Imh2NzUwNjk3MjcifQ","null_mag_excluded":0},"features":[{"type":"Feature","id":"aka2026wlhnqh","geometry":{"type":"Point","coordinates":[-156.829,67.403,10.1]},"properties":{"mag":3.3,"magType":"ml","place":"55 km N of Kobuk, Alaska","time":1794511119716,"updated":1794511366002,"country_id":"USA","country_name":"Estados Unidos","is_synthetic":false,"status":"automatic","url":"https://earthquake.usgs.gov/earthquakes/eventpage/aka2026wlhnqh","sig":168}},{"type":"Feature","id":"hv75069727","geometry":{"type":"Point","coordinates":[-155.49333190918,19.1936664581299,29.2800006866455]},"properties":{"mag":2.64,"magType":"ml","place":"1 km WSW of Pāhala, Hawaii","time":1794511026730,"updated":1794511241120,"country_id":"USA","country_name":"Estados Unidos","is_synthetic":false,"status":"automatic","url":"https://earthquake.usgs.gov/earthquakes/eventpage/hv75069727","sig":107}}]}

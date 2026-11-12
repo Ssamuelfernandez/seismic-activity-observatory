@@ -7,7 +7,12 @@ Cierre de la feature (T072), 2026-11-12. Todo lo marcado «Cumplido» está comp
 - Pruebas y salidas: `T059_api_config.txt`, `T060_cors.txt`, `T061_env.txt`, `T062_cors_curl.txt`, `T063_netlify.txt`, `T064_vitest.txt`, `T065_build_dist.txt`, `T066_respuestas.txt`, `T066_respuestas_brutas.txt`, `T066_limite_y_recuentos.txt`, `T067_puertos_secretos.txt`, `T068_readme.txt`, `T070_menciones.txt`, `T071_*.txt` (regresión).
 - Revisión de exposición: [`exposicion.md`](exposicion.md).
 - Plantillas del alumno: [`H1_movil.md`](H1_movil.md), [`prueba-09_cierre-tunel.md`](prueba-09_cierre-tunel.md), [`prueba-10_reapertura-tunel.md`](prueba-10_reapertura-tunel.md).
-- Capturas en vivo (2026-11-12): **no se hicieron**. No había herramienta de navegador disponible (la conexión se cerró) y no se instaló nada. Quedan pendientes: el panel en `https://observatorio.ssamuelfernandez.net`, `/api/salud` y un fragmento de `/api/eventos` en la URL pública.
+- Capturas en vivo (2026-11-12, páginas públicas, tomadas con Edge headless desde la misma red del servidor; la captura headless no dibuja la barra de direcciones, así que la URL se indica aquí):
+  - [`2026-11-12_panel-publico.png`](2026-11-12_panel-publico.png): `https://observatorio.ssamuelfernandez.net/` con datos reales cargados (LIVE, 12 eventos mostrados, total 244 de la API).
+  - [`2026-11-12_api-salud.png`](2026-11-12_api-salud.png): `https://observatorio-api.ssamuelfernandez.net/api/salud`.
+  - [`2026-11-12_api-eventos.png`](2026-11-12_api-eventos.png): `https://observatorio-api.ssamuelfernandez.net/api/eventos?limit=2&start=2026-01-01` (`metadata` y `features`).
+  - [`2026-11-12_respuestas-publicas.txt`](2026-11-12_respuestas-publicas.txt): salida de `curl` de `/api/salud` y `/api/eventos?limit=2` (texto).
+  - Estas capturas no sustituyen la prueba 9 desde fuera de la red ni la captura de H1 desde el móvil con datos.
 - Verificación en vivo (alumno, a mano): panel y API desplegados (Cloudflare Tunnel y Netlify) y el panel muestra datos reales.
 - Pruebas 9 y 10: se verifican en vivo en la URL pública y su evidencia en vídeo irá en `readme-video`. Cualquier captura tomada desde la misma red del servidor no sustituye la prueba 9 desde fuera de la red (H1 con datos móviles sigue como captura pendiente).
 - Apuntes de defensa: `docs/borradores/despliegue-tunel.md`.
