@@ -1,0 +1,15 @@
+time="2026-11-13T00:35:52+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Running 
+time="2026-11-13T00:35:52+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-tests-run-f1590da9749f Creating 
+ Container seismic-observatory-tests-run-f1590da9749f Created 
+2026-11-12 23:35:54,575 INFO size=1000 search listo en 0.1 s
+2026-11-12 23:35:54,942 INFO size=1000 geo listo (acumulado 0.4 s)
+2026-11-12 23:35:55,051 INFO size=1000 agg listo (total 0.5 s)
+2026-11-12 23:35:55,135 INFO terminado: 34 mediciones, violaciones de aislamiento: ninguna
+
+real	0m3.107s
+user	0m0.045s
+sys	0m0.090s

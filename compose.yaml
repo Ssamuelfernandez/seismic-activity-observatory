@@ -216,6 +216,8 @@ services:
       - ./data/historical:/app/data/historical:ro
       # Lectura y escritura: solo para tests/support/evidence.py.
       - ./docs/evidencias/consumidor-idempotente:/app/evidence
+      # Lectura y escritura: resultados de las mediciones (scripts/benchmarks/run_benchmarks.py).
+      - ./docs/evidencias/mediciones:/app/evidence-mediciones
     depends_on:
       postgres:
         condition: service_healthy

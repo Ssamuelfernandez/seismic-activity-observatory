@@ -1,0 +1,13 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.9, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 3 items
+
+tests/scripts/test_bench_sql_static.py::test_every_write_statement_qualifies_with_bench PASSED [ 33%]
+tests/scripts/test_bench_sql_static.py::test_the_closed_list_is_really_found PASSED [ 66%]
+tests/scripts/test_bench_sql_static.py::test_the_scanner_detects_bad_statements PASSED [100%]
+
+============================== 3 passed in 0.04s ==============================

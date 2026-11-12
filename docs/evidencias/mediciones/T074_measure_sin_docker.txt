@@ -1,0 +1,14 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.9, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 4 items
+
+tests/scripts/test_bench_measure.py::test_short_sleep_gives_positive_samples_and_n_up_to_15 PASSED [ 25%]
+tests/scripts/test_bench_measure.py::test_expensive_function_reduces_n_to_three_without_skipping PASSED [ 50%]
+tests/scripts/test_bench_measure.py::test_warmup_over_budget_counts_as_a_repetition PASSED [ 75%]
+tests/scripts/test_bench_measure.py::test_peak_memory_grows_with_the_structure PASSED [100%]
+
+============================== 4 passed in 0.09s ==============================

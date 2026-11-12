@@ -1,0 +1,45 @@
+# T087 corrida completa (datos SINTETICOS en bench; stack en marcha)
+inicio: 2026-11-12T23:36:21Z
+## docker compose config --services
+kafka
+postgres
+producer
+api
+consumer
+## estado ANTES
+ bench | usgs_historical | replay_ce | replay_ev | replay_q | replay_x | bench_in_live | bench_in_live_q | bench_in_live_x 
+-------+-----------------+-----------+-----------+----------+----------+---------------+-----------------+-----------------
+       |           18302 |        22 |        24 |        0 |        0 |             0 |               0 |               0
+(1 row)
+
+## corrida: python -m scripts.benchmarks.run_benchmarks --yes
+ Container seismic-observatory-postgres-1 Running 
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-tests-run-3767c6d6506a Creating 
+ Container seismic-observatory-tests-run-3767c6d6506a Created 
+2026-11-12 23:36:24,367 INFO size=1000 search listo en 0.1 s
+2026-11-12 23:36:25,363 INFO size=1000 geo listo (acumulado 1.1 s)
+2026-11-12 23:36:25,513 INFO size=1000 agg listo (total 1.2 s)
+2026-11-12 23:36:25,971 INFO size=10000 search listo en 0.2 s
+2026-11-12 23:36:35,987 INFO size=10000 geo listo (acumulado 10.2 s)
+2026-11-12 23:36:36,584 INFO size=10000 agg listo (total 10.8 s)
+2026-11-12 23:36:39,752 INFO size=100000 search listo en 1.0 s
+2026-11-12 23:38:16,532 INFO size=100000 geo listo (acumulado 101.6 s)
+2026-11-12 23:38:19,003 INFO size=100000 agg listo (total 104.1 s)
+2026-11-12 23:38:19,462 INFO terminado: 102 mediciones, violaciones de aislamiento: ninguna
+codigo_de_salida_cli=0
+duracion_segundos=117
+## estado DESPUES
+ bench | usgs_historical | replay_ce | replay_ev | replay_q | replay_x | bench_in_live | bench_in_live_q | bench_in_live_x 
+-------+-----------------+-----------+-----------+----------+----------+---------------+-----------------+-----------------
+       |           18302 |        22 |        24 |        0 |        0 |             0 |               0 |               0
+(1 row)
+
+## docker compose ps
+api Up 5 hours (healthy)
+consumer Up 7 hours (healthy)
+kafka Up 7 hours (healthy)
+postgres Up 7 hours (healthy)
+producer Up 7 hours (healthy)
+fin: 2026-11-12T23:38:20Z

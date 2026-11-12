@@ -1,0 +1,14 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.9, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 4 items
+
+tests/scripts/test_bench_hardware.py::test_parse_cpuinfo_reads_model_and_cores PASSED [ 25%]
+tests/scripts/test_bench_hardware.py::test_parse_meminfo_and_cgroup_limits PASSED [ 50%]
+tests/scripts/test_bench_hardware.py::test_render_has_machine_fields_and_pending_host PASSED [ 75%]
+tests/scripts/test_bench_hardware.py::test_missing_proc_says_unavailable_without_inventing PASSED [100%]
+
+============================== 4 passed in 0.19s ==============================

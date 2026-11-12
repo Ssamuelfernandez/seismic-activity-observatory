@@ -1,0 +1,23 @@
+== T088-T090 comprobaciones (propuestas 7 y 8 citan fila de transferencia.md/almacenamiento.md: esas mediciones no tienen id en resultados.json) ==
+teoria_vs_observado.md ids citados: 80 inexistentes: []
+escalado.md ids citados: 37 inexistentes: []
+indices.md ids citados: 38 inexistentes: []
+## A. tiene columnas teoria/observado: True
+## B. tiene columnas teoria/observado: True
+## C. tiene columnas teoria/observado: True
+puntos de razonamiento (### N.): 6
+propuestas: 8
+ propuesta 1 id_u_origen+cifra+mejora+medicion: True
+ propuesta 2 id_u_origen+cifra+mejora+medicion: True
+ propuesta 3 id_u_origen+cifra+mejora+medicion: True
+ propuesta 4 id_u_origen+cifra+mejora+medicion: True
+ propuesta 5 id_u_origen+cifra+mejora+medicion: True
+ propuesta 6 id_u_origen+cifra+mejora+medicion: True
+ propuesta 7 id_u_origen+cifra+mejora+medicion: True
+ propuesta 8 id_u_origen+cifra+mejora+medicion: True
+SUPUESTO en escalado: 13
+RESULT OK
+== grep -i -E 'riesgo|predic' ==
+(sin coincidencias)
+== git diff --stat sql/ contratos enunciado pyproject uv.lock ==
+(fin; vacío = sin cambios)

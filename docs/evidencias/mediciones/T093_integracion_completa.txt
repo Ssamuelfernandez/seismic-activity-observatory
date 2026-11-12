@@ -1,0 +1,26 @@
+time="2026-11-13T00:47:30+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Running 
+time="2026-11-13T00:47:30+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-tests-run-4977f7f45811 Creating 
+ Container seismic-observatory-tests-run-4977f7f45811 Created 
+........................................................................ [ 31%]
+........................................................................ [ 63%]
+........................................................................ [ 95%]
+...........                                                              [100%]
+==================================== ERRORS ====================================
+_______________ ERROR collecting tests/common/test_api_config.py _______________
+ImportError while importing test module '/app/tests/common/test_api_config.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/local/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/common/test_api_config.py:4: in <module>
+    from common.api_config import ApiSettings, load_api_settings, load_cors_origins, parse_cors_origins
+E   ImportError: cannot import name 'load_cors_origins' from 'common.api_config' (/app/common/api_config.py)
+=========================== short test summary info ============================
+ERROR tests/common/test_api_config.py
+227 passed, 814 deselected, 1 error in 50.14s
+

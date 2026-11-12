@@ -25,6 +25,8 @@ La API es la **API de consulta** (ver su sección más abajo). El productor ya e
 
 El orden de las fases está en [`docs/planificacion/02-roadmap-implementacion.md`](docs/planificacion/02-roadmap-implementacion.md).
 
+Mediciones de complejidad y costes (`mediciones-costes`, en curso): borrador en [`docs/borradores/mediciones-costes.md`](docs/borradores/mediciones-costes.md); evidencias en `docs/evidencias/mediciones/`.
+
 ## Estructura del repositorio
 
 | Ruta | Contenido |

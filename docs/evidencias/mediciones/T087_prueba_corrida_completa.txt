@@ -1,0 +1,8 @@
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 2 items
+
+tests/integration/test_bench_run.py::test_trial_run_exits_zero_leaves_no_bench_and_writes_complete_outputs PASSED [ 50%]
+tests/integration/test_bench_run.py::test_full_run_evidence_has_three_sizes_when_present PASSED [100%]
+
+============================== 2 passed in 2.23s ===============================

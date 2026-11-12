@@ -1,0 +1,17 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.9, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 7 items
+
+tests/scripts/test_bench_synth.py::test_same_seed_gives_identical_rows PASSED [ 14%]
+tests/scripts/test_bench_synth.py::test_all_rows_are_labelled_synthetic_with_unique_ids PASSED [ 28%]
+tests/scripts/test_bench_synth.py::test_requested_size_equals_returned_rows PASSED [ 42%]
+tests/scripts/test_bench_synth.py::test_coherence_and_ranges_hold_in_every_row PASSED [ 57%]
+tests/scripts/test_bench_synth.py::test_nulls_of_the_seed_are_kept_as_nulls PASSED [ 71%]
+tests/scripts/test_bench_synth.py::test_country_comes_from_the_real_geometry PASSED [ 85%]
+tests/scripts/test_bench_synth.py::test_row_values_follow_the_column_order PASSED [100%]
+
+============================== 7 passed in 1.59s ==============================

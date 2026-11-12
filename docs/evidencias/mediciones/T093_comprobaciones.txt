@@ -1,0 +1,15 @@
+## compose config --services
+postgres
+api
+kafka
+consumer
+producer
+## git diff --stat contratos sql enunciado pyproject uv.lock
+(fin; vacio = sin cambios)
+## to_regnamespace tras los tests
+ bench | bench_in_live | usgs_historical 
+-------+---------------+-----------------
+       |             0 |           18302
+(1 row)
+
+## fecha: 2026-11-12T23:48:25Z

@@ -1,0 +1,18 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.9, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 8 items
+
+tests/scripts/test_bench_stats.py::test_summarize_known_series_gives_expected_median_and_iqr PASSED [ 12%]
+tests/scripts/test_bench_stats.py::test_summarize_single_sample_and_empty PASSED [ 25%]
+tests/scripts/test_bench_stats.py::test_constants_are_the_ones_of_the_plan PASSED [ 37%]
+tests/scripts/test_bench_stats.py::test_plan_repetitions_follows_the_budget[1-15] PASSED [ 50%]
+tests/scripts/test_bench_stats.py::test_plan_repetitions_follows_the_budget[10-9] PASSED [ 62%]
+tests/scripts/test_bench_stats.py::test_plan_repetitions_follows_the_budget[40-3] PASSED [ 75%]
+tests/scripts/test_bench_stats.py::test_plan_repetitions_follows_the_budget[400-3] PASSED [ 87%]
+tests/scripts/test_bench_stats.py::test_warmup_counts_only_when_it_exceeds_the_budget PASSED [100%]
+
+============================== 8 passed in 0.03s ==============================

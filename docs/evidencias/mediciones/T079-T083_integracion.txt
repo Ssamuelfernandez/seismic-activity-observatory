@@ -1,0 +1,22 @@
+# T079, T080, T082, T083 integracion (servicio tests; base temporal de sesion para esquema/indices, base real solo lectura para usgs_historical)
+time="2026-11-13T00:29:43+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Running 
+time="2026-11-13T00:29:43+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-tests-run-8a37c1ca8bc3 Creating 
+ Container seismic-observatory-tests-run-8a37c1ca8bc3 Created 
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /opt/venv/bin/python
+rootdir: /app
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 5 items
+
+tests/integration/test_bench_ops.py::test_load_four_real_indexes_one_at_a_time_and_saved_plan PASSED [ 20%]
+tests/integration/test_bench_ops.py::test_search_gives_sixteen_plus_build_with_plan_nodes PASSED [ 40%]
+tests/integration/test_bench_ops.py::test_aggregation_measures_q2_q3_q4_without_and_with_index PASSED [ 60%]
+tests/integration/test_bench_storage.py::test_four_real_indexes_with_size_and_idx_scan_in_read_only_transaction PASSED [ 80%]
+tests/integration/test_bench_storage.py::test_real_database_has_18302_usgs_historical_rows PASSED [100%]
+
+============================== 5 passed in 1.99s ===============================

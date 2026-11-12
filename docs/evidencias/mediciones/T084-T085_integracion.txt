@@ -1,0 +1,18 @@
+ Container seismic-observatory-postgres-1 Running 
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-tests-run-4ffc4cde6aaa Creating 
+ Container seismic-observatory-tests-run-4ffc4cde6aaa Created 
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /opt/venv/bin/python
+rootdir: /app
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 4 items
+
+tests/integration/test_bench_storage.py::test_four_real_indexes_with_size_and_idx_scan_in_read_only_transaction PASSED [ 25%]
+tests/integration/test_bench_storage.py::test_real_database_has_18302_usgs_historical_rows PASSED [ 50%]
+tests/integration/test_bench_storage.py::test_real_storage_bytes_per_row_equals_size_over_real_count_and_is_positive PASSED [ 75%]
+tests/integration/test_bench_transfer.py::test_four_routes_measured_through_api_service_name_with_positive_bytes PASSED [100%]
+
+============================== 4 passed in 1.28s ===============================

@@ -1,0 +1,28 @@
+# T079 (parte pura: rewrite_index, columnas, planes) y T080/T081/T082 puras sin Docker
+============================= test session starts =============================
+platform win32 -- Python 3.12.9, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Samuel\Desktop\Proyectos Curso\seismic-activity-observatory
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 17 items
+
+tests/scripts/test_bench_load_pure.py::test_rewrite_index_replaces_schema_table_and_name_without_live PASSED [  5%]
+tests/scripts/test_bench_load_pure.py::test_rewrite_rejects_unknown_definitions_and_bad_tables PASSED [ 11%]
+tests/scripts/test_bench_load_pure.py::test_columns_are_read_from_definition_and_found_by_columns PASSED [ 17%]
+tests/scripts/test_bench_load_pure.py::test_plan_summary_reads_nodes_time_and_buffers PASSED [ 23%]
+tests/scripts/test_bench_ops_pure.py::test_list_and_dict_find_same_event_and_absent PASSED [ 29%]
+tests/scripts/test_bench_ops_pure.py::test_memory_strategies_give_eight_measurements_plus_build PASSED [ 35%]
+tests/scripts/test_bench_ops_pure.py::test_both_geo_methods_agree_on_mixed_and_ocean PASSED [ 41%]
+tests/scripts/test_bench_ops_pure.py::test_run_geo_reports_five_measurements_with_zero_differences PASSED [ 47%]
+tests/scripts/test_bench_ops_pure.py::test_border_and_overlap_points_give_same_result_in_both_methods PASSED [ 52%]
+tests/scripts/test_bench_verdicts.py::test_clear_improvement_with_index_used_is_justified_and_cites_ids PASSED [ 58%]
+tests/scripts/test_bench_verdicts.py::test_index_not_used_is_not_justified PASSED [ 64%]
+tests/scripts/test_bench_verdicts.py::test_overlapping_ranges_are_inconclusive PASSED [ 70%]
+tests/scripts/test_bench_verdicts.py::test_minimum_three_repetitions_is_judged_and_fewer_is_inconclusive PASSED [ 76%]
+tests/scripts/test_bench_verdicts.py::test_index_used_but_slower_is_not_justified_and_overall_prefers_justified PASSED [ 82%]
+tests/scripts/test_bench_sql_static.py::test_every_write_statement_qualifies_with_bench PASSED [ 88%]
+tests/scripts/test_bench_sql_static.py::test_the_closed_list_is_really_found PASSED [ 94%]
+tests/scripts/test_bench_sql_static.py::test_the_scanner_detects_bad_statements PASSED [100%]
+
+============================= 17 passed in 0.66s ==============================

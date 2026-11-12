@@ -1,0 +1,5 @@
+cifras del borrador: 87 sin respaldo en la evidencia: []
+Resultados clave True
+Veredictos de índices True
+Razonamiento a 100 True
+enlace README: docs/borradores/mediciones-costes.md existe: True

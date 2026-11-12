@@ -1,0 +1,107 @@
+[
+  {
+    "Plan": {
+      "Node Type": "Aggregate",
+      "Strategy": "Sorted",
+      "Partial Mode": "Simple",
+      "Parallel Aware": false,
+      "Async Capable": false,
+      "Startup Cost": 1110.39,
+      "Total Cost": 1335.39,
+      "Plan Rows": 10000,
+      "Plan Width": 16,
+      "Actual Startup Time": 1.405,
+      "Actual Total Time": 2.436,
+      "Actual Rows": 5485,
+      "Actual Loops": 1,
+      "Group Key": [
+        "(date_trunc('hour'::text, (event_time AT TIME ZONE 'UTC'::text)))"
+      ],
+      "Shared Hit Blocks": 296,
+      "Shared Read Blocks": 0,
+      "Shared Dirtied Blocks": 0,
+      "Shared Written Blocks": 0,
+      "Local Hit Blocks": 0,
+      "Local Read Blocks": 0,
+      "Local Dirtied Blocks": 0,
+      "Local Written Blocks": 0,
+      "Temp Read Blocks": 0,
+      "Temp Written Blocks": 0,
+      "Plans": [
+        {
+          "Node Type": "Sort",
+          "Parent Relationship": "Outer",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Startup Cost": 1110.39,
+          "Total Cost": 1135.39,
+          "Plan Rows": 10000,
+          "Plan Width": 8,
+          "Actual Startup Time": 1.402,
+          "Actual Total Time": 1.639,
+          "Actual Rows": 10000,
+          "Actual Loops": 1,
+          "Sort Key": [
+            "(date_trunc('hour'::text, (event_time AT TIME ZONE 'UTC'::text)))"
+          ],
+          "Sort Method": "quicksort",
+          "Sort Space Used": 385,
+          "Sort Space Type": "Memory",
+          "Shared Hit Blocks": 296,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0,
+          "Plans": [
+            {
+              "Node Type": "Seq Scan",
+              "Parent Relationship": "Outer",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Relation Name": "event_10000",
+              "Alias": "event_10000",
+              "Startup Cost": 0.0,
+              "Total Cost": 446.0,
+              "Plan Rows": 10000,
+              "Plan Width": 8,
+              "Actual Startup Time": 0.004,
+              "Actual Total Time": 0.918,
+              "Actual Rows": 10000,
+              "Actual Loops": 1,
+              "Shared Hit Blocks": 296,
+              "Shared Read Blocks": 0,
+              "Shared Dirtied Blocks": 0,
+              "Shared Written Blocks": 0,
+              "Local Hit Blocks": 0,
+              "Local Read Blocks": 0,
+              "Local Dirtied Blocks": 0,
+              "Local Written Blocks": 0,
+              "Temp Read Blocks": 0,
+              "Temp Written Blocks": 0
+            }
+          ]
+        }
+      ]
+    },
+    "Planning": {
+      "Shared Hit Blocks": 0,
+      "Shared Read Blocks": 0,
+      "Shared Dirtied Blocks": 0,
+      "Shared Written Blocks": 0,
+      "Local Hit Blocks": 0,
+      "Local Read Blocks": 0,
+      "Local Dirtied Blocks": 0,
+      "Local Written Blocks": 0,
+      "Temp Read Blocks": 0,
+      "Temp Written Blocks": 0
+    },
+    "Planning Time": 0.042,
+    "Triggers": [],
+    "Execution Time": 2.561
+  }
+]
