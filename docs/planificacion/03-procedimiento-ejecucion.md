@@ -5,6 +5,7 @@ Complementa `01-checklist-requisitos.md` (qué hay que entregar) y `02-roadmap-i
 Los IDs (A1, B6, C4, F8, G5…) remiten al checklist; las fases (F0–F13) remiten al roadmap.
 
 **Registro de cambios**
+- 13-nov-2026 (rev. 8): **cambio de evaluación: sin defensa oral; README + vídeo de 5 min.** La feature `017-memoria-defensa` pasa a `017-readme-video`; `doc-keeper` mantiene la tabla rúbrica→evidencia del README. Números y nombres de §4 alineados con `specs/` (`003-consumidor-idempotente`, `004-productor-live`, `009-replay`, `010-despliegue-tunel`). `defense-coach` y `/defensa` quedan aparcados (no existen).
 - 1-nov-2026 (rev. 3): reconciliación de los tres documentos. **El frontend se construye desde cero** (el proyecto Angular del paquete es solo un ejemplo): la feature del panel se divide en cinco. Tabla de features única (§4) con las semillas de spec integradas (antes estaban en el roadmap). Identificadores de código, BD y topics en inglés. Constitución ampliada (§5). Comandos de Spec Kit con nota de versión. Se añade la fuente de verdad por tema (§0).
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet; se decide en el plan de `panel-base-mock`. Afecta a §0, §3 (árbol de carpetas), §4.2, §6 y §7.5.
 - Nov-2026 (rev. 5): el profesor permite cambiar el frontend; decisión del alumno: **React + TypeScript + Vite + Tailwind** en lugar de Angular (mapa `react-globe.gl`, plan B MapLibre o Leaflet; TanStack Query; Chart.js; store único de filtros). Afecta a §0, §3, §4.2, §5 y §7.5. El alcance de las features no cambia.
@@ -24,7 +25,7 @@ Los IDs (A1, B6, C4, F8, G5…) remiten al checklist; las fases (F0–F13) remit
 | Idioma | **Identificadores en inglés** (funciones, variables, archivos de código, tablas, columnas, topics). Docstrings, comentarios y documentación en español. Excepciones: rutas y campos fijados por el contrato del profesor (`/api/eventos`, `/api/salud`, `/api/estadisticas`, `country_id`, `country_name`…). El nombre de las carpetas de features en `specs/` va en español |
 | Claridad del código | Reglas de estructura y funciones + docstrings explicativos + mapa del código (`CODEMAP.md`) |
 | Contratos | La feature `001-contratos-y-modelo` es la **fuente de verdad** de los tres contratos. Las demás features los referencian y nunca los duplican |
-| Frontend | React + TypeScript + Vite + Tailwind, con mapa `react-globe.gl` (plan B MapLibre o Leaflet; se confirma en el plan de panel-base-mock) **desde cero** (el ejemplo del paquete solo se consulta). Se desarrolla primero contra un **mock** del contrato y se reconecta a la API real |
+| Frontend | React + TypeScript + Vite + Tailwind, con globo `react-globe.gl` (decidido en `008-panel-base-mock`) **desde cero** (el ejemplo del paquete solo se consulta). Se desarrolla primero contra un **mock** del contrato y se reconecta a la API real |
 | Documentación | `docs/enunciado/` (material del profesor) es **solo lectura**. `docs/` (entregables) y `specs/` (herramienta) son cosas distintas (§1) |
 
 ### Fuente de verdad por tema (si dos documentos discrepan, manda este orden)
@@ -157,28 +158,28 @@ Una feature = un ciclo completo de Spec Kit = una rama. Spec Kit numera las carp
 |---|---|---|---|
 | `001-contratos-y-modelo` | F1b | E1–E5, E7; contrato Kafka; esquema BD (`sql/001_schema.sql`); `api.md`; reglas de versiones (C4) | — (se valida con `004`) |
 | `002-infra-compose` | F2 (el andamiaje F0 va a mano antes) | A1–A12, M7–M9 (configuración de Git y estructura) | — (arranca limpio, persiste tras reiniciar) |
-| `003-productor-live` | F4 | B1–B12 | 1 (evento nuevo, real), 2 (reenvío) |
-| `004-consumidor-idempotente` | F3 | C1–C8, C13 | 2 (reenvío), 3, 4, 6, 8 |
+| `004-productor-live` | F4 | B1–B12 | 1 (evento nuevo, real), 2 (reenvío) |
+| `003-consumidor-idempotente` | F3 | C1–C8, C13 | 2 (reenvío), 3, 4, 6, 8 |
 | `005-geografia-pais` | F5 | C9–C12 | 5 (magnitud nula), 7 (evento marítimo) |
 | `006-historico-2025` | F6 | B13–B18 | — (conteos cuadran con los archivos) |
-| `007-api` | F7 | F1–F12 (F12 se completa con `013`) | — (tests con httpx, 503 con BD parada) |
-| `008-panel-base-mock` (**enmendada el 10-nov-2026**: adopta el front externo y absorbe `009`–`012`) | F8a–F8e | G0, G1, G2, G3, G4, G5, G5b, G6, G7, G8, G9, G11, G14, G15, G17; G12 (`magType`, `country_id`, `country_name`, `truncated`, `last_ingestion`). G16 **no cubierta** (decisión propia). G10 y G12 (`metadata.mode`) se cierran en `013-replay` (el banner y la vista de replay viajan en `008`) | — (capturas con el mock y con la API real, filtros visibles, fallo provocado, una captura a 375 px) |
-| `009-panel-filtros-tabla` | F8b | **ABSORBIDA por `008-panel-base-mock`**: G6, G8, G16 (no cubierta); parte de G12 (`country_id`, `country_name`, `truncated`) | — |
-| `010-panel-graficos-comparacion` | F8c | **ABSORBIDA por `008-panel-base-mock`**: G3, G4, G5, G5b | — |
-| `011-panel-estado-fallos` | F8d | **ABSORBIDA por `008-panel-base-mock`**: G7, G9; parte de G12 (`last_ingestion`) | — |
-| `012-panel-conexion-api` | F8e | **ABSORBIDA por `008-panel-base-mock`**: G1 | — |
-| `013-replay` | F9 | J1–J8, G10, F12; parte de G12 (`metadata.mode`) | 11 |
+| `007-api` | F7 | F1–F12 (F12 se completa con `009-replay`) | — (tests con httpx, 503 con BD parada) |
+| `008-panel-base-mock` (**enmendada el 10-nov-2026**: adopta el front externo y absorbe las cuatro features de panel siguientes, ya sin número) | F8a–F8e | G0, G1, G2, G3, G4, G5, G5b, G6, G7, G8, G9, G11, G14, G15, G17; G12 (`magType`, `country_id`, `country_name`, `truncated`, `last_ingestion`). G16 **no cubierta** (decisión propia). G10 y G12 (`metadata.mode`) se cierran en `009-replay` (el banner y la vista de replay viajan en `008`) | — (capturas con el mock y con la API real, filtros visibles, fallo provocado, una captura a 375 px) |
+| `panel-filtros-tabla` | F8b | **ABSORBIDA por `008-panel-base-mock`**: G6, G8, G16 (no cubierta); parte de G12 (`country_id`, `country_name`, `truncated`) | — |
+| `panel-graficos-comparacion` | F8c | **ABSORBIDA por `008-panel-base-mock`**: G3, G4, G5, G5b | — |
+| `panel-estado-fallos` | F8d | **ABSORBIDA por `008-panel-base-mock`**: G7, G9; parte de G12 (`last_ingestion`) | — |
+| `panel-conexion-api` | F8e | **ABSORBIDA por `008-panel-base-mock`**: G1 | — |
+| `009-replay` | F9 | J1–J8, G10, F12; parte de G12 (`metadata.mode`) | 11 |
 | `014-pruebas-aceptacion` | F10 | Tabla I completa | Las 11 (formalización y evidencia) |
-| `015-despliegue-tunel` (carpeta real `010-despliegue-tunel`) | F11 | G13, H1–H4 | 9 y 10 (cerrar y reabrir túnel) |
+| `010-despliegue-tunel` | F11 | G13, H1–H4 | 9 y 10 (cerrar y reabrir túnel) |
 | `016-mediciones-costes` | F12 | K1–K8, E6 | — |
-| `017-memoria-defensa` | F13 | Bloque L, D y C14 (calidad), M, H5 | — |
+| `017-readme-video` | F13 | Bloque L (índice del README), D y C14 (calidad), M (incl. M10), H5 (vídeo) | — (vídeo grabado y tabla rúbrica→evidencia completa) |
 | `panel-mapa-2d` | F8f | G18 | **APLAZADA** (10-nov-2026): no se ejecuta salvo que sobre tiempo. — (captura del mapa 2D con eventos ya cargados y aviso de truncado; sin peticiones nuevas) |
 
 Notas:
 - `006` es independiente y puede ir en paralelo a `003`–`005` (el roadmap lo permite desde F1). `008` puede empezar en cuanto exista `002`, porque solo necesita el contrato.
-- Si una feature crece demasiado, divídela (por ejemplo `004` en validación, transformación y escritura transaccional). Si el tiempo aprieta (quedan ~18 días desde el 1-nov), **fusiona** features pequeñas: `001`+`002`; `008`+`009`; `010`+`011`+`012`; `014`+`015`. Mejor menos ciclos completos que ciclos a medias.
+- Si una feature crece demasiado, divídela (por ejemplo `003` en validación, transformación y escritura transaccional). Si el tiempo aprieta (quedan ~18 días desde el 1-nov), **fusiona** features pequeñas: `001`+`002`; `014`+`016`. Mejor menos ciclos completos que ciclos a medias.
 - La documentación (memoria, README, `CODEMAP.md`) **no espera a `017`**: cada feature deja su parte al cerrarse (apartado 6, paso 9). El apartado de calidad (C14) se prepara en `notebooks/` durante `004`–`006`.
-- Pasos sin feature: F0 (andamiaje, a mano, §2 paso 0), F1 (script `scripts/explore_usgs.py` de exploración de USGS y lectura del contrato) y F13 (a mano, `017` solo organiza la memoria).
+- Pasos sin feature: F0 (andamiaje, a mano, §2 paso 0), F1 (script `scripts/explore_usgs.py` de exploración de USGS y lectura del contrato) y F13 (a mano, `017` solo organiza el README y el guion del vídeo).
 
 ### 4.1 Los tres contratos (feature `001`)
 
@@ -218,7 +219,7 @@ Regla: **el contrato se cambia antes que el código**. Si una feature necesita o
 | `pruebas-aceptacion` | Las 11 pruebas con procedimiento y evidencia |
 | `despliegue-tunel` | túnel (Cloudflare Tunnel), Netlify, CORS, procedimiento de activación, pruebas del túnel |
 | `mediciones-costes` | Operaciones, tamaños, métricas, procedimiento, costes |
-| `memoria-defensa` | Índice de memoria, README, evidencias, recorrido de un evento, decisión propia |
+| `readme-video` | README final con el índice del bloque L, tabla rúbrica→evidencia (M10), recorrido de un evento, decisión propia, guion y vídeo de 5 min enlazado |
 
 Cada spec termina con **criterios de aceptación** copiados de los IDs del checklist que cubre.
 
@@ -454,13 +455,13 @@ USGS -> producer/usgs_client.py -> producer/publisher.py -> Kafka
 |---|---|---|
 ```
 
-Úsalo también para la defensa oral (H5): el recorrido de un evento ya está escrito.
+Úsalo también para el README y el vídeo (H5): el recorrido de un evento ya está escrito.
 
 ---
 
 ## 8. Procedimiento de ejecución del sistema (borrador para el README)
 
-Es un borrador. Los nombres exactos de scripts y variables se fijan al implementar `002`, `006`, `013` y `015`; el README final debe reflejar lo que de verdad funcione desde un clon limpio (M3).
+Es un borrador. Los nombres exactos de scripts y variables se fijan al implementar `002`, `006`, `009-replay` y `010-despliegue-tunel`; el README final debe reflejar lo que de verdad funcione desde un clon limpio (M3).
 
 ### 8.1 Primera vez
 
@@ -486,7 +487,7 @@ docker compose logs -f consumer
 curl http://127.0.0.1:8000/api/salud     # estado y última ingesta
 ```
 
-### 8.4 Activar el panel para la defensa (H2)
+### 8.4 Activar el panel para la demo y la grabación del vídeo (H2)
 
 1. Compose arriba y datos cargados (8.1 y 8.2).
 2. Túnel (Cloudflare Tunnel): `cloudflared` en el equipo, con destino `http://localhost:8000`. El token solo en tu máquina, nunca en Git.
@@ -556,7 +557,7 @@ Si algún día un documento discrepa de otro, aplica la tabla de §0 y corrige e
 2. Instalar Spec Kit, inicializar, escribir la constitución (apartado 5), `CLAUDE.md` (apartado 9), `CODEMAP.md` vacío (apartado 7.6) y la configuración de atribución de Git (apartado 2). Script `scripts/explore_usgs.py` (F1) y lectura completa de `CONTRATO-API.md`.
 3. Feature `001-contratos-y-modelo`: es la que más decisiones tuyas contiene.
 4. `002` → `003` → `004` → `005`: el pipeline extremo a extremo con datos reales. `006` en paralelo.
-5. `008` (panel contra mock) puede empezar en cuanto exista `002`; luego `009` → `010` → `011`, y `007` (API) en paralelo; `012` conecta panel y API.
-6. `013` a `017`.
+5. `008-panel-base-mock` (que incluye filtros, gráficos, estado y conexión con la API) puede empezar en cuanto exista `002`, con `007` (API) en paralelo.
+6. `009-replay`, `010-despliegue-tunel`, y después `014` a `017` (README y vídeo al final).
 
 Prioridad si falta tiempo (del roadmap §5): pipeline correcto → pruebas → memoria. Los extras no puntúan. Ver el calendario orientativo del roadmap §5.

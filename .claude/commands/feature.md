@@ -19,7 +19,7 @@ Formato: `<nombre-feature> <fase> [texto]`. Fases: `diseno`, `implementar`, `cie
 
 ## Proporcionalidad (pégalo literal en el prompt de revisores y verificadores)
 
-Trabajo de clase de unas 2 semanas, no producción. Es **bloqueante o importante** solo lo que: haría fallar una prueba de aceptación o un requisito obligatorio del checklist; contradice un contrato o la constitución; pierde o duplica datos, o bloquea el consumo, con datos que USGS puede enviar de verdad; o deja una decisión que el alumno no podría explicar en la defensa. Todo lo demás es **menor**: NO se lista en el informe ni se corrige; como mucho, una línea de "límite conocido". No añadas requisitos para casos imaginarios. Cada hallazgo importante lleva: qué falla, un ejemplo concreto y qué prueba o requisito afecta; sin ejemplo, no se reporta. **El informe ocupa como máximo 15 líneas.**
+Trabajo de clase de unas 2 semanas, no producción. Es **bloqueante o importante** solo lo que: haría fallar una prueba de aceptación o un requisito obligatorio del checklist; contradice un contrato o la constitución; pierde o duplica datos, o bloquea el consumo, con datos que USGS puede enviar de verdad; o deja una decisión que el alumno no podría explicar en el README o en el vídeo. Todo lo demás es **menor**: NO se lista en el informe ni se corrige; como mucho, una línea de "límite conocido". No añadas requisitos para casos imaginarios. Cada hallazgo importante lleva: qué falla, un ejemplo concreto y qué prueba o requisito afecta; sin ejemplo, no se reporta. **El informe ocupa como máximo 15 líneas.**
 
 ## Escalar (PARA y devuelve la pregunta con tu recomendación)
 
@@ -63,7 +63,7 @@ Cambio de contrato o de alcance; decisión no justificable con la constitución,
 
 **0. Preflight.** Rama de la feature y tareas activas verificadas; si no, PARA. Aplica las indicaciones del alumno.
 
-**1.** Ejecuta tú `git diff --stat` de contratos (vacío esperado). Lanza **solo `doc-keeper`**: CODEMAP, README, `docs/borradores/<feature>.md` (material de defensa, breve), estado de la spec → Implemented, tareas diferidas marcadas "Diferido" en la spec con su motivo, fila del histórico y rutas de evidencias. No hay segunda revisión: la implementación ya la verificó el `verificador`.
+**1.** Ejecuta tú `git diff --stat` de contratos (vacío esperado). Lanza **solo `doc-keeper`**: CODEMAP, README, `docs/borradores/<feature>.md` (material para el README y el vídeo, breve), estado de la spec → Implemented, tareas diferidas marcadas "Diferido" en la spec con su motivo, fila del histórico y rutas de evidencias. No hay segunda revisión: la implementación ya la verificó el `verificador`.
 
 **2. STOP.** Sin commit ni merge. Dile al alumno los IDs del checklist a marcar (solo los que tienen evidencia) y un mensaje de commit sugerido sin atribución.
 

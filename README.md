@@ -19,7 +19,7 @@ Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
 | `009` filtros y tabla, `010` gráficos y comparación, `011` estado y fallos, `012` conexión con la API | Absorbidas por `panel-base-mock` (no se ejecutan por separado) |
 | `replay` (009) | Completada (implementada y comprobada de extremo a extremo): reproducción acelerada de una selección de 2025 por Kafka, aislada de `live` (J1–J8, F12, G10). Ver la sección «Replay»; apuntes en [`docs/borradores/replay.md`](docs/borradores/replay.md) |
 | `despliegue-tunel` (010) | Implementada y verificada en local (2026-11-12), pendiente de la revisión del alumno: CORS, `netlify.toml`, build sin mock, revisión de exposición y procedimiento de activación; túnel, Netlify, DNS y pruebas 9 y 10 pendientes del alumno. Ver «Túnel público y panel» |
-| `pruebas-aceptacion` (014), `mediciones-costes` (016), `memoria-defensa` (017, incluye el README final) | Pendientes |
+| `pruebas-aceptacion` (014), `mediciones-costes` (016), `readme-video` (017, incluye el README final y el vídeo) | Pendientes |
 
 La API es la **API de consulta** (ver su sección más abajo). El productor ya es el **productor en vivo** (ver su sección más abajo). El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
 

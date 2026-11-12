@@ -51,11 +51,11 @@ Un rango como `C1–C8` significa "del C1 al C8, ambos incluidos".
 | **E** | Modelo de datos y SQL | E1 modelo conceptual, lógico y físico |
 | **F** | API FastAPI | F1 `/api/eventos` · F8 error explícito si cae la BD |
 | **G** | Panel React | G2 mapa · G5 comparación histórica |
-| **H** | Despliegue y defensa oral | H2 procedimiento de activación · H5 explicar un evento |
+| **H** | Despliegue y vídeo | H2 procedimiento de activación · H5 vídeo de 5 min |
 | **I** | Las 11 pruebas de aceptación | numeradas 1 a 11 |
 | **J** | Replay (reproducción histórica) | J4 etiqueta "REPRODUCCIÓN" |
 | **K** | Complejidad, mediciones y costes | K5 razonar con 100 millones de registros |
-| **L** | Secciones de la memoria | 1 a 10 |
+| **L** | Índice del README (secciones 1 a 10) | 1 a 10 |
 | **M** | Repositorio | M7 historial sin trailers de coautoría |
 
 ### Etiquetas
@@ -105,9 +105,9 @@ Cada fase la ejecuta una feature. En los prompts usa el **nombre**, no el númer
 | **F10** | Pruebas de aceptación | `pruebas-aceptacion` | bloque I |
 | **F11** | Túnel (Cloudflare Tunnel) y Netlify | `despliegue-tunel` | G13, H1–H4 |
 | **F12** | Mediciones y costes | `mediciones-costes` | K1–K8, E6 |
-| **F13** | Memoria final y defensa | `memoria-defensa` | bloque L, H5 |
+| **F13** | README final, guion y vídeo | `readme-video` | bloque L, H5, M10 |
 
-> Ojo al orden: **F3 es el consumidor** pero su feature es la `004`; **F4 es el productor** y su feature es la `003`. Por eso conviene usar siempre el nombre.
+> Ojo al orden: **F3 es el consumidor** y su feature es la `003`; **F4 es el productor** y su feature es la `004`. Conviene usar siempre el nombre.
 
 ### Calendario orientativo
 
@@ -117,10 +117,11 @@ Cada fase la ejecuta una feature. En los prompts usa el **nombre**, no el númer
 | 4–7 nov | F4, F3, F5 (y F6 en paralelo) |
 | 8–11 nov | F7, F8a, F8b |
 | 12–15 nov | F8c, F8d, F8e, F9 |
-| 16–18 nov | F10, F11, F12; memoria en continuo |
+| 16–17 nov | F10, F12; README en continuo |
+| 17–18 nov | Grabar el vídeo de 5 min |
 | 19 nov | Entrega |
 
-Si el tiempo aprieta, se fusionan features pequeñas y se recorta lo no obligatorio. Nunca se recortan las pruebas de aceptación ni la memoria.
+Si el tiempo aprieta, se fusionan features pequeñas y se recorta lo no obligatorio. Nunca se recortan las pruebas de aceptación, el README ni el vídeo.
 
 ---
 

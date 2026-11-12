@@ -7,6 +7,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 - 1-nov-2026 (rev. 3): **reconciliación con `03-procedimiento-ejecucion.md`.** Cada fase indica su feature de Spec Kit (la tabla única vive en 03 §4; las "semillas de spec" se movieron allí). Se añade **F1b** (feature `contratos-y-modelo`, antes de la infraestructura). Identificadores de BD, topics, scripts y módulos en inglés. Estructura del repo alineada con 03 §3. Panel: la parte de replay pasa a F9; F8d queda en estado y fallos. Calendario orientativo hasta el 19-nov (§5).
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet; se decide en el plan de `panel-base-mock` tras un prototipo corto. Afecta a §0, §1 (Frontend: mapa), F8a y riesgos (§4).
 - 6-nov-2026 (rev. 5): cambio de diseño visual del alumno en F8a (globo HUD con prismas hexagonales y ficha en panel lateral; `react-globe.gl` implícita) y nueva fase **F8f** (mapa 2D con MapLibre, feature `panel-mapa-2d`, G18). El texto de F8a («popup», «círculos») se reconcilia al cerrar `panel-base-mock`.
+- 13-nov-2026 (rev. 7): **cambio de evaluación: sin defensa oral; README + vídeo de 5 min.** F13 pasa a «README final + guion + vídeo» (feature `017-readme-video`); se reserva el 17–18 nov para grabar el vídeo antes de la entrega del 19. Reconciliación con `specs/`: `003-consumidor-idempotente`/`004-productor-live`, `009-replay`, `010-despliegue-tunel`; las features absorbidas por `008` se citan por nombre; túnel Cloudflare (ngrok solo alternativa).
 - 10-nov-2026 (rev. 6): **enmienda de alcance de `008-panel-base-mock`.** El alumno aporta un front ya desarrollado y lo adopta con correcciones: `008-panel-base-mock` absorbe F8b, F8c, F8d y F8e (features `009`, `010`, `011` y `012`, que ya no se ejecutan por separado). F8f (`panel-mapa-2d`, G18) queda aplazada. F9 (replay) sigue siendo su feature. Detalle en `specs/008-panel-base-mock/spec.md` y en `inventario-front-externo.md`.
 
 ---
@@ -17,7 +18,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 
 **Objetivo.** Sistema que ingiere terremotos de USGS (feed reciente + histórico 2025 M≥4) y los integra con un catálogo de países, y responde: *¿dónde hay actividad sísmica y cómo se compara con un periodo histórico equivalente?*
 
-**Arquitectura obligatoria (Docker Compose, 5 servicios):** `producer` (Python+aiokafka) · `kafka` · `consumer` (Python+aiokafka) · `postgres` · `api` (FastAPI). Fuera de Compose: túnel (Cloudflare Tunnel, HTTPS a la API) y el panel **React + TypeScript + Vite + Tailwind con mapa `react-globe.gl` (plan B MapLibre o Leaflet), construido desde cero**, en Netlify. El `paises.geojson` y el `CONTRATO-API.md` (contrato mínimo) del profesor son la única base entregada; el frontend de ejemplo del paquete es solo referencia.
+**Arquitectura obligatoria (Docker Compose, 5 servicios):** `producer` (Python+aiokafka) · `kafka` · `consumer` (Python+aiokafka) · `postgres` · `api` (FastAPI). Fuera de Compose: túnel (Cloudflare Tunnel, HTTPS a la API) y el panel **React + TypeScript + Vite + Tailwind con globo `react-globe.gl` (decidido en `008`), construido desde cero**, en Netlify. El `paises.geojson` y el `CONTRATO-API.md` (contrato mínimo) del profesor son la única base entregada; el frontend de ejemplo del paquete es solo referencia.
 
 **Reglas no negociables:** la fuente de verdad es la **constitución** (borrador en 03 §5; si difiere de esta lista, manda la constitución). Las más críticas:
 1. Procesamiento *al menos una vez* + escritura **idempotente**; offset de Kafka confirmado **después** del commit en PostgreSQL.
@@ -52,7 +53,7 @@ Complementa `01-checklist-requisitos.md` (los IDs A1, B6, C4… remiten a él) y
 | Originales | Tabla `ingest.raw_response(id, fetched_at, sha256, body jsonb)` insertando solo si el hash difiere del anterior; purga por antigüedad | Cumple B4–B5 (retención definida) |
 | Estadísticas | Todas calculadas en SQL sobre `current_event` | Reflejan revisiones sin contadores incrementales (FAQ 22) |
 | Frontend: base | Proyecto React + TypeScript + Vite + Tailwind nuevo (`npm create vite`, plantilla `react-ts`; versiones de Node y dependencias fijadas en el plan de `panel-base-mock`) en `frontend/`, build de producción (`dist/`) para Netlify | Se construye desde cero; el ejemplo del paquete solo se consulta |
-| Frontend: mapa | Librería libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: `react-globe.gl`; prototipo corto con unos 5.000 eventos del mock antes de fijarla (clic, leyenda, nulos como ND). Mapa en un componente aislado que recibe eventos y emite el seleccionado. Ocultar la Antártida (`ADM0_A3 = ATA`) en el globo. Plan B: Leaflet o MapLibre. Fronteras desde `paises.geojson` copiado a los assets (material reutilizado, G14). Se decide en el plan de `panel-base-mock` | Menos dependencias = menos riesgo de incompatibilidad con la versión de React; el componente aislado permite cambiar de librería |
+| Frontend: mapa | Librería libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Decidida en `008`: `react-globe.gl` 2.38.0 (se hizo un prototipo corto con unos 5.000 eventos del mock antes de fijarla (clic, leyenda, nulos como ND)). Mapa en un componente aislado que recibe eventos y emite el seleccionado. Ocultar la Antártida (`ADM0_A3 = ATA`) en el globo. Plan B: Leaflet o MapLibre. Fronteras desde `paises.geojson` copiado a los assets (material reutilizado, G14). Se decide en el plan de `panel-base-mock` | Menos dependencias = menos riesgo de incompatibilidad con la versión de React; el componente aislado permite cambiar de librería |
 | Frontend: estado | Un store único de filtros (la librería concreta se fija en el plan) del que leen mapa, tabla, gráficos y panel lateral | Garantiza coherencia entre vistas (G6) |
 | Frontend: datos | Capa de API con TanStack Query: timeout, refresco ~60 s sin solapar peticiones (`refetchInterval`), conservación de la última lectura y fuente seleccionable por `config.json` (`mock` \| `api`) | Permite desarrollar sin backend (G15) y probar fallos (G9) |
 | Gráficos | Chart.js (versión fijada); empezar por el gráfico de dos barras del panel lateral y reutilizar el componente para el resto | Primer gráfico simple para calibrar; el resto reutiliza el componente |
@@ -153,18 +154,18 @@ Dependencias de frontend (enmienda del 10-nov-2026): `F8a–F8e` son **una sola 
 - Productor mínimo que publica un evento ficticio **marcado como sintético**; consumidor mínimo que lo imprime.
 - **Verificación:** `docker compose up --build -d` desde cero; el log del consumidor muestra el mensaje; reiniciar contenedores y comprobar que PG conserva datos (volumen). **Cubre:** A1–A12.
 
-### F3 — Base de datos y consumidor idempotente (feature `004-consumidor-idempotente`)
+### F3 — Base de datos y consumidor idempotente (feature `003-consumidor-idempotente`)
 - Aplicar `sql/001_schema.sql` al iniciar (idempotente), carga del catálogo `country`/`date_dim`.
 - Consumidor: `enable_auto_commit=False`; por mensaje: validar → transformar (ms→UTC) → transacción (insert versión `DO NOTHING` + upsert condicional) → commit PG → commit offset. Mensaje inválido → `quarantine` + commit offset. Reintentos de conexión PG/Kafka.
 - Reproducir **la secuencia de la FAQ 12** con mensajes sintéticos (E1 10:05 mag 4.2 → repetición → E1 10:09 mag 4.6 → E1 10:05 repetida → E2).
 - **Verificación esperada:** 2 eventos actuales, E1 mag 4.6, 3 versiones. Test automático (pytest) + consulta SQL como evidencia. **Cubre:** C1–C5, C8, C13 (pruebas 2, 3, 4, 6, 8).
 
-### F4 — Productor real (feature `003-productor-live`)
+### F4 — Productor real (feature `004-productor-live`)
 - Bucle cada `POLL_SECONDS` (env): GET con timeout → guardar `ingest_run` y `raw_response` (por hash) → filtrar `type=="earthquake"` y registrar `exclusion` → comparar con `ingest_state` → publicar `send_and_wait` (acks=all, idempotencia, clave=id) → marcar publicado **tras** el ack.
 - Errores: timeout, 429/5xx con backoff exponencial y jitter, JSON inválido; sin tocar `ingest_state` previo.
 - Arranque robusto: reintentos hasta que Kafka esté listo.
 - **Verificación:** el segundo ciclo publica ≈0 eventos nuevos; matar y reiniciar el productor no republica; simular 500/429/timeout (mock) y comprobar logs y estado. **Cubre:** B1–B12, A10 (pruebas 1 real y 2).
-- *Nota de orden:* en Spec Kit `003` se ejecuta antes que `004`; esta fase F4 puede probarse con un consumidor mínimo hasta que F3 esté lista.
+- *Nota de orden:* en Spec Kit `003-consumidor-idempotente` se ejecutó antes que `004-productor-live`; esta fase F4 puede probarse con un consumidor mínimo hasta que F3 esté lista.
 
 ### F5 — Catálogo de países y calidad en el consumidor (feature `005-geografia-pais`)
 - `common/geo.py`: carga, `STRtree`, `covers`, regla de empates, test de unicidad `ADM0_A3`.
@@ -182,7 +183,7 @@ Dependencias de frontend (enmienda del 10-nov-2026): `F8a–F8e` son **una sola 
 ### F7 — API FastAPI (feature `007-api`)
 - `/api/eventos` (filtros `start`, `end`, `min_mag`, `country_id`, `mode`, `limit`, `cursor`; default últimas 24 h; `metadata` completo; `truncated` con total y paginación; `properties` con `mag`, `magType`, `place`, `time`, `updated`, `country_id`, `country_name`), `/api/salud`, `/api/estadisticas` (mismos filtros). Forma de respuesta según `api.md` (F1b).
 - `/api/estadisticas` devuelve: conteos por hora UTC (ventana `[h, h+1)`, tiempo del evento), por país (incluyendo `null`), histogramas de magnitud y profundidad con `no_value`, comparación histórica (`n_recent`, `daily_mean_2025 = n_2025/365`, `variation_pct` o `null`), periodo, filtros, unidades.
-- CORS exacto + `localhost:4200` + cabecera ngrok; BD caída → 503 con mensaje (no `[]`).
+- CORS exacto + `localhost:4200` + cabecera `ngrok-skip-browser-warning` (la exige el contrato); BD caída → 503 con mensaje (no `[]`).
 - **Pendiente heredado de `002-infra-compose`:** los 404 (`not_found`) y 405 (`method_not_allowed`) deben devolver el cuerpo de error común `{"error": {"code", "message"}}` de `contracts/api.md` §6; hoy usan el cuerpo por defecto de FastAPI (`{"detail": …}`, comprobado en `docs/evidencias/infra-compose/pendiente_404_405.txt`). Añadir manejadores globales en `api/main.py`.
 - **Verificación:** tests con `httpx`; `curl` de cada endpoint; parar PG y comprobar el 503; evento con mag nula excluido por `min_mag` pero contado aparte. **Cubre:** F1–F11.
 
@@ -198,20 +199,20 @@ Dependencias de frontend (enmienda del 10-nov-2026): `F8a–F8e` son **una sola 
 - Filtros, tabla, estadísticas (hora UTC, país, distribuciones, comparación con 2025), estado del feed y avisos de fallo, banner REPRODUCCIÓN, conexión con la API real y vista de replay sobre el intervalo de 2025.
 - **Verificación:** casos del mock en el navegador y, con el stack levantado, los mismos paneles contra la API real al cambiar filtros, con un fallo provocado y su recuperación; capturas a 375, 768 y 1280 px. **Cubre:** G0, G1, G2, G3, G4, G5, G5b, G6, G7, G8, G9, G11, G12 (`magType`, `country_id`, `country_name`, `truncated`, `last_ingestion`), G14, G15, G17. **No cubre:** G16 (decisión propia), G10 (cierre en `replay`), G13 (`despliegue-tunel`) ni G18 (aplazada).
 
-**F8b — Filtros, tabla y estado único (feature `009-panel-filtros-tabla`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026)**
+**F8b — Filtros, tabla y estado único (feature `panel-filtros-tabla`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026)**
 - Store único de filtros (fechas, magnitud mínima, país/región) compartido por todas las vistas; tabla de eventos ordenable y accesible; uso de `country_id`, `country_name` y `truncated` (aviso, sin estadísticas sobre muestra truncada).
 - **Verificación:** al cambiar un filtro, mapa y tabla cambian a la vez; truncado visible. **Cubre:** G6, G8, G16, G12 (`country_id`, `country_name`, `truncated`).
 
-**F8c — Gráficos y panel lateral de comparación histórica (feature `010-panel-graficos-comparacion`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026; el front externo los dibuja con barras propias en el cajón de estadísticas, sin Chart.js)**
+**F8c — Gráficos y panel lateral de comparación histórica (feature `panel-graficos-comparacion`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026; el front externo los dibuja con barras propias en el cajón de estadísticas, sin Chart.js)**
 - **Sin Chart.js** (decisión del alumno, 10-nov-2026): las barras son HTML y CSS. La **comparación histórica** va dentro del **cajón inferior de estadísticas** (decisión propia, no un panel lateral): nº de eventos M≥4 en las últimas 24 h con los filtros activos, media diaria 2025 (`n_2025 / 365`, incluyendo días con cero), diferencia absoluta, variación % (ND si la media es 0) y aviso "el periodo reciente puede estar incompleto". Se actualiza al cambiar los filtros. Los datos salen de `/api/estadisticas`; el frontend no calcula nada.
 - Mismo cajón: recuento por hora UTC, recuento por país (con "Sin país asignado"), distribuciones de magnitud y profundidad con registros sin valor.
 - **Verificación:** gráficos coherentes con la tabla al cambiar filtros; capturas con filtros visibles. **Cubre:** G3, G4, G5, G5b.
 
-**F8d — Estado del sistema y fallos (feature `011-panel-estado-fallos`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026)**
+**F8d — Estado del sistema y fallos (feature `panel-estado-fallos`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026)**
 - Barra de **estado del sistema**: última lectura correcta de la API, `generated`, `last_ingestion`, periodo consultado, aviso de desactualización por umbral y error de backend; refresco ~60 s sin solapar peticiones, timeout, conservación e identificación de la última lectura (no presentarla como reciente).
 - **Verificación:** simular API caída en el mock (y luego con el túnel real en F11) y comprobar aviso + recuperación. **Cubre:** G7, G9, G12 (`last_ingestion`).
 
-**F8e — Conexión con la API real (feature `012-panel-conexion-api`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026)**
+**F8e — Conexión con la API real (feature `panel-conexion-api`; ABSORBIDA por `008-panel-base-mock`, enmienda del 10-nov-2026)**
 - Cambiar `config.json` a `mode: api` (dev: `http://localhost:8000`); contrastar respuestas reales con el mock y corregir diferencias (si el contrato y la API divergen, se arregla la API o el mock, nunca el contrato sin avisar).
 - **Verificación:** con datos reales ver mapa + tabla + gráficos coherentes al cambiar filtros; capturas con filtros visibles. **Cubre:** G1.
 
@@ -219,7 +220,7 @@ Dependencias de frontend (enmienda del 10-nov-2026): `F8a–F8e` son **una sola 
 - Vista plana (MapLibre GL JS, versión fijada en su plan) que se abriría desde la ficha del globo (el botón no existe todavía; se añadiría con esta feature). Usa **solo los eventos ya cargados** (sin nuevas peticiones a la API ni al mock), la paleta de profundidad y el tamaño por magnitud del globo y los tokens de `specs/008-panel-base-mock/diseno-visual.md`. Aviso visible si `metadata.truncated` (G12). Atribución propia del mapa base si usa teselas. Va después de `009` (necesita el aviso de truncado) y no bloquea a `010`–`013`.
 - **Verificación:** abrir el mapa 2D desde una ficha con el mock `base` y `truncated`; pestaña de red sin peticiones nuevas; captura. **Cubre:** G18.
 
-### F9 — Replay histórico (feature `013-replay`)
+### F9 — Replay histórico (feature `009-replay`)
 - `producer/replay.py`: lee una selección ordenada por fecha desde los archivos de F6 (p. ej. 20 eventos de una zona), publica en `earthquakes.replay` con `mode="replay"`, `replay_at`, velocidad configurable (p. ej. 1 evento / 2 s), incluyendo **duplicados y revisiones controlados** (se pueden fabricar y etiquetar como sintéticos o forzar con dos versiones reales).
 - Consumidor enruta a esquema `replay` reutilizando `common`.
 - API y panel: selector de modo, intervalo 2025, banner **REPRODUCCIÓN** (`metadata.mode`).
@@ -233,7 +234,7 @@ Dependencias de frontend (enmienda del 10-nov-2026): `F8a–F8e` son **una sola 
 - Túnel con nombre (Cloudflare Tunnel) con dominio propio, hacia `http://localhost:8000`; actualizar `config.json` con la URL HTTPS; build de producción; deploy en Netlify (Base directory `frontend`, Build command `npm run build`, Publish directory `dist`, relativo a la base); poner el dominio de Netlify en CORS (`CORS_ALLOWED_ORIGINS`).
 - Añadir `netlify.toml` y la regla de redirección para SPA (`/* /index.html 200`).
 - Probar desde otro dispositivo; probar cierre/reapertura del túnel (pruebas 9–10) y apagado del túnel mientras el panel sigue abierto.
-- Escribir el **procedimiento de activación** para la defensa (H2).
+- Escribir el **procedimiento de activación** para la demo y el vídeo (H2).
 - **Cubre:** G13, H1–H4, pruebas 9–10.
 
 ### F12 — Mediciones, complejidad y costes (feature `016-mediciones-costes`)
@@ -244,10 +245,12 @@ Dependencias de frontend (enmienda del 10-nov-2026): `F8a–F8e` son **una sola 
 - Costes: hardware (amortización), electricidad (potencia medida o supuesta × horas × €/kWh, indicando que es supuesto), almacenamiento (tamaño real de BD y archivos), transferencia, mantenimiento, horas de desarrollo; escalado y razonamiento a 100 M de registros (particionado por fecha, índices, batch, varios consumidores por partición).
 - **Cubre:** K1–K8, E6.
 
-### F13 — Memoria final, README y ensayo de defensa (feature `017-memoria-defensa`; el contenido se redacta a mano)
-- Completar `docs/memoria.md` (índice de checklist §L), con diccionario, procedencia, calidad con consultas y resultados reales (`notebooks/`), modelo (diagrama y equivalencias de nombres con el enunciado), análisis y **≥3 conclusiones** con cifras/filtros/denominador y capturas, pruebas, replay, limitaciones y mejoras. Indicar el material reutilizado (M2).
+### F13 — README final, guion y vídeo (feature `017-readme-video`; el contenido se redacta a mano)
+- Completar el README final con el índice del bloque L (el contenido largo puede estar en `docs/memoria.md` y enlazarse): con diccionario, procedencia, calidad con consultas y resultados reales (`notebooks/`), modelo (diagrama y equivalencias de nombres con el enunciado), análisis y **≥3 conclusiones** con cifras/filtros/denominador y capturas, pruebas, replay, limitaciones y mejoras. Indicar el material reutilizado (M2).
 - README reproducible desde un clon limpio (probarlo realmente en otra carpeta o equipo).
-- Preparar la explicación oral: recorrido de un evento de USGS al panel (usar `event_id` real y seguirlo por `ingest.raw_response` → Kafka offset → `event_version` → `current_event` → API → mapa; apoyarse en `CODEMAP.md`) + una decisión propia (p. ej. commit de offset tras PG; esquema separado para replay; agregaciones en SQL sobre `current_event`).
+- Escribir en el README el recorrido de un evento y la decisión propia: recorrido de un evento de USGS al panel (usar `event_id` real y seguirlo por `ingest.raw_response` → Kafka offset → `event_version` → `current_event` → API → mapa; apoyarse en `CODEMAP.md`) + una decisión propia (p. ej. commit de offset tras PG; esquema separado para replay; agregaciones en SQL sobre `current_event`).
+- Añadir al README la tabla **rúbrica→evidencia** (M10), que `doc-keeper` mantiene desde cada cierre de feature.
+- Escribir el **guion** del vídeo de 5 min (un tramo por criterio de la rúbrica: Extracción, Calidad, Modelado, Análisis, Reflexión) y **grabarlo en el hueco del 17–18 nov**, con el stack y el túnel encendidos; enlazarlo en el README (H5).
 - Recorrer la checklist final del §6 del documento 01.
 
 ---
@@ -267,8 +270,8 @@ Reparto de la documentación entre herramientas: la **constitución** recoge los
 | Kafka conecta pero falla después | Revisar `advertised.listeners`; usar nombres de servicio |
 | Recuentos suben sin eventos nuevos | Contar desde `current_event`, no por mensaje; comprobar clave de upsert |
 | Replay "no muestra nada" | Consultar el intervalo 2025 y el esquema `replay`, no "últimas 24 h" |
-| CORS falla aunque la URL abre | Origen exacto de Netlify, preflight OPTIONS, cabecera ngrok |
-| El panel recibe HTML | Página de aviso del túnel (ngrok la muestra; Cloudflare Tunnel no) o URL con `/api` duplicado |
+| CORS falla aunque la URL abre | Origen exacto de Netlify, preflight OPTIONS, cabecera `ngrok-skip-browser-warning` |
+| El panel recibe HTML | Página de aviso del túnel (ngrok la muestra; Cloudflare Tunnel no, y es el que se usa) o URL con `/api` duplicado |
 | Puntos en sitios raros | Orden lon/lat en GeoJSON vs el orden que exija la librería de mapa elegida; comprobarlo con un evento conocido |
 | Mes >20.000 resultados | Detectar `count` y subdividir; nunca truncar en silencio |
 | Sobrecarga de alcance | Prioridad: pipeline correcto → pruebas → memoria; ignorar "opcionales" |
@@ -298,9 +301,10 @@ Reparto de la documentación entre herramientas: la **constitución** recoge los
 |---|---|
 | 1–3 nov | F0, F1, F1b (`001`), F2 (`002`) |
 | 4–7 nov | F4 (`003`), F3 (`004`), F5 (`005`); F6 (`006`) en paralelo |
-| 8–11 nov | F7 (`007`), F8a–F8e (`008`, que absorbe `009`–`012`) |
-| 12–15 nov | F9 (`013`); holgura para `008` |
-| 16–18 nov | F10 (`014`), F11 (`015`), F12 (`016`); memoria (`017`) en continuo |
-| 19 nov | Entrega: revisión final con la lista del checklist §6 y ensayo de la defensa |
+| 8–11 nov | F7 (`007`), F8a–F8e (`008`, que absorbe las features de panel antes numeradas `009`–`012`) |
+| 12–15 nov | F9 (`009-replay`), F11 (`010-despliegue-tunel`); holgura para `008` |
+| 16–17 nov | F10 (`014`), F12 (`016`); README (`017`) en continuo |
+| 17–18 nov | **Grabar el vídeo de 5 min** (guion ya escrito, stack y túnel encendidos); cerrar `017-readme-video` |
+| 19 nov | Entrega: revisión final con la lista del checklist §6 (README, tabla rúbrica→evidencia y enlace al vídeo) |
 
-Si el calendario se retrasa, fusionar features y recortar primero lo no obligatorio (pulido visual, extras de gráficos); nunca recortar las pruebas de aceptación ni la memoria.
+Si el calendario se retrasa, fusionar features y recortar primero lo no obligatorio (pulido visual, extras de gráficos); nunca recortar las pruebas de aceptación, el README ni el vídeo.

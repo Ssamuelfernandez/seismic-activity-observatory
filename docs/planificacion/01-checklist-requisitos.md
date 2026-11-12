@@ -12,17 +12,18 @@ Convención: **[OBL]** obligatorio · **[EVAL]** puntúa en rúbrica · **[OPC]*
 - 2-nov-2026 (rev. 4): la librería del mapa es libre (el profesor confirmó por correo el 2-nov-2026 que Leaflet era una guía, no una obligación). Candidata: Globe.gl; alternativas: MapLibre o Leaflet. Se decide en el plan de `panel-base-mock`. Afecta a §0, G0, G2, G11, G16, M2, §5 y la introducción del bloque G (frontend).
 - 5-nov-2026 (rev. 5): nuevo requisito **G17** (diseño responsive, decisión propia del alumno), asignado a `panel-base-mock`.
 - 6-nov-2026 (rev. 6): cambio de diseño visual del alumno (globo HUD con prismas hexagonales y ficha en panel lateral en `panel-base-mock`; `react-globe.gl` queda implícita para el globo). Nuevo requisito **G18** (vista de mapa 2D con MapLibre), asignado a la feature nueva `panel-mapa-2d`. Los textos de G0, G2 y de §0 que dicen «candidata» o «popup» se reconcilian al cerrar `panel-base-mock`.
+- 13-nov-2026 (rev. 8): **cambio de evaluación: sin defensa oral; se entrega README + vídeo de 5 min.** H5 pasa a ser el vídeo (con recorrido de un evento y decisión propia en el README); nuevo requisito **M10** (tabla rúbrica→evidencia en el README); el bloque L pasa a ser el índice del README; la feature `memoria-defensa` pasa a `readme-video` (`017`). Reconciliación de documentos: React + Tailwind con `react-globe.gl` (decidido en `008`), túnel con Cloudflare Tunnel (ngrok solo como alternativa) y nombres/números de features alineados con `specs/` (`003-consumidor-idempotente`, `004-productor-live`, `009-replay`, `010-despliegue-tunel`).
 - 10-nov-2026 (rev. 7): **enmienda de alcance de `panel-base-mock`** (decisión del alumno): adopta el front externo con correcciones y absorbe las features `panel-filtros-tabla`, `panel-graficos-comparacion`, `panel-estado-fallos` y `panel-conexion-api` (§7). **G18** queda aplazada (`panel-mapa-2d`). **G16** (accesibilidad) queda **no cubierta, decisión propia**: la tabla existe (G8) pero no se trabaja el foco de teclado ni el no depender solo del color. La apariencia del globo y del layout es la del front externo (G2 se lee con ese diseño; **G5b se reformula** como decisión propia: la comparación va en el cajón de estadísticas, no en un panel lateral).
 
 ---
 
 ## 0. Qué es esto, en 6 líneas
 
-1. Pipeline en Docker Compose: USGS → **productor** (Python/aiokafka) → **Kafka** → **consumidor** (Python/aiokafka) → **PostgreSQL** → **API FastAPI** → ngrok (HTTPS) → **panel React + TypeScript + Vite + Tailwind, con mapa `react-globe.gl` (candidata; plan B MapLibre o Leaflet), en Netlify (a construir desde cero)**.
+1. Pipeline en Docker Compose: USGS → **productor** (Python/aiokafka) → **Kafka** → **consumidor** (Python/aiokafka) → **PostgreSQL** → **API FastAPI** → túnel Cloudflare (HTTPS) → **panel React + TypeScript + Vite + Tailwind, con globo `react-globe.gl`, en Netlify (construido desde cero)**.
 2. Tres fuentes de datos: feed reciente (`all_day.geojson`), histórico 2025 (M≥4, por meses) y catálogo de países (Natural Earth, ya entregado).
 3. El núcleo técnico es: **no duplicar** (id + updated), **revisiones** (la versión antigua nunca pisa a la nueva), **idempotencia** (al menos una vez + upsert) y **país por punto-en-polígono**.
 4. La nota sale de 5 criterios: Extracción, Calidad, Modelado, Análisis, Reflexión. Más infraestructura **no** da más nota.
-5. Entregas en 3 bloques: **repositorio**, **memoria/notebook**, **panel + defensa oral**.
+5. Entregas en 3 bloques: **repositorio**, **README (con el índice del bloque L y la tabla rúbrica→evidencia)** y **panel + vídeo de 5 min** (sin defensa oral).
 6. No hay que predecir terremotos, ni usar Spark/Flink/Kubernetes/ML/cloud permanente.
 
 ---
@@ -54,11 +55,11 @@ Ponderación de la asignatura (de la sesión 8, sin cambios): test 30 % · prác
 | A5 | **[OBL]** Volúmenes persistentes (PG, y lo necesario para originales) | Reiniciar contenedores no pierde datos | Enunc. §9 | [x] |
 | A6 | **[OBL]** Retención limitada de Kafka | Parámetro configurado y documentado | Enunc. §9 | [x] |
 | A7 | **[OBL]** Nombres de servicio en vez de `localhost` entre contenedores; documentar listeners de Kafka si hay acceso desde host | Config coherente con `.env.example` | Enunc. §9 · FAQ 28 | [x] |
-| A8 | **[OBL]** Solo la API se expone (Kafka y PG nunca por el túnel) | Solo `127.0.0.1:8000:8000` publicado (o ngrok en la red Compose) | Enunc. §9 | [x] |
-| A9 | **[OBL]** Uvicorn en `0.0.0.0:8000` dentro del contenedor (ngrok termina el HTTPS; la API recibe HTTP local) | Comprobado | Enunc. §9 · CONTRATO | [x] |
+| A8 | **[OBL]** Solo la API se expone (Kafka y PG nunca por el túnel) | Solo `127.0.0.1:8000:8000` publicado (o el túnel en la red Compose) | Enunc. §9 | [x] |
+| A9 | **[OBL]** Uvicorn en `0.0.0.0:8000` dentro del contenedor (el túnel termina el HTTPS; la API recibe HTTP local) | Comprobado | Enunc. §9 · CONTRATO | [x] |
 | A10 | **[OBL]** `.env.example` sin credenciales reales; variables coinciden con el código | Productor configurable por env: Kafka, topic, frecuencia | Enunc. §5, §9 | [x] |
 | A11 | **[OBL]** Dependencias fijadas (`requirements.txt` / lock) | Versiones concretas | Guía 1.3 | [x] |
-| A12 | El panel React **no** necesita contenedor (SPA en Netlify); ngrok en host o contenedor | — | Guía 1.2 | [x] |
+| A12 | El panel React **no** necesita contenedor (SPA en Netlify); túnel (`cloudflared`) en host o contenedor | — | Guía 1.2 | [x] |
 
 ### B. Extracción e ingesta
 
@@ -155,7 +156,7 @@ El frontend no viene hecho: hay que crear el proyecto React (Vite + TypeScript +
 
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
-| G0 | **Crear el proyecto React + TypeScript + Vite + Tailwind** (versiones de Node y de dependencias fijadas, `package-lock.json`), con la librería de mapa elegida (candidata: `react-globe.gl`; plan B MapLibre o Leaflet; se confirma en el plan de panel-base-mock), TanStack Query para los datos, estructura por componentes/hooks/store y build de producción (`dist/`) funcionando | `npm ci && npm run dev` y `npm run build` OK desde clon limpio | Decisión propia | [x] |
+| G0 | **Crear el proyecto React + TypeScript + Vite + Tailwind** (versiones de Node y de dependencias fijadas, `package-lock.json`), con la librería de mapa elegida (`react-globe.gl` 2.38.0, decidida en el plan de `panel-base-mock`), TanStack Query para los datos, estructura por componentes/hooks/store y build de producción (`dist/`) funcionando | `npm ci && npm run dev` y `npm run build` OK desde clon limpio | Decisión propia | [x] |
 | G1 | **[OBL]** Consulta **vuestra API**, no USGS | `config.json` en modo `api` | Enunc. §8 | [x] |
 | G2 | **[OBL]** Mapa o globo: fondo, fronteras, círculos, ficha; tamaño ∝ magnitud, color ∝ profundidad, **leyenda**, nulos visibles como **ND** | Implementado y comprobado visualmente con datos del mock y reales | Enunc. §8 | [x] |
 | G3 | **[OBL]** Recuentos por país/subregión (incl. "Sin país asignado") y por **hora UTC fija según tiempo del evento** | Gráfico/tabla | Enunc. §8 | [x] |
@@ -176,15 +177,15 @@ El frontend no viene hecho: hay que crear el proyecto React (Vite + TypeScript +
 | G17 | **Diseño responsive:** el panel es sobre todo para PC, pero es usable en móvil (breakpoints de Tailwind; mapa, ficha y leyenda sin scroll horizontal a 375 px de ancho) | Captura a 375 px sin scroll horizontal | Decisión propia | [x] |
 | G18 | **Vista de mapa 2D (MapLibre):** el botón «Ver en mapa 2D» de la ficha abre una vista plana con los eventos **ya cargados** (sin nuevas peticiones), con la misma paleta de profundidad y tamaño por magnitud que el globo, y un aviso visible si `truncated`. En `panel-base-mock` el botón está presente pero marcado como no disponible | Captura del mapa 2D con eventos del mock (y del caso `truncated` con su aviso); sin peticiones nuevas en la pestaña de red | Decisión propia | ☐ |
 
-### H. Despliegue y defensa
+### H. Despliegue y vídeo
 
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
 | H1 | **[OBL]** Panel Netlify accesible desde otro dispositivo | Probado | Guía 3.1 | [x] |
-| H2 | **[OBL]** Procedimiento breve de activación para la defensa (Compose → API → túnel → comprobación de `/api/salud` pública → panel → replay) | En README | Guía 3.2 | [x] |
+| H2 | **[OBL]** Procedimiento breve de activación para la demo y la grabación del vídeo (Compose → API → túnel → comprobación de `/api/salud` pública → panel → replay) | En README | Guía 3.2 | [x] |
 | H3 | **[OBL]** Túnel HTTPS (Cloudflare Tunnel con nombre; ngrok u otro servicio equivalente según el enunciado) que expone solo `http://localhost:8000`; el token o authtoken del túnel queda fuera de Git y del frontend | — | Enunc. §9 | ☐ |
 | H4 | **[OBL]** Equipo, contenedores y túnel **encendidos** durante la demo | — | Enunc. §9 | ☐ |
-| H5 | **[OBL]** Explicación individual oral: recorrido de un evento USGS → panel + **una decisión técnica propia** justificada | Preparado (apoyo: `CODEMAP.md`) | Guía 3.3 | ☐ |
+| H5 | **[OBL]** Vídeo de 5 min explicando cómo se cumple cada criterio de la rúbrica (+ recorrido de un evento y decisión propia en el README) | Vídeo grabado y enlazado en el README; recorrido de un evento USGS → panel y una decisión técnica propia justificada, por escrito en el README (apoyo: `CODEMAP.md`) | Cambio de evaluación (sin defensa oral) | ☐ |
 
 ### I. Pruebas de aceptación (las 11 del enunciado — ejecutarlas, no solo programarlas)
 
@@ -232,9 +233,9 @@ La columna "Feature" indica dónde se prueba por primera vez; la feature `prueba
 | K7 | **[OBL]** Propuesta de escalado + mejoras ligadas a problemas concretos (no genéricas) | Enunc. §10 · Guía 2.7 | ☐ |
 | K8 | **[OPC]** ROI (solo si defines un beneficio medible; no inventar) | Enunc. §10 | ☐ |
 
-### L. Memoria / notebook (un solo documento, no nueve)
+### L. Índice del README (un solo documento, no nueve)
 
-Índice recomendado (todo en `docs/memoria.md` o `notebooks/memoria.ipynb`):
+El bloque L es el índice del README final; el contenido largo puede vivir en `docs/memoria.md` o `notebooks/` y enlazarse desde él:
 
 | § | Contenido | ☐ |
 |---|---|---|
@@ -257,9 +258,10 @@ Reglas de las conclusiones: interpretar, no solo mostrar; con cifras; **sin leng
 |---|---|---|
 | M1 | **[OBL]** Código: productor, consumidor, API, frontend, carga histórica y replay | ☐ |
 | M2 | **[OBL]** Distinguir material reutilizado de lo desarrollado/modificado. Reutilizado: `paises.geojson` (catálogo entregado), teselas OSM, librerías (Chart.js…), la librería de mapa elegida y la textura o teselas usadas. El frontend de ejemplo del paquete **no** es base del trabajo: si se toma alguna idea o fragmento, indicarlo | ☐ |
-| M3 | **[OBL]** README reproducible (requisitos y versiones, `.env`, build/up, tablas y carga histórica, estado/logs, frontend dev y publicación, ngrok y URL, pruebas y replay, parar y qué datos persisten, dónde está cada evidencia) | ☐ |
+| M3 | **[OBL]** README reproducible (requisitos y versiones, `.env`, build/up, tablas y carga histórica, estado/logs, frontend dev y publicación, túnel y URL, pruebas y replay, parar y qué datos persisten, dónde está cada evidencia) | ☐ |
 | M4 | **[OBL]** El profesor tiene acceso al repo | ☐ |
-| M5 | **[OBL]** NO subir `node_modules`, secretos, authtoken ngrok, volúmenes de BD ni descargas grandes regenerables (`data/raw/`); documentar dónde van los originales y cómo regenerarlos | ☐ |
+| M5 | **[OBL]** NO subir `node_modules`, secretos, token del túnel, volúmenes de BD ni descargas grandes regenerables (`data/raw/`); documentar dónde van los originales y cómo regenerarlos | ☐ |
+| M10 | **[OBL, EVAL]** Tabla **rúbrica→evidencia** en el README: para cada criterio (Extracción, Calidad, Modelado, Análisis, Reflexión), dónde está la evidencia (archivo, consulta, captura o minuto del vídeo). La mantiene `doc-keeper` al cerrar cada feature | ☐ |
 | M6 | Estructura (ver 03 §3): `README.md`, `docs/memoria.md`, `docs/evidencias/`, `docs/enunciado/` (solo lectura), `docs/planificacion/`, `sql/`, un directorio por servicio (las carpetas de servicio se crean cuando su feature se implementa) | ☐ |
 | M7 | Historial de Git sin trailers de coautoría ni líneas de "generado por" herramientas (commits y PRs): constitución + `.claude/settings.json` + hook `commit-msg`; comprobado con `git log` | [x] |
 | M8 | `CLAUDE.md`, `CODEMAP.md` y la constitución (`.specify/`) versionados y al día; `docs/` (entregables) separado de `specs/` (herramienta de trabajo) | [x] |
@@ -276,7 +278,7 @@ Reglas de las conclusiones: interpretar, no solo mostrar; con cifras; **sin leng
 | `ENUNCIADO`, FAQ, guía de entregables, `VALIDACION.md`, `FUENTES-Y-LICENCIAS.md` | Implementar `/api/eventos`, `/api/salud`, `/api/estadisticas` y decidir lo que el contrato deja abierto |
 | Ejemplo de frontend (Angular + Leaflet, 4 eventos ficticios): **solo referencia, no es tu base** | **Todo el frontend desde cero** (React + TypeScript + Vite + Tailwind): proyecto, mapa, fronteras, filtros, tabla, gráficos, comparación histórica, estado del sistema, modo replay, mock del contrato |
 | — | Datos reales, histórico, replay por Kafka |
-| — | Memoria, mediciones, costes, pruebas con evidencias, defensa |
+| — | Memoria, mediciones, costes, pruebas con evidencias, README y vídeo |
 
 Límites del material de ejemplo (de `VALIDACION.md`): nunca se probó visualmente en navegador ni con Netlify/ngrok reales. Aplica también a lo que tomes de él como idea: compruébalo tú.
 
@@ -295,11 +297,11 @@ Límites del material de ejemplo (de `VALIDACION.md`): nunca se probó visualmen
 
 ## 5. Puntos ambiguos o por confirmar con el profesor
 
-1. ~~Fecha de entrega y modalidad~~ **Resuelto:** trabajo **individual**, entrega el **19 de noviembre de 2026**. Al ser individual, la explicación oral (H5) la defiendes tú entero: debes poder explicar todo el flujo, no solo una parte.
+1. ~~Fecha de entrega y modalidad~~ **Resuelto:** trabajo **individual**, entrega el **19 de noviembre de 2026**. Al ser individual, el vídeo y el README (H5) los asumes tú entero: debes poder explicar todo el flujo, no solo una parte. **Cambio de evaluación:** ya no hay defensa oral.
 2. **Dónde vive el histórico 2025**: ¿mismo esquema `live` que el feed (necesario para la comparación) o esquema propio? El enunciado no lo fija. Propuesta del roadmap: mismo esquema, columna `source`, y justificarlo.
 3. **Gráficos en el panel**: no se menciona librería; asumir que una dependencia fijada (p. ej. Chart.js) es válida, o SVG propio. Confirmar si importa.
 4. **Cobertura "últimas 24 h" en replay**: la vista de replay debe usar el intervalo de 2025; confirmar que el selector de modo en el panel es aceptable.
-5. **Dominio ngrok**: el gratuito puede cambiar entre sesiones y `config.json` se compila en el build → comprobar si tu cuenta permite un dominio estático para no recompilar Netlify cada vez.
+5. **Dominio del túnel:** ~~dominio ngrok~~ **Resuelto:** Cloudflare Tunnel con dominio propio (URL estable; `config.json` se compila en el build, no hay que recompilar Netlify entre sesiones).
 6. **Tamaño máximo de puntos por respuesta** (truncado/paginación): lo fijas tú, pero debe estar documentado.
 7. **Inconsistencia menor**: la FAQ menciona `ENUNCIADO.md` y `README.md` del paquete; tu carpeta ya los tiene todos. La guía de entregables no está en la carpeta (solo la subiste al chat): guárdala como `Guia-entregables.md` en `docs/enunciado/`.
 8. **Uso del frontend de ejemplo**: se asume que hay que desarrollar el panel desde cero y que el ejemplo es solo referencia. Si el profesor permite partir de él, G0 y parte de G2/G11 se simplifican; en ese caso indicarlo en M2.
@@ -323,10 +325,11 @@ Límites del material de ejemplo (de `VALIDACION.md`): nunca se probó visualmen
 - [ ] Panel abre desde otro dispositivo con túnel activo; si falla, lo indica.
 - [ ] Replay aislado y etiquetado.
 - [ ] Memoria con calidad, modelo, análisis, mediciones y costes; 11 pruebas ejecutadas con evidencia.
+- [ ] Tabla rúbrica→evidencia en el README (M10).
 - [ ] Sin credenciales ni `node_modules` en Git; historial sin trailers de coautoría (`git log`).
 - [ ] Material reutilizado (catálogo, librerías) distinguido del desarrollado por mí.
 - [ ] `CODEMAP.md` al día y `docs/enunciado/` sin modificar.
-- [ ] Puedo explicar un evento de principio a fin y una decisión propia.
+- [ ] Vídeo de 5 min grabado (cada criterio de la rúbrica) y enlazado; recorrido de un evento y decisión propia en el README.
 
 ---
 
@@ -353,5 +356,5 @@ Fuente de verdad de las features: `03-procedimiento-ejecucion.md` §4. Se usa el
 | Tabla I (las 11 pruebas) | `pruebas-aceptacion` (se prueban antes en `productor-live`, `consumidor-idempotente`, `geografia-pais`, `replay` y `despliegue-tunel`) |
 | G13, H1–H4; pruebas 9 y 10 | `despliegue-tunel` |
 | K1–K8, E6 | `mediciones-costes` |
-| Bloque L, D y C14 (calidad), B2/B11/B12/B18 (texto), H5, M1–M6 | `memoria-defensa` (el contenido se prepara en `notebooks/` y `docs/memoria.md` desde las features anteriores) |
+| Bloque L (índice del README), D y C14 (calidad), B2/B11/B12/B18 (texto), H5 (vídeo), M1–M6, M10 | `readme-video` (el contenido se prepara en `notebooks/`, `docs/memoria.md` y los borradores desde las features anteriores) |
 | M1, M3 (README), M8 | Todas las features (cada una deja README y `CODEMAP.md` al cerrarse) |
