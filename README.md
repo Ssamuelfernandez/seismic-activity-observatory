@@ -15,7 +15,9 @@ Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
 | `geografia-pais` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: país por geometría (`ADM0_A3`), catálogo de 177 países cargado al arrancar, comprobación de esquema y reglas de validez (C9–C12, C13; pruebas 5 y 7). Evidencias en `docs/evidencias/geografia-pais/`. Sin tareas diferidas; apuntes en `docs/borradores/geografia-pais.md` |
 | `historico-2025` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: descarga de 2025 (M≥4, mundial, por meses), deduplicación, carga en la base con el procesamiento común y procedimiento de hueco (B12–B18). Evidencias en `docs/evidencias/historico-2025/`; apuntes en `docs/borradores/historico-2025.md` |
 | `api` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: API de consulta de solo lectura (`/api/eventos`, `/api/estadisticas`, `/api/salud`; F1–F8, F10, F11, F12 parcial). Evidencias en `docs/evidencias/api/`; CORS (F9) queda en `despliegue` |
-| Resto de features | No empezadas |
+| `panel-base-mock` | **Completada** (2026-11-10), pendiente de la comprobación visual del alumno: panel React con el front externo del alumno adoptado y corregido, conectado a la API real, con mock sintético de cinco escenarios y 70 pruebas Vitest. Ver [`frontend/README.md`](frontend/README.md) y [`docs/evidencias/panel-base-mock/`](docs/evidencias/panel-base-mock/) |
+| `009` filtros y tabla, `010` gráficos y comparación, `011` estado y fallos, `012` conexión con la API | Absorbidas por `panel-base-mock` (no se ejecutan por separado) |
+| `replay` (013), `pruebas-aceptacion` (014), `despliegue-tunel` (015), `mediciones-costes` (016), `memoria-defensa` (017, incluye el README final) | Pendientes |
 
 La API es la **API de consulta** (ver su sección más abajo). El productor ya es el **productor en vivo** (ver su sección más abajo). El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
 
@@ -302,6 +304,24 @@ docker compose --profile test run --rm tests pytest -m integration -q           
 ```
 
 **Límites conocidos.** Sin CORS: el panel en otro origen no podrá consultar la API hasta la feature `despliegue` (F9); `OPTIONS` responde 405. El modo `replay` lee `replay.current_event`, vacío hasta la feature de replay. Un cursor reutilizado con otros filtros no se detecta; los parámetros desconocidos se ignoran; un error SQL no previsto sale como 503; un año completo en `by_hour` son unas 8 760 entradas. Si PostgreSQL está parado al arrancar, la API reintenta y no atiende hasta que vuelva. Evidencias: [`docs/evidencias/api/`](docs/evidencias/api/).
+
+## Panel web
+
+Detalle completo en [`frontend/README.md`](frontend/README.md). Requiere Node 24.18.0 (`frontend/.nvmrc`) y, para ver datos reales, la API levantada en `127.0.0.1:8000` (`docker compose up -d`).
+
+```bash
+cd frontend
+npm ci
+npm run dev      # http://localhost:4200 (puerto fijo); /api se reenvía por proxy a http://127.0.0.1:8000
+```
+
+La configuración se lee al arrancar de `frontend/public/config.json` (`mode`, `apiBaseUrl`, `refreshSeconds`, `timeoutMs`; sin secretos). Con `"mode": "mock"` usa el mock sintético, solo en desarrollo. El proxy se cambia con `API_PROXY_TARGET`. Pruebas: `npm test`.
+
+### Material reutilizado
+
+- **react-globe.gl** 2.38.0 y **three** 0.187.0 (licencia MIT): globo 3D.
+- **`paises.geojson`** de Natural Earth (Admin 0 Countries, 1:110 m, dominio público): `data/catalogo/paises.geojson`, copiado sin modificar a `frontend/public/datos/`.
+- **Front externo del alumno**: prototipo propio previo, portado y corregido para esta feature (inventario en [`specs/008-panel-base-mock/inventario-front-externo.md`](specs/008-panel-base-mock/inventario-front-externo.md)).
 
 ## Configuración de Git: el hook `commit-msg`
 
