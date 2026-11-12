@@ -1,0 +1,6 @@
+replay metadata.mode = replay total = 22 features = 22
+reales: 20 time distinto del archivo: []
+is_synthetic true solo en: ['synthetic-replay-e2', 'synthetic-replay-e1'] | sinteticos sin prefijo: [] | reales marcados: []
+sin mode: metadata.mode = live features = 211 ids replay: []
+estadisticas: metadata.mode = replay comparison = None
+claves estadisticas: ['metadata', 'period', 'filters', 'total', 'by_hour', 'by_country', 'histograms', 'comparison']

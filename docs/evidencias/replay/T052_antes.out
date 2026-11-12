@@ -1,0 +1,21 @@
+# T052 antes - 2026-11-12T16:38:58Z
+NAME                             IMAGE                              COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+seismic-observatory-api-1        seismic-observatory-python:0.1.0   "uvicorn api.main:ap…"   api        53 seconds ago   Up 47 seconds (healthy)   127.0.0.1:8000->8000/tcp
+seismic-observatory-consumer-1   seismic-observatory-python:0.1.0   "python -m consumer.…"   consumer   53 seconds ago   Up 46 seconds (healthy)   
+seismic-observatory-kafka-1      apache/kafka:4.1.2                 "/__cacert_entrypoin…"   kafka      53 seconds ago   Up 52 seconds (healthy)   9092/tcp
+seismic-observatory-postgres-1   postgres:16.15-bookworm            "docker-entrypoint.s…"   postgres   53 seconds ago   Up 52 seconds (healthy)   127.0.0.1:5433->5432/tcp
+
+     t      | count |               md5                
+------------+-------+----------------------------------
+ current    |   211 | 5a51932f2d257dd5724850ef206b65b7
+ version    |   211 | 69daf81f2efd2d07fcd22166511f3f97
+ quarantine |     0 | 
+(3 rows)
+
+     t      | count 
+------------+-------
+ current    |     0
+ version    |     0
+ quarantine |     0
+(3 rows)
+

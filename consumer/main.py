@@ -3,8 +3,8 @@ import asyncio
 import signal
 
 from common.config import (
-    load_database_settings, load_health_settings, load_kafka_settings, load_log_level,
-    load_retry_settings, read_optional_int, read_str,
+    load_consumer_topics, load_database_settings, load_health_settings, load_kafka_settings,
+    load_log_level, load_retry_settings, read_optional_int, read_str,
 )
 from common.logging_setup import configure_logging
 from consumer.fault_hook import AfterDbCommit, build_fault_hook
@@ -23,6 +23,7 @@ def build_settings() -> ConsumerSettings:
         health=load_health_settings(),
         group_id=read_str("KAFKA_GROUP_ID"),
         country_catalog_path=read_str("COUNTRY_CATALOG_PATH"),
+        topics=load_consumer_topics(),
     )
 
 

@@ -1,0 +1,41 @@
+time="2026-11-12T17:40:20+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-kafka-1 Running 
+ Container seismic-observatory-postgres-1 Running 
+time="2026-11-12T17:40:20+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-kafka-1 Waiting 
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-kafka-1 Healthy 
+ Container seismic-observatory-producer-run-bd70a3468704 Creating 
+ Container seismic-observatory-producer-run-bd70a3468704 Created 
+2026-11-12 16:40:21,744 INFO [common.kafka_topics] Tema creado: earthquakes.live
+2026-11-12 16:40:21,745 INFO [common.kafka_topics] Tema creado: earthquakes.replay
+2026-11-12 16:40:21,750 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pgti
+2026-11-12 16:40:23,762 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000phap
+2026-11-12 16:40:25,775 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000phbz
+2026-11-12 16:40:27,783 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000phem
+2026-11-12 16:40:29,796 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000phla
+2026-11-12 16:40:31,800 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pifa
+2026-11-12 16:40:33,804 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000piqd
+2026-11-12 16:40:35,816 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pj17
+2026-11-12 16:40:37,821 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pj3c
+2026-11-12 16:40:39,825 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pjha
+2026-11-12 16:40:40,942 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pjue
+2026-11-12 16:40:42,948 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pk4q
+2026-11-12 16:40:44,950 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pl70
+2026-11-12 16:40:46,953 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000plfl
+2026-11-12 16:40:48,957 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000plfq
+2026-11-12 16:40:50,961 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pm4b
+2026-11-12 16:40:52,966 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pmap
+2026-11-12 16:40:54,998 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pmeu
+2026-11-12 16:40:57,003 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us6000pms8
+2026-11-12 16:40:59,008 INFO [producer.publisher] Publicado en earthquakes.replay: clave=us7000p9rg
+2026-11-12 16:41:01,015 INFO [producer.publisher] Publicado en earthquakes.replay: clave=synthetic-replay-e1
+2026-11-12 16:41:03,020 INFO [producer.publisher] Publicado en earthquakes.replay: clave=synthetic-replay-e1
+2026-11-12 16:41:05,024 INFO [producer.publisher] Publicado en earthquakes.replay: clave=synthetic-replay-e1
+2026-11-12 16:41:07,029 INFO [producer.publisher] Publicado en earthquakes.replay: clave=synthetic-replay-e1
+2026-11-12 16:41:09,035 INFO [producer.publisher] Publicado en earthquakes.replay: clave=synthetic-replay-e2
+2026-11-12 16:41:10,178 INFO [producer.publisher] Publicado en earthquakes.replay: clave=synthetic-replay-e1
+2026-11-12 16:41:10,178 INFO [producer.replay_runner] Replay terminado: 20 reales y 6 del bloque controlado
+2026-11-12 16:41:10,180 INFO [__main__] Publicados: 26 (20 reales + 6 del bloque controlado)
+exit=0

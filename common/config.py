@@ -5,6 +5,8 @@ Toda la configuración variable entra por aquí; el resto del código no llama a
 import os
 from dataclasses import dataclass
 
+from common.kafka_topics import CONTRACT_TOPICS
+
 DEFAULT_LOG_LEVEL = "INFO"
 DEFAULT_RETRY_INITIAL_SECONDS = 1
 DEFAULT_RETRY_MAX_SECONDS = 30
@@ -134,6 +136,31 @@ def load_kafka_settings() -> KafkaSettings:
         bootstrap_servers=read_str("KAFKA_BOOTSTRAP_SERVERS"),
         topic=read_str("KAFKA_TOPIC"),
     )
+
+
+def load_consumer_topics() -> tuple[str, ...]:
+    """Lee los topics a los que se suscribe el consumidor (J3, FR-008).
+
+    Qué hace:
+        Interpreta `KAFKA_CONSUMER_TOPICS` como lista separada por comas, sin espacios ni
+        duplicados, y valida cada nombre contra `CONTRACT_TOPICS`.
+    Recibe:
+        Nada; lee el entorno. Si la variable falta, se usan todos los topics del contrato.
+    Devuelve:
+        Tupla con los nombres, en el orden indicado.
+    Por qué existe:
+        El consumidor debe leer `earthquakes.live` y `earthquakes.replay`; un nombre mal escrito
+        debe fallar al arrancar nombrando la variable (A10).
+    """
+    raw = read_str("KAFKA_CONSUMER_TOPICS", ",".join(CONTRACT_TOPICS))
+    names = tuple(dict.fromkeys(part.strip() for part in raw.split(",") if part.strip()))
+    if not names:
+        raise ConfigError("La variable KAFKA_CONSUMER_TOPICS no contiene ningún topic.")
+    unknown = [name for name in names if name not in CONTRACT_TOPICS]
+    if unknown:
+        raise ConfigError(f"La variable KAFKA_CONSUMER_TOPICS contiene topics desconocidos: {unknown}; "
+                          f"los válidos son {list(CONTRACT_TOPICS)}.")
+    return names
 
 
 def load_database_settings() -> DatabaseSettings:

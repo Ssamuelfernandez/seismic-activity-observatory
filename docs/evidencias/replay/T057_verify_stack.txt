@@ -1,0 +1,20 @@
+PASS  Los cinco servicios están healthy — {'api': 'healthy', 'consumer': 'healthy', 'kafka': 'healthy', 'postgres': 'healthy', 'producer': 'healthy'}
+PASS  live.current_event contiene eventos reales (is_synthetic=false, usgs_feed) — filas: 212
+PASS  GET /api/salud en 127.0.0.1:8000 — {"status": "ok", "last_ingestion": 1794502055250, "generated": 1794502075715}
+FAIL  Solo la API publica un puerto, en 127.0.0.1:8000 — {'api': [('127.0.0.1', 8000)], 'postgres': [('127.0.0.1', 5433)]}
+PASS  kafka no tiene puertos enlazados al equipo — sin enlaces
+FAIL  postgres no tiene puertos enlazados al equipo — {'5432/tcp': [{'HostIp': '127.0.0.1', 'HostPort': '5433'}]}
+INFO  el puerto 5432 del equipo responde, pero Compose no publica ninguno: lo atiende otro proceso local
+PASS  Tema earthquakes.live: 1 partición, factor 1, retención 7 días — Topic: earthquakes.live	TopicId: MFox7cU0S_OSZ2vnwN0IuQ	PartitionCount: 1	ReplicationFactor: 1	Configs: min.insync.replicas=1,retention.ms=604800000
+PASS  Tema earthquakes.replay: 1 partición, factor 1, retención 7 días — Topic: earthquakes.replay	TopicId: ef6ZF4U4QFiBwhbLmTi4aA	PartitionCount: 1	ReplicationFactor: 1	Configs: min.insync.replicas=1,retention.ms=604800000
+PASS  Rol observatory_api: permisos de escritura según el contrato
+PASS  Rol observatory_producer: permisos de escritura según el contrato
+PASS  Rol observatory_consumer: permisos de escritura según el contrato
+PASS  Rol observatory_api: puede leer current_event, country e ingest_run
+PASS  La cuenta de la API no puede escribir (INSERT rechazado) — WRITE_DENIED
+PASS  Tras reiniciar, los cinco servicios vuelven a estar healthy
+PASS  PostgreSQL conserva el dato tras reiniciar los contenedores
+PASS  live.current_event contiene eventos reales (is_synthetic=false, usgs_feed) — filas: 212
+
+14/16 comprobaciones superadas.
+rc=1

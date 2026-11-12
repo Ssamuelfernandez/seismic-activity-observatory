@@ -51,3 +51,7 @@
 | replay | Zona `chile-norte`, N=20 (2025-01-01..29, M4.0-6.1): 18 Chile, 1 Bolivia, 1 sin país | Zona global o más grande | Incluye caso sin país y frontera; tamaño manejable en demo |
 | replay | "Live no cambia" se comprueba con el productor live parado | Comprobarlo con el productor activo | USGS real seguiría ingiriendo y falsearía la comparación |
 | replay | Volumen de solo lectura `data/historical` en el productor; el panel no se toca salvo T056 | Copiar datos a la imagen; rediseñar el panel | Sin servicios nuevos ni ampliar alcance |
+| replay | Volumen `data/historical` en modo ro también en el servicio `tests` de compose.yaml | Copiar los archivos a la imagen de pruebas o saltar las pruebas de integración | Las pruebas necesitan los archivos reales; ro no puede alterarlos; compose.yaml no es contrato |
+| replay | `load_verified_features` lee solo `manifest.files`, sin `gaps` | Incluir los archivos `usgs_gap_*` | research D10: el replay no usa los huecos; la zona y el mes elegidos no los necesitan |
+| replay | Panel verificado con Edge headless por CDP y sin modificarlo | Esperar a la extensión de Chrome o cambiar `fadeByAge` | La extensión no conectó; los puntos de 2025 son legibles, no hay cambio justificado |
+| replay | `verify_stack.py` 14/16 aceptado: fallo por `compose.override.yaml` local (publica 5433, ignorado por git) | Corregir el script o borrar el override | Ajeno a la feature y al repositorio; se documenta como límite |

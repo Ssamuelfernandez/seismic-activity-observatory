@@ -17,7 +17,8 @@ Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
 | `api` | Implementada y verificada (2026-11-05), pendiente de la revisión del alumno: API de consulta de solo lectura (`/api/eventos`, `/api/estadisticas`, `/api/salud`; F1–F8, F10, F11, F12 parcial). Evidencias en `docs/evidencias/api/`; CORS (F9) queda en `despliegue` |
 | `panel-base-mock` | **Completada** (2026-11-10), pendiente de la comprobación visual del alumno: panel React con el front externo del alumno adoptado y corregido, conectado a la API real, con mock sintético de cinco escenarios y 70 pruebas Vitest. Ver [`frontend/README.md`](frontend/README.md) y [`docs/evidencias/panel-base-mock/`](docs/evidencias/panel-base-mock/) |
 | `009` filtros y tabla, `010` gráficos y comparación, `011` estado y fallos, `012` conexión con la API | Absorbidas por `panel-base-mock` (no se ejecutan por separado) |
-| `replay` (013), `pruebas-aceptacion` (014), `despliegue-tunel` (015), `mediciones-costes` (016), `memoria-defensa` (017, incluye el README final) | Pendientes |
+| `replay` (009) | En revisión (implementada y comprobada de extremo a extremo): reproducción acelerada de una selección de 2025 por Kafka, aislada de `live` (J1–J8, F12, G10). Ver la sección «Replay»; apuntes en [`docs/borradores/replay.md`](docs/borradores/replay.md) |
+| `pruebas-aceptacion` (014), `despliegue-tunel` (015), `mediciones-costes` (016), `memoria-defensa` (017, incluye el README final) | Pendientes |
 
 La API es la **API de consulta** (ver su sección más abajo). El productor ya es el **productor en vivo** (ver su sección más abajo). El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
 
@@ -160,9 +161,9 @@ ngrok **se ejecuta en el equipo anfitrión** (`ngrok http 8000`) y **queda fuera
 
 ## Consumidor idempotente
 
-El consumidor lee solo el tema live (`KAFKA_TOPIC`, por defecto `earthquakes.live`; el replay queda fuera de alcance de esta feature), valida cada mensaje, lo guarda en PostgreSQL en una transacción por mensaje (sin duplicados, conservando todas las versiones) y envía a cuarentena lo que no se puede guardar. Escribe una línea `decision=… event_id=…` por mensaje y un resumen `COUNTERS {…}` cada 60 s y al parar. Los contratos están en `specs/001-contratos-y-modelo/contracts/` y los del consumidor en [`specs/003-consumidor-idempotente/contracts/`](specs/003-consumidor-idempotente/contracts/).
+El consumidor se suscribe a los topics de `KAFKA_CONSUMER_TOPICS` (lista separada por comas; por defecto `earthquakes.live,earthquakes.replay`; cada nombre se valida contra los topics del contrato y un nombre desconocido impide arrancar). `KAFKA_TOPIC` ya no sirve para suscribirlo: es el topic del productor live. Valida cada mensaje, lo guarda en PostgreSQL en una transacción por mensaje (sin duplicados, conservando todas las versiones) y envía a cuarentena lo que no se puede guardar. Escribe una línea `decision=… event_id=…` por mensaje y un resumen `COUNTERS {…}` cada 60 s y al parar. Los contratos están en `specs/001-contratos-y-modelo/contracts/` y los del consumidor en [`specs/003-consumidor-idempotente/contracts/`](specs/003-consumidor-idempotente/contracts/).
 
-**Configuración del `.env` local** (no se comitea): además de las contraseñas, debe contener `KAFKA_GROUP_ID=consumer-live` (el grupo ya no se llama `consumer-minimal`) y `CONSUMER_FAULT_CRASH_AT_OFFSET=` (vacía; solo la usa la prueba 8). `.env.example` ya trae ambas.
+**Configuración del `.env` local** (no se comitea): además de las contraseñas, debe contener `KAFKA_GROUP_ID=consumer-live` (el grupo ya no se llama `consumer-minimal`), opcionalmente `KAFKA_CONSUMER_TOPICS` (si falta, `compose.yaml` usa `earthquakes.live,earthquakes.replay`) y `CONSUMER_FAULT_CRASH_AT_OFFSET=` (vacía; solo la usa la prueba 8). `.env.example` ya trae ambas.
 
 **Pruebas unitarias** (sin Docker; el entorno virtual con las dependencias de desarrollo):
 
@@ -303,7 +304,37 @@ docker compose up -d postgres && docker compose --profile test build tests
 docker compose --profile test run --rm tests pytest -m integration -q              # integración (rol real)
 ```
 
-**Límites conocidos.** Sin CORS: el panel en otro origen no podrá consultar la API hasta la feature `despliegue` (F9); `OPTIONS` responde 405. El modo `replay` lee `replay.current_event`, vacío hasta la feature de replay. Un cursor reutilizado con otros filtros no se detecta; los parámetros desconocidos se ignoran; un error SQL no previsto sale como 503; un año completo en `by_hour` son unas 8 760 entradas. Si PostgreSQL está parado al arrancar, la API reintenta y no atiende hasta que vuelva. Evidencias: [`docs/evidencias/api/`](docs/evidencias/api/).
+**Límites conocidos.** Sin CORS: el panel en otro origen no podrá consultar la API hasta la feature `despliegue` (F9); `OPTIONS` responde 405. El modo `replay` lee `replay.current_event`, que está vacío hasta que se lanza el replay (ver «Replay»). Un cursor reutilizado con otros filtros no se detecta; los parámetros desconocidos se ignoran; un error SQL no previsto sale como 503; un año completo en `by_hour` son unas 8 760 entradas. Si PostgreSQL está parado al arrancar, la API reintenta y no atiende hasta que vuelva. Evidencias: [`docs/evidencias/api/`](docs/evidencias/api/).
+
+## Replay
+
+Reproduce por Kafka una selección de eventos reales de 2025, a ritmo configurable, para tener actividad que mostrar sin esperar a un terremoto. Va aislado de `live` y etiquetado como «REPRODUCCIÓN». Guía paso a paso: [`specs/009-replay/quickstart.md`](specs/009-replay/quickstart.md); decisiones: [`specs/009-replay/research.md`](specs/009-replay/research.md); apuntes de defensa: [`docs/borradores/replay.md`](docs/borradores/replay.md).
+
+**Selección por defecto.** Los 20 primeros eventos (por `time`, desempate por `id`) de la caja `chile-norte` (lat −27 a −18, lon −72 a −68,5), del 2025-01-01 08:08 UTC al 2025-01-29 03:44 UTC, leídos de `data/historical/` tras verificar el sha256 de cada archivo. Se eligió porque tiene más de 20 eventos M ≥ 4 y un país reconocible (18 en Chile, 1 en Bolivia, 1 sin país: enseña país por geometría y «Sin país asignado»). La otra zona disponible es `japon-honshu`, pero 9 de sus 20 primeros caen en el mar. A los 20 se añade un **bloque controlado** de 6 mensajes sobre dos eventos sintéticos (`synthetic-replay-e1`, `synthetic-replay-e2`, `is_synthetic = true`): reenvíos, una versión posterior y una versión antigua tardía.
+
+**Comando** (el servicio `producer` monta `data/historical/` en solo lectura; no hay servicio nuevo):
+
+```bash
+docker compose run --rm producer python -m producer.replay --interval 2 --zone chile-norte --count 20
+```
+
+`--interval` son los segundos entre mensajes (por defecto 2, no es «el doble de rápido»); `--zone` y `--count` tienen los valores indicados y `--data-dir` por defecto `data/historical`. Con el intervalo por defecto dura unos 52 s. Termina con «Publicados: 26 (20 reales + 6 del bloque controlado)». Si falta o está alterado un archivo, la zona no existe o la selección queda vacía, sale con código 1 y no publica nada.
+
+**Aislamiento.** Tres capas: el replay solo publica en `earthquakes.replay`; el consumidor guarda lo de ese topic únicamente en el esquema `replay`; y comprueba que el campo `mode` del mensaje coincide con el topic (si no, va a `replay.quarantine` con `mode_topic_mismatch`). Para comprobar que `live` no cambia, hay que parar antes el productor live (`docker compose stop producer`), porque este sigue ingiriendo USGS.
+
+**Qué se espera ver** (esquema `replay` vacío, un solo replay): 26 mensajes; `replay.current_event` = 22 filas, `replay.event_version` = 24, `replay.quarantine` = 0; el consumidor registra 2 reenvíos ignorados, 1 versión posterior y 1 antigua tardía; `synthetic-replay-e1` conserva la versión con `updated` 10:09 y 3 versiones; todas las filas con `source = replay_demo` y `replay_at` no nulo. En la API, `GET /api/eventos?mode=replay&start=2025-01-01&end=2026-01-01` da `metadata.mode = "replay"` y `total = 22`, con los `time` originales; sin `mode` no sale ningún evento de replay; en `/api/estadisticas?mode=replay`, `comparison` es `null`. En el panel (`config.json` con `mode: "api"`), elegir «Reproducción» muestra el banner «REPRODUCCIÓN» y los 22 eventos con fechas de 2025; «En vivo» los oculta.
+
+**Repetir.** Es idempotente: relanzar el replay sin vaciar nada deja los mismos 22 / 24 / 0 y los mismos `replay_at` de las filas existentes (todo son reenvíos). **Resultados medidos** (demo completa con contenedores, 2026-11-12): 26 mensajes publicados en 51 s con `--interval 2`; `replay.current_event` = 22, `replay.event_version` = 24, `replay.quarantine` = 0; 2 reenvíos ignorados, 1 versión posterior, 1 antigua tardía; `live` intacto (211 / 211 / 0 con la misma huella `md5` antes y después, con el productor live parado). Evidencias: [`docs/evidencias/replay/`](docs/evidencias/replay/).
+
+**Límites conocidos.**
+
+- No hay borrado de las tablas de replay (ningún rol tiene `DELETE`): empezar de cero exige recrear el volumen de PostgreSQL (`docker compose down -v`).
+- La velocidad es un intervalo fijo entre mensajes, no una compresión proporcional del tiempo original.
+- La selección y el bloque controlado son fijos: no hay modo aleatorio.
+- El replay usa los archivos de `historico-2025`; no reproduce la ingesta real de USGS.
+- El grupo del consumidor sigue llamándose `consumer-live` aunque ahora lee los dos topics (renombrarlo reprocesaría `live` entero).
+- El bloque controlado tiene 6 mensajes, una variante propia de la secuencia de la FAQ 12 (que tiene 5).
+- `specs/002-infra-compose/contracts/config.md` no recoge `KAFKA_CONSUMER_TOPICS`: la fuente es `.env.example` y este README.
 
 ## Panel web
 

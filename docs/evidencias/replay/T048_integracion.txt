@@ -1,0 +1,5 @@
+tests/integration/test_replay_consumer.py::test_26_messages_give_22_24_0_in_replay_and_nothing_in_live PASSED [ 25%]
+tests/integration/test_replay_consumer.py::test_e1_keeps_the_greatest_updated_and_every_row_has_replay_at_and_source PASSED [ 50%]
+tests/integration/test_replay_consumer.py::test_repeating_the_26_messages_keeps_counts_and_replay_at PASSED [ 75%]
+tests/integration/test_replay_consumer.py::test_live_mode_message_in_the_replay_topic_goes_to_replay_quarantine PASSED [100%]
+============================== 4 passed in 4.16s ===============================

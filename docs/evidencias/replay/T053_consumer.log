@@ -1,0 +1,333 @@
+2026-11-12 16:38:13,175 INFO [common.db] PostgreSQL disponible con el rol observatory_consumer.
+2026-11-12 16:38:13,249 INFO [consumer.catalog_loader] catalog loaded total=177 inserted=177 updated=0
+2026-11-12 16:38:13,259 INFO [common.kafka_topics] Tema creado: earthquakes.live
+2026-11-12 16:38:13,261 INFO [common.kafka_topics] Tema creado: earthquakes.replay
+2026-11-12 16:38:13,262 INFO [aiokafka.consumer.subscription_state] Updating subscribed topics to: frozenset({'earthquakes.live', 'earthquakes.replay'})
+2026-11-12 16:38:13,271 ERROR [aiokafka.consumer.group_coordinator] Group Coordinator Request failed: [Error 15] GroupCoordinatorNotAvailableError
+2026-11-12 16:38:13,376 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:13,376 INFO [aiokafka.consumer.group_coordinator] Revoking previously assigned partitions set() for group consumer-live
+2026-11-12 16:38:13,377 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:13,378 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:13,481 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:13,482 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:13,482 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:13,584 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:13,584 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:13,585 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:13,687 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:13,687 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:13,688 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:13,791 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:13,791 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:13,792 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:13,894 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:13,894 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:13,895 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:13,997 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:13,997 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:13,998 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,099 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,099 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,099 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,201 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,201 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,202 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,304 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,304 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,305 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,407 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,407 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,407 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,509 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,509 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,510 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,612 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,612 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,613 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,714 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,714 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,715 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:13,928 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:13,928 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:13,929 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,030 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,030 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,031 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,133 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,133 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,134 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,235 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,235 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,236 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,338 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,338 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,339 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,440 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,440 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,441 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,543 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,543 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,544 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,645 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,645 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,646 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,747 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,747 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,748 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,849 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,849 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,850 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:14,951 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:14,951 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:14,952 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:15,053 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:15,053 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:15,054 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:15,155 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:15,155 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:15,156 WARNING [aiokafka.consumer.group_coordinator] Marking the coordinator dead (node 1)for group consumer-live.
+2026-11-12 16:38:15,257 INFO [aiokafka.consumer.group_coordinator] Discovered coordinator 1 for group consumer-live
+2026-11-12 16:38:15,257 INFO [aiokafka.consumer.group_coordinator] (Re-)joining group consumer-live
+2026-11-12 16:38:15,262 INFO [aiokafka.consumer.group_coordinator] Joined group 'consumer-live' (generation 1) with member_id aiokafka-0.15.0-e555ec29-4063-4955-94c5-87809f873716
+2026-11-12 16:38:15,262 INFO [aiokafka.consumer.group_coordinator] Elected group leader -- performing partition assignments using roundrobin
+2026-11-12 16:38:15,266 INFO [aiokafka.consumer.group_coordinator] Successfully synced group consumer-live with generation 1
+2026-11-12 16:38:15,266 INFO [aiokafka.consumer.group_coordinator] Setting newly assigned partitions {TopicPartition(topic='earthquakes.live', partition=0), TopicPartition(topic='earthquakes.replay', partition=0)} for group consumer-live
+2026-11-12 16:38:15,266 INFO [consumer.loop] Consumidor suscrito a los temas earthquakes.live, earthquakes.replay.
+2026-11-12 16:38:15,288 INFO [consumer.reporting] decision=new_event event_id=ci41361383 topic=earthquakes.live partition=0 offset=0
+2026-11-12 16:38:15,304 INFO [consumer.reporting] decision=new_event event_id=aka2026wlbqmd topic=earthquakes.live partition=0 offset=1
+2026-11-12 16:38:15,313 INFO [consumer.reporting] decision=new_event event_id=nc75465777 topic=earthquakes.live partition=0 offset=2
+2026-11-12 16:38:15,323 INFO [consumer.reporting] decision=new_event event_id=aka2026wlbocy topic=earthquakes.live partition=0 offset=3
+2026-11-12 16:38:15,332 INFO [consumer.reporting] decision=new_event event_id=aka2026wlbkgk topic=earthquakes.live partition=0 offset=4
+2026-11-12 16:38:15,341 INFO [consumer.reporting] decision=new_event event_id=hv75069677 topic=earthquakes.live partition=0 offset=5
+2026-11-12 16:38:15,349 INFO [consumer.reporting] decision=new_event event_id=aka2026wlayjd topic=earthquakes.live partition=0 offset=6
+2026-11-12 16:38:15,358 INFO [consumer.reporting] decision=new_event event_id=aka2026wlajid topic=earthquakes.live partition=0 offset=7
+2026-11-12 16:38:15,367 INFO [consumer.reporting] decision=new_event event_id=aka2026wlafzk topic=earthquakes.live partition=0 offset=8
+2026-11-12 16:38:15,375 INFO [consumer.reporting] decision=new_event event_id=aka2026wladtr topic=earthquakes.live partition=0 offset=9
+2026-11-12 16:38:15,384 INFO [consumer.reporting] decision=new_event event_id=aka2026wkzvgs topic=earthquakes.live partition=0 offset=10
+2026-11-12 16:38:15,392 INFO [consumer.reporting] decision=new_event event_id=nn00926915 topic=earthquakes.live partition=0 offset=11
+2026-11-12 16:38:15,403 INFO [consumer.reporting] decision=new_event event_id=aka2026wkzmac topic=earthquakes.live partition=0 offset=12
+2026-11-12 16:38:15,411 INFO [consumer.reporting] decision=new_event event_id=nc75465762 topic=earthquakes.live partition=0 offset=13
+2026-11-12 16:38:15,419 INFO [consumer.reporting] decision=new_event event_id=aka2026wkyzlw topic=earthquakes.live partition=0 offset=14
+2026-11-12 16:38:15,428 INFO [consumer.reporting] decision=new_event event_id=aka2026wkyssd topic=earthquakes.live partition=0 offset=15
+2026-11-12 16:38:15,436 INFO [consumer.reporting] decision=new_event event_id=aka2026wkynmc topic=earthquakes.live partition=0 offset=16
+2026-11-12 16:38:15,444 INFO [consumer.reporting] decision=new_event event_id=aka2026wkygcp topic=earthquakes.live partition=0 offset=17
+2026-11-12 16:38:15,453 INFO [consumer.reporting] decision=new_event event_id=aka2026wkybma topic=earthquakes.live partition=0 offset=18
+2026-11-12 16:38:15,461 INFO [consumer.reporting] decision=new_event event_id=ci41361343 topic=earthquakes.live partition=0 offset=19
+2026-11-12 16:38:15,469 INFO [consumer.reporting] decision=new_event event_id=nc75465747 topic=earthquakes.live partition=0 offset=20
+2026-11-12 16:38:15,478 INFO [consumer.reporting] decision=new_event event_id=hv75069667 topic=earthquakes.live partition=0 offset=21
+2026-11-12 16:38:15,487 INFO [consumer.reporting] decision=new_event event_id=aka2026wkwyos topic=earthquakes.live partition=0 offset=22
+2026-11-12 16:38:15,496 INFO [consumer.reporting] decision=new_event event_id=nc75465737 topic=earthquakes.live partition=0 offset=23
+2026-11-12 16:38:15,504 INFO [consumer.reporting] decision=new_event event_id=ci41361335 topic=earthquakes.live partition=0 offset=24
+2026-11-12 16:38:15,512 INFO [consumer.reporting] decision=new_event event_id=aka2026wkwgje topic=earthquakes.live partition=0 offset=25
+2026-11-12 16:38:15,521 INFO [consumer.reporting] decision=new_event event_id=aka2026wkwelj topic=earthquakes.live partition=0 offset=26
+2026-11-12 16:38:15,530 INFO [consumer.reporting] decision=new_event event_id=us7000txsr topic=earthquakes.live partition=0 offset=27
+2026-11-12 16:38:15,539 INFO [consumer.reporting] decision=new_event event_id=aka2026wkvkuk topic=earthquakes.live partition=0 offset=28
+2026-11-12 16:38:15,548 INFO [consumer.reporting] decision=new_event event_id=nc75465722 topic=earthquakes.live partition=0 offset=29
+2026-11-12 16:38:15,557 INFO [consumer.reporting] decision=new_event event_id=aka2026wkvgod topic=earthquakes.live partition=0 offset=30
+2026-11-12 16:38:15,566 INFO [consumer.reporting] decision=new_event event_id=aka2026wkuxzc topic=earthquakes.live partition=0 offset=31
+2026-11-12 16:38:15,574 INFO [consumer.reporting] decision=new_event event_id=nc75465717 topic=earthquakes.live partition=0 offset=32
+2026-11-12 16:38:15,583 INFO [consumer.reporting] decision=new_event event_id=aka2026wkurya topic=earthquakes.live partition=0 offset=33
+2026-11-12 16:38:15,591 INFO [consumer.reporting] decision=new_event event_id=hv75069647 topic=earthquakes.live partition=0 offset=34
+2026-11-12 16:38:15,600 INFO [consumer.reporting] decision=new_event event_id=aka2026wkumlg topic=earthquakes.live partition=0 offset=35
+2026-11-12 16:38:15,608 INFO [consumer.reporting] decision=new_event event_id=aka2026wkujsl topic=earthquakes.live partition=0 offset=36
+2026-11-12 16:38:15,616 INFO [consumer.reporting] decision=new_event event_id=ci41361327 topic=earthquakes.live partition=0 offset=37
+2026-11-12 16:38:15,625 INFO [consumer.reporting] decision=new_event event_id=ci41361319 topic=earthquakes.live partition=0 offset=38
+2026-11-12 16:38:15,633 INFO [consumer.reporting] decision=new_event event_id=aka2026wksvww topic=earthquakes.live partition=0 offset=39
+2026-11-12 16:38:15,642 INFO [consumer.reporting] decision=new_event event_id=aka2026wkstmu topic=earthquakes.live partition=0 offset=40
+2026-11-12 16:38:15,650 INFO [consumer.reporting] decision=new_event event_id=ci41361311 topic=earthquakes.live partition=0 offset=41
+2026-11-12 16:38:15,658 INFO [consumer.reporting] decision=new_event event_id=nc75465707 topic=earthquakes.live partition=0 offset=42
+2026-11-12 16:38:15,667 INFO [consumer.reporting] decision=new_event event_id=aka2026wksaru topic=earthquakes.live partition=0 offset=43
+2026-11-12 16:38:15,676 INFO [consumer.reporting] decision=new_event event_id=ci41361303 topic=earthquakes.live partition=0 offset=44
+2026-11-12 16:38:15,684 INFO [consumer.reporting] decision=new_event event_id=nc75465702 topic=earthquakes.live partition=0 offset=45
+2026-11-12 16:38:15,693 INFO [consumer.reporting] decision=new_event event_id=uu80164311 topic=earthquakes.live partition=0 offset=46
+2026-11-12 16:38:15,701 INFO [consumer.reporting] decision=new_event event_id=aka2026wkrdxr topic=earthquakes.live partition=0 offset=47
+2026-11-12 16:38:15,710 INFO [consumer.reporting] decision=new_event event_id=uu80164306 topic=earthquakes.live partition=0 offset=48
+2026-11-12 16:38:15,718 INFO [consumer.reporting] decision=new_event event_id=nc75465697 topic=earthquakes.live partition=0 offset=49
+2026-11-12 16:38:15,726 INFO [consumer.reporting] decision=new_event event_id=nc75465692 topic=earthquakes.live partition=0 offset=50
+2026-11-12 16:38:15,735 INFO [consumer.reporting] decision=new_event event_id=nc75465687 topic=earthquakes.live partition=0 offset=51
+2026-11-12 16:38:15,743 INFO [consumer.reporting] decision=new_event event_id=uu80164301 topic=earthquakes.live partition=0 offset=52
+2026-11-12 16:38:15,752 INFO [consumer.reporting] decision=new_event event_id=nc75465682 topic=earthquakes.live partition=0 offset=53
+2026-11-12 16:38:15,760 INFO [consumer.reporting] decision=new_event event_id=aka2026wkpmlh topic=earthquakes.live partition=0 offset=54
+2026-11-12 16:38:15,769 INFO [consumer.reporting] decision=new_event event_id=uu80164296 topic=earthquakes.live partition=0 offset=55
+2026-11-12 16:38:15,778 INFO [consumer.reporting] decision=new_event event_id=nn00926912 topic=earthquakes.live partition=0 offset=56
+2026-11-12 16:38:15,788 INFO [consumer.reporting] decision=new_event event_id=nc75465662 topic=earthquakes.live partition=0 offset=57
+2026-11-12 16:38:15,798 INFO [consumer.reporting] decision=new_event event_id=aka2026wknplp topic=earthquakes.live partition=0 offset=58
+2026-11-12 16:38:15,808 INFO [consumer.reporting] decision=new_event event_id=tx2026wgyidv topic=earthquakes.live partition=0 offset=59
+2026-11-12 16:38:15,818 INFO [consumer.reporting] decision=new_event event_id=uu80164291 topic=earthquakes.live partition=0 offset=60
+2026-11-12 16:38:15,829 INFO [consumer.reporting] decision=new_event event_id=aka2026wknkyr topic=earthquakes.live partition=0 offset=61
+2026-11-12 16:38:15,841 INFO [consumer.reporting] decision=new_event event_id=aka2026wknjku topic=earthquakes.live partition=0 offset=62
+2026-11-12 16:38:15,852 INFO [consumer.reporting] decision=new_event event_id=ci41361295 topic=earthquakes.live partition=0 offset=63
+2026-11-12 16:38:15,862 INFO [consumer.reporting] decision=new_event event_id=hv75069577 topic=earthquakes.live partition=0 offset=64
+2026-11-12 16:38:15,872 INFO [consumer.reporting] decision=new_event event_id=nc75465657 topic=earthquakes.live partition=0 offset=65
+2026-11-12 16:38:15,881 INFO [consumer.reporting] decision=new_event event_id=us7000txrm topic=earthquakes.live partition=0 offset=66
+2026-11-12 16:38:15,892 INFO [consumer.reporting] decision=new_event event_id=us7000txrk topic=earthquakes.live partition=0 offset=67
+2026-11-12 16:38:15,903 INFO [consumer.reporting] decision=new_event event_id=aka2026wkkvqy topic=earthquakes.live partition=0 offset=68
+2026-11-12 16:38:15,914 INFO [consumer.reporting] decision=new_event event_id=tx2026wgvlpx topic=earthquakes.live partition=0 offset=69
+2026-11-12 16:38:15,927 INFO [consumer.reporting] decision=new_event event_id=aka2026wkkryl topic=earthquakes.live partition=0 offset=70
+2026-11-12 16:38:15,938 INFO [consumer.reporting] decision=new_event event_id=uu80164281 topic=earthquakes.live partition=0 offset=71
+2026-11-12 16:38:15,949 INFO [consumer.reporting] decision=new_event event_id=aka2026wkkklx topic=earthquakes.live partition=0 offset=72
+2026-11-12 16:38:15,960 INFO [consumer.reporting] decision=new_event event_id=ci41361287 topic=earthquakes.live partition=0 offset=73
+2026-11-12 16:38:15,970 INFO [consumer.reporting] decision=new_event event_id=nc75465647 topic=earthquakes.live partition=0 offset=74
+2026-11-12 16:38:15,980 INFO [consumer.reporting] decision=new_event event_id=nc75465642 topic=earthquakes.live partition=0 offset=75
+2026-11-12 16:38:15,990 INFO [consumer.reporting] decision=new_event event_id=ci41361279 topic=earthquakes.live partition=0 offset=76
+2026-11-12 16:38:15,999 INFO [consumer.reporting] decision=new_event event_id=nc75465637 topic=earthquakes.live partition=0 offset=77
+2026-11-12 16:38:16,008 INFO [consumer.reporting] decision=new_event event_id=nc75465632 topic=earthquakes.live partition=0 offset=78
+2026-11-12 16:38:16,017 INFO [consumer.reporting] decision=new_event event_id=nc75465627 topic=earthquakes.live partition=0 offset=79
+2026-11-12 16:38:16,027 INFO [consumer.reporting] decision=new_event event_id=uu80164271 topic=earthquakes.live partition=0 offset=80
+2026-11-12 16:38:16,036 INFO [consumer.reporting] decision=new_event event_id=uu80164276 topic=earthquakes.live partition=0 offset=81
+2026-11-12 16:38:16,044 INFO [consumer.reporting] decision=new_event event_id=ci41361271 topic=earthquakes.live partition=0 offset=82
+2026-11-12 16:38:16,053 INFO [consumer.reporting] decision=new_event event_id=aka2026wkissx topic=earthquakes.live partition=0 offset=83
+2026-11-12 16:38:16,062 INFO [consumer.reporting] decision=new_event event_id=aka2026wkiilc topic=earthquakes.live partition=0 offset=84
+2026-11-12 16:38:16,070 INFO [consumer.reporting] decision=new_event event_id=aka2026wkiecq topic=earthquakes.live partition=0 offset=85
+2026-11-12 16:38:16,078 INFO [consumer.reporting] decision=new_event event_id=uu80164266 topic=earthquakes.live partition=0 offset=86
+2026-11-12 16:38:16,087 INFO [consumer.reporting] decision=new_event event_id=ci41361263 topic=earthquakes.live partition=0 offset=87
+2026-11-12 16:38:16,096 INFO [consumer.reporting] decision=new_event event_id=nc75465622 topic=earthquakes.live partition=0 offset=88
+2026-11-12 16:38:16,105 INFO [consumer.reporting] decision=new_event event_id=ci41361255 topic=earthquakes.live partition=0 offset=89
+2026-11-12 16:38:16,113 INFO [consumer.reporting] decision=new_event event_id=ci41361247 topic=earthquakes.live partition=0 offset=90
+2026-11-12 16:38:16,122 INFO [consumer.reporting] decision=new_event event_id=aka2026wkhjxi topic=earthquakes.live partition=0 offset=91
+2026-11-12 16:38:16,131 INFO [consumer.reporting] decision=new_event event_id=uu80164261 topic=earthquakes.live partition=0 offset=92
+2026-11-12 16:38:16,140 INFO [consumer.reporting] decision=new_event event_id=aka2026wkhhbr topic=earthquakes.live partition=0 offset=93
+2026-11-12 16:38:16,149 INFO [consumer.reporting] decision=new_event event_id=aka2026wkhblk topic=earthquakes.live partition=0 offset=94
+2026-11-12 16:38:16,157 INFO [consumer.reporting] decision=new_event event_id=aka2026wkgrqa topic=earthquakes.live partition=0 offset=95
+2026-11-12 16:38:16,166 INFO [consumer.reporting] decision=new_event event_id=aka2026wkgnee topic=earthquakes.live partition=0 offset=96
+2026-11-12 16:38:16,175 INFO [consumer.reporting] decision=new_event event_id=ci41361239 topic=earthquakes.live partition=0 offset=97
+2026-11-12 16:38:16,183 INFO [consumer.reporting] decision=new_event event_id=uu80164256 topic=earthquakes.live partition=0 offset=98
+2026-11-12 16:38:16,192 INFO [consumer.reporting] decision=new_event event_id=uu80164251 topic=earthquakes.live partition=0 offset=99
+2026-11-12 16:38:16,201 INFO [consumer.reporting] decision=new_event event_id=aka2026wkfjao topic=earthquakes.live partition=0 offset=100
+2026-11-12 16:38:16,210 INFO [consumer.reporting] decision=new_event event_id=nc75465597 topic=earthquakes.live partition=0 offset=101
+2026-11-12 16:38:16,219 INFO [consumer.reporting] decision=new_event event_id=nc75465592 topic=earthquakes.live partition=0 offset=102
+2026-11-12 16:38:16,228 INFO [consumer.reporting] decision=new_event event_id=aka2026wkewvb topic=earthquakes.live partition=0 offset=103
+2026-11-12 16:38:16,236 INFO [consumer.reporting] decision=new_event event_id=aka2026wkesbj topic=earthquakes.live partition=0 offset=104
+2026-11-12 16:38:16,245 INFO [consumer.reporting] decision=new_event event_id=aka2026wkenfd topic=earthquakes.live partition=0 offset=105
+2026-11-12 16:38:16,252 INFO [consumer.reporting] decision=new_event event_id=uu80164241 topic=earthquakes.live partition=0 offset=106
+2026-11-12 16:38:16,261 INFO [consumer.reporting] decision=new_event event_id=ci41361215 topic=earthquakes.live partition=0 offset=107
+2026-11-12 16:38:16,270 INFO [consumer.reporting] decision=new_event event_id=ci41361207 topic=earthquakes.live partition=0 offset=108
+2026-11-12 16:38:16,280 INFO [consumer.reporting] decision=new_event event_id=ci41361199 topic=earthquakes.live partition=0 offset=109
+2026-11-12 16:38:16,290 INFO [consumer.reporting] decision=new_event event_id=hv75069532 topic=earthquakes.live partition=0 offset=110
+2026-11-12 16:38:16,299 INFO [consumer.reporting] decision=new_event event_id=aka2026wkdubd topic=earthquakes.live partition=0 offset=111
+2026-11-12 16:38:16,309 INFO [consumer.reporting] decision=new_event event_id=aka2026wkdouu topic=earthquakes.live partition=0 offset=112
+2026-11-12 16:38:16,317 INFO [consumer.reporting] decision=new_event event_id=nc75465582 topic=earthquakes.live partition=0 offset=113
+2026-11-12 16:38:16,326 INFO [consumer.reporting] decision=new_event event_id=aka2026wkdeju topic=earthquakes.live partition=0 offset=114
+2026-11-12 16:38:16,335 INFO [consumer.reporting] decision=new_event event_id=us7000txqx topic=earthquakes.live partition=0 offset=115
+2026-11-12 16:38:16,343 INFO [consumer.reporting] decision=new_event event_id=aka2026wkdcos topic=earthquakes.live partition=0 offset=116
+2026-11-12 16:38:16,352 INFO [consumer.reporting] decision=new_event event_id=ci41361191 topic=earthquakes.live partition=0 offset=117
+2026-11-12 16:38:16,362 INFO [consumer.reporting] decision=new_event event_id=us7000txqr topic=earthquakes.live partition=0 offset=118
+2026-11-12 16:38:16,372 INFO [consumer.reporting] decision=new_event event_id=ci41361175 topic=earthquakes.live partition=0 offset=119
+2026-11-12 16:38:16,381 INFO [consumer.reporting] decision=new_event event_id=aka2026wkcjcz topic=earthquakes.live partition=0 offset=120
+2026-11-12 16:38:16,392 INFO [consumer.reporting] decision=new_event event_id=nc75465572 topic=earthquakes.live partition=0 offset=121
+2026-11-12 16:38:16,403 INFO [consumer.reporting] decision=new_event event_id=aka2026wkbtox topic=earthquakes.live partition=0 offset=122
+2026-11-12 16:38:16,412 INFO [consumer.reporting] decision=new_event event_id=aka2026wkbomt topic=earthquakes.live partition=0 offset=123
+2026-11-12 16:38:16,420 INFO [consumer.reporting] decision=new_event event_id=uw714137991 topic=earthquakes.live partition=0 offset=124
+2026-11-12 16:38:16,429 INFO [consumer.reporting] decision=new_event event_id=aka2026wkakxb topic=earthquakes.live partition=0 offset=125
+2026-11-12 16:38:16,438 INFO [consumer.reporting] decision=new_event event_id=aka2026wkaida topic=earthquakes.live partition=0 offset=126
+2026-11-12 16:38:16,447 INFO [consumer.reporting] decision=new_event event_id=ci41361159 topic=earthquakes.live partition=0 offset=127
+2026-11-12 16:38:16,456 INFO [consumer.reporting] decision=new_event event_id=nc75465567 topic=earthquakes.live partition=0 offset=128
+2026-11-12 16:38:16,465 INFO [consumer.reporting] decision=new_event event_id=ci41361151 topic=earthquakes.live partition=0 offset=129
+2026-11-12 16:38:16,473 INFO [consumer.reporting] decision=new_event event_id=ci41361143 topic=earthquakes.live partition=0 offset=130
+2026-11-12 16:38:16,482 INFO [consumer.reporting] decision=new_event event_id=ci41361127 topic=earthquakes.live partition=0 offset=131
+2026-11-12 16:38:16,490 INFO [consumer.reporting] decision=new_event event_id=uu80164231 topic=earthquakes.live partition=0 offset=132
+2026-11-12 16:38:16,499 INFO [consumer.reporting] decision=new_event event_id=us7000txqa topic=earthquakes.live partition=0 offset=133
+2026-11-12 16:38:16,507 INFO [consumer.reporting] decision=new_event event_id=ci41361111 topic=earthquakes.live partition=0 offset=134
+2026-11-12 16:38:16,515 INFO [consumer.reporting] decision=new_event event_id=nc75465552 topic=earthquakes.live partition=0 offset=135
+2026-11-12 16:38:16,524 INFO [consumer.reporting] decision=new_event event_id=nc75465542 topic=earthquakes.live partition=0 offset=136
+2026-11-12 16:38:16,532 INFO [consumer.reporting] decision=new_event event_id=aka2026wjvsvz topic=earthquakes.live partition=0 offset=137
+2026-11-12 16:38:16,540 INFO [consumer.reporting] decision=new_event event_id=aka2026wjvsfu topic=earthquakes.live partition=0 offset=138
+2026-11-12 16:38:16,549 INFO [consumer.reporting] decision=new_event event_id=hv75069487 topic=earthquakes.live partition=0 offset=139
+2026-11-12 16:38:16,557 INFO [consumer.reporting] decision=new_event event_id=tx2026wggeug topic=earthquakes.live partition=0 offset=140
+2026-11-12 16:38:16,565 INFO [consumer.reporting] decision=new_event event_id=ci41361103 topic=earthquakes.live partition=0 offset=141
+2026-11-12 16:38:16,573 INFO [consumer.reporting] decision=new_event event_id=us7000txpv topic=earthquakes.live partition=0 offset=142
+2026-11-12 16:38:16,581 INFO [consumer.reporting] decision=new_event event_id=us7000txpu topic=earthquakes.live partition=0 offset=143
+2026-11-12 16:38:16,590 INFO [consumer.reporting] decision=new_event event_id=aka2026wjudea topic=earthquakes.live partition=0 offset=144
+2026-11-12 16:38:16,598 INFO [consumer.reporting] decision=new_event event_id=ci41361095 topic=earthquakes.live partition=0 offset=145
+2026-11-12 16:38:16,606 INFO [consumer.reporting] decision=new_event event_id=ci41361087 topic=earthquakes.live partition=0 offset=146
+2026-11-12 16:38:16,615 INFO [consumer.reporting] decision=new_event event_id=nc75465517 topic=earthquakes.live partition=0 offset=147
+2026-11-12 16:38:16,623 INFO [consumer.reporting] decision=new_event event_id=uu80164226 topic=earthquakes.live partition=0 offset=148
+2026-11-12 16:38:16,632 INFO [consumer.reporting] decision=new_event event_id=aka2026wjtfdh topic=earthquakes.live partition=0 offset=149
+2026-11-12 16:38:16,640 INFO [consumer.reporting] decision=new_event event_id=uu80164221 topic=earthquakes.live partition=0 offset=150
+2026-11-12 16:38:16,649 INFO [consumer.reporting] decision=new_event event_id=tx2026wgdyjd topic=earthquakes.live partition=0 offset=151
+2026-11-12 16:38:16,658 INFO [consumer.reporting] decision=new_event event_id=us7000txpk topic=earthquakes.live partition=0 offset=152
+2026-11-12 16:38:16,666 INFO [consumer.reporting] decision=new_event event_id=ci41361079 topic=earthquakes.live partition=0 offset=153
+2026-11-12 16:38:16,675 INFO [consumer.reporting] decision=new_event event_id=us7000txpg topic=earthquakes.live partition=0 offset=154
+2026-11-12 16:38:16,684 INFO [consumer.reporting] decision=new_event event_id=uu80164216 topic=earthquakes.live partition=0 offset=155
+2026-11-12 16:38:16,693 INFO [consumer.reporting] decision=new_event event_id=ci41361071 topic=earthquakes.live partition=0 offset=156
+2026-11-12 16:38:16,702 INFO [consumer.reporting] decision=new_event event_id=uu80164211 topic=earthquakes.live partition=0 offset=157
+2026-11-12 16:38:16,711 INFO [consumer.reporting] decision=new_event event_id=nc75465507 topic=earthquakes.live partition=0 offset=158
+2026-11-12 16:38:16,720 INFO [consumer.reporting] decision=new_event event_id=aka2026wjrtps topic=earthquakes.live partition=0 offset=159
+2026-11-12 16:38:16,729 INFO [consumer.reporting] decision=new_event event_id=uu80164201 topic=earthquakes.live partition=0 offset=160
+2026-11-12 16:38:16,737 INFO [consumer.reporting] decision=new_event event_id=ci41361063 topic=earthquakes.live partition=0 offset=161
+2026-11-12 16:38:16,746 INFO [consumer.reporting] decision=new_event event_id=us7000txpa topic=earthquakes.live partition=0 offset=162
+2026-11-12 16:38:16,754 INFO [consumer.reporting] decision=new_event event_id=aka2026wjqxbh topic=earthquakes.live partition=0 offset=163
+2026-11-12 16:38:16,763 INFO [consumer.reporting] decision=new_event event_id=uu80164196 topic=earthquakes.live partition=0 offset=164
+2026-11-12 16:38:16,773 INFO [consumer.reporting] decision=new_event event_id=aka2026wjqjgm topic=earthquakes.live partition=0 offset=165
+2026-11-12 16:38:16,781 INFO [consumer.reporting] decision=new_event event_id=ci41361047 topic=earthquakes.live partition=0 offset=166
+2026-11-12 16:38:16,790 INFO [consumer.reporting] decision=new_event event_id=nc75465482 topic=earthquakes.live partition=0 offset=167
+2026-11-12 16:38:16,798 INFO [consumer.reporting] decision=new_event event_id=pr71539098 topic=earthquakes.live partition=0 offset=168
+2026-11-12 16:38:16,807 INFO [consumer.reporting] decision=new_event event_id=nc75465472 topic=earthquakes.live partition=0 offset=169
+2026-11-12 16:38:16,816 INFO [consumer.reporting] decision=new_event event_id=us7000txns topic=earthquakes.live partition=0 offset=170
+2026-11-12 16:38:16,825 INFO [consumer.reporting] decision=new_event event_id=ci41361039 topic=earthquakes.live partition=0 offset=171
+2026-11-12 16:38:16,834 INFO [consumer.reporting] decision=new_event event_id=hv75069437 topic=earthquakes.live partition=0 offset=172
+2026-11-12 16:38:16,843 INFO [consumer.reporting] decision=new_event event_id=nc75465467 topic=earthquakes.live partition=0 offset=173
+2026-11-12 16:38:16,852 INFO [consumer.reporting] decision=new_event event_id=us7000txni topic=earthquakes.live partition=0 offset=174
+2026-11-12 16:38:16,860 INFO [consumer.reporting] decision=new_event event_id=us7000txnf topic=earthquakes.live partition=0 offset=175
+2026-11-12 16:38:16,870 INFO [consumer.reporting] decision=new_event event_id=nc75465447 topic=earthquakes.live partition=0 offset=176
+2026-11-12 16:38:16,879 INFO [consumer.reporting] decision=new_event event_id=aka2026wjnxib topic=earthquakes.live partition=0 offset=177
+2026-11-12 16:38:16,888 INFO [consumer.reporting] decision=new_event event_id=aka2026wjnvet topic=earthquakes.live partition=0 offset=178
+2026-11-12 16:38:16,897 INFO [consumer.reporting] decision=new_event event_id=aka2026wjnswr topic=earthquakes.live partition=0 offset=179
+2026-11-12 16:38:16,906 INFO [consumer.reporting] decision=new_event event_id=aka2026wjnmsm topic=earthquakes.live partition=0 offset=180
+2026-11-12 16:38:16,915 INFO [consumer.reporting] decision=new_event event_id=pr71539088 topic=earthquakes.live partition=0 offset=181
+2026-11-12 16:38:16,924 INFO [consumer.reporting] decision=new_event event_id=us7000txmx topic=earthquakes.live partition=0 offset=182
+2026-11-12 16:38:16,932 INFO [consumer.reporting] decision=new_event event_id=nc75465437 topic=earthquakes.live partition=0 offset=183
+2026-11-12 16:38:16,941 INFO [consumer.reporting] decision=new_event event_id=pr71539083 topic=earthquakes.live partition=0 offset=184
+2026-11-12 16:38:16,950 INFO [consumer.reporting] decision=new_event event_id=aka2026wjmdrz topic=earthquakes.live partition=0 offset=185
+2026-11-12 16:38:16,958 INFO [consumer.reporting] decision=new_event event_id=uu80164181 topic=earthquakes.live partition=0 offset=186
+2026-11-12 16:38:16,967 INFO [consumer.reporting] decision=new_event event_id=uu80164176 topic=earthquakes.live partition=0 offset=187
+2026-11-12 16:38:16,976 INFO [consumer.reporting] decision=new_event event_id=us7000txmq topic=earthquakes.live partition=0 offset=188
+2026-11-12 16:38:16,985 INFO [consumer.reporting] decision=new_event event_id=pr71539078 topic=earthquakes.live partition=0 offset=189
+2026-11-12 16:38:16,994 INFO [consumer.reporting] decision=new_event event_id=aka2026wjlmbp topic=earthquakes.live partition=0 offset=190
+2026-11-12 16:38:17,003 INFO [consumer.reporting] decision=new_event event_id=aka2026wjlejc topic=earthquakes.live partition=0 offset=191
+2026-11-12 16:38:17,012 INFO [consumer.reporting] decision=new_event event_id=ci41361023 topic=earthquakes.live partition=0 offset=192
+2026-11-12 16:38:17,021 INFO [consumer.reporting] decision=new_event event_id=aka2026wjkxqw topic=earthquakes.live partition=0 offset=193
+2026-11-12 16:38:17,029 INFO [consumer.reporting] decision=new_event event_id=nc75465422 topic=earthquakes.live partition=0 offset=194
+2026-11-12 16:38:17,038 INFO [consumer.reporting] decision=new_event event_id=nc75465412 topic=earthquakes.live partition=0 offset=195
+2026-11-12 16:38:17,047 INFO [consumer.reporting] decision=new_event event_id=us7000txmi topic=earthquakes.live partition=0 offset=196
+2026-11-12 16:38:17,056 INFO [consumer.reporting] decision=new_event event_id=ci41361015 topic=earthquakes.live partition=0 offset=197
+2026-11-12 16:38:17,065 INFO [consumer.reporting] decision=new_event event_id=aka2026wjjawr topic=earthquakes.live partition=0 offset=198
+2026-11-12 16:38:17,074 INFO [consumer.reporting] decision=new_event event_id=us7000txm8 topic=earthquakes.live partition=0 offset=199
+2026-11-12 16:38:17,083 INFO [consumer.reporting] decision=new_event event_id=aka2026wjibyh topic=earthquakes.live partition=0 offset=200
+2026-11-12 16:38:17,092 INFO [consumer.reporting] decision=new_event event_id=uu80164166 topic=earthquakes.live partition=0 offset=201
+2026-11-12 16:38:17,102 INFO [consumer.reporting] decision=new_event event_id=aka2026wjhxjv topic=earthquakes.live partition=0 offset=202
+2026-11-12 16:38:17,111 INFO [consumer.reporting] decision=new_event event_id=aka2026wjhtuu topic=earthquakes.live partition=0 offset=203
+2026-11-12 16:38:17,121 INFO [consumer.reporting] decision=new_event event_id=aka2026wjhlwp topic=earthquakes.live partition=0 offset=204
+2026-11-12 16:38:17,129 INFO [consumer.reporting] decision=new_event event_id=aka2026wjhgma topic=earthquakes.live partition=0 offset=205
+2026-11-12 16:38:17,138 INFO [consumer.reporting] decision=new_event event_id=nc75465377 topic=earthquakes.live partition=0 offset=206
+2026-11-12 16:38:17,147 INFO [consumer.reporting] decision=new_event event_id=nc75465362 topic=earthquakes.live partition=0 offset=207
+2026-11-12 16:38:17,155 INFO [consumer.reporting] decision=new_event event_id=uw714137501 topic=earthquakes.live partition=0 offset=208
+2026-11-12 16:38:17,163 INFO [consumer.reporting] decision=new_event event_id=tx2026wfribb topic=earthquakes.live partition=0 offset=209
+2026-11-12 16:38:17,172 INFO [consumer.reporting] decision=new_event event_id=uu80164161 topic=earthquakes.live partition=0 offset=210
+2026-11-12 16:39:06,009 INFO [consumer.reporting] decision=new_event event_id=us6000pgti topic=earthquakes.replay partition=0 offset=0
+2026-11-12 16:39:08,014 INFO [consumer.reporting] decision=new_event event_id=us6000phap topic=earthquakes.replay partition=0 offset=1
+2026-11-12 16:39:10,019 INFO [consumer.reporting] decision=new_event event_id=us6000phbz topic=earthquakes.replay partition=0 offset=2
+2026-11-12 16:39:12,023 INFO [consumer.reporting] decision=new_event event_id=us6000phem topic=earthquakes.replay partition=0 offset=3
+2026-11-12 16:39:13,155 INFO [consumer.reporting] decision=new_event event_id=us6000phla topic=earthquakes.replay partition=0 offset=4
+2026-11-12 16:39:13,502 INFO [consumer.reporting] COUNTERS {"late_old_versions":0,"ms_to_utc_conversions":216,"new_events":216,"newer_versions_applied":0,"nulls_kept":{},"quarantine_duplicates":{},"quarantined":{},"received":216,"redeliveries_ignored":0,"same_updated_conflicts":0}
+2026-11-12 16:39:15,159 INFO [consumer.reporting] decision=new_event event_id=us6000pifa topic=earthquakes.replay partition=0 offset=5
+2026-11-12 16:39:17,163 INFO [consumer.reporting] decision=new_event event_id=us6000piqd topic=earthquakes.replay partition=0 offset=6
+2026-11-12 16:39:19,171 INFO [consumer.reporting] decision=new_event event_id=us6000pj17 topic=earthquakes.replay partition=0 offset=7
+2026-11-12 16:39:21,180 INFO [consumer.reporting] decision=new_event event_id=us6000pj3c topic=earthquakes.replay partition=0 offset=8
+2026-11-12 16:39:23,184 INFO [consumer.reporting] decision=new_event event_id=us6000pjha topic=earthquakes.replay partition=0 offset=9
+2026-11-12 16:39:25,189 INFO [consumer.reporting] decision=new_event event_id=us6000pjue topic=earthquakes.replay partition=0 offset=10
+2026-11-12 16:39:27,195 INFO [consumer.reporting] decision=new_event event_id=us6000pk4q topic=earthquakes.replay partition=0 offset=11
+2026-11-12 16:39:29,200 INFO [consumer.reporting] decision=new_event event_id=us6000pl70 topic=earthquakes.replay partition=0 offset=12
+2026-11-12 16:39:31,205 INFO [consumer.reporting] decision=new_event event_id=us6000plfl topic=earthquakes.replay partition=0 offset=13
+2026-11-12 16:39:33,208 INFO [consumer.reporting] decision=new_event event_id=us6000plfq topic=earthquakes.replay partition=0 offset=14
+2026-11-12 16:39:35,211 INFO [consumer.reporting] decision=new_event event_id=us6000pm4b topic=earthquakes.replay partition=0 offset=15
+2026-11-12 16:39:37,219 INFO [consumer.reporting] decision=new_event event_id=us6000pmap topic=earthquakes.replay partition=0 offset=16
+2026-11-12 16:39:39,233 INFO [consumer.reporting] decision=new_event event_id=us6000pmeu topic=earthquakes.replay partition=0 offset=17
+2026-11-12 16:39:41,239 INFO [consumer.reporting] decision=new_event event_id=us6000pms8 topic=earthquakes.replay partition=0 offset=18
+2026-11-12 16:39:42,381 INFO [consumer.reporting] decision=new_event event_id=us7000p9rg topic=earthquakes.replay partition=0 offset=19
+2026-11-12 16:39:44,390 INFO [consumer.reporting] decision=new_event event_id=synthetic-replay-e1 topic=earthquakes.replay partition=0 offset=20
+2026-11-12 16:39:46,395 INFO [consumer.reporting] decision=redelivery_ignored event_id=synthetic-replay-e1 topic=earthquakes.replay partition=0 offset=21
+2026-11-12 16:39:48,397 INFO [consumer.reporting] decision=newer_version event_id=synthetic-replay-e1 topic=earthquakes.replay partition=0 offset=22
+2026-11-12 16:39:50,401 INFO [consumer.reporting] decision=redelivery_ignored event_id=synthetic-replay-e1 topic=earthquakes.replay partition=0 offset=23
+2026-11-12 16:39:52,406 INFO [consumer.reporting] decision=new_event event_id=synthetic-replay-e2 topic=earthquakes.replay partition=0 offset=24
+2026-11-12 16:39:54,416 INFO [consumer.reporting] decision=late_old_version event_id=synthetic-replay-e1 topic=earthquakes.replay partition=0 offset=25

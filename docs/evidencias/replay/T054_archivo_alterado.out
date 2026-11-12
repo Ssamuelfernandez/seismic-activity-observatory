@@ -1,0 +1,19 @@
+# copia con un byte alterado en usgs_2025-01.geojson (copia en directorio temporal; data/historical/ intacto)
+time="2026-11-12T17:41:37+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Running 
+ Container seismic-observatory-kafka-1 Running 
+time="2026-11-12T17:41:37+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-kafka-1 Waiting 
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-kafka-1 Healthy 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-producer-run-4ca4d724883c Creating 
+ Container seismic-observatory-producer-run-4ca4d724883c Created 
+2026-11-12 16:41:38,151 ERROR [__main__] No se puede leer el origen del replay: sha256 distinto en usgs_2025-01.geojson: esperado e8b26593eb116bb545e098fc76ea3405566d850367cb813e344d1dfc4181fccb, real d9a006ee9737af1c28e6839e6e0527425acaa7b4d434cee23268e68dda8eddd5
+
+exit=1
+ c  | v  | q 
+----+----+---
+ 22 | 24 | 0
+(1 row)
+
