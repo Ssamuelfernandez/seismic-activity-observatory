@@ -1,0 +1,34 @@
+-- [1] Madrid: país por geometría
+SELECT event_id, country_id, place FROM live.current_event WHERE event_id = 'synthetic-geo-madrid'
+
+event_id             | country_id | place                 
+---------------------+------------+-----------------------
+synthetic-geo-madrid | ESP        | 5 km de París, Francia
+(1 filas)
+
+-- [2] Atlántico: fila con country_id vacío (NULL) y sin cuarentena
+SELECT event_id, country_id, place FROM live.current_event WHERE event_id LIKE 'synthetic-geo-%' ORDER BY event_id
+
+event_id                | country_id | place                    
+------------------------+------------+--------------------------
+synthetic-geo-atlantico | NULL       | Lugar sintético de prueba
+(1 filas)
+
+-- [3] total = con país + sin país
+SELECT count(*) AS total, count(country_id) AS con_pais, count(*) - count(country_id) AS sin_pais FROM live.current_event
+
+total | con_pais | sin_pais
+------+----------+---------
+3     | 2        | 1       
+(1 filas)
+
+-- [4] Filas de los casos geográficos
+SELECT event_id, country_id, place FROM live.current_event WHERE event_id LIKE 'synthetic-geo-%' ORDER BY event_id
+
+event_id                | country_id | place                    
+------------------------+------------+--------------------------
+synthetic-geo-atlantico | NULL       | Lugar sintético de prueba
+synthetic-geo-madrid    | ESP        | 5 km de París, Francia   
+synthetic-geo-mag-nula  | ESP        | Lugar sintético de prueba
+(3 filas)
+

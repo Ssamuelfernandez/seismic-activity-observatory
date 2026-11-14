@@ -1,0 +1,18 @@
+-- [1] carga 1
+Carga 1 (huella ANTES de recargar)
+current_event: filas=26 md5=95cbcada2f7ba76d33e41a9be973cd31
+event_version: filas=26 md5=69133de51bc9b8c4111eb1d191789d47
+quarantine: filas=3 md5=2b5560add8b73dc6ab14fd6f4f1ebca4
+
+-- [2] carga 2
+Carga 2 (huella DESPUÉS: idéntica a la carga 1; resumen new=0 newer=0)
+current_event: filas=26 md5=95cbcada2f7ba76d33e41a9be973cd31
+event_version: filas=26 md5=69133de51bc9b8c4111eb1d191789d47
+quarantine: filas=3 md5=2b5560add8b73dc6ab14fd6f4f1ebca4
+
+-- [3] carga 3
+Carga 3 (huella DESPUÉS: idéntica a la carga 1; resumen new=0 newer=0)
+current_event: filas=26 md5=95cbcada2f7ba76d33e41a9be973cd31
+event_version: filas=26 md5=69133de51bc9b8c4111eb1d191789d47
+quarantine: filas=3 md5=2b5560add8b73dc6ab14fd6f4f1ebca4
+
