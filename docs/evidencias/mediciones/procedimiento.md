@@ -38,7 +38,7 @@ La corrida completa medida (`T087_corrida.txt`, 2026-11-12) tardó 117 s en tota
 
 ## Equipo anfitrión
 
-`equipo.md` lee de la máquina CPU, núcleos, RAM, SO, Python, PostgreSQL y shapely. Los campos «Modelo del equipo anfitrión» y «Potencia del equipo anfitrión (W)» son PENDIENTE (alumno): no se rellenan sin que los aporte el alumno.
+`equipo.md` lee de la máquina CPU, núcleos, RAM, SO, Python, PostgreSQL y shapely. Los campos «Modelo del equipo anfitrión» y «Potencia del equipo anfitrión (W)» los aporta el alumno y están rellenos en `equipo.md` (el lector automático no los obtiene: son datos del anfitrión, no de la VM de Docker). Los límites de CPU y memoria de los contenedores se leen con `docker inspect`.
 
 ## Repetición desde un clon limpio
 

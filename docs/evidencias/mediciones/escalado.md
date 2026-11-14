@@ -105,4 +105,4 @@ Formato: problema observado (id y cifra) → mejora → medición que la confirm
 
 - Sin datos de disco, de concurrencia de escrituras ni de Kafka: los puntos 5 y 6 usan como cota la ida y vuelta de una consulta y la integración geográfica medidas, y se marcan como SUPUESTO.
 - La precisión de las extrapolaciones a 10^8 filas depende de que la tendencia medida (tres tamaños, tres decenas) se mantenga; las fórmulas permiten reemplazar los valores si se vuelve a medir con un tamaño mayor.
-- Las tarifas, visitas por mes y demás entradas de coste monetario siguen PENDIENTES del alumno (`costes.md`); no se calcula ningún importe en euros aquí.
+- Los importes en euros (tarifas, visitas por mes, horas y demás entradas de coste monetario) están en `costes.md`, con su origen y su naturaleza efectivo/imputado; no se calcula ningún importe en euros aquí.

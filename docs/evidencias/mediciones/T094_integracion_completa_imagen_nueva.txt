@@ -1,0 +1,56 @@
+time="2026-11-14T01:13:29+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Running 
+time="2026-11-14T01:13:29+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-tests-run-d0ae92b19c19 Creating 
+ Container seismic-observatory-tests-run-d0ae92b19c19 Created 
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0
+rootdir: /app
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.16.0
+collected 1059 items / 832 deselected / 227 selected
+
+tests/integration/test_api_coherence.py .....                            [  2%]
+tests/integration/test_api_comparison.py .......                         [  5%]
+tests/integration/test_api_database_down.py ...                          [  6%]
+tests/integration/test_api_errors.py ..................................  [ 21%]
+tests/integration/test_api_events.py ...............                     [ 28%]
+tests/integration/test_api_harness.py .                                  [ 28%]
+tests/integration/test_api_health.py ....                                [ 30%]
+tests/integration/test_api_pagination.py ........                        [ 33%]
+tests/integration/test_api_queries.py ..........                         [ 38%]
+tests/integration/test_api_readonly.py .............                     [ 44%]
+tests/integration/test_api_replay_events.py .....                        [ 46%]
+tests/integration/test_api_replay_real.py ....                           [ 48%]
+tests/integration/test_api_stats.py .......                              [ 51%]
+tests/integration/test_api_stats_queries.py .....                        [ 53%]
+tests/integration/test_bench_ops.py ...                                  [ 54%]
+tests/integration/test_bench_run.py ..                                   [ 55%]
+tests/integration/test_bench_schema.py ........                          [ 59%]
+tests/integration/test_bench_storage.py ...                              [ 60%]
+tests/integration/test_bench_transfer.py .                               [ 60%]
+tests/integration/test_catalog_load.py ...                               [ 62%]
+tests/integration/test_counters_reconcile.py ...                         [ 63%]
+tests/integration/test_date_dim.py ....                                  [ 65%]
+tests/integration/test_faq12.py ..                                       [ 66%]
+tests/integration/test_geography.py .......                              [ 69%]
+tests/integration/test_geography_exclusion.py .                          [ 69%]
+tests/integration/test_geography_validity.py .........                   [ 73%]
+tests/integration/test_historical_gap.py ..                              [ 74%]
+tests/integration/test_historical_load.py ...                            [ 75%]
+tests/integration/test_historical_reload.py .                            [ 76%]
+tests/integration/test_historical_rules.py ......                        [ 78%]
+tests/integration/test_idempotence.py ....                               [ 80%]
+tests/integration/test_nulls_times.py ....                               [ 82%]
+tests/integration/test_producer_cycles.py ....                           [ 84%]
+tests/integration/test_producer_failures.py ......                       [ 86%]
+tests/integration/test_producer_store.py .......                         [ 89%]
+tests/integration/test_quarantine.py ..........                          [ 94%]
+tests/integration/test_replay_consumer.py ....                           [ 96%]
+tests/integration/test_restart_crash.py .......                          [ 99%]
+tests/integration/test_roles.py ..                                       [100%]
+
+===================== 227 passed, 832 deselected in 51.60s =====================
