@@ -1,0 +1,12 @@
+# T094-T098 pytest tests/integration/test_acceptance_api.py
+# comando: MSYS_NO_PATHCONV=1 docker compose --profile test run --rm tests pytest tests/integration/test_acceptance_api.py -x -q
+# fecha: 2026-11-14T00:50:19Z
+time="2026-11-14T01:50:20+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Running 
+time="2026-11-14T01:50:20+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-tests-run-e8ee433e6e00 Creating 
+ Container seismic-observatory-tests-run-e8ee433e6e00 Created 
+.....                                                                    [100%]
+5 passed in 2.53s

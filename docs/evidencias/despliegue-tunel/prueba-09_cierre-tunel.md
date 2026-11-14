@@ -1,6 +1,6 @@
 # Prueba 9: cierre del túnel
 
-**Estado: se verifica en vivo en la URL pública; su evidencia en vídeo irá en readme-video.** Cubre prueba 9, G9 (prueba real), SC-006. No hay capturas en esta carpeta: las capturas de `README.md` desde la misma red del servidor no sustituyen esta prueba.
+**Estado: pendiente de la demostración del alumno (no verificada). La evidencia irá en `docs/evidencias/pruebas/` y en readme-video.** Cubre prueba 9, G9 (prueba real), SC-006. No hay capturas en esta carpeta: las capturas de `README.md` desde la misma red del servidor no sustituyen esta prueba.
 
 ## Pasos
 

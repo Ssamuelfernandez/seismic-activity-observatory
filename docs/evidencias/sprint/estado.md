@@ -2,7 +2,7 @@
 
 - Feature: pruebas-aceptacion | Rama: 012-pruebas-aceptacion (desde main) | Checklist: tabla I (1–11), G9, entregable evidencias de las 11 pruebas
 - diseno: TERMINADA (supervisor: CONTINUAR); 24 tareas T094–T117 en 5 bloques
-- implementar: pendiente
+- implementar: TERMINADA (T094–T117 verificadas)
 - cierre: pendiente
 - Sin merge ni push. Checklist sin marcar: lo marca el alumno.
 - Pruebas 9 y 10: pendientes de la demostración del alumno con cloudflared.

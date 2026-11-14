@@ -1,0 +1,11 @@
+# comando: docker compose --profile test run --rm tests pytest tests/integration/test_acceptance_api.py::test_null_magnitude_stays_null_in_db_and_api tests/integration/test_acceptance_api.py::test_sea_event_has_no_country_and_is_counted tests/integration/test_nulls_times.py tests/integration/test_api_events.py tests/integration/test_quarantine.py tests/integration/test_geography.py tests/integration/test_restart_crash.py -q
+# fecha: 2026-11-14T00:52:06Z
+time="2026-11-14T01:52:06+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Running 
+time="2026-11-14T01:52:06+01:00" level=warning msg="No services to build"
+ Container seismic-observatory-postgres-1 Waiting 
+ Container seismic-observatory-postgres-1 Healthy 
+ Container seismic-observatory-tests-run-857e1a2e0566 Creating 
+ Container seismic-observatory-tests-run-857e1a2e0566 Created 
+.............................................                            [100%]
+45 passed in 8.53s

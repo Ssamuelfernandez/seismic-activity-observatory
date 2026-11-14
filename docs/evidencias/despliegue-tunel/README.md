@@ -13,8 +13,8 @@ Cierre de la feature (T072), 2026-11-12. Todo lo marcado «Cumplido» está comp
   - [`2026-11-12_api-eventos.png`](2026-11-12_api-eventos.png): `https://observatorio-api.ssamuelfernandez.net/api/eventos?limit=2&start=2026-01-01` (`metadata` y `features`).
   - [`2026-11-12_respuestas-publicas.txt`](2026-11-12_respuestas-publicas.txt): salida de `curl` de `/api/salud` y `/api/eventos?limit=2` (texto).
   - Estas capturas no sustituyen la prueba 9 desde fuera de la red ni la captura de H1 desde el móvil con datos.
-- Verificación en vivo (alumno, a mano): panel y API desplegados (Cloudflare Tunnel y Netlify) y el panel muestra datos reales.
-- Pruebas 9 y 10: se verifican en vivo en la URL pública y su evidencia en vídeo irá en `readme-video`. Cualquier captura tomada desde la misma red del servidor no sustituye la prueba 9 desde fuera de la red (H1 con datos móviles sigue como captura pendiente).
+- Verificación del despliegue (alumno, a mano): panel y API desplegados (Cloudflare Tunnel y Netlify) y el panel muestra datos reales.
+- Pruebas 9 y 10: pendientes de la demostración del alumno (no verificadas en vivo todavía). Se harán en la URL pública con el túnel real y su evidencia irá en `docs/evidencias/pruebas/` (fichas 09 y 10) y en `readme-video`. Cualquier captura tomada desde la misma red del servidor no sustituye la prueba 9 desde fuera de la red (H1 con datos móviles sigue como captura pendiente).
 - Apuntes de defensa: `docs/borradores/despliegue-tunel.md`.
 
 ## Veredicto de SC-001 a SC-008

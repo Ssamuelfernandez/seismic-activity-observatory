@@ -1,0 +1,10 @@
+# T099 huella inicial de live (SQL solo lectura)
+# fecha: 2026-11-14T00:51:31Z
+# comando: docker compose exec -T postgres psql -U observatory_admin -d observatory (SELECT en transaccion READ ONLY, esquema live)
+BEGIN
+ n_sinteticos | n_current | n_sinteticos_version |          md5_sinteticos          
+--------------+-----------+----------------------+----------------------------------
+            0 |     18855 |                    0 | d41d8cd98f00b204e9800998ecf8427e
+(1 row)
+
+ROLLBACK

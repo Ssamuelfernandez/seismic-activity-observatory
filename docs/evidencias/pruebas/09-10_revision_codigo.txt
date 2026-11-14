@@ -1,0 +1,37 @@
+# T105 revision del codigo del panel para las pruebas 9 y 10 (lectura de codigo, no ejecucion)
+# fecha: 2026-11-14
+# Solo se reportan huecos; no se ha modificado codigo del panel (FR-013).
+
+## Comportamiento (a): fallo del refresco -> aviso con la hora de la ultima lectura y datos anteriores visibles
+frontend/src/shared/hooks/useObservatory.ts:43   const refetchInterval = getConfig().refreshSeconds * 1000;
+frontend/src/shared/hooks/useObservatory.ts:49   refetchInterval (eventos); :56 (estadisticas); :63 salud con HEALTH_REFRESH_MS = 30_000 (l.11)
+frontend/src/shared/hooks/useObservatory.ts:50   retry: false (eventos); :57 estadisticas; :64 salud -> el error se muestra tal cual, sin reintentos ocultos
+frontend/src/shared/hooks/useObservatory.ts:51   placeholderData: keepPreviousData (eventos); :58 estadisticas -> se conserva la ultima lectura buena
+frontend/src/shared/hooks/useObservatory.ts:67   const response = events.data ?? null;  -> los datos anteriores siguen en la respuesta
+frontend/src/shared/hooks/useObservatory.ts:69   state: deriveDataState(n_features, events.error !== null)
+frontend/src/shared/hooks/useObservatory.ts:73   updatedAt: events.dataUpdatedAt  -> hora de la ultima lectura correcta
+frontend/src/components/StatusBanners.tsx:82-89  if (error && hasData) -> aviso «Datos antiguos»: «No se pudo actualizar (...) Se muestra la ultima lectura correcta, de {edad} ({hora UTC de updatedAt})»
+frontend/src/components/StatusBanners.tsx:61    backendDown = Boolean(healthError) -> añade «El backend no responde.»
+frontend/src/components/StatusBanners.tsx:90-97  if (error && !hasData) -> «Sin datos» y «No significa que haya 0 eventos» (sin lectura previa no se afirma 0)
+frontend/src/components/StatusBanners.tsx:98-100 !error && backendDown -> «Backend sin respuesta»
+
+## Comportamiento (b): recuperacion en el siguiente refresco, sin recargar
+frontend/src/shared/hooks/useObservatory.ts:49   refetchInterval sigue activo tras un error (no esta condicionado al error)
+frontend/src/main.tsx:9   new QueryClient({ defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } } })
+Al responder la API en el siguiente refresco, events.error pasa a null y las condiciones de StatusBanners.tsx:82 y :90 dejan de cumplirse: el aviso desaparece y updatedAt se actualiza.
+(Lo anterior se deduce del codigo y de TanStack Query; no se ha observado en el tunel.)
+
+## Configuracion
+frontend/public/config.json: "refreshSeconds": 60, "timeoutMs": 15000, "mode": "api", "apiBaseUrl": "https://observatorio-api.ssamuelfernandez.net/api"
+frontend/src/shared/api/client.ts:26   AbortSignal.timeout(getConfig().timeoutMs); :55 mensaje «La API no respondio en 15 s.»
+
+## grep refetchIntervalInBackground en frontend/src
+comando: grep -rn refetchIntervalInBackground frontend/src
+resultado: sin coincidencias (codigo de salida 1)
+
+## Huecos encontrados (no se corrigen aqui)
+1. Latencia: refreshSeconds = 60 mas timeoutMs = 15000 -> el aviso (tras cerrar) y la recuperacion (tras reabrir) pueden tardar hasta unos 75 s.
+2. Pestaña oculta: no se usa refetchIntervalInBackground (grep sin resultados); TanStack Query pausa por defecto el intervalo con la pestaña en segundo plano. Mantener la pestaña visible durante la demostracion.
+3. Sin refresco al volver a la pestaña: refetchOnWindowFocus: false (main.tsx:9); volver a la pestaña no fuerza una consulta.
+4. T036 (docs/evidencias/panel-base-mock/T036_*) probo la API local parada (curl, proxy, ciclo de refresco, sin lectura previa), no el tunel real ni el dominio publico. No sustituye las pruebas 9 y 10.
+5. Estado de las pruebas 9 y 10: Pendiente del alumno. El codigo muestra que ambos comportamientos existen; no esta demostrado en la URL publica.
