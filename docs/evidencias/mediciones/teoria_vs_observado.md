@@ -61,3 +61,10 @@ Discrepancias y su explicación:
 ## Límite de estas cifras
 
 Los datos son SINTÉTICOS (semilla fija, `bench`) y el Postgres corre en la VM de Docker Desktop (WSL2), no en el equipo anfitrión. Los tiempos absolutos no son los de otro entorno; la comparación entre estrategias dentro de la misma corrida es lo que se puede usar.
+
+Limitaciones concretas de la medición:
+
+- **Memoria con `tracemalloc`:** solo cuenta lo que Python reserva (campo `peak_kib`). No incluye la memoria de PostgreSQL ni la del sistema. Solo se mide al construir el `dict` y en la integración geográfica; en las consultas a la base no hay medición de memoria.
+- **Valor atípico:** `server_ms` de `search.pg_seq.100000.first` (7,057 ms) queda sin explicar; no se ha usado para ninguna conclusión.
+- **N = 1.000 como ruido:** con 1.000 filas domina la ida y vuelta al servidor, no el algoritmo; por eso a ese tamaño el `Seq Scan` no se distingue del índice. Las conclusiones sobre el coste del algoritmo se apoyan en 10.000 y 100.000 filas.
+- **Tres tamaños:** con tres puntos solo se puede decir si la tendencia es compatible con la teoría, no demostrarla.

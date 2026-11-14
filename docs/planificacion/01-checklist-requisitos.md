@@ -128,7 +128,7 @@ Reglas de redacción: indicar siempre **conjunto** (mensajes / versiones distint
 | E3 | Estructura orientativa del enunciado: `evento_actual` (hecho, única por `event_id`), `fecha`, `pais`, `evento_version` (única `(event_id, updated)`), estado de ingesta/cuarentena. **Identificadores del proyecto en inglés:** `current_event`, `date_dim`, `country`, `event_version`, `quarantine`, `ingest.*`. No es obligatorio copiar la estructura, sí justificar y **documentar la equivalencia** de nombres en la memoria | Equivalencia escrita | Enunc. §7 · FAQ 20 | ☐ |
 | E4 | **[OBL]** Integrar terremotos con atributos del catálogo (histórico y feed no cuentan como segunda fuente) | Join país | Enunc. §7 | ☐ |
 | E5 | **[OBL]** SQL de creación de tablas e índices en el repo (`sql/`) enlazado desde la memoria | Carpeta `sql/` | Guía 2.5 | [x] |
-| E6 | **[OBL]** Índices justificados **por consulta concreta** y con medición antes/después | `EXPLAIN ANALYZE` / tiempos | FAQ 20 | ☐ |
+| E6 | **[OBL]** Índices justificados **por consulta concreta** y con medición antes/después | `EXPLAIN ANALYZE` / tiempos | FAQ 20 | [x] |
 | E7 | Timestamps completos conservados (para ventanas horarias) | Campo `event_time` timestamptz | FAQ 20 | [x] |
 
 ### F. API (FastAPI)
@@ -224,13 +224,13 @@ La columna "Feature" indica dónde se prueba por primera vez; la feature `prueba
 
 | ID | Requisito | Fuente | ☐ |
 |---|---|---|---|
-| K1 | **[OBL, EVAL]** Justificar ≥3 operaciones: búsqueda de versiones por id, integración geográfica, agregación por ventanas; coste medio vs peor caso | Enunc. §10 | ☐ |
-| K2 | **[OBL]** Medir **tiempo y memoria** con ≥3 tamaños de entrada; indicar equipo, procedimiento, unidades | Enunc. §10 | ☐ |
-| K3 | **[OBL]** Comparar búsqueda secuencial vs diccionario **o** consulta sin/con índice | Enunc. §10 | ☐ |
-| K4 | **[OBL]** Si replicas datos para escala: marcarlos **sintéticos**, fuera del análisis real | Enunc. §10 | ☐ |
-| K5 | **[OBL]** Razonar qué pasaría con **100 millones** de registros | Enunc. §10 | ☐ |
-| K6 | **[OBL]** Costes: hardware, electricidad, almacenamiento, transferencia, mantenimiento, tiempo de desarrollo; distinguir **medido vs supuesto**; cuota gratuita ≠ coste cero | Enunc. §10 | ☐ |
-| K7 | **[OBL]** Propuesta de escalado + mejoras ligadas a problemas concretos (no genéricas) | Enunc. §10 · Guía 2.7 | ☐ |
+| K1 | **[OBL, EVAL]** Justificar ≥3 operaciones: búsqueda de versiones por id, integración geográfica, agregación por ventanas; coste medio vs peor caso | Enunc. §10 | [x] |
+| K2 | **[OBL]** Medir **tiempo y memoria** con ≥3 tamaños de entrada; indicar equipo, procedimiento, unidades | Enunc. §10 | [x] |
+| K3 | **[OBL]** Comparar búsqueda secuencial vs diccionario **o** consulta sin/con índice | Enunc. §10 | [x] |
+| K4 | **[OBL]** Si replicas datos para escala: marcarlos **sintéticos**, fuera del análisis real | Enunc. §10 | [x] |
+| K5 | **[OBL]** Razonar qué pasaría con **100 millones** de registros | Enunc. §10 | [x] |
+| K6 | **[OBL]** Costes: hardware, electricidad, almacenamiento, transferencia, mantenimiento, tiempo de desarrollo; distinguir **medido vs supuesto**; cuota gratuita ≠ coste cero | Enunc. §10 | [x] |
+| K7 | **[OBL]** Propuesta de escalado + mejoras ligadas a problemas concretos (no genéricas) | Enunc. §10 · Guía 2.7 | [x] |
 | K8 | **[OPC]** ROI (solo si defines un beneficio medible; no inventar) | Enunc. §10 | ☐ |
 
 ### L. Índice del README (un solo documento, no nueve)

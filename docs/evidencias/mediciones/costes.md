@@ -38,6 +38,14 @@ Comprobación: A = 22,92 + 6,08 + 0,0006 + 30,00 + 1,83 = 60,83; efectivo = 6,08
 
 Lectura: el coste en efectivo es pequeño; la mayor parte del coste total es el tiempo del alumno (mantenimiento) y la amortización del equipo, que no suponen un desembolso adicional pero sí un coste real. Una cuota gratuita no equivale a coste cero (ver abajo).
 
+## Supuestos explícitos
+
+- **Fracción de uso del hardware = 1** en los dos escenarios (A y B): todo el coste del equipo se imputa a este proyecto, aunque el equipo se use también para otras cosas. Es una cota superior del coste imputado del hardware.
+- **Electricidad:** A = 12 h/día y B = 24/7 con 100 W constantes (SUPUESTO, no medidos); el consumo real varía con la carga.
+- **Transferencia:** los 109.996 B por petición se midieron con la ventana de 24 h que devuelve `/api/eventos` por defecto y con el stack tal como estaba el 2026-11-13; con otro periodo o más eventos, la cifra cambia. Peticiones por visita = 10 min x 1 petición/min y 5 a 10 visitas al mes (SUPUESTO).
+- **Tarifa de 15 EUR/h** para mantenimiento y desarrollo: perfil junior, SUPUESTO; es un coste de oportunidad, no un pago.
+- No se contrata ningún servicio de pago ni se atribuye ningún beneficio económico al observatorio; el ROI (K8) no se calcula.
+
 ## Cuotas gratuitas (hosting estático, túnel y demás servicios)
 
 cuota gratuita ≠ coste cero: superar el límite puede generar un cobro.

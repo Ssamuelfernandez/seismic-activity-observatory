@@ -39,7 +39,7 @@ Además hay un bloque de requisitos de «aceptación» (las 11 pruebas del enunc
 | **Calidad** | **Suficiente-Notable en código; Insuficiente en lo escrito** | Las reglas existen y funcionan (14 motivos de cuarentena, nulos sin rellenar, negativos válidos, `is_synthetic`, contadores de transformaciones). La memoria §4 documenta las **reglas**, pero **no contiene todavía el análisis**: porcentajes de completitud, duplicados, anomalías, actualidad, antes/después. Es lo que puntúa y no lo tienes escrito. | Redactar §4 con las 6 dimensiones (completitud, unicidad, validez, consistencia, actualidad, exactitud), cada una con su consulta, resultado, denominador y acción. **Es el hueco más importante.** |
 | **Modelado** | **Sobresaliente en el diseño** | Modelo conceptual, lógico y físico en `docs/memoria.md` §5, con equivalencia de nombres. Hecho actual + historial de versiones, país por punto-en-polígono, upsert idempotente, offset tras el commit, esquemas `live`/`replay` aislados. Pruebas 2, 3, 4, 6, 8 y 11 ejecutadas con evidencia. | Que la memoria cite los resultados de las mediciones de índices (`docs/evidencias/mediciones/indices.md`) para justificar los índices («modelo optimizado»). Cerrar las pruebas 1, 5 y 7 con capturas. |
 | **Análisis** | **Funcional, sin redactar** | El panel y la API ya calculan lo exigido: recuentos por hora UTC y país (incluido «Sin país asignado»), distribuciones, comparación 24 h M≥4 frente a la media diaria de 2025, filtros coherentes, tabla. Pero la memoria §6 está vacía: **no hay ninguna conclusión escrita** y la rúbrica pide ≥3 con cifras. | Escribir ≥3 conclusiones con periodo, filtros, denominador y captura con los filtros visibles. |
-| **Reflexión** | **Notable, con costes por rellenar** | Mediciones hechas con 3 tamaños, comparaciones lista/diccionario y sin/con índice, razonamiento a 10⁸ filas, 8 propuestas de escalado (`docs/evidencias/mediciones/`). **Los costes tienen la fórmula pero los valores salen «PENDIENTE (alumno)»**: precio del equipo, potencia, tarifa eléctrica, horas, etc. Sin ellos el coste total es «no calculable». | Rellenar `costes.md` y `equipo.md` con tus datos, pasar el resumen a la memoria §7 y a «Limitaciones» §10. |
+| **Reflexión** | **Sobresaliente en el material; falta pasarlo a la memoria** | Mediciones con 3 tamaños, comparaciones lista/diccionario y sin/con índice, razonamiento a 10⁸ filas, 8 propuestas de escalado ligadas a cifras, costes completos (hardware, electricidad, almacenamiento, transferencia, mantenimiento, dominio y desarrollo) con origen medido/supuesto y naturaleza efectivo/imputado, y limitaciones declaradas (`docs/evidencias/mediciones/`; auditoría sin bloqueantes en `docs/evidencias/subagentes/verificador-auditoria-mediciones-costes.md`). | La memoria §7 ya lo resume; queda la cuota de Netlify sin verificar y repetir desde un clon limpio (SC-007). |
 
 ### Hallazgos reales que debes conocer antes de grabar
 
@@ -63,7 +63,7 @@ Para que el vídeo tenga algo sólido que enseñar. Cada punto indica el criteri
 
 1. **Análisis de calidad por dimensiones** (Calidad). Son 6 consultas SQL sobre `live.*` y `quarantine`, con denominador y acción. Puntúa mucho y es lo que más falta. Reglas de redacción en el checklist (§D): indicar el conjunto y el denominador, no sumar incidencias solapadas, no inventar errores en datos reales.
 2. **≥3 conclusiones con cifras** (Análisis). Candidatas con datos que ya tienes: porcentaje sin país y su explicación; comparación de las últimas 24 h con M≥4 frente a la media diaria de 2025 (con días a cero en el denominador); distribución de profundidad y de magnitud; recuentos por país.
-3. **Costes** (Reflexión). Rellenar precio y vida útil del equipo, potencia, horas encendido, tarifa eléctrica, horas de desarrollo y mantenimiento.
+3. **Costes** (Reflexión). **Hecho** (`costes.md`, `equipo.md`, `transferencia.md`). Queda sin verificar el límite de Netlify.
 4. **Memoria §1, §3, §6, §7, §8, §9, §10** vacías o a medias. Basta con trasladar los borradores de `docs/borradores/` y las tablas de `docs/evidencias/mediciones/`.
 5. **Pruebas de aceptación 1, 5, 7, 9 y 10** con evidencia propia (checklist §I). Las 2, 3, 4, 6, 8 y 11 ya tienen evidencia.
 6. **README final** con la tabla rúbrica→evidencia (M10) y el recorrido de un evento y la decisión propia. El README actual es un diario de features, no el documento final.
@@ -134,7 +134,7 @@ Las pruebas 9 y 10 se hacen **mejor en el propio vídeo**: son visuales y tu pla
 
 1. **Calidad** (consultas + redacción en la memoria §4). Es el mayor impacto.
 2. **Análisis**: 3 conclusiones y sus capturas con los filtros visibles.
-3. **Costes**: rellenar `costes.md` y `equipo.md`.
+3. ~~Costes: rellenar `costes.md` y `equipo.md`~~ (hecho; resumen en la memoria §7).
 4. Memoria: trasladar los borradores a §1, §3, §6, §7, §8, §9 y §10.
 5. Túnel + Netlify en vivo, pruebas 9 y 10 y capturas de 1, 5 y 7.
 6. README final con la tabla rúbrica→evidencia, el recorrido de un evento y la decisión propia.

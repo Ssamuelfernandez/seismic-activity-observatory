@@ -12,7 +12,7 @@ Material para el README y la defensa. Cifras copiadas de `docs/evidencias/medici
 
 ## Equipo (REAL, leído de la máquina)
 
-AMD Ryzen 9 9900X, 12 núcleos físicos y 24 lógicos, 15,17 GiB de RAM, PostgreSQL 16.15, Python 3.12.16. Es la VM de Docker Desktop (WSL2). Modelo y potencia del equipo anfitrión: PENDIENTE (alumno).
+AMD Ryzen 9 9900X, 12 núcleos físicos y 24 lógicos, 15,17 GiB de RAM, PostgreSQL 16.15, Python 3.12.16. Es la VM de Docker Desktop (WSL2), con 24 CPU y 15,17 GiB asignados y sin límites por contenedor. Equipo anfitrión (aportado por el alumno): 32 GB DDR5, RTX 3060 Ti, 1,82 TB; potencia supuesta 100 W.
 
 ## Resultados clave (SINTÉTICO, 100.000 filas)
 
@@ -39,11 +39,24 @@ No se edita el DDL ni el contrato; decide el alumno.
 
 - `bench` con los 4 índices (SINTÉTICO): 363,2 bytes por fila a 100.000 filas (466,9 a 1.000 y 398,1 a 10.000).
 - Tablas reales (REAL): `live.current_event` 475,2 bytes por fila; `live.event_version` 1.090,3 bytes por fila; base completa 47160343 bytes.
-- Transferencia (REAL): 109996 bytes por visita (eventos 107162, estadísticas 2762, salud 72).
+- Transferencia (REAL): 109996 bytes por petición (eventos 107162, estadísticas 2762, salud 72); con 10 peticiones por visita (SUPUESTO), 1.099.960 bytes por visita.
 
-## Costes
+## Costes (detalle y fórmulas en `costes.md`)
 
-Solo se mide el almacenamiento (0,0439215 GiB, MEDIDO) y los bytes por visita (0,000102442 GiB, MEDIDO). El resto (hardware, electricidad, tarifas, visitas, mantenimiento, horas de desarrollo y límites de las cuotas gratuitas de Netlify y Cloudflare Tunnel) es SUPUESTO y está PENDIENTE (alumno): mientras falte una entrada el resultado es «no calculable», nunca 0. Una cuota gratuita no es coste cero: superar el límite puede generar un cobro.
+Cada cifra lleva su origen (MEDIDO, SUPUESTO o ESTIMADO) y su naturaleza (en efectivo o imputada). Medido: almacenamiento (0,0439215 GiB) y bytes por petición (109996 B = 0,000102442 GiB). Todo lo demás es SUPUESTO o ESTIMADO. Mes de 30 días; tarifa eléctrica de 0,169 EUR/kWh.
+
+| Concepto | Naturaleza | A: 12 h/día (EUR/mes) | B: 24/7 (EUR/mes) |
+|---|---|---|---|
+| Hardware (1100 EUR / 48 meses) | imputado | 22,92 | 22,92 |
+| Electricidad (100 W) | efectivo | 6,08 | 12,17 |
+| Almacenamiento | imputado (efectivo 0) | 0,0006 | 0,0006 |
+| Transferencia | efectivo 0 | 0 | 0 |
+| Mantenimiento (2 h/mes x 15 EUR/h) | imputado | 30,00 | 30,00 |
+| Dominio (22 EUR/año) | efectivo | 1,83 | 1,83 |
+| **Total imputado** | | **≈ 60,8** | **≈ 66,9** |
+| **Total en efectivo** | | **≈ 7,9** | **≈ 14,0** |
+
+Desarrollo: 1.080 EUR una sola vez (72 h x 15 EUR/h; rango 810 a 1.350 EUR), fuera de los totales mensuales. Una cuota gratuita no es coste cero: superar el límite puede generar un cobro. No se calcula ROI ni se contrata ningún servicio.
 
 ## Razonamiento a 100 millones de filas (SUPUESTO, extrapolado)
 
@@ -58,14 +71,15 @@ Se parte de cifras medidas hasta 100.000 filas; no se midió 10^8.
 
 ## Pendientes del alumno
 
-- (a) Rellenar `costes.md`, `equipo.md` y `transferencia.md`: horas de desarrollo, potencia del PC, modelo del equipo, €/kWh, precio y amortización del hardware, visitas por mes y cuotas gratuitas (Netlify, Cloudflare Tunnel) con la fecha de consulta.
-- (b) Reconstruir la imagen `tests` (`docker compose build tests`). El error de recogida de `tests/common/test_api_config.py` es preexistente, de la 010.
-- (c) Repetir el procedimiento desde un clon limpio (SC-007 parcial).
-- (d) Revisar las 6 decisiones provisionales de `specs/011-mediciones-costes/spec.md` y decidir sobre los índices y las propuestas de `escalado.md`.
+- (a) Verificar en el panel de Netlify el límite que aplica a la cuenta (la celda de `costes.md` queda como está por decisión del alumno).
+- (b) Repetir el procedimiento desde un clon limpio (SC-007 parcial).
+- (c) Revisar las 6 decisiones provisionales de `specs/011-mediciones-costes/spec.md` y decidir sobre los índices y las propuestas de `escalado.md`.
+
+Resuelto: costes, equipo y transferencia rellenados; imagen `tests` reconstruida (227 pruebas de integración en verde, `T094_integracion_completa_imagen_nueva.txt`).
 
 ## Límites conocidos
 
-Mediciones en la VM de Docker, no en el anfitrión; `server_ms` de `search.pg_seq.100000.first` (7,057 ms) sin explicar; el ensayo reducido sobrescribe las tablas; imagen `tests` desactualizada.
+Mediciones en la VM de Docker, no en el anfitrión; `server_ms` de `search.pg_seq.100000.first` (7,057 ms) sin explicar; el ensayo reducido sobrescribe las tablas; la memoria con `tracemalloc` solo cuenta lo que reserva Python y solo se mide en la construcción del `dict` y en la geografía; con 1.000 filas domina la ida y vuelta al servidor (ruido), no el algoritmo.
 
 ## Nota sobre la suite de integración
 
