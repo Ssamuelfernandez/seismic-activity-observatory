@@ -20,7 +20,8 @@ Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
 | `replay` (009) | Completada (implementada y comprobada de extremo a extremo): reproducción acelerada de una selección de 2025 por Kafka, aislada de `live` (J1–J8, F12, G10). Ver la sección «Replay»; apuntes en [`docs/borradores/replay.md`](docs/borradores/replay.md) |
 | `despliegue-tunel` (010) | Implementada y verificada en local (2026-11-12), pendiente de la revisión del alumno: CORS, `netlify.toml`, build sin mock, revisión de exposición y procedimiento de activación; túnel, Netlify, DNS y pruebas 9 y 10 pendientes del alumno. Ver «Túnel público y panel» |
 | `mediciones-costes` (011) | Cerrada (2026-11-13): costes y equipo rellenados por el alumno, auditoría sin bloqueantes, K1–K7 y E6 marcados. Evidencias en `docs/evidencias/mediciones/`; resumen en la sección 7 de la memoria. Solo falta repetir desde un clon limpio (SC-007) |
-| `pruebas-aceptacion` (014), `readme-video` (017, incluye el README final y el vídeo) | Pendientes |
+| `pruebas-aceptacion` (012) | Implementada y verificada (2026-11-14), pendiente de la revisión del alumno: 11 fichas y resumen en [`docs/evidencias/pruebas/README.md`](docs/evidencias/pruebas/README.md); capturas reales de 1, 3, 5 y 7 y pruebas 9 y 10 pendientes del alumno. Apuntes: [`docs/borradores/pruebas-aceptacion.md`](docs/borradores/pruebas-aceptacion.md) |
+| `readme-video` (017, incluye el README final, la tabla rúbrica→evidencia y el vídeo) | Pendiente |
 
 La API es la **API de consulta** (ver su sección más abajo). El productor ya es el **productor en vivo** (ver su sección más abajo). El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
 

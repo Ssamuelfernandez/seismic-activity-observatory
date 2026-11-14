@@ -18,7 +18,12 @@ Comando base (en Git Bash de Windows): `MSYS_NO_PATHCONV=1 docker compose --prof
 | [10 Reapertura del túnel](10-reapertura-tunel.md) | Recuperación sin recargar | No ejecutada; solo revisión de código | [`09-10_revision_codigo.txt`](09-10_revision_codigo.txt) | Pasos de la ficha, a continuación de la 9 | Pendiente del alumno |
 | [11 Reproducción histórica](11-reproduccion-historica.md) | 26 mensajes a 22 / 24 / 0 en `replay`; `live` intacto | `replay` 22 / 24 / 0 (2026-11-12); `live` 211 / 211 / 0 con el mismo md5; pruebas del 2026-11-14: 8 passed | [`T053_despues.out`](../replay/T053_despues.out), [`replay/README.md`](../replay/README.md), [`11_pytest.txt`](11_pytest.txt) | `... pytest tests/integration/test_replay_consumer.py tests/integration/test_api_replay_real.py -q` | Observada |
 
-Resultados de las ejecuciones del 2026-11-14 (0 fallos): pruebas 1 a 4, 13 passed ([`01-04_pytest.txt`](01-04_pytest.txt)); pruebas 5 a 8, 45 passed ([`05-08_pytest.txt`](05-08_pytest.txt)); prueba 11, 8 passed ([`11_pytest.txt`](11_pytest.txt)); archivo nuevo de puente consumidor a API, 5 passed ([`B1_test_acceptance_api.txt`](B1_test_acceptance_api.txt)). La suite completa (T114) no forma parte de este bloque.
+Resultados de las ejecuciones del 2026-11-14 (0 fallos): pruebas 1 a 4, 13 passed ([`01-04_pytest.txt`](01-04_pytest.txt)); pruebas 5 a 8, 45 passed ([`05-08_pytest.txt`](05-08_pytest.txt)); prueba 11, 8 passed ([`11_pytest.txt`](11_pytest.txt)); archivo nuevo de puente consumidor a API, 5 passed ([`B1_test_acceptance_api.txt`](B1_test_acceptance_api.txt)). La suite completa se ejecutó aparte (apartado siguiente).
+
+## Suites completas (T114)
+
+- Unitarias ([`suite_unitarias.txt`](suite_unitarias.txt)): 829 passed y 3 failed. Los 3 fallos son de entorno, no de la feature: están en `tests/scripts/test_netlify_config.py` (`test_build_section_has_the_expected_values`, `test_spa_redirect_is_a_200_rewrite_to_index`, `test_node_version_matches_nvmrc`) porque el servicio `tests` de Compose no monta `netlify.toml` ni `frontend/.nvmrc`. Vienen de `despliegue-tunel`; no se corrigen aquí (no se toca código).
+- Integración ([`suite_integracion.txt`](suite_integracion.txt)): 232 passed.
 
 ## Huecos del panel en 9 y 10
 

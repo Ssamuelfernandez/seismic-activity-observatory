@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-14
 
-**Status**: Draft (fase A: specify + clarify; fase B: plan, tasks y analyze hechos con las decisiones provisionales; falta la revisión del alumno antes de implementar)
+**Status**: Implemented (2026-11-14; T099–T117 hechas y verificadas; con salvedad: las capturas reales de 1, 3, 5 y 7 y las pruebas 9 y 10 quedan pendientes del alumno; pendiente la revisión del alumno)
 
 **Input**: Formalizar las 11 pruebas de aceptación del enunciado: cada una con procedimiento repetible, resultado esperado, resultado observado, evidencia y cómo repetirla. Reutilizar las evidencias y las pruebas que ya existen; añadir solo lo que falte.
 
@@ -143,12 +143,12 @@ Un único `README.md` resume las 11 pruebas y la documentación de `despliegue-t
 
 ### Measurable Outcomes
 
-- **SC-001**: Existen 11 fichas, una por prueba, y cada una tiene sus 6 apartados (procedimiento, esperado, observado, evidencia, cómo repetir, estado) sin apartados vacíos, salvo los huecos explícitos de 9 y 10.
+- **SC-001**: Existen 11 fichas, una por prueba, y cada una tiene sus 6 apartados (procedimiento, esperado, observado, evidencia, cómo repetir, estado) sin apartados vacíos, salvo los huecos explícitos de 9 y 10. *(Cumplido.)*
 - **SC-002**: `docs/evidencias/pruebas/README.md` tiene 11 filas y el 100 % de los enlaces de evidencia apuntan a archivos existentes.
 - **SC-003**: Las pruebas 1 a 8 y 11 pasan con un comando cada una en una repetición desde el stack levantado, con 0 filas sintéticas nuevas en `live` y 0 diferencias en la huella de `live` en la prueba 11.
-- **SC-004**: Las pruebas 9 y 10 tienen procedimiento, plantilla y revisión del código con 2 comportamientos comprobados (aviso con última lectura; recuperación en el siguiente refresco) y 0 afirmaciones de «verificada» sin captura del alumno.
-- **SC-005**: Las capturas de 1, 5 y 7 existen con fecha, URL y tipo de dato, o su plantilla con huecos, y las de datos sintéticos llevan la etiqueta correspondiente.
-- **SC-006**: Tests ejecutados y guardados en `docs/evidencias/pruebas/`, `CODEMAP.md` actualizado, `docs/evidencias/consumidor-idempotente/` restaurado y 0 cambios en contratos, `docs/enunciado/` y checklist.
+- **SC-004**: Las pruebas 9 y 10 tienen procedimiento, plantilla y revisión del código con 2 comportamientos comprobados (aviso con última lectura; recuperación en el siguiente refresco) y 0 afirmaciones de «verificada» sin captura del alumno. *(Cumplido en lo documentable; **Diferido**: la demostración real de 9 y 10 requiere `cloudflared` y la URL pública, y la hace el alumno.)*
+- **SC-005**: Las capturas de 1, 5 y 7 existen con fecha, URL y tipo de dato, o su plantilla con huecos, y las de datos sintéticos llevan la etiqueta correspondiente. *(**Diferido**: existen las plantillas `01_`, `03_`, `05_` y `07_captura_pendiente.md`; las capturas reales las toma el alumno con navegador.)*
+- **SC-006**: Tests ejecutados y guardados en `docs/evidencias/pruebas/`, `CODEMAP.md` actualizado, `docs/evidencias/consumidor-idempotente/` restaurado y 0 cambios en contratos, `docs/enunciado/` y checklist. *(Cumplido; las unitarias dan 829 passed y 3 fallos de entorno de `test_netlify_config.py`, ver `docs/evidencias/pruebas/README.md`.)*
 
 ## Assumptions
 
