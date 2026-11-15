@@ -16,6 +16,38 @@ Fuente: feed `all_day.geojson` de USGS, según `docs/evidencias/f1/explore_usgs_
 | `type` | Tipo de evento. En la muestra todos son `earthquake`. | Texto | No faltó (210/210). Otros valores posibles: por confirmar. |
 | `status` | Estado de revisión del evento. Valor visto: `automatic`; otros valores: por confirmar. | Texto | No faltó (210/210). |
 | `coordinates[2]` (profundidad) | Profundidad del foco, tercera coordenada de la geometría. Hay 2 valores negativos (mínimo -0,18), válidos. | Decimal, kilómetros (unidad por confirmar con la documentación de USGS) | No faltó (0 nulos). Si falta se guarda NULL, nunca 0. |
+### 2.1 Respuesta del feed: opcionales, frecuencia, errores y latencia (B2)
+
+Origen: `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson` (eventos de las últimas 24 horas). Las cifras proceden de una única exploración (`docs/evidencias/f1/explore_usgs_salida.txt`, generada con `scripts/explore_usgs.py`; respuesta del 2026-11-01 a las 14:33 UTC). Es una muestra de un momento: otras horas darán otros recuentos. Lo que no se midió se dice como tal.
+
+**Estructura.** Un objeto GeoJSON con `type`, `metadata`, `features` y `bbox`. `metadata` trae `generated` (milisegundos Unix), `url`, `title`, `status` (200), `api` (2.8.2) y `count`. En la muestra `count` fue 210 y `features` tuvo 210 elementos; cada uno es un `Feature` con `id`, `properties` y `geometry`.
+
+**Tipos y unidades** (complementa la tabla anterior).
+
+| Campo | Tipo observado | Unidad o significado |
+|---|---|---|
+| `properties.time`, `properties.updated` | entero | Milisegundos desde 1970 en UTC |
+| `properties.mag` | número (entero o decimal) | Magnitud, sin unidad; `magType` indica la escala (`ml`, `md`, `mb`, `mww`, `mwr` en la muestra) |
+| `geometry.coordinates` | lista de 3 números | Longitud, latitud (grados) y profundidad (kilómetros, según la documentación de USGS) |
+| `place`, `title`, `url`, `detail`, `net`, `code`, `ids`, `sources`, `types`, `status`, `type` | texto | Descriptivos |
+| `nst`, `sig`, `tsunami`, `felt` | entero | Número de estaciones, significancia, indicador de tsunami, informes de percepción |
+| `gap`, `dmin`, `rms`, `cdi`, `mmi` | número | Parámetros de calidad e intensidad de la localización |
+
+**Opcionales y casos raros observados (de 210 eventos).**
+
+- Presentes en los 210: `code`, `detail`, `dmin`, `gap`, `ids`, `mag`, `magType`, `net`, `nst`, `place`, `rms`, `sig`, `sources`, `status`, `time`, `title`, `tsunami`, `type`, `types`, `updated`, `url`.
+- Opcionales (a menudo nulos): `alert` (4 de 210), `cdi` (14), `felt` (14), `mmi` (10). `tz` fue nulo en los 210.
+- `mag` negativa: 1 caso (mínimo -0,06); no hubo `mag` nula en esta respuesta, aunque el contrato debe tolerarla.
+- Profundidad negativa: 2 casos (mínimo -0,180000007152557).
+- Tipo de evento: los 210 fueron `earthquake`; no apareció ningún otro tipo en esta muestra.
+- Geometría: 210 `Point` con 3 coordenadas, ninguna nula ni fuera de rango. Identificadores sin nulos ni duplicados dentro de la respuesta.
+
+**Frecuencia de actualización.** Cabeceras de la muestra: `Cache-Control: public, max-age=60`, `Last-Modified: Sun, 01 Nov 2026 14:33:01 GMT`, `Expires: Sun, 01 Nov 2026 14:34:01 GMT`, `Age: 23`. El feed se regenera aproximadamente cada 60 segundos, y por eso `POLL_SECONDS` vale 60 por defecto. `metadata.generated` cambia en cada regeneración aunque no haya eventos nuevos, así que el hash para detectar una respuesta distinta se calcula solo sobre `features`. Un evento ya publicado puede revisarse más tarde: `updated - time` fue, en minutos, de 0,6 (mínimo), 3,5 (mediana) y 1125,1 (máximo); por eso el productor republica solo si `updated` es mayor que el de la última versión publicada.
+
+**Errores.** En la exploración la respuesta fue HTTP 200 y no se observó ningún error. Los fallos que el productor contempla (HTTP 429 y 5xx, tiempo de espera agotado, cuerpo que no es JSON) no están medidos contra USGS real: se prueban con un servidor simulado (`tests/support/mock_usgs.py`) y se tratan con espera creciente entre intentos (valores de configuración, no medidos: 2 s inicial, 60 s máxima, con aleatoriedad). El productor no lee la cabecera `Retry-After`.
+
+**Latencia y tamaño.** En la muestra: 223 ms de latencia y 150 724 bytes de cuerpo. Es una sola medición; no se calcula una distribución. El tiempo de espera por operación de socket es `HTTP_TIMEOUT_SECONDS` (10 s por defecto).
+
 ## 3. Procedencia y registro de consultas
 ## 4. Calidad
 
@@ -53,6 +85,35 @@ El consumidor valida cada mensaje de Kafka antes de tocar la base (`common/valid
 - El offset se confirma solo después del commit en PostgreSQL; un corte entre ambos provoca una reentrega que se ignora (`ON CONFLICT (event_id, updated_ms) DO NOTHING`).
 - Solo una versión con `updated` estrictamente mayor sustituye al estado actual; el historial conserva todas las versiones distintas.
 - Evidencias: `docs/evidencias/consumidor-idempotente/` (pruebas 2, 3, 4, 6 y 8; 412 pruebas unitarias y 35 de integración).
+### 4.4 Análisis de calidad sobre datos reales de `live` (C14)
+
+Fecha: 2026-11-15. Base: el PostgreSQL del stack levantado, consultado en solo lectura (`default_transaction_read_only=on`). Esquema `live`, solo datos reales (`is_synthetic = false`). Las consultas completas, una por dimensión, están en `docs/evidencias/revision-final/calidad-live.md`, junto con el modo de reproducirlas; las cifras cambian con el tiempo porque el productor sigue ingiriendo, y las de aquí son las del 2026-11-15. Las incidencias de filas distintas no se suman: miden cosas distintas y pueden solaparse.
+
+| Dimensión | Conjunto y denominador | Resultado |
+|---|---|---|
+| Completitud | Eventos actuales reales de `live.current_event`: 19 208 | `mag`, `mag_type`, `place` y profundidad al 100,00 % cada uno; `country_id` al 24,50 % |
+| Unicidad | 19 208 eventos actuales y 19 509 versiones | 19 208 `event_id` distintos; 19 509 versiones distintas (0 duplicadas); 149 eventos con más de una versión |
+| Validez | 19 208 eventos actuales reales | 0 magnitudes, profundidades o coordenadas fuera de rango o NaN; 13 magnitudes y 14 profundidades negativas (válidas); 0 reales en cuarentena |
+| Consistencia | 19 208 eventos actuales reales | 0 estados actuales sin su versión; 0 que no sean la versión más reciente; 0 países fuera del catálogo; 0 con `updated` anterior a `time` |
+| Actualidad | Agrupado por `source`: `usgs_feed` (906) y `usgs_historical` (18 302) | `usgs_feed`: mediana ocurrencia a `updated` 19,3 min, ocurrencia a ingesta 417,1 min (p95 1 289,5 min), máximo ocurrencia a `updated` 1,0 días. `usgs_historical`: mediana ocurrencia a `updated` 110 821,6 min, máximo 615,3 días; su `ingested_at` es el de la carga por lote |
+| Exactitud | Agrupado por `source` (906 y 18 302) | `usgs_feed`: 152 de 906 sin país (16,8 %), magnitud de -0,6 a 5,8, profundidad de -3,42 a 587,447 km. `usgs_historical`: 14 350 de 18 302 sin país (78,4 %), magnitud de 4 a 8,8, profundidad de 0,5 a 669,556 km |
+
+**Decisiones tomadas con estas cifras.**
+
+1. Las 13 magnitudes y 14 profundidades negativas se conservan, porque USGS las publica y el rango del esquema las admite.
+2. El 24,50 % de eventos con país (75,50 % «Sin país asignado») se declara como límite del catálogo de 110 m y de que la mayoría de los sismos ocurren en el mar, no como fallo. La proporción difiere entre histórico (solo M≥4: 78,4 % sin país) y feed (todas las magnitudes: 16,8 %); no se ha investigado la causa.
+3. La actualidad se mide por separado para feed e histórico, porque el `ingested_at` del histórico es el momento de la carga, no un retraso real de ingesta.
+4. El máximo de 615,3 días entre ocurrencia y `updated` del histórico muestra revisiones tardías de USGS que el sistema guarda como versiones sin duplicar eventos (149 eventos con más de una versión).
+
+**Antes y después.** En los datos reales de `live` no hay nada que limpiar (0 duplicados, 0 fuera de rango, 0 estados desfasados, 0 reales en cuarentena), así que el «antes y después» se enseña con evidencia ya existente de las reglas aplicadas, sin recalcular nada:
+
+- *Respuesta cruda frente a eventos limpios.* La respuesta cruda de USGS explorada (`docs/evidencias/f1/explore_usgs_salida.txt`) tenía 210 eventos, todos `earthquake`, con 1 magnitud negativa y 2 profundidades negativas; ninguno incumple las reglas de §4.1, así que todos serían aceptados tal cual, con los negativos conservados y sin rellenar nulos con 0. En `live` hay hoy 19 208 eventos reales y 0 reales en cuarentena.
+- *Contadores del consumidor, caso controlado FAQ 12* (`docs/evidencias/consumidor-idempotente/faq12_antes_despues.out`, datos sintéticos etiquetados): antes, `live.current_event` 0 filas y `live.event_version` 0 filas; tras publicar 5 mensajes, 2 eventos actuales y 3 versiones, con los contadores `received` 5, `new_events` 2, `newer_versions_applied` 1 y `redeliveries_ignored` 2.
+- *Cuarentena con motivo* (`prueba6_cuarentena.out`, sintético salvo las dos filas ilegibles): 6 mensajes inválidos producen 6 filas, con los motivos `coordinates_out_of_range`, `db_constraint_violation`, `invalid_json` (dos filas), `mode_topic_mismatch` y `value_out_of_range`; en `current_event` solo queda el mensaje válido y `event_version` tiene 1 fila.
+- *Exclusiones* (`geografia_no_earthquake.out`, sintético): un evento con `properties.type` = `quarry blast` queda en `live.exclusion` (`non_earthquake_type`) y no entra en `current_event`.
+
+**Límites.** El rango no es exactitud física: no hay una segunda fuente con la que contrastar magnitud, profundidad o posición. El país por geometría depende del catálogo simplificado. 906 eventos del feed son una ventana corta, así que sus medianas de actualidad son indicativas. `live.exclusion` no se analiza sobre datos reales en esta tabla: son eventos que nunca entran en `current_event`.
+
 ## 5. Modelo conceptual, lógico y físico
 
 > Borrador. Se completará con las mediciones de la sección 7 y con el resultado de la carga real cuando existan.
@@ -209,4 +270,17 @@ Añadir una capa de mares y océanos (polígonos de una segunda fuente por deter
 ## 9. Reproducción histórica
 ## 10. Limitaciones
 
-Los eventos en el mar quedan como "Sin país asignado"; el campo `place` de USGS se muestra como descripción, pero no se usa para asignar país.
+Los eventos en el mar quedan como "Sin país asignado"; el campo `place` de USGS se muestra como descripción, pero no se usa para asignar país. La proporción es alta (24,5 % de eventos con país) por el catálogo de 110 m y el mar; no es un fallo (ver §4.4).
+
+**Un evento que sale de la ventana de 24 h no está eliminado (B11).** El feed `all_day` solo muestra las últimas 24 horas. Si un evento deja de aparecer en una respuesta posterior, el productor no puede concluir que USGS lo haya eliminado: lo más probable es que haya salido de la ventana. Por eso no borra ni marca nada por ausencia; solo publica eventos nuevos o con `updated` mayor. Detectar eliminaciones reales exigiría reconciliar de forma exhaustiva lo guardado con el catálogo de USGS (consultando cada evento por `id` o por intervalos de fechas); esa reconciliación es una ampliación fuera de alcance, y los eventos que USGS retire del feed quedan sin detectar. Si el productor está parado más de 24 horas, los eventos ocurridos durante la parada que ya salieron de la ventana no vuelven a aparecer en el feed (hay un hueco); el procedimiento de recuperación con el catálogo histórico está explicado, sin automatizar, en `docs/borradores/productor-live.md` (B12).
+
+**Límites del productor.** No respeta la cabecera `Retry-After`. Un solo productor; dos a la vez no están soportados. Un evento sin `id` o sin `updated` se republica en cada ciclo. El periodo real entre consultas es algo mayor que `POLL_SECONDS`, porque la espera se suma a la duración del ciclo. Si USGS tarda más del tiempo de espera, el ciclo cuenta como fallo aunque el servicio funcione.
+
+**Otras limitaciones** (las mismas que «Limitaciones conocidas» del `README.md`):
+
+- Sin comparación en replay: `GET /api/estadisticas?mode=replay` devuelve `comparison` nulo; la comparación histórica solo existe en modo en vivo.
+- Comparación fija: siempre las últimas 24 h frente a la media diaria de 2025 (M≥4); no hay periodos a elegir. El periodo reciente puede estar incompleto y la API lo avisa (`recent_incomplete`).
+- La memoria medida con `tracemalloc` solo cuenta lo que reserva Python y solo se midió al construir el diccionario y en la integración geográfica. Los tiempos se tomaron en la VM de Docker Desktop (WSL2), no en el anfitrión.
+- Un error 500 de la API no lleva cabeceras CORS, así que el navegador lo ve como fallo de red.
+- Clon limpio verificado en la feature 002 (2026-11-03), no repetido con el estado final (A2).
+- Los datos sintéticos (`synthetic-…`, mock del panel y replay) van etiquetados y no se mezclan con `live`.
