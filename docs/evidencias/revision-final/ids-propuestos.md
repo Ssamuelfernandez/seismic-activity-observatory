@@ -10,7 +10,7 @@ Incluye B12 y M10 (cumplen tras T126) y G2 y H1 (cumplen tras las capturas del 2
 
 A1, A3, A4, A5, A6, A7, A8, A9, A10, A11, B1, B3, B4, B5, B6, B7, B8, B9, B10, B12, B13, B14, B15, B16, B17, C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, E1, E2, E4, E5, E6, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, G1, G2, G3, G4, G5, G6, G7, G8, G10, G13, H1, H2, J1, J2, J3, J4, J5, J6, J7, K1, K2, K3, K4, K5, K6, K7, M1, M2, M5, M10
 
-Total: 81.
+Total: 83.
 
 ## Tabla ID → estado propuesto → responsable
 

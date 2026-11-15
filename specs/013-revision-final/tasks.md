@@ -27,14 +27,14 @@ Orden: T132 → T126 → T133. T126 y T133 dependen de T120 (auditoría).
 
 ## Bloque 3: inventario y parada P1 (C, paso 1)
 
-- [ ] **T127** Crear `RF/inventario.md` con los candidatos del plan (decisión 5) y los que surjan de `git ls-files` y `git status --ignored`: candidatos a mover, renombrar o eliminar, con clasificación, motivo, quién lo referencia (`grep`), y «propuesta para tu decisión» para lo que está dentro de rutas protegidas. Prueba: `git status --porcelain` sin borrados ni movimientos; todo ítem referenciado propuesto como «borrar» o «mover» lleva su corrección de referencia. IDs: FR-011, FR-012, FR-013, FR-015, SC-005, M5, M6, M8.
-- [ ] **T128** **PARADA P1**: el agente se detiene, entrega `inventario.md` y no borra ni mueve nada hasta la aprobación expresa del alumno (por ítem o en bloque). Si el alumno no aprueba nada, T129 se cierra como «sin cambios». Prueba: la aprobación queda registrada en `inventario.md` (fecha y ítems). IDs: FR-013, SC-005.
+- [x] **T127** Crear `RF/inventario.md` con los candidatos del plan (decisión 5) y los que surjan de `git ls-files` y `git status --ignored`: candidatos a mover, renombrar o eliminar, con clasificación, motivo, quién lo referencia (`grep`), y «propuesta para tu decisión» para lo que está dentro de rutas protegidas. Prueba: `git status --porcelain` sin borrados ni movimientos; todo ítem referenciado propuesto como «borrar» o «mover» lleva su corrección de referencia. IDs: FR-011, FR-012, FR-013, FR-015, SC-005, M5, M6, M8.
+- [x] **T128** **PARADA P1**: el agente se detiene, entrega `inventario.md` y no borra ni mueve nada hasta la aprobación expresa del alumno (por ítem o en bloque). Si el alumno no aprueba nada, T129 se cierra como «sin cambios». Prueba: la aprobación queda registrada en `inventario.md` (fecha y ítems). IDs: FR-013, SC-005.
 
 **Parada tras el bloque 3**: espera de la aprobación P1.
 
 ## Bloque 4: limpieza condicionada y cierre (C, paso 2)
 
-- [ ] **T129** *(Limpieza condicionada a P1; el cierre no lo está.)* Aplicar solo lo aprobado, corregir las referencias afectadas (comprobadas con `grep` y `git ls-files`), actualizar `CODEMAP.md` si algo se movió o borró, y dejar los cambios listos para un commit propio y reversible que hace el alumno o el agente solo si el alumno lo indica. Cierre: comprobar que no cambian contratos, `docs/enunciado/`, `sql/001_schema.sql`, constitución ni checklist y entregar el resumen con la lista de `ids-propuestos.md`. Prueba: sin referencias colgantes a lo movido o borrado (`grep`), `git status` solo con lo aprobado y rutas permitidas, sin commit. IDs: FR-014, FR-015, FR-022, FR-024, SC-005.
+- [x] **T129** *(Limpieza condicionada a P1; el cierre no lo está.)* Aplicar solo lo aprobado, corregir las referencias afectadas (comprobadas con `grep` y `git ls-files`), actualizar `CODEMAP.md` si algo se movió o borró, y dejar los cambios listos para un commit propio y reversible que hace el alumno o el agente solo si el alumno lo indica. Cierre: comprobar que no cambian contratos, `docs/enunciado/`, `sql/001_schema.sql`, constitución ni checklist y entregar el resumen con la lista de `ids-propuestos.md`. Prueba: sin referencias colgantes a lo movido o borrado (`grep`), `git status` solo con lo aprobado y rutas permitidas, sin commit. IDs: FR-014, FR-015, FR-022, FR-024, SC-005.
 
 **Parada final**: el agente se detiene y espera la revisión.
 

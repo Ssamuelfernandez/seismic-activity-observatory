@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-14
 
-**Status**: Draft (specify + clarify hechos; pendiente de la revisión del alumno)
+**Status**: Implemented (2026-11-15, alcance reducido: solo documentación; 9 tareas activas hechas, 7 diferidas; pendiente de la revisión del alumno)
 
 **Input**: Dejar el repositorio entregable: verificado y ordenado. Límite: 4 bloques de ejecución, un día de trabajo. Lo que no esté en este alcance no se hace.
 
@@ -255,3 +255,23 @@ Lo que sigue queda **Diferido** por decisión del alumno (2026-11-14): no se eje
 | Huecos no [OBL] detectados en la auditoría, en la comprobación de `docs/rubrica-y-guia-video.md` o en el inventario | Regla: solo se arregla lo que deje un [OBL] sin evidencia | T118 a T120, T127, T133 |
 | `docs/rubrica-y-guia-video.md`: rutas de las pruebas 5 y 7 sin el directorio `geografia-pais/`, prueba 3 sin «captura pendiente», comparación sin la salvedad «ausente en replay», y cifras y frases anteriores al estado final (calidad, tabla M10 del README, numeración 014/017) | Ninguno deja un [OBL] sin evidencia; el detalle está en `docs/evidencias/revision-final/rubrica-guia.md` | T133 |
 | Pasar `docs/evidencias/revision-final/calidad-live.md` (C14) y las conclusiones del análisis a `docs/memoria.md` (§4 y §6) | La memoria queda fuera del alcance de la feature; el análisis existe como evidencia | T126 |
+
+## Diferido
+
+Por recorte de alcance del alumno (2026-11-14), las tareas T121 a T125, T130 y T131 (marcadas `- [-]` en `tasks.md`) no se ejecutan en esta feature: no se cambia código, no se ejecuta la suite de integración ni se toca el stack del alumno. No bloquean el cierre y pasan a «Pendientes no bloqueantes» (tabla anterior), a decidir por el alumno.
+
+| Tarea | Qué era | Motivo | Dónde pasa |
+|---|---|---|---|
+| T121 | Salida de evidencias de los tests a carpeta temporal (`EVIDENCE_KEEP`) | No se cambia código de tests | Pendientes no bloqueantes |
+| T122 | Skip de los 3 tests de `test_netlify_config.py` | Cambio de código de tests fuera del alcance | Pendientes no bloqueantes |
+| T123 | `scripts/check_links.py` y su test | No se crea código; rutas comprobadas a mano | Pendientes no bloqueantes |
+| T124 | Unitarios e integración con `git status` antes y después | No se ejecuta la integración | Pendientes no bloqueantes |
+| T125 | Ejecución del comprobador y `enlaces.md` | Depende de T123 | Pendientes no bloqueantes |
+| T130 | Parada P2 del stack y `cloudflared` | Sin clon limpio | Pendientes no bloqueantes |
+| T131 | Clon limpio, `docker compose config` y `clon-limpio.md` | Alcance reducido; la reproducibilidad desde clon queda para el alumno | Pendientes no bloqueantes (A2 sigue «parcial», responsable alumno) |
+
+## Histórico
+
+| Feature | Estado | Fecha | Evidencias |
+|---|---|---|---|
+| `revision-final` (013) | Implemented (alcance reducido, solo documentación) | 2026-11-15 | `docs/evidencias/revision-final/` (`auditoria.md`, `verificacion-A.md`, `ids-propuestos.md`, `inventario.md`, `calidad-live.md`, `rubrica-guia.md`, `verificacion-B2.md`, `T132_T126_T133_comprobaciones.txt`); apuntes en `docs/borradores/revision-final.md` |
