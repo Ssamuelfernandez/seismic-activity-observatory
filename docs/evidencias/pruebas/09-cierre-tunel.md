@@ -47,3 +47,11 @@ Plantilla a rellenar:
 Cómo repetir: los pasos de la sección 2, con el túnel real (`cloudflared`). No hay comando automático.
 
 **Estado: Pendiente del alumno.** Pasa a «Observada» solo cuando el alumno rellene horas y capturas. Hasta entonces no se afirma que esté comprobada en el túnel real.
+
+## Captura recibida (2026-11-15, parcial)
+
+Aportada por el alumno: [`capturas/09_cierre_tunel_sin_respuesta.png`](capturas/09_cierre_tunel_sin_respuesta.png). Con el túnel cerrado, el panel público muestra el estado **SIN RESPUESTA DE LA API** (indicador rojo), el aviso «SIN DATOS: No se pudo conectar con la API. El backend no responde. No significa que haya 0 eventos…» y «EVENTOS RECIENTES: SIN DATOS». Es decir: el fallo se muestra y **no se presenta como 0 eventos**.
+
+**Parcial:** la captura es de un panel sin lecturas previas (carga con el túnel ya cerrado), así que no demuestra que se **conserva la última lectura** («Datos antiguos» con su hora UTC), que es lo que pide el esperado; tampoco hay captura inicial, horas A/B/C ni la hora de la captura. Para cerrar la prueba 9 hace falta la secuencia de la sección 2 (abrir con datos, cerrar `cloudflared`, esperar el refresco).
+
+![Prueba 9: panel sin respuesta de la API](capturas/09_cierre_tunel_sin_respuesta.png)

@@ -53,3 +53,11 @@ Pasos P1 a P9 de `specs/010-despliegue-tunel/tasks.md`:
 - P7 Prueba 10: reabrir el túnel, recuperación en el siguiente refresco sin recargar, con hora.
 - P8 Retirar `compose.override.yaml` y recrear `postgres` antes de abrir el túnel.
 - P9 Marcar el checklist con evidencia y decidir si adopta la propuesta de redacción de la spec.
+
+## H3: captura del túnel de Cloudflare (aportada por el alumno, 2026-11-15)
+
+Archivo: [`H3_cloudflared_tunel.png`](H3_cloudflared_tunel.png). Muestra el túnel `observatorio-api` en el panel de Cloudflare: estado «Buen estado», 1 réplica activa y 1 ruta (`observatorio-api.ssamuelfernandez.net`, «Aplicación publicada»), versión `2026.11.0`, tiempo de actividad 3 horas, sin token a la vista. La IP pública del servidor de origen se tapó (recuadro gris) antes de guardarla en el repositorio.
+
+**Parcial:** la captura no muestra el destino interno de la ruta (`http://localhost:8000` como único destino), que está en la pestaña «Rutas». Para cerrar H3 falta esa captura (token tapado).
+
+![H3: túnel observatorio-api](H3_cloudflared_tunel.png)

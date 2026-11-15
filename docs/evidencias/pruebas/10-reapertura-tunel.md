@@ -43,3 +43,7 @@ En el siguiente refresco desaparece el aviso «Datos antiguos» y la hora de la 
 Cómo repetir: los pasos de la sección 2, a continuación de la ficha [`09-cierre-tunel.md`](09-cierre-tunel.md). No hay comando automático.
 
 **Estado: Pendiente del alumno.** Hasta que el alumno rellene horas y capturas, no se afirma que esté comprobada en el túnel real.
+
+## Estado a 2026-11-15
+
+**Sigue pendiente.** No hay captura de la recuperación: la captura del alumno de la prueba 9 es del fallo y la del móvil (H1) es un panel en vivo sin secuencia, así que ninguna demuestra que el panel se recupera solo al reabrir el túnel. Falta el paso 3 de esta ficha con captura.

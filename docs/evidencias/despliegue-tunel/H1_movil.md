@@ -23,3 +23,17 @@ El panel carga desde datos móviles y muestra eventos reales (o el aviso de la �
 | Resultado | (pendiente) |
 
 **Captura (URL visible):** (pendiente del alumno)
+
+## Captura recibida (2026-11-15)
+
+**Estado: captura aportada por el alumno.** Archivo: [`H1_movil_datos_moviles.jpg`](H1_movil_datos_moviles.jpg).
+
+| Campo | Valor |
+|---|---|
+| Fecha y hora | 2026-11-15; hora del móvil 8:24 (la captura no muestra la fecha) |
+| Dispositivo y red | Móvil; indicador de red **4G+** (datos móviles) |
+| Resultado | El panel carga en `…ervatorio.ssamuelfernandez.net` (URL visible, recortada por la izquierda), con globo con eventos, «EN VIVO · 24 H · MAG. TODAS · TODOS LOS PAÍSES» y estado **LIVE** en verde |
+
+Límite: la URL aparece recortada en la barra (se ve `…ervatorio.ssamuelfernandez.net`) y no se ve ni el wifi apagado ni una ficha de evento. Lo aporta el alumno; el agente no la hizo.
+
+![H1: panel desde el móvil con datos móviles](H1_movil_datos_moviles.jpg)
