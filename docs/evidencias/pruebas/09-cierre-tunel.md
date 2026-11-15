@@ -20,7 +20,7 @@ El panel muestra el aviso «Datos antiguos» («No se pudo actualizar (...) Se m
 
 ## 4. Observado
 
-**Pendiente de la demostración del alumno.** No se ha ejecutado. Solo hay revisión de código (que dice que el comportamiento existe), no observación en el túnel real.
+**Parcial (2026-11-15):** hay una captura del fallo (ver «Captura recibida» al final), pero no la secuencia completa con la última lectura conservada. Solo hay revisión de código (que dice que el comportamiento existe), no observación en el túnel real.
 
 Plantilla a rellenar:
 

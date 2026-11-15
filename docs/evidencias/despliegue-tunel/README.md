@@ -40,7 +40,7 @@ Regresión (T071): 776 pruebas unitarias, 73 de Vitest, 121 de integración de l
 
 ## Pendiente del alumno
 
-IDs del checklist: **con evidencia** F9, F10, F5, A8 (parte local: un único puerto publicado y revisión), G13 (parte local: `config.json`, build sin mock, `netlify.toml`; el despliegue real en Netlify queda pendiente); **pendientes** H1, pruebas 9 y 10, G9 (prueba real), H3 (token y destino del túnel), H4 y la parte real de H2.
+IDs del checklist: **con evidencia** F9, F10, F5, A8 (parte local: un único puerto publicado y revisión), G13 (parte local: `config.json`, build sin mock, `netlify.toml`; el despliegue real en Netlify queda pendiente); **pendientes** pruebas 9 y 10, G9 (prueba real), H3 (destino del túnel; captura parcial); H1 cumplida el 2026-11-15, H4 y la parte real de H2.
 
 Pasos P1 a P9 de `specs/010-despliegue-tunel/tasks.md`:
 

@@ -1,6 +1,6 @@
 # H1: panel accesible desde otro dispositivo
 
-**Estado: verificado a mano por el alumno (el panel público muestra datos reales); captura desde móvil con datos móviles pendiente.** Cubre H1, SC-006.
+**Estado: verificado, con captura desde el móvil con datos móviles (2026-11-15; ver «Captura recibida» al final).** Cubre H1, SC-006.
 
 ## Pasos
 
@@ -18,11 +18,11 @@ El panel carga desde datos móviles y muestra eventos reales (o el aviso de la �
 
 | Campo | Valor |
 |---|---|
-| Fecha y hora | (pendiente) |
-| Dispositivo y red | (pendiente) |
-| Resultado | (pendiente) |
+| Fecha y hora | 2026-11-15, 8:24 (hora del móvil) |
+| Dispositivo y red | Móvil, 4G+ (datos móviles) |
+| Resultado | Cumple: el panel carga y muestra eventos en LIVE |
 
-**Captura (URL visible):** (pendiente del alumno)
+**Captura (URL visible):** [`H1_movil_datos_moviles.jpg`](H1_movil_datos_moviles.jpg)
 
 ## Captura recibida (2026-11-15)
 
