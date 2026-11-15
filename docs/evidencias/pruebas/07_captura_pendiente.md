@@ -1,18 +1,12 @@
-# Captura 7 (prueba 7, evento marítimo): plantilla pendiente
+# Captura 7 (prueba 7, evento marítimo): hecha con datos reales
 
-**Estado: pendiente de captura del alumno.** Sin herramienta de navegador (T103). No se ha capturado nada.
+**Estado: capturada** el 2026-11-15 a las ~19:23 UTC con el navegador integrado, sobre el panel público en vivo. Datos reales de USGS.
 
-- **Origen de los datos: datos reales** (USGS tiene eventos oceánicos sin polígono de país).
-- **URL**: `https://observatorio.ssamuelfernandez.net/`
-- **Fecha y hora de la captura (UTC)**: ______
-- **Sin cuentas ni credenciales.**
+- **Archivo**: [`capturas/07_evento_maritimo.png`](capturas/07_evento_maritimo.png)
+- **Fecha y hora de la captura (UTC)**: 2026-11-15 ~19:23:45 (periodo 2026-11-14 19:23 → 2026-11-15 19:23 UTC).
+- **URL / modo**: `https://observatorio.ssamuelfernandez.net/`, en vivo, con el filtro de país «Sin país asignado».
+- **event_id usado**: no es un solo evento; son todos los eventos sin país del periodo. El primero de la lista es «155 km SE of Chignik, Alaska» (M 2,6).
+- **Número de eventos mostrado**: **30** (lista, y «Por país: Sin país asignado 30» en las estadísticas; el total sin filtro era 184).
+- **Qué se ve**: con el filtro activo, la lista y el mapa muestran eventos reales sin país, y el análisis (30 eventos, distribución por hora, magnitud, profundidad) los sigue contando.
 
-## Qué debe verse
-
-Con el filtro de país «Sin país asignado» activo, la lista y el mapa muestran eventos reales sin país (etiquetados como «Sin país asignado»), y el total y el análisis por hora siguen contando esos eventos. Anota el número de eventos mostrado: ______
-
-## Imagen
-
-![Captura 7: filtro «Sin país asignado» con datos reales](07_captura.png)
-
-(hueco: guardar como `docs/evidencias/pruebas/07_captura.png`).
+![Captura 7: Sin país asignado (real)](capturas/07_evento_maritimo.png)

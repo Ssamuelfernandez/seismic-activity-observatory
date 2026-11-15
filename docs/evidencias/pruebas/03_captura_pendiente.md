@@ -1,17 +1,20 @@
-# Captura 3 (prueba 3, versión posterior): plantilla pendiente
+# Captura 3 (prueba 3, versión posterior): hecha con un caso real
 
-**Estado: pendiente de captura del alumno.** Sin herramienta de navegador (T103). Además, esta captura es siempre plantilla por decisión de la spec: **datos sintéticos (TempDatabase), no visibles en el panel público; evidencia principal: SQL de T095** (`test_later_version_changes_current_and_aggregates`, salida en [`01-04_pytest.txt`](01-04_pytest.txt)) y [`../consumidor-idempotente/bloque3_prueba3_4_versiones.out`](../consumidor-idempotente/bloque3_prueba3_4_versiones.out).
+**Estado: capturada** el 2026-11-15 a las ~19:26 UTC con el navegador integrado, sobre el panel público en vivo. Es un caso **real** (no sintético): el feed de USGS revisó el evento y el consumidor guardó las dos versiones. No se inyectó nada en `live`.
 
-- **Origen de los datos: datos sintéticos** (`synthetic-acc-*`, `is_synthetic = true`, solo en `TempDatabase`). No se toca la base real para mostrarlos.
-- **URL**: `https://observatorio.ssamuelfernandez.net/` (el panel público no puede mostrar estos datos; solo se rellenaría si el alumno monta un panel local con datos sintéticos etiquetados).
-- **Fecha y hora de la captura (UTC)**: ______
+- **Archivo**: [`capturas/03_version_posterior.png`](capturas/03_version_posterior.png)
+- **Fecha y hora de la captura (UTC)**: 2026-11-15 ~19:26:48.
+- **URL / modo**: `https://observatorio.ssamuelfernandez.net/`, en vivo.
+- **event_id usado**: `uw714139501` (13 km SSW of Alder, Washington).
+- **Consulta de solo lectura** (`live.event_version`, comprobada antes de capturar):
 
-## Qué debería verse (si el alumno la hace en un panel local etiquetado)
+  | updated_at (UTC) | mag | depth_km |
+  |---|---|---|
+  | 2026-11-15 18:55:07.7 | 1,5758 | 17,58 |
+  | 2026-11-15 19:07:22.85 (posterior) | 1,38 | 17,37 |
 
-Tras una versión con `updated` posterior: los datos actuales del evento cambian (otro país y otra hora), el recuento por país y por hora cambia, y la etiqueta «Datos sintéticos» es visible.
+  y `live.current_event` = 1,38, `updated_at` 19:07:22.85, país USA.
+- **Qué se ve**: la ficha abierta con la versión **posterior** (magnitud 1,38, profundidad 17,37 km, actualizado 2026-11-15 19:07 UTC, estado `reviewed`) y el análisis (184 eventos, magnitud, país, hora). El historial con las dos versiones está en la consulta de arriba.
+- **Límite**: la magnitud cae en el mismo tramo del histograma (1–2) en las dos versiones, así que el recuento por magnitud no cambia; el cambio visible es el del dato actual del evento. El caso con cambio de país y de hora y recuentos distintos sigue siendo sintético (`TempDatabase`; evidencia: SQL de T095, ver [`03-version-posterior.md`](03-version-posterior.md)).
 
-## Imagen
-
-![Captura 3: versión posterior (sintética)](03_captura.png)
-
-(hueco: guardar como `docs/evidencias/pruebas/03_captura.png`).
+![Captura 3: versión posterior (real)](capturas/03_version_posterior.png)
