@@ -253,3 +253,5 @@ Lo que sigue queda **Diferido** por decisión del alumno (2026-11-14): no se eje
 | `docs/README.md` (mapa) | Sustituido por el README final mínimo | FR-021 |
 | Resto del bloque de limpieza (todo lo que no sea el inventario, P1 y lo aprobado en P1) | Alcance ligero | FR-011 a FR-015 solo en su parte aprobada |
 | Huecos no [OBL] detectados en la auditoría, en la comprobación de `docs/rubrica-y-guia-video.md` o en el inventario | Regla: solo se arregla lo que deje un [OBL] sin evidencia | T118 a T120, T127, T133 |
+| `docs/rubrica-y-guia-video.md`: rutas de las pruebas 5 y 7 sin el directorio `geografia-pais/`, prueba 3 sin «captura pendiente», comparación sin la salvedad «ausente en replay», y cifras y frases anteriores al estado final (calidad, tabla M10 del README, numeración 014/017) | Ninguno deja un [OBL] sin evidencia; el detalle está en `docs/evidencias/revision-final/rubrica-guia.md` | T133 |
+| Pasar `docs/evidencias/revision-final/calidad-live.md` (C14) y las conclusiones del análisis a `docs/memoria.md` (§4 y §6) | La memoria queda fuera del alcance de la feature; el análisis existe como evidencia | T126 |

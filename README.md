@@ -2,6 +2,10 @@
 
 Observatorio de actividad sísmica: un sistema que consulta el feed de terremotos de USGS, lo publica en Kafka, lo guarda en PostgreSQL sin duplicados ni pérdida de versiones y lo expone mediante una API a un panel con mapa. También permite reproducir un histórico, aislado de los datos en vivo. Proyecto de curso.
 
+**Vídeo de 5 minutos: PENDIENTE: enlace de YouTube** (lo rellena el alumno tras grabarlo).
+
+**Aviso: el panel público solo está disponible con el equipo del alumno y `cloudflared` encendidos.** La API pública sale de un túnel que se ejecuta en el PC del alumno; con el PC apagado o el túnel cerrado, el panel (que sigue en Netlify) no recibe datos. Para comprobar el sistema sin el túnel, ver «Cómo ejecutar» más abajo.
+
 ## Estado actual
 
 Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
@@ -21,13 +25,104 @@ Se trabaja con Spec Kit, una feature cada vez y con revisión antes de avanzar.
 | `despliegue-tunel` (010) | Implementada y verificada en local (2026-11-12), pendiente de la revisión del alumno: CORS, `netlify.toml`, build sin mock, revisión de exposición y procedimiento de activación; túnel, Netlify, DNS y pruebas 9 y 10 pendientes del alumno. Ver «Túnel público y panel» |
 | `mediciones-costes` (011) | Cerrada (2026-11-13): costes y equipo rellenados por el alumno, auditoría sin bloqueantes, K1–K7 y E6 marcados. Evidencias en `docs/evidencias/mediciones/`; resumen en la sección 7 de la memoria. Solo falta repetir desde un clon limpio (SC-007) |
 | `pruebas-aceptacion` (012) | Implementada y verificada (2026-11-14), pendiente de la revisión del alumno: 11 fichas y resumen en [`docs/evidencias/pruebas/README.md`](docs/evidencias/pruebas/README.md); capturas reales de 1, 3, 5 y 7 y pruebas 9 y 10 pendientes del alumno. Apuntes: [`docs/borradores/pruebas-aceptacion.md`](docs/borradores/pruebas-aceptacion.md) |
-| `readme-video` (017, incluye el README final, la tabla rúbrica→evidencia y el vídeo) | Pendiente |
+| `revision-final` (013) | Documentación final entregada (2026-11-15), sin cambios de código: auditoría de los requisitos obligatorios ([`auditoria.md`](docs/evidencias/revision-final/auditoria.md)), `CODEMAP.md` al día, este README con la tabla rúbrica→evidencia, análisis de calidad sobre datos reales ([`calidad-live.md`](docs/evidencias/revision-final/calidad-live.md)) y comprobación de la rúbrica-guía ([`rubrica-guia.md`](docs/evidencias/revision-final/rubrica-guia.md)). Las acciones que solo puede hacer el alumno están en «Pendientes del alumno» |
 
-La API es la **API de consulta** (ver su sección más abajo). El productor ya es el **productor en vivo** (ver su sección más abajo). El consumidor ya es el **consumidor idempotente** (ver su sección más abajo). La lógica real llega en las siguientes features.
+La API es la **API de consulta**, el productor es el **productor en vivo** y el consumidor es el **consumidor idempotente** (cada uno tiene su sección más abajo).
 
 El orden de las fases está en [`docs/planificacion/02-roadmap-implementacion.md`](docs/planificacion/02-roadmap-implementacion.md).
 
+Mapa de dónde está cada cosa: [`CODEMAP.md`](CODEMAP.md). Rúbrica, estado de cumplimiento y guion del vídeo: [`docs/rubrica-y-guia-video.md`](docs/rubrica-y-guia-video.md).
+
 Mediciones de complejidad y costes (`mediciones-costes`, 011, cerrada): resumen en la sección 7 de [`docs/memoria.md`](docs/memoria.md), borrador en [`docs/borradores/mediciones-costes.md`](docs/borradores/mediciones-costes.md) y evidencias en [`docs/evidencias/mediciones/`](docs/evidencias/mediciones/README.md).
+
+## Rúbrica → evidencia (M10)
+
+Una fila por criterio de la rúbrica (Extracción, Calidad, Modelado, Análisis, Reflexión). El estado está tomado de [`docs/evidencias/revision-final/auditoria.md`](docs/evidencias/revision-final/auditoria.md); la rúbrica y el guion del vídeo, en [`docs/rubrica-y-guia-video.md`](docs/rubrica-y-guia-video.md).
+
+| Criterio | Qué se afirma | Evidencia | Estado (auditoría) |
+|---|---|---|---|
+| Extracción | Feed de USGS cada 60 s con filtro `type=earthquake` y motivo de exclusión, originales guardados, histórico 2025 por meses (18 302 únicos) y catálogo de 177 países | [`docs/evidencias/productor-live/ciclo1.log`](docs/evidencias/productor-live/ciclo1.log), [`docs/evidencias/productor-live/ciclo1_consultas.out`](docs/evidencias/productor-live/ciclo1_consultas.out), [`data/historical/manifest.json`](data/historical/manifest.json), [`docs/evidencias/historico-2025/descarga_2025.log`](docs/evidencias/historico-2025/descarga_2025.log), [`docs/evidencias/geografia-pais/geografia_catalogo.out`](docs/evidencias/geografia-pais/geografia_catalogo.out) | B1 a B17 cumplen; B2 (respuesta, tipos, errores y latencia del feed) parcial: resumen abajo y apuntes en [`docs/borradores/productor-live.md`](docs/borradores/productor-live.md); prueba 1 sin captura del panel |
+| Calidad | Reglas de validación y cuarentena con motivo; análisis de las 6 dimensiones sobre datos reales de `live` con consultas SQL y resultados | [`docs/evidencias/revision-final/calidad-live.md`](docs/evidencias/revision-final/calidad-live.md), [`docs/evidencias/consumidor-idempotente/bloque3_prueba6_cuarentena.out`](docs/evidencias/consumidor-idempotente/bloque3_prueba6_cuarentena.out), [`docs/evidencias/pruebas/05-magnitud-nula.md`](docs/evidencias/pruebas/05-magnitud-nula.md), [`docs/evidencias/pruebas/07-evento-maritimo.md`](docs/evidencias/pruebas/07-evento-maritimo.md) | C1 a C13 cumplen; C14 parcial: el análisis está en `calidad-live.md` (sin «antes y después» porque en datos reales no hay nada que limpiar) y falta pasarlo a la memoria; pruebas 5 y 7 sin captura |
+| Modelado | Modelo conceptual, lógico y físico; `current_event` más historial de versiones; escritura idempotente; índices medidos sin y con índice | [`docs/memoria.md`](docs/memoria.md) (§5), [`sql/001_schema.sql`](sql/001_schema.sql), [`docs/evidencias/mediciones/indices.md`](docs/evidencias/mediciones/indices.md), [`docs/evidencias/pruebas/02-reenvio.md`](docs/evidencias/pruebas/02-reenvio.md), [`docs/evidencias/pruebas/04-version-tardia.md`](docs/evidencias/pruebas/04-version-tardia.md), [`docs/evidencias/pruebas/08-reinicio-consumidor.md`](docs/evidencias/pruebas/08-reinicio-consumidor.md) | E1 a E6 cumplen; pruebas 2, 4 y 8 observadas; prueba 3 sin captura |
+| Análisis | Estadísticas en SQL por hora UTC y por país (con «Sin país asignado»), distribuciones, comparación 24 h M≥4 frente a la media diaria de 2025, filtros coherentes entre mapa, tabla y gráficos | [`docs/evidencias/api/recorrido_08_estadisticas.txt`](docs/evidencias/api/recorrido_08_estadisticas.txt), [`docs/evidencias/api/coherencia_real.txt`](docs/evidencias/api/coherencia_real.txt), [`docs/evidencias/api/T016_pytest_api_comparison.txt`](docs/evidencias/api/T016_pytest_api_comparison.txt), [`docs/evidencias/panel-base-mock/T035_tabla_filtros_totales.md`](docs/evidencias/panel-base-mock/T035_tabla_filtros_totales.md), [`docs/evidencias/despliegue-tunel/2026-11-12_panel-publico.png`](docs/evidencias/despliegue-tunel/2026-11-12_panel-publico.png) | F7 y G3 a G8 cumplen; G2 parcial (ficha y ND con datos reales sin captura); conclusiones redactadas en la memoria (§6) sin escribir |
+| Reflexión | Complejidad con 3 tamaños, secuencial frente a diccionario y sin/con índice, razonamiento a 100 millones de registros, costes medido frente a supuesto y propuestas de escalado | [`docs/evidencias/mediciones/teoria_vs_observado.md`](docs/evidencias/mediciones/teoria_vs_observado.md), [`docs/evidencias/mediciones/tablas.md`](docs/evidencias/mediciones/tablas.md), [`docs/evidencias/mediciones/escalado.md`](docs/evidencias/mediciones/escalado.md), [`docs/evidencias/mediciones/costes.md`](docs/evidencias/mediciones/costes.md) | K1 a K7 cumplen; límite de la cuota gratuita de Netlify sin verificar |
+
+La auditoría completa (una fila por cada requisito obligatorio, con huecos y responsable) está en `docs/evidencias/revision-final/auditoria.md`; las pruebas de aceptación 1 a 11, en [`docs/evidencias/pruebas/README.md`](docs/evidencias/pruebas/README.md).
+
+### Respuesta del feed de USGS (B2, resumen)
+
+El feed `all_day.geojson` es un GeoJSON con `metadata`, `features` y `bbox`; en la muestra del 2026-11-01 (210 eventos) las claves obligatorias estuvieron en todos, `mag` y la profundidad pueden ser negativas (no son errores), `alert`, `cdi`, `felt` y `mmi` son opcionales y a menudo nulos, y no hubo `mag` nula (el contrato la tolera). Tiempos en ms Unix UTC, profundidad en km. El feed se regenera cada unos 60 s (`Cache-Control: max-age=60`), por eso `POLL_SECONDS` es 60. En la muestra, latencia de 223 ms y 150 724 bytes (una sola medición). Los errores (429, 5xx, timeout, JSON inválido) no se midieron contra USGS real: se prueban con un servidor simulado. Detalle y fuentes: [`docs/borradores/productor-live.md`](docs/borradores/productor-live.md) y [`docs/evidencias/f1/explore_usgs_salida.txt`](docs/evidencias/f1/explore_usgs_salida.txt).
+
+## Recorrido de un evento: `us6000pms8`
+
+Es un evento **real de 2025** (terremoto M 4.4 `mb`, a 37 km SSW de Calama, Chile, 2025-01-28 12:26:19 UTC, profundidad 107,8 km) que se ha seguido **reproducido por replay** el 2026-11-12: no es un evento en vivo, entró por `earthquakes.replay` y vive en el esquema `replay`. El evento en vivo sigue el mismo camino, pero con el productor que consulta USGS y el topic `earthquakes.live`.
+
+| Paso | Qué pasa con `us6000pms8` | Evidencia |
+|---|---|---|
+| Productor | `python -m producer.replay` lee `data/historical/` (comprobando el sha256 de cada archivo) y publica el mensaje con clave `us6000pms8` en `earthquakes.replay` (16:39:41 UTC) | [`docs/evidencias/replay/T053_replay.log`](docs/evidencias/replay/T053_replay.log) |
+| Kafka | Topic `earthquakes.replay`, partición 0, offset 18 | [`docs/evidencias/replay/T053_consumer.log`](docs/evidencias/replay/T053_consumer.log) |
+| Consumidor | Valida, asigna país por geometría y escribe en una transacción; línea `decision=new_event event_id=us6000pms8 topic=earthquakes.replay partition=0 offset=18`; después confirma el offset | [`docs/evidencias/replay/T053_consumer.log`](docs/evidencias/replay/T053_consumer.log) |
+| Base de datos | Fila en `replay.current_event` con `event_time` 2025-01-28 12:26:19.97+00, `replay_at` 2026-11-12 16:39:41+00 y `is_synthetic` falso | [`docs/evidencias/replay/T053_despues_detalle.out`](docs/evidencias/replay/T053_despues_detalle.out) |
+| API | `GET /api/eventos?mode=replay&start=2025-01-01&end=2026-01-01` devuelve el evento con `mag` 4.4, `country_id` `CHL` y los `time` originales | [`docs/evidencias/replay/T055_eventos_replay.json`](docs/evidencias/replay/T055_eventos_replay.json) |
+| Panel | Con «Reproducción» elegido el panel muestra el banner «REPRODUCCIÓN» y los 22 eventos de 2025 (entre ellos este); la captura no lo señala individualmente | [`docs/evidencias/replay/T056_reproduccion.png`](docs/evidencias/replay/T056_reproduccion.png) |
+
+## Decisión propia: el replay aislado de `live` en tres capas
+
+Para tener actividad que enseñar sin esperar a un terremoto y sin contaminar los datos reales, el replay solo publica en `earthquakes.replay`, el consumidor guarda lo de ese topic únicamente en el esquema `replay` y además comprueba que el campo `mode` del mensaje coincide con el topic (si no, cuarentena con `mode_topic_mismatch`). **Motivo:** una sola barrera (por ejemplo solo el topic) dejaría que un error de configuración mezclara datos de demostración con datos reales sin que nadie lo notara; con tres capas independientes, el panel puede etiquetar «REPRODUCCIÓN» con seguridad. **Comprobado:** `live` quedó idéntico antes y después del replay (211 / 211 / 0 con la misma huella `md5`, productor live parado), ver [`docs/evidencias/replay/T053_despues.out`](docs/evidencias/replay/T053_despues.out).
+
+## Limitaciones conocidas
+
+- **Sin comparación en replay:** `GET /api/estadisticas?mode=replay` devuelve `comparison` nulo; la comparación histórica solo existe en modo en vivo.
+- **Comparación fija:** siempre son las últimas 24 h frente a la media diaria de 2025 (M≥4), no hay periodos a elegir.
+- **Periodo reciente posiblemente incompleto:** el periodo comparado puede no estar completo y la API lo avisa (`recent_incomplete`).
+- **`tracemalloc`:** la memoria medida solo cuenta lo que reserva Python y solo se midió al construir el diccionario y en la integración geográfica.
+- **Medición dentro de la VM de Docker:** los tiempos se tomaron en la VM de Docker Desktop (WSL2), no en el anfitrión; el equipo del anfitrión es supuesto ([`docs/evidencias/mediciones/equipo.md`](docs/evidencias/mediciones/equipo.md)).
+- **Error 500 sin cabeceras CORS:** un error 500 de la API no lleva cabeceras CORS, así que el navegador lo ve como fallo de red ([`docs/borradores/despliegue-tunel.md`](docs/borradores/despliegue-tunel.md)).
+- **Clon limpio verificado en la feature 002, no repetido con el estado final (A2):** la prueba de `docker compose up --build -d` desde un clon limpio es de 2026-11-03, antes del productor real, la API y el panel ([`docs/evidencias/infra-compose/clon_limpio.txt`](docs/evidencias/infra-compose/clon_limpio.txt)).
+- **Un evento que sale de la ventana de 24 h del feed no está eliminado** (B11): el productor no puede distinguirlo y la reconciliación exhaustiva con USGS no está implementada (ver los límites del productor más abajo).
+- **Sin país asignado:** la proporción es alta (24,5 % de eventos con país) por el catálogo de 110 m y el mar; no es un fallo (ver [`calidad-live.md`](docs/evidencias/revision-final/calidad-live.md)).
+- **Datos del mock y del replay:** los sintéticos (`synthetic-…`, mock del panel) van etiquetados y no se mezclan con `live`.
+
+## Cómo ejecutar
+
+Guía detallada en «Ejecución con Docker Compose» más abajo y en [`specs/002-infra-compose/quickstart.md`](specs/002-infra-compose/quickstart.md). Resumen:
+
+```bash
+cp .env.example .env                 # en PowerShell: Copy-Item .env.example .env; cambia las contraseñas de ejemplo
+docker compose build                 # construye la imagen Python compartida
+docker compose up -d                 # arranca los cinco servicios
+docker compose ps                    # deben figurar como healthy
+curl http://127.0.0.1:8000/api/salud # 200 con status, last_ingestion y generated
+```
+
+- **Carga del histórico 2025:** ver «Histórico 2025» (`historical.load_main`, repetible; `data/historical/` ya está en el repositorio y no hace falta descargar).
+- **Replay (opcional):** `docker compose run --rm producer python -m producer.replay --interval 2 --zone chile-norte --count 20` (ver «Replay»).
+- **Panel local:** `cd frontend && npm ci && npm run dev` (http://localhost:4200, necesita Node 24.18.0 y la API en `127.0.0.1:8000`).
+- **Pruebas:** `uv run pytest -m "not integration" -q` (unitarias) y, con PostgreSQL levantado, `docker compose --profile test build tests` seguido de `docker compose --profile test run --rm tests pytest -m integration -q` (integración); en el panel, `npm test`.
+- **Muestra reducida declarada:** el repositorio trae el histórico completo de 2025 (18 302 eventos); para una demostración rápida basta el replay de 26 mensajes. Esta guía no se ha probado en un clon limpio con el estado final (A2).
+- **Panel público:** `https://observatorio.ssamuelfernandez.net` **solo está disponible con el equipo del alumno y `cloudflared` encendidos** (ver «Túnel público y panel»). Sin ellos, usa el panel local.
+
+## Pendientes del alumno
+
+Lo que solo puede hacer el alumno (ninguna captura ni acción se ha inventado; las plantillas existen y están sin rellenar). Detalle en [`docs/evidencias/revision-final/auditoria.md`](docs/evidencias/revision-final/auditoria.md).
+
+| ID | Qué falta | Dónde se rellena |
+|---|---|---|
+| G2 | Captura del panel final con la ficha de un evento y de un evento sin magnitud (ND; no hay nulos reales, sale del mock sintético etiquetado) | [`docs/evidencias/panel-base-mock/T024_T026_capturas_pendientes.md`](docs/evidencias/panel-base-mock/T024_T026_capturas_pendientes.md) |
+| G9 | Probar el aviso de fallo y la última lectura con el túnel real | pruebas 9 y 10, abajo |
+| H1 | Captura desde un móvil con datos móviles, con la URL visible | [`docs/evidencias/despliegue-tunel/H1_movil.md`](docs/evidencias/despliegue-tunel/H1_movil.md) |
+| H3 | Captura de la configuración de `cloudflared` con `http://localhost:8000` como único destino y el token tapado (paso P1) | [`docs/evidencias/despliegue-tunel/README.md`](docs/evidencias/despliegue-tunel/README.md) |
+| H4 | Demo con el equipo, los contenedores y el túnel encendidos (comprobaciones previas en «Túnel público y panel») | durante la grabación |
+| H5 | Grabar el vídeo de 5 minutos y poner el enlace en el marcador de arriba | este README |
+| M4 | Dar acceso de lectura al profesor en el servidor del repositorio | acción en el servidor del repositorio |
+| Prueba 1 | Captura de un evento real reciente en mapa y análisis (anotar su `id`) | [`docs/evidencias/pruebas/01_captura_pendiente.md`](docs/evidencias/pruebas/01_captura_pendiente.md) (guardar `01_captura.png`) |
+| Prueba 3 | Captura del efecto de la versión posterior | [`docs/evidencias/pruebas/03_captura_pendiente.md`](docs/evidencias/pruebas/03_captura_pendiente.md) (`03_captura.png`) |
+| Prueba 5 | Captura de un ND en el panel | [`docs/evidencias/pruebas/05_captura_pendiente.md`](docs/evidencias/pruebas/05_captura_pendiente.md) (`05_captura.png`) |
+| Prueba 7 | Captura de «Sin país asignado» en el análisis con datos reales | [`docs/evidencias/pruebas/07_captura_pendiente.md`](docs/evidencias/pruebas/07_captura_pendiente.md) (`07_captura.png`) |
+| Prueba 9 | Cerrar `cloudflared`, esperar el siguiente refresco y capturar el aviso con la hora | [`docs/evidencias/pruebas/09-cierre-tunel.md`](docs/evidencias/pruebas/09-cierre-tunel.md) |
+| Prueba 10 | Reabrir el túnel y comprobar que el panel se recupera solo | [`docs/evidencias/pruebas/10-reapertura-tunel.md`](docs/evidencias/pruebas/10-reapertura-tunel.md) |
+
+Además, el análisis de [`calidad-live.md`](docs/evidencias/revision-final/calidad-live.md) (C14) y las conclusiones del análisis hay que pasarlos a la memoria (`docs/memoria.md`, §4 y §6) si se quiere cumplir el texto del checklist.
 
 ## Estructura del repositorio
 
@@ -38,7 +133,7 @@ Mediciones de complejidad y costes (`mediciones-costes`, 011, cerrada): resumen 
 | [`.env.example`](.env.example) | Variables de ejemplo, sin credenciales reales (se copia a `.env`) |
 | `pyproject.toml`, `uv.lock`, `.python-version` | Python 3.12.16 y dependencias con versiones exactas y bloqueo |
 | [`common/`](common/) | Código compartido por todos los servicios Python (configuración, reintentos, latido, conexión a PostgreSQL, temas de Kafka, evento sintético) |
-| [`producer/`](producer/) | Productor mínimo: publica un evento sintético cada intervalo configurable |
+| [`producer/`](producer/) | Productor en vivo (consulta USGS y publica en Kafka) y publicador del replay (`python -m producer.replay`) |
 | [`consumer/`](consumer/) | Consumidor idempotente: valida, guarda en PostgreSQL y envía a cuarentena |
 | [`api/`](api/) | API FastAPI de consulta, solo lectura: `/api/eventos`, `/api/estadisticas` y `/api/salud` |
 | [`sql/`](sql/) | `001_schema.sql` (esquema) y `002_roles.sql` (roles y permisos) |

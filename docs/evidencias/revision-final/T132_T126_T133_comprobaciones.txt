@@ -1,0 +1,58 @@
+# Comprobaciones T132, T126, T133 (2026-11-15)
+## T132: carpetas de primer nivel versionadas ausentes de CODEMAP.md (vacío = todas figuran)
+## T132: rutas con barra citadas en CODEMAP.md que no existen (solo abreviaturas y no-rutas, ver informe)
+ver chk.py: 0 rutas reales inexistentes; falsos positivos: 10/35/70/300, I/O, dist/ (generado), src/config.json (histórico)
+## T126: marcadores en README.md
+PENDIENTE: enlace de YouTube: 1 línea(s)
+us6000pms8: 4 línea(s)
+Sin comparación en replay: 1 línea(s)
+Comparación fija: 1 línea(s)
+Periodo reciente posiblemente incompleto: 1 línea(s)
+tracemalloc: 1 línea(s)
+VM de Docker: 1 línea(s)
+Error 500 sin cabeceras CORS: 1 línea(s)
+no repetido con el estado final (A2): 1 línea(s)
+solo está disponible con el equipo del alumno: 2 línea(s)
+## T126: referencias prohibidas en README.md (vacío = ninguna)
+## T126: git diff --stat -- .claude (vacío)
+## T126: git diff --stat checklist, enunciado, sql, contratos (vacío)
+## T133: git diff docs/rubrica-y-guia-video.md (vacío)
+## C14: salida bruta de las consultas (solo lectura)
+===Q1
+ total | pct_mag | pct_mag_type | pct_place | pct_depth | pct_country 
+-------+---------+--------------+-----------+-----------+-------------
+ 19208 |  100.00 |       100.00 |    100.00 |    100.00 |       24.50
+(1 row)
+
+===Q2
+ eventos_actuales | event_id_distintos | versiones | versiones_distintas | eventos_con_varias_versiones 
+------------------+--------------------+-----------+---------------------+------------------------------
+            19208 |              19208 |     19509 |               19509 |                          149
+(1 row)
+
+===Q3
+ total | mag_fuera_rango | prof_fuera_rango | coord_invalidas | mag_negativa_valida | prof_negativa_valida | en_cuarentena_real 
+-------+-----------------+------------------+-----------------+---------------------+----------------------+--------------------
+ 19208 |               0 |                0 |               0 |                  13 |                   14 |                  0
+(1 row)
+
+===Q4
+ eventos | actual_sin_su_version | actual_no_es_la_mas_reciente | pais_sin_catalogo | updated_anterior_a_time 
+---------+-----------------------+------------------------------+-------------------+-------------------------
+   19208 |                     0 |                            0 |                 0 |                       0
+(1 row)
+
+===Q5
+     source      |   n   | mediana_ocurrencia_a_updated_min | mediana_ocurrencia_a_ingesta_min | p95_ocurrencia_a_ingesta_min | max_ocurrencia_a_updated_dias 
+-----------------+-------+----------------------------------+----------------------------------+------------------------------+-------------------------------
+ usgs_feed       |   906 |                             19.3 |                            417.1 |                       1289.5 |                           1.0
+ usgs_historical | 18302 |                         110821.6 |                         672814.9 |                     943300.1 |                         615.3
+(2 rows)
+
+===Q6
+     source      | eventos | sin_pais | pct_sin_pais | mag_min | mag_max | prof_min | prof_max 
+-----------------+---------+----------+--------------+---------+---------+----------+----------
+ usgs_feed       |     906 |      152 |         16.8 |    -0.6 |     5.8 |    -3.42 |  587.447
+ usgs_historical |   18302 |    14350 |         78.4 |       4 |     8.8 |      0.5 |  669.556
+(2 rows)
+
