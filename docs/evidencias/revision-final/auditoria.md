@@ -6,13 +6,13 @@ Criterio: **cumple** = la evidencia citada existe, está versionada y no es una 
 
 ## [OBL] sin evidencia o con evidencia incompleta
 
-Recuento: 93 [OBL] = 80 cumple, 9 parcial, 4 no (tras T119/T120).
+Recuento: 93 [OBL] = 83 cumple, 7 parcial, 3 no (tras T119/T120, T126 y las capturas del 2026-11-15).
 
-Sin evidencia (**no**): H4 (equipo, contenedores y túnel encendidos en la demo), H5 (vídeo de 5 min), M4 (acceso del profesor al repositorio), M10 (tabla rúbrica→evidencia en el `README.md`).
+Sin evidencia (**no**): H4 (equipo, contenedores y túnel encendidos en la demo), H5 (vídeo de 5 min), M4 (acceso del profesor al repositorio).
 
-Con evidencia incompleta (**parcial**): A2 (clon limpio solo probado en la feature 002), B2 (respuesta, errores y latencia del feed: solo en el borrador), B11 (limitación solo en el README, memoria §10 vacía), C14 (apartado de calidad: hay reglas, no hay análisis con antes y después), G2 (ficha y ND con datos reales sin captura), G9 (prueba real con túnel pendiente), H1 (captura desde móvil con datos móviles), H3 (captura de la configuración del túnel), M3 (README sin recorrido del evento y sin repetir desde clon).
+Con evidencia incompleta (**parcial**): A2 (clon limpio solo probado en la feature 002), B2 (respuesta, errores y latencia del feed: solo en el borrador), B11 (limitación solo en el README, memoria §10 vacía), C14 (análisis hecho en `calidad-live.md`; falta pasarlo a la memoria), G9 (prueba real con túnel pendiente), H3 (captura del panel de Cloudflare sin el destino `http://localhost:8000`), M3 (sin repetir desde un clon limpio).
 
-Pendientes humanos relacionados con la tabla I (no [OBL] en el checklist, ver la segunda tabla): capturas de las pruebas 1, 3, 5 y 7 y pruebas 9 y 10.
+Pendientes humanos relacionados con la tabla I (no [OBL] en el checklist, ver la segunda tabla): prueba 9 (parcial: falta demostrar la última lectura conservada) y prueba 10 (reapertura, sin captura).
 
 ## Tabla de [OBL]
 
@@ -76,7 +76,7 @@ Pendientes humanos relacionados con la tabla I (no [OBL] en el checklist, ver la
 | F9 | CORS: origen de Netlify y `localhost:4200`, GET y OPTIONS | `docs/evidencias/despliegue-tunel/T062_cors_curl.txt`; `docs/evidencias/despliegue-tunel/T060_cors.txt` | cumple | — | — |
 | F10 | Sin rutas de administración ni secretos expuestos | `docs/evidencias/despliegue-tunel/exposicion.md`; `docs/evidencias/despliegue-tunel/T066_respuestas.txt` | cumple | — | — |
 | G1 | El panel consulta nuestra API, no USGS | `docs/evidencias/panel-base-mock/contraste-mock-api.md`; `docs/evidencias/panel-base-mock/T034_curl_proxy_4300.txt`; `frontend/public/config.json` | cumple | Las comprobaciones visuales de `docs/evidencias/panel-base-mock/T034_T037_comprobaciones_pendientes.md` no se capturaron; la captura pública de H1 muestra datos reales | — |
-| G2 | Globo: fronteras, tamaño ∝ magnitud, color ∝ profundidad, leyenda y ND | `docs/evidencias/despliegue-tunel/2026-11-12_panel-publico.png`; `docs/evidencias/panel-base-mock/T026_comprobacion_simbologia.txt` | parcial | La ficha del evento y el ND con datos reales no aparecen en capturas del panel final (solo en prototipos); la captura pública solo muestra la leyenda con «ND» | alumno |
+| G2 | Globo: fronteras, tamaño ∝ magnitud, color ∝ profundidad, leyenda y ND | `docs/evidencias/pruebas/capturas/01_evento_nuevo.png`; `docs/evidencias/pruebas/capturas/05_magnitud_nula_nd.png`; `docs/evidencias/despliegue-tunel/2026-11-12_panel-publico.png` | cumple | Matiz: la ficha abierta es de un evento real (captura 1); el ND se ve en modo mock, **sintético** y etiquetado, porque no hay magnitudes nulas reales en `live` | — |
 | G3 | Recuentos por país (incl. «Sin país asignado») y por hora UTC | `docs/evidencias/panel-base-mock/T035_tabla_filtros_totales.md`; `docs/evidencias/api/recorrido_08_estadisticas.txt` | cumple | — | — |
 | G4 | Distribuciones de magnitud y profundidad con registros sin valor | `docs/evidencias/api/recorrido_08_estadisticas.txt`; `docs/evidencias/api/T014_pytest_api_stats.txt` | cumple | — | — |
 | G5 | Comparación 24 h M≥4 frente a la media diaria de 2025, con aviso de periodo incompleto | `docs/evidencias/api/T016_pytest_api_comparison.txt`; `docs/evidencias/panel-base-mock/contraste-mock-api.md` (`recent_incomplete`) | cumple | — | — |
@@ -86,7 +86,7 @@ Pendientes humanos relacionados con la tabla I (no [OBL] en el checklist, ver la
 | G9 | Fallo de la API: aviso, última lectura identificada | `docs/evidencias/panel-base-mock/T036_curl_api_parada.txt`; `docs/evidencias/pruebas/09-10_revision_codigo.txt` | parcial | Probado con la API local parada y por revisión de código; no con el túnel real (pruebas 9 y 10 pendientes). Huecos del panel anotados en `docs/evidencias/pruebas/README.md` | alumno |
 | G10 | Modo «REPRODUCCIÓN» etiquetado | `docs/evidencias/replay/T056_reproduccion.png`; `docs/evidencias/replay/T056_panel.md` | cumple | — | — |
 | G13 | Netlify: `config.json` con la URL HTTPS del túnel antes de compilar | `docs/evidencias/despliegue-tunel/T065_build_dist.txt`; `docs/evidencias/despliegue-tunel/T063_netlify.txt`; `netlify.toml`; `docs/evidencias/despliegue-tunel/2026-11-12_panel-publico.png` | cumple | El despliegue real lo hizo el alumno a mano; la evidencia es la captura pública y las comprobaciones locales | — |
-| H1 | Panel de Netlify accesible desde otro dispositivo | `docs/evidencias/despliegue-tunel/2026-11-12_panel-publico.png`; `docs/evidencias/despliegue-tunel/H1_movil.md` | parcial | Captura tomada desde la misma red del servidor; la ficha `H1_movil.md` sigue con campos «pendiente» (captura desde móvil con datos móviles) | alumno |
+| H1 | Panel de Netlify accesible desde otro dispositivo | `docs/evidencias/despliegue-tunel/H1_movil_datos_moviles.jpg`; `docs/evidencias/despliegue-tunel/H1_movil.md` | cumple | Matiz: la URL sale recortada por la izquierda y la hora del móvil (8:24) no lleva fecha | — |
 | H2 | Procedimiento de activación para la demo en el README | `README.md` («Túnel público y panel (Procedimiento de activación)»); `docs/evidencias/despliegue-tunel/T068_readme.txt` | cumple | — | — |
 | H3 | Túnel HTTPS que expone solo `http://localhost:8000`; token fuera de Git | `docs/evidencias/despliegue-tunel/T067_puertos_secretos.txt`; `docs/evidencias/despliegue-tunel/2026-11-12_respuestas-publicas.txt` | parcial | El token no está en Git y el túnel responde en público, pero falta la captura de la configuración de `cloudflared` con `http://localhost:8000` como único destino (paso P1 de `docs/evidencias/despliegue-tunel/README.md`) | alumno |
 | H4 | Equipo, contenedores y túnel encendidos durante la demo | (ninguna; es un estado que solo existe durante la demo) | no | Sin evidencia posible hasta la demo. `README.md` lista las comprobaciones previas | alumno |
@@ -116,14 +116,14 @@ Pendientes humanos relacionados con la tabla I (no [OBL] en el checklist, ver la
 
 | Prueba | Evidencia (ruta) | Estado | Hueco | Responsable |
 |---|---|---|---|---|
-| Prueba 1 Evento nuevo | `docs/evidencias/pruebas/01-evento-nuevo.md`; `docs/evidencias/productor-live/prueba1_evento_nuevo.out` | parcial | Observada hasta PostgreSQL y por prueba de API; falta la captura de API, mapa y análisis (`docs/evidencias/pruebas/01_captura_pendiente.md` es plantilla) | alumno |
+| Prueba 1 Evento nuevo | `docs/evidencias/pruebas/01-evento-nuevo.md`; `docs/evidencias/pruebas/capturas/01_evento_nuevo.png` | cumple | Captura real hecha (2026-11-15, evento `ci41362543`) | — |
 | Prueba 2 Reenvío | `docs/evidencias/pruebas/02-reenvio.md`; `docs/evidencias/consumidor-idempotente/bloque3_prueba2_reenvio.out` | cumple | — | — |
-| Prueba 3 Versión posterior | `docs/evidencias/pruebas/03-version-posterior.md`; `docs/evidencias/consumidor-idempotente/bloque3_prueba3_4_versiones.out` | parcial | SQL y API observados; falta la captura (`docs/evidencias/pruebas/03_captura_pendiente.md` es plantilla) | alumno |
+| Prueba 3 Versión posterior | `docs/evidencias/pruebas/03-version-posterior.md`; `docs/evidencias/pruebas/capturas/03_version_posterior.png` | cumple | Captura real (`uw714139501`, 2 versiones 1,5758 → 1,38). Matiz: la magnitud cae en el mismo tramo del histograma; el caso con cambio de país y hora sigue siendo sintético (SQL de T095) | — |
 | Prueba 4 Versión tardía | `docs/evidencias/pruebas/04-version-tardia.md`; `docs/evidencias/consumidor-idempotente/bloque3_prueba3_4_versiones.out` | cumple | — | — |
-| Prueba 5 Magnitud nula | `docs/evidencias/pruebas/05-magnitud-nula.md`; `docs/evidencias/geografia-pais/geografia_prueba5.out` | parcial | SQL y API sintéticos observados; falta la captura de ND en el panel (`docs/evidencias/pruebas/05_captura_pendiente.md` es plantilla). No hay nulos reales | alumno |
+| Prueba 5 Magnitud nula | `docs/evidencias/pruebas/05-magnitud-nula.md`; `docs/evidencias/pruebas/capturas/05_magnitud_nula_nd.png` | cumple | Captura en modo mock (**sintética**, etiquetada): no hay nulos reales | — |
 | Prueba 6 Coordenadas inválidas | `docs/evidencias/pruebas/06-coordenadas-invalidas.md`; `docs/evidencias/consumidor-idempotente/bloque3_prueba6_cuarentena.out` | cumple | — | — |
-| Prueba 7 Evento marítimo | `docs/evidencias/pruebas/07-evento-maritimo.md`; `docs/evidencias/geografia-pais/geografia_prueba7.out` | parcial | SQL, API y feed real observados; falta la captura (`docs/evidencias/pruebas/07_captura_pendiente.md` es plantilla) | alumno |
+| Prueba 7 Evento marítimo | `docs/evidencias/pruebas/07-evento-maritimo.md`; `docs/evidencias/pruebas/capturas/07_evento_maritimo.png` | cumple | Captura real hecha (30 eventos «Sin país asignado», 2026-11-15) | — |
 | Prueba 8 Reinicio del consumidor | `docs/evidencias/pruebas/08-reinicio-consumidor.md`; `docs/evidencias/consumidor-idempotente/prueba8_reinicio.out` | cumple | — | — |
-| Prueba 9 Cierre del túnel | `docs/evidencias/pruebas/09-cierre-tunel.md`; `docs/evidencias/pruebas/09-10_revision_codigo.txt` | no | No ejecutada: la ficha es plantilla y solo hay revisión de código | alumno |
+| Prueba 9 Cierre del túnel | `docs/evidencias/pruebas/09-cierre-tunel.md`; `docs/evidencias/pruebas/capturas/09_cierre_tunel_sin_respuesta.png` | parcial | El panel muestra «SIN RESPUESTA DE LA API» sin presentarlo como 0 eventos, pero no demuestra que conserva la última lectura («Datos antiguos» con hora): falta la secuencia con datos previos | alumno |
 | Prueba 10 Reapertura del túnel | `docs/evidencias/pruebas/10-reapertura-tunel.md`; `docs/evidencias/pruebas/09-10_revision_codigo.txt` | no | No ejecutada: la ficha es plantilla y solo hay revisión de código | alumno |
 | Prueba 11 Reproducción histórica | `docs/evidencias/pruebas/11-reproduccion-historica.md`; `docs/evidencias/replay/T053_despues.out` | cumple | — | — |

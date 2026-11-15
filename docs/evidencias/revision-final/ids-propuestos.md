@@ -1,14 +1,14 @@
 # IDs propuestos (revision-final, T120)
 
-Propuesta derivada de `auditoria.md` (T118, corregida con T119). No se ha tocado el checklist: el alumno marca. Recuento tras T126: 93 [OBL] = 81 cumple, 9 parcial, 3 no (el único cambio respecto a T120 es M10, de no a cumple).
+Propuesta derivada de `auditoria.md` (T118, corregida con T119). No se ha tocado el checklist: el alumno marca. Recuento tras T126: 93 [OBL] = 83 cumple, 7 parcial, 3 no (cambios respecto a T120: M10 de no a cumple; G2 y H1 de parcial a cumple tras las capturas del 2026-11-15).
 
 **Estado final tras T126 y T133** (2026-11-15). B2, B11, B12, C14, M3 y M10 ya no son provisionales: su estado final está en la tabla y la nota explica por qué. B18, D y L no son filas [OBL] de la auditoría; D se cubre con `calidad-live.md` (ver C14). T133 no cambia ningún estado (el documento `docs/rubrica-y-guia-video.md` no deja ningún [OBL] sin evidencia; ver `rubrica-guia.md`). El alumno marca el checklist: aquí no se ha tocado.
 
 ## IDs que el alumno puede marcar (cumple con evidencia)
 
-Incluye B12 y M10 (cumplen tras T126).
+Incluye B12 y M10 (cumplen tras T126) y G2 y H1 (cumplen tras las capturas del 2026-11-15).
 
-A1, A3, A4, A5, A6, A7, A8, A9, A10, A11, B1, B3, B4, B5, B6, B7, B8, B9, B10, B12, B13, B14, B15, B16, B17, C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, E1, E2, E4, E5, E6, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, G1, G3, G4, G5, G6, G7, G8, G10, G13, H2, J1, J2, J3, J4, J5, J6, J7, K1, K2, K3, K4, K5, K6, K7, M1, M2, M5, M10
+A1, A3, A4, A5, A6, A7, A8, A9, A10, A11, B1, B3, B4, B5, B6, B7, B8, B9, B10, B12, B13, B14, B15, B16, B17, C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, E1, E2, E4, E5, E6, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, G1, G2, G3, G4, G5, G6, G7, G8, G10, G13, H1, H2, J1, J2, J3, J4, J5, J6, J7, K1, K2, K3, K4, K5, K6, K7, M1, M2, M5, M10
 
 Total: 81.
 
@@ -74,7 +74,7 @@ Total: 81.
 | F9 | cumple | — |  |
 | F10 | cumple | — |  |
 | G1 | cumple | — |  |
-| G2 | parcial | alumno |  |
+| G2 | cumple | — | Captura 1 (ficha real) y captura 5 (ND en mock, sintético) |
 | G3 | cumple | — |  |
 | G4 | cumple | — |  |
 | G5 | cumple | — |  |
@@ -84,7 +84,7 @@ Total: 81.
 | G9 | parcial | alumno |  |
 | G10 | cumple | — |  |
 | G13 | cumple | — |  |
-| H1 | parcial | alumno |  |
+| H1 | cumple | — | Captura móvil 2026-11-15 |
 | H2 | cumple | — |  |
 | H3 | parcial | alumno |  |
 | H4 | no | alumno |  |
@@ -112,15 +112,9 @@ Total: 81.
 
 ## Pendientes del alumno
 
-Ninguna captura ni acción se ha inventado; las plantillas existen sin rellenar. Misma lista que en `README.md` («Pendientes del alumno»).
+Misma lista que en `README.md` («Pendientes del alumno»). Hechas el 2026-11-15: G2, H1 y las pruebas 1, 3, 5 y 7.
 
-- **G2**: captura del panel final con la ficha de un evento y de un ND (`docs/evidencias/panel-base-mock/T024_T026_capturas_pendientes.md`).
-- **G9**: prueba del aviso de fallo con el túnel real (pruebas 9 y 10).
-- **H1**: captura desde móvil con datos móviles (`docs/evidencias/despliegue-tunel/H1_movil.md`).
-- **H3**: captura de la configuración de `cloudflared` con `http://localhost:8000` como único destino, token tapado (`docs/evidencias/despliegue-tunel/README.md`, paso P1).
-- **H4**: demo con equipo, contenedores y túnel encendidos.
-- **H5**: grabar el vídeo y poner el enlace donde dice «PENDIENTE: enlace de YouTube» en `README.md`.
-- **M4**: acceso del profesor al repositorio.
-- **Pruebas 1, 3, 5 y 7**: capturas (`docs/evidencias/pruebas/01_captura_pendiente.md`, `03_`, `05_` y `07_captura_pendiente.md`).
-- **Pruebas 9 y 10**: ejecutarlas con `cloudflared` real (`docs/evidencias/pruebas/09-cierre-tunel.md` y `10-reapertura-tunel.md`).
-- Además: A2 (clon limpio con el estado final), pasar a la memoria B2, B11, C14 y las conclusiones del análisis, y las correcciones menores de `rubrica-guia.md`.
+- **H3** (parcial): captura de la pestaña «Rutas» del túnel con `http://localhost:8000` como único destino, token tapado.
+- **G9 y prueba 9** (parcial): abrir el panel con datos, cerrar `cloudflared` y esperar el refresco para capturar «Datos antiguos» con la hora de la última lectura (`docs/evidencias/pruebas/09-cierre-tunel.md`).
+- **Prueba 10**: reabrir el túnel y capturar la recuperación sin recargar (`docs/evidencias/pruebas/10-reapertura-tunel.md`).
+- **H4**: demo con el equipo, los contenedores y el túnel encendidos. **H5**: vídeo de 5 min. **M4**: acceso de lectura al profesor.
