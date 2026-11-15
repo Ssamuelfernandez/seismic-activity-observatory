@@ -124,9 +124,9 @@ Reglas de redacción: indicar siempre **conjunto** (mensajes / versiones distint
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
 | E1 | **[OBL, EVAL]** Modelo conceptual, lógico y físico (3 vistas de la misma BD) | Diagramas/tablas en memoria | Enunc. §7 | [x] |
-| E2 | **[OBL]** Explicar grano (qué es una fila), claves, relaciones e índices | Por tabla | Enunc. §7 | ☐ |
+| E2 | **[OBL]** Explicar grano (qué es una fila), claves, relaciones e índices | Por tabla | Enunc. §7 | [x] |
 | E3 | Estructura orientativa del enunciado: `evento_actual` (hecho, única por `event_id`), `fecha`, `pais`, `evento_version` (única `(event_id, updated)`), estado de ingesta/cuarentena. **Identificadores del proyecto en inglés:** `current_event`, `date_dim`, `country`, `event_version`, `quarantine`, `ingest.*`. No es obligatorio copiar la estructura, sí justificar y **documentar la equivalencia** de nombres en la memoria | Equivalencia escrita | Enunc. §7 · FAQ 20 | ☐ |
-| E4 | **[OBL]** Integrar terremotos con atributos del catálogo (histórico y feed no cuentan como segunda fuente) | Join país | Enunc. §7 | ☐ |
+| E4 | **[OBL]** Integrar terremotos con atributos del catálogo (histórico y feed no cuentan como segunda fuente) | Join país | Enunc. §7 | [x] |
 | E5 | **[OBL]** SQL de creación de tablas e índices en el repo (`sql/`) enlazado desde la memoria | Carpeta `sql/` | Guía 2.5 | [x] |
 | E6 | **[OBL]** Índices justificados **por consulta concreta** y con medición antes/después | `EXPLAIN ANALYZE` / tiempos | FAQ 20 | [x] |
 | E7 | Timestamps completos conservados (para ventanas horarias) | Campo `event_time` timestamptz | FAQ 20 | [x] |
@@ -256,11 +256,11 @@ Reglas de las conclusiones: interpretar, no solo mostrar; con cifras; **sin leng
 
 | ID | Requisito | ☐ |
 |---|---|---|
-| M1 | **[OBL]** Código: productor, consumidor, API, frontend, carga histórica y replay | ☐ |
-| M2 | **[OBL]** Distinguir material reutilizado de lo desarrollado/modificado. Reutilizado: `paises.geojson` (catálogo entregado), teselas OSM, librerías (Chart.js…), la librería de mapa elegida y la textura o teselas usadas. El frontend de ejemplo del paquete **no** es base del trabajo: si se toma alguna idea o fragmento, indicarlo | ☐ |
+| M1 | **[OBL]** Código: productor, consumidor, API, frontend, carga histórica y replay | [x] |
+| M2 | **[OBL]** Distinguir material reutilizado de lo desarrollado/modificado. Reutilizado: `paises.geojson` (catálogo entregado), teselas OSM, librerías (Chart.js…), la librería de mapa elegida y la textura o teselas usadas. El frontend de ejemplo del paquete **no** es base del trabajo: si se toma alguna idea o fragmento, indicarlo | [x] |
 | M3 | **[OBL]** README reproducible (requisitos y versiones, `.env`, build/up, tablas y carga histórica, estado/logs, frontend dev y publicación, túnel y URL, pruebas y replay, parar y qué datos persisten, dónde está cada evidencia) | ☐ |
 | M4 | **[OBL]** El profesor tiene acceso al repo | ☐ |
-| M5 | **[OBL]** NO subir `node_modules`, secretos, token del túnel, volúmenes de BD ni descargas grandes regenerables (`data/raw/`); documentar dónde van los originales y cómo regenerarlos | ☐ |
+| M5 | **[OBL]** NO subir `node_modules`, secretos, token del túnel, volúmenes de BD ni descargas grandes regenerables (`data/raw/`); documentar dónde van los originales y cómo regenerarlos | [x] |
 | M10 | **[OBL, EVAL]** Tabla **rúbrica→evidencia** en el README: para cada criterio (Extracción, Calidad, Modelado, Análisis, Reflexión), dónde está la evidencia (archivo, consulta, captura o minuto del vídeo). La mantiene `doc-keeper` al cerrar cada feature | ☐ |
 | M6 | Estructura (ver 03 §3): `README.md`, `docs/memoria.md`, `docs/evidencias/`, `docs/enunciado/` (solo lectura), `docs/planificacion/`, `sql/`, un directorio por servicio (las carpetas de servicio se crean cuando su feature se implementa) | ☐ |
 | M7 | Historial de Git sin trailers de coautoría ni líneas de "generado por" herramientas (commits y PRs): constitución + `.claude/settings.json` + hook `commit-msg`; comprobado con `git log` | [x] |
