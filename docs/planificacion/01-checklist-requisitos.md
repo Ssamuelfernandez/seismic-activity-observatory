@@ -66,7 +66,7 @@ Ponderación de la asignatura (de la sesión 8, sin cambios): test 30 % · prác
 | ID | Requisito | Hecho cuando… | Fuente | ☐ |
 |---|---|---|---|---|
 | B1 | **[OBL]** Productor consulta el feed cada ~60 s (GET) | Log con cada ciclo | Enunc. §4.1 | [x] |
-| B2 | **[OBL]** Documentar respuesta, tipos, unidades, opcionales, frecuencia, errores y latencia | Sección en memoria | Enunc. §4.1 | ☐ (pendiente: pasar docs/borradores/productor-live.md a la memoria) |
+| B2 | **[OBL]** Documentar respuesta, tipos, unidades, opcionales, frecuencia, errores y latencia | Sección en memoria | Enunc. §4.1 | [x] (pendiente: pasar docs/borradores/productor-live.md a la memoria) |
 | B3 | **[OBL]** Filtrar `properties.type == "earthquake"` y **guardar el motivo de exclusión** | Tabla/log de exclusiones | Enunc. §4.1 | [x] |
 | B4 | **[OBL]** Guardar el GeoJSON original + metadatos de extracción (fecha, status, latencia, nº) **antes** de transformar | Existe en PG o disco | Enunc. §5 | [x] |
 | B5 | **[OBL]** Evitar guardar indefinidamente copias idénticas: **definir retención** y registrar consultas | Política escrita + implementada (p. ej. hash) | Enunc. §5 | [x] |
@@ -75,7 +75,7 @@ Ponderación de la asignatura (de la sesión 8, sin cambios): test 30 % · prác
 | B8 | **[OBL]** Mensaje con `source`, `ingested_at`, `mode` (live/replay) y evento original | Esquema documentado | Enunc. §5 | [x] |
 | B9 | **[OBL]** Esperar confirmación (ack) de Kafka **antes** de marcar publicado | Orden en el código | Enunc. §5 | [x] |
 | B10 | **[OBL]** Timeout, HTTP 429/5xx, backoff progresivo, errores de JSON; registrar error **sin borrar el estado válido anterior** | Pruebas con fallo simulado | Enunc. §5 | [x] |
-| B11 | **[OBL]** Explicar la limitación: evento que sale de la ventana ≠ eliminado por USGS; reconciliación exhaustiva es ampliación | Párrafo en memoria | Enunc. §5 | ☐ (pendiente: pasar docs/borradores/productor-live.md a la memoria) |
+| B11 | **[OBL]** Explicar la limitación: evento que sale de la ventana ≠ eliminado por USGS; reconciliación exhaustiva es ampliación | Párrafo en memoria | Enunc. §5 | [x] (pendiente: pasar docs/borradores/productor-live.md a la memoria) |
 | B12 | **[OBL]** Explicar cómo recuperar el hueco tras una parada >24 h con el catálogo histórico | Procedimiento documentado (no tiene por qué automatizarse) | Enunc. §5 | [x]: pasar docs/borradores/productor-live.md a la memoria) |
 | B13 | **[OBL]** Histórico: 2025, mundial, M≥4, `eventtype=earthquake`, **por meses**; si un mes >20.000, subdividir **sin truncar en silencio** | Archivos + log de nº de registros por consulta | Enunc. §4.2 | [x] |
 | B14 | **[OBL]** Deduplicar eventos compartidos entre intervalos (los extremos pueden incluirse en ambos) | Unicidad de `event_id` comprobada | Enunc. §4.2 | [x] |
@@ -103,7 +103,7 @@ Nota de nombres: los identificadores del proyecto (tablas, columnas, topics, có
 | C11 | **[OBL]** Documentar regla para puntos en frontera y múltiples coincidencias | Párrafo + implementación | Enunc. §4.3 · FAQ 19 | [x] |
 | C12 | **[OBL]** "Sin país asignado" se conserva (no se atribuye al más cercano, no es error automático) y permanece en análisis | `country_id` nulo → etiqueta en API/panel | Enunc. §4.3 | [x] |
 | C13 | **[OBL]** Casos de prueba artificiales **separados e identificados** | Marcados como sintéticos (`is_synthetic`) | Enunc. §6 | [x] |
-| C14 | **[OBL, EVAL]** Apartado de calidad en memoria/notebook con código o consultas, resultados **antes/después**, decisiones y registros de ejemplo | Ver D | Enunc. §6, §12 | ☐ |
+| C14 | **[OBL, EVAL]** Apartado de calidad en memoria/notebook con código o consultas, resultados **antes/después**, decisiones y registros de ejemplo | Ver D | Enunc. §6, §12 | [x] |
 | C15 | **[OPC]** Informe de calidad automático / panel de calidad / tabla de métricas | **No** hacerlo salvo que sobre tiempo | Enunc. §6 | — |
 
 ### D. Contenido del apartado de calidad (6 dimensiones)
