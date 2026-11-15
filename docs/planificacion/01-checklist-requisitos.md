@@ -76,7 +76,7 @@ Ponderación de la asignatura (de la sesión 8, sin cambios): test 30 % · prác
 | B9 | **[OBL]** Esperar confirmación (ack) de Kafka **antes** de marcar publicado | Orden en el código | Enunc. §5 | [x] |
 | B10 | **[OBL]** Timeout, HTTP 429/5xx, backoff progresivo, errores de JSON; registrar error **sin borrar el estado válido anterior** | Pruebas con fallo simulado | Enunc. §5 | [x] |
 | B11 | **[OBL]** Explicar la limitación: evento que sale de la ventana ≠ eliminado por USGS; reconciliación exhaustiva es ampliación | Párrafo en memoria | Enunc. §5 | ☐ (pendiente: pasar docs/borradores/productor-live.md a la memoria) |
-| B12 | **[OBL]** Explicar cómo recuperar el hueco tras una parada >24 h con el catálogo histórico | Procedimiento documentado (no tiene por qué automatizarse) | Enunc. §5 | ☐ (pendiente: pasar docs/borradores/productor-live.md a la memoria) |
+| B12 | **[OBL]** Explicar cómo recuperar el hueco tras una parada >24 h con el catálogo histórico | Procedimiento documentado (no tiene por qué automatizarse) | Enunc. §5 | [x]: pasar docs/borradores/productor-live.md a la memoria) |
 | B13 | **[OBL]** Histórico: 2025, mundial, M≥4, `eventtype=earthquake`, **por meses**; si un mes >20.000, subdividir **sin truncar en silencio** | Archivos + log de nº de registros por consulta | Enunc. §4.2 | [x] |
 | B14 | **[OBL]** Deduplicar eventos compartidos entre intervalos (los extremos pueden incluirse en ambos) | Unicidad de `event_id` comprobada | Enunc. §4.2 | [x] |
 | B15 | **[OBL]** Guardar consultas (URLs/parámetros), fecha de extracción y nº de registros; descargar una vez y reutilizar | Registro de procedencia | Enunc. §4.2 · Guía 2.3 | [x] |
@@ -193,13 +193,13 @@ La columna "Feature" indica dónde se prueba por primera vez; la feature `prueba
 
 | # | Prueba | Resultado esperado | Evidencia | Feature | ☐ |
 |---|---|---|---|---|---|
-| 1 | Evento nuevo | 1 fila actual visible en API, mapa y análisis | SQL + captura | `productor-live` (real; parte productor hasta PostgreSQL hecha, ver `docs/evidencias/productor-live/prueba1_evento_nuevo.out`) + `pruebas-aceptacion` | ☐ |
+| 1 | Evento nuevo | 1 fila actual visible en API, mapa y análisis | SQL + captura | `productor-live` (real; parte productor hasta PostgreSQL hecha, ver `docs/evidencias/productor-live/prueba1_evento_nuevo.out`) + `pruebas-aceptacion` | [x] |
 | 2 | Reenviar la misma versión | No aumenta el recuento | SQL antes/después | `productor-live`, `consumidor-idempotente` | [x] |
 | 3 | Versión posterior | Cambian datos actuales y agregaciones afectadas | SQL + captura | `consumidor-idempotente` | [x] |
 | 4 | Versión antigua tardía | No sustituye a la reciente | Actual + historial | `consumidor-idempotente` | [x] |
-| 5 | Magnitud nula | Se conserva, tratamiento documentado, se ve como **ND** | Captura | `geografia-pais` (+ panel) | ☐ |
+| 5 | Magnitud nula | Se conserva, tratamiento documentado, se ve como **ND** | Captura | `geografia-pais` (+ panel) | [x] |
 | 6 | Coordenadas inválidas | Cuarentena + motivo; ningún punto inventado | Fila de cuarentena | `consumidor-idempotente` | [x] |
-| 7 | Evento marítimo | "Sin país asignado"; sigue en el análisis | Captura | `geografia-pais` (+ panel) | ☐ |
+| 7 | Evento marítimo | "Sin país asignado"; sigue en el análisis | Captura | `geografia-pais` (+ panel) | [x] |
 | 8 | Reiniciar consumidor | Reanuda sin duplicar efectos ya persistidos | Logs + SQL | `consumidor-idempotente` | [x] |
 | 9 | Cerrar el túnel | Panel muestra el fallo y conserva/identifica la última lectura | Captura del aviso | `despliegue-tunel` | ☐ |
 | 10 | Reabrir el túnel | Se recupera automáticamente en el siguiente refresco | Captura | `despliegue-tunel` | ☐ |
@@ -261,7 +261,7 @@ Reglas de las conclusiones: interpretar, no solo mostrar; con cifras; **sin leng
 | M3 | **[OBL]** README reproducible (requisitos y versiones, `.env`, build/up, tablas y carga histórica, estado/logs, frontend dev y publicación, túnel y URL, pruebas y replay, parar y qué datos persisten, dónde está cada evidencia) | ☐ |
 | M4 | **[OBL]** El profesor tiene acceso al repo | ☐ |
 | M5 | **[OBL]** NO subir `node_modules`, secretos, token del túnel, volúmenes de BD ni descargas grandes regenerables (`data/raw/`); documentar dónde van los originales y cómo regenerarlos | [x] |
-| M10 | **[OBL, EVAL]** Tabla **rúbrica→evidencia** en el README: para cada criterio (Extracción, Calidad, Modelado, Análisis, Reflexión), dónde está la evidencia (archivo, consulta, captura o minuto del vídeo). La mantiene `doc-keeper` al cerrar cada feature | ☐ |
+| M10 | **[OBL, EVAL]** Tabla **rúbrica→evidencia** en el README: para cada criterio (Extracción, Calidad, Modelado, Análisis, Reflexión), dónde está la evidencia (archivo, consulta, captura o minuto del vídeo). La mantiene `doc-keeper` al cerrar cada feature | [x] |
 | M6 | Estructura (ver 03 §3): `README.md`, `docs/memoria.md`, `docs/evidencias/`, `docs/enunciado/` (solo lectura), `docs/planificacion/`, `sql/`, un directorio por servicio (las carpetas de servicio se crean cuando su feature se implementa) | ☐ |
 | M7 | Historial de Git sin trailers de coautoría ni líneas de "generado por" herramientas (commits y PRs): constitución + `.claude/settings.json` + hook `commit-msg`; comprobado con `git log` | [x] |
 | M8 | `CLAUDE.md`, `CODEMAP.md` y la constitución (`.specify/`) versionados y al día; `docs/` (entregables) separado de `specs/` (herramienta de trabajo) | [x] |
