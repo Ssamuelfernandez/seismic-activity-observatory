@@ -117,7 +117,7 @@ Toda consulta a una fuente externa deja un registro: las del feed en vivo, en la
 
 **El histórico es una instantánea a la fecha de extracción (B18).** Los 18 302 eventos son lo que USGS devolvía el 2026-11-05 para 2025 con M≥4; no se reconcilian las revisiones que USGS haga después. Por eso un evento puede tener hoy en USGS una magnitud o una profundidad distintas de las guardadas aquí, y el sistema no lo detecta. Evidencia: `docs/evidencias/historico-2025/descarga_2025.log` y el manifiesto.
 
-**Fuentes de las evidencias del productor.** Primer ciclo real (2026-11-04): `docs/evidencias/productor-live/ciclo1.log` (203 eventos recibidos, 12 excluidos, 191 publicados) y `ciclo1_consultas.out` (3 consultas, las 3 con HTTP 200).
+**Fuentes de las evidencias del productor.** Primer ciclo real (2026-11-04): `docs/evidencias/productor-live/ciclo1.log` (203 eventos recibidos, 12 excluidos, 191 publicados) y `docs/evidencias/productor-live/ciclo1_consultas.out` (3 consultas, las 3 con HTTP 200).
 
 ## 4. Calidad
 
@@ -383,7 +383,7 @@ docker compose run --rm producer python -m producer.replay --interval 2 --zone c
 
 **Aislamiento, en tres capas.** (1) El replay solo publica en `earthquakes.replay`. (2) El consumidor guarda lo de ese topic únicamente en el esquema `replay`. (3) Comprueba que el campo `mode` del mensaje coincide con el topic y, si no, lo manda a cuarentena con `mode_topic_mismatch`. Se comprobó con el productor live parado: las tablas de `live` quedaron idénticas antes y después (211 / 211 / 0 y la misma huella `md5`).
 
-**Banner.** Con «Reproducción» elegido, el panel muestra el banner «REPRODUCCIÓN» y los 22 eventos de 2025 (`metadata.mode = "replay"`); «En vivo» los oculta (`docs/evidencias/replay/T056_panel.md`, `T056_reproduccion.png`, `T056_en_vivo.png`).
+**Banner.** Con «Reproducción» elegido, el panel muestra el banner «REPRODUCCIÓN» y los 22 eventos de 2025 (`metadata.mode = "replay"`); «En vivo» los oculta (`docs/evidencias/replay/T056_panel.md`, `docs/evidencias/replay/T056_reproduccion.png`, `docs/evidencias/replay/T056_en_vivo.png`).
 
 **Resultados** (demo completa con contenedores, 2026-11-12):
 
@@ -405,7 +405,7 @@ Los eventos en el mar quedan como "Sin país asignado"; el campo `place` de USGS
 
 **Un evento que sale de la ventana de 24 h no está eliminado (B11).** El feed `all_day` solo muestra las últimas 24 horas. Si un evento deja de aparecer en una respuesta posterior, el productor no puede concluir que USGS lo haya eliminado: lo más probable es que haya salido de la ventana. Por eso no borra ni marca nada por ausencia; solo publica eventos nuevos o con `updated` mayor. Detectar eliminaciones reales exigiría reconciliar de forma exhaustiva lo guardado con el catálogo de USGS (consultando cada evento por `id` o por intervalos de fechas); esa reconciliación es una ampliación fuera de alcance, y los eventos que USGS retire del feed quedan sin detectar. Si el productor está parado más de 24 horas, los eventos ocurridos durante la parada que ya salieron de la ventana no vuelven a aparecer en el feed (hay un hueco); el procedimiento de recuperación con el catálogo histórico está explicado, sin automatizar, en `docs/borradores/productor-live.md` (B12).
 
-**Recuperación de un hueco de más de 24 h (B12), resumen.** Se descarga con `historical.download_main --start <inicio> --end <fin>` el intervalo perdido, con la misma URL del histórico, y se vuelve a cargar con `historical.load_main`; lo ya presente no se duplica ni retrocede. Ensayo con el intervalo 2025-12-30 a 2025-12-31 (30 registros): la carga dio nuevos 3, iguales 4 y antiguos 1, y repetirla dejó la misma huella (`docs/evidencias/historico-2025/hueco_ensayo.out`, `historico_hueco.out`). No está automatizado.
+**Recuperación de un hueco de más de 24 h (B12), resumen.** Se descarga con `historical.download_main --start <inicio> --end <fin>` el intervalo perdido, con la misma URL del histórico, y se vuelve a cargar con `historical.load_main`; lo ya presente no se duplica ni retrocede. Ensayo con el intervalo 2025-12-30 a 2025-12-31 (30 registros): la carga dio nuevos 3, iguales 4 y antiguos 1, y repetirla dejó la misma huella (`docs/evidencias/historico-2025/hueco_ensayo.out`, `docs/evidencias/historico-2025/historico_hueco.out`). No está automatizado.
 
 **Límites del productor.** No respeta la cabecera `Retry-After`. Un solo productor; dos a la vez no están soportados. Un evento sin `id` o sin `updated` se republica en cada ciclo. El periodo real entre consultas es algo mayor que `POLL_SECONDS`, porque la espera se suma a la duración del ciclo. Si USGS tarda más del tiempo de espera, el ciclo cuenta como fallo aunque el servicio funcione.
 
