@@ -82,7 +82,7 @@ Ponderación de la asignatura (de la sesión 8, sin cambios): test 30 % · prác
 | B15 | **[OBL]** Guardar consultas (URLs/parámetros), fecha de extracción y nº de registros; descargar una vez y reutilizar | Registro de procedencia | Enunc. §4.2 · Guía 2.3 | [x] |
 | B16 | **[OBL]** Histórico procesado con **las mismas reglas** de limpieza e integración que el live (vía Kafka o lógica común en batch; documentar la elección) | Misma función de procesamiento | FAQ 21 | [x] |
 | B17 | **[OBL]** El histórico no se pierde al reiniciar; procedimiento reproducible de carga | Comando documentado en README | FAQ 21 | [x] |
-| B18 | Aclarar que el histórico es una instantánea a la fecha de extracción, no todas las revisiones pasadas | Párrafo | Enunc. §4.2 | ☐ |
+| B18 | Aclarar que el histórico es una instantánea a la fecha de extracción, no todas las revisiones pasadas | Párrafo | Enunc. §4.2 | [x] |
 
 ### C. Consumidor, calidad y país
 
