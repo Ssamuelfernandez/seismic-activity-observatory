@@ -80,7 +80,7 @@ Para tener actividad que enseñar sin esperar a un terremoto y sin contaminar lo
 - **Error 500 sin cabeceras CORS:** un error 500 de la API no lleva cabeceras CORS, así que el navegador lo ve como fallo de red ([`docs/borradores/despliegue-tunel.md`](docs/borradores/despliegue-tunel.md)).
 - **Clon limpio verificado en la feature 002, no repetido con el estado final (A2):** la prueba de `docker compose up --build -d` desde un clon limpio es de 2026-11-03, antes del productor real, la API y el panel ([`docs/evidencias/infra-compose/clon_limpio.txt`](docs/evidencias/infra-compose/clon_limpio.txt)).
 - **Un evento que sale de la ventana de 24 h del feed no está eliminado** (B11): el productor no puede distinguirlo y la reconciliación exhaustiva con USGS no está implementada (ver los límites del productor más abajo).
-- **Sin país asignado:** la proporción es alta (24,5 % de eventos con país el 2026-11-15) por el catálogo de 110 m y el mar; no es un fallo (ver [`calidad-live.md`](docs/evidencias/revision-final/calidad-live.md)).
+- **Sin país asignado:** la proporción es alta (24,5 % de eventos con país el 2026-11-15) por el catálogo de 110 m; no es un fallo: los polígonos del catálogo son países (tierra, no aguas): un sismo en el mar queda sin país y se conserva, como pide el enunciado; es esperable que buena parte sea submarina, pero la consulta no lo mide (ver [`calidad-live.md`](docs/evidencias/revision-final/calidad-live.md)).
 - **Datos del mock y del replay:** los sintéticos (`synthetic-…`, mock del panel) van etiquetados y no se mezclan con `live`.
 
 ## Cómo ejecutar

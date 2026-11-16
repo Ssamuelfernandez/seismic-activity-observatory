@@ -171,7 +171,7 @@ Fecha: 2026-11-15. Base: el PostgreSQL del stack levantado, consultado en solo l
 **Decisiones tomadas con estas cifras.**
 
 1. Las 13 magnitudes y 14 profundidades negativas se conservan, porque USGS las publica y el rango del esquema las admite.
-2. El 24,50 % de eventos con país (75,50 % «Sin país asignado») se declara como límite del catálogo de 110 m y de que la mayoría de los sismos ocurren en el mar, no como fallo. La proporción difiere entre histórico (solo M≥4: 78,4 % sin país) y feed (todas las magnitudes: 16,8 %); no se ha investigado la causa.
+2. El 24,50 % de eventos con país (75,50 % «Sin país asignado») se declara como límite del catálogo de 110 m, no como fallo: los polígonos del catálogo son países (tierra, no aguas): un sismo en el mar queda sin país y se conserva, como pide el enunciado; es esperable que buena parte sea submarina, pero la consulta no lo mide. La proporción difiere entre histórico (solo M≥4: 78,4 % sin país) y feed (todas las magnitudes: 16,8 %); no se ha investigado la causa.
 3. La actualidad se mide por separado para feed e histórico, porque el `ingested_at` del histórico es el momento de la carga, no un retraso real de ingesta.
 4. El máximo de 615,3 días entre ocurrencia y `updated` del histórico muestra revisiones tardías de USGS que el sistema guarda como versiones sin duplicar eventos (149 eventos con más de una versión).
 
@@ -401,7 +401,7 @@ El recorrido de un evento real (`us6000pms8`, M 4,4 cerca de Calama, Chile) por 
 
 ## 10. Limitaciones
 
-Los eventos en el mar quedan como "Sin país asignado"; el campo `place` de USGS se muestra como descripción, pero no se usa para asignar país. La proporción es alta (24,5 % de eventos con país el 2026-11-15) por el catálogo de 110 m y el mar; no es un fallo (ver §4.4).
+Los eventos en el mar quedan como "Sin país asignado"; el campo `place` de USGS se muestra como descripción, pero no se usa para asignar país. La proporción es alta (24,5 % de eventos con país el 2026-11-15) por el catálogo de 110 m; no es un fallo: los polígonos del catálogo son países (tierra, no aguas): un sismo en el mar queda sin país y se conserva, como pide el enunciado; es esperable que buena parte sea submarina, pero la consulta no lo mide (ver §4.4).
 
 **Un evento que sale de la ventana de 24 h no está eliminado (B11).** El feed `all_day` solo muestra las últimas 24 horas. Si un evento deja de aparecer en una respuesta posterior, el productor no puede concluir que USGS lo haya eliminado: lo más probable es que haya salido de la ventana. Por eso no borra ni marca nada por ausencia; solo publica eventos nuevos o con `updated` mayor. Detectar eliminaciones reales exigiría reconciliar de forma exhaustiva lo guardado con el catálogo de USGS (consultando cada evento por `id` o por intervalos de fechas); esa reconciliación es una ampliación fuera de alcance, y los eventos que USGS retire del feed quedan sin detectar. Si el productor está parado más de 24 horas, los eventos ocurridos durante la parada que ya salieron de la ventana no vuelven a aparecer en el feed (hay un hueco); el procedimiento de recuperación con el catálogo histórico está explicado, sin automatizar, en `docs/borradores/productor-live.md` (B12).
 

@@ -47,7 +47,7 @@ El sistema (código, datos y mediciones) está construido y los documentos final
 |---|---|---|
 | Eventos actuales reales en `live` | 19 208 el 2026-11-15 (18 302 del histórico y 906 del feed); 19 385 el 2026-11-16 (1 083 del feed). 0 sintéticos | Hay datos de sobra. Di la fecha de la cifra que enseñes. |
 | Versiones guardadas | 19 509 el 2026-11-15, con 149 eventos con más de una versión | Evidencia viva de que las revisiones se guardan sin duplicar eventos. |
-| Sin país asignado | 75,50 % de los eventos de `live` el 2026-11-15 (24,50 % con país); 78,4 % en el histórico de 2025 (14 350 de 18 302) | Explícalo con cifra: la mayoría de los sismos ocurren en el mar y el catálogo es de 110 m. No es un error; es una conclusión y una limitación. |
+| Sin país asignado | 75,50 % de los eventos de `live` el 2026-11-15 (24,50 % con país); 78,4 % en el histórico de 2025 (14 350 de 18 302) | Explícalo con cifra y con esta redacción: los polígonos del catálogo son países (tierra, no aguas): un sismo en el mar queda sin país y se conserva, como pide el enunciado; es esperable que buena parte sea submarina, pero la consulta no lo mide. No es un error; es una conclusión y una limitación. |
 | Magnitud nula en `live` | 0 | La prueba 5 no se puede enseñar con datos reales: usa la captura del mock sintético etiquetado (`docs/evidencias/pruebas/capturas/05_magnitud_nula_nd.png`). |
 | Cuarentena real en `live` | 0 | La prueba 6 se enseña con la evidencia guardada (`docs/evidencias/consumidor-idempotente/bloque3_prueba6_cuarentena.out`), no con datos reales. |
 | Consultas al feed | 1 762, todas con HTTP 200, del 2026-11-12 16:38 UTC al 2026-11-16 18:10 UTC | Prueba de que el productor lleva días funcionando sin fallos. |
