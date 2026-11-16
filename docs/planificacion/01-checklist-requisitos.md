@@ -76,7 +76,7 @@ Ponderación de la asignatura (de la sesión 8, sin cambios): test 30 % · prác
 | B9 | **[OBL]** Esperar confirmación (ack) de Kafka **antes** de marcar publicado | Orden en el código | Enunc. §5 | [x] |
 | B10 | **[OBL]** Timeout, HTTP 429/5xx, backoff progresivo, errores de JSON; registrar error **sin borrar el estado válido anterior** | Pruebas con fallo simulado | Enunc. §5 | [x] |
 | B11 | **[OBL]** Explicar la limitación: evento que sale de la ventana ≠ eliminado por USGS; reconciliación exhaustiva es ampliación | Párrafo en memoria | Enunc. §5 | [x] |
-| B12 | **[OBL]** Explicar cómo recuperar el hueco tras una parada >24 h con el catálogo histórico | Procedimiento documentado (no tiene por qué automatizarse) | Enunc. §5 | [x]: pasar docs/borradores/productor-live.md a la memoria) |
+| B12 | **[OBL]** Explicar cómo recuperar el hueco tras una parada >24 h con el catálogo histórico | Procedimiento documentado (no tiene por qué automatizarse) | Enunc. §5 | [x] |
 | B13 | **[OBL]** Histórico: 2025, mundial, M≥4, `eventtype=earthquake`, **por meses**; si un mes >20.000, subdividir **sin truncar en silencio** | Archivos + log de nº de registros por consulta | Enunc. §4.2 | [x] |
 | B14 | **[OBL]** Deduplicar eventos compartidos entre intervalos (los extremos pueden incluirse en ambos) | Unicidad de `event_id` comprobada | Enunc. §4.2 | [x] |
 | B15 | **[OBL]** Guardar consultas (URLs/parámetros), fecha de extracción y nº de registros; descargar una vez y reutilizar | Registro de procedencia | Enunc. §4.2 · Guía 2.3 | [x] |
