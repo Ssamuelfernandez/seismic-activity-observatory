@@ -1,5 +1,7 @@
 # Comprobación de `docs/rubrica-y-guia-video.md` (revision-final, T133)
 
+> **Documento histórico del 2026-11-15.** Comprobó la versión anterior de la guía, que desde entonces se ha reescrito. La guía vigente es [`docs/rubrica-y-guia-video.md`](../../rubrica-y-guia-video.md), a fecha 2026-11-16; lo que dice este archivo sobre el estado de la guía ya no es aplicable.
+
 Fecha: 2026-11-15. Solo lectura: el documento **no se ha modificado** (`git diff docs/rubrica-y-guia-video.md` vacío). Regla de la feature: se corrige únicamente lo que deje un [OBL] sin evidencia; lo demás queda como pendiente no bloqueante (también anotado en `specs/013-revision-final/spec.md`, «Pendientes no bloqueantes»). Comprobación de rutas: cada ruta citada se resolvió contra el disco y contra `git ls-files`; los nombres cortos (`costes.md`, `tablas.md`…) se resolvieron en `docs/evidencias/mediciones/`. Estado de cada prueba: `docs/evidencias/pruebas/README.md` y `auditoria.md`.
 
 Resultado global: **ninguna ruta citada apunta a una evidencia inexistente o sin versionar**; hay dos rutas con el directorio equivocado, varias cifras y frases anteriores al estado final y una ausencia (comparación en replay). Ninguna deja un [OBL] sin evidencia, así que no se corrige nada.
