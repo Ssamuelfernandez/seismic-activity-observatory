@@ -1,6 +1,6 @@
 # Rúbrica del proyecto, estado de cumplimiento y guía del vídeo
 
-Este documento no añade requisitos: resume lo que puntúa según `ENUNCIADO.md` §13 y `README-paquete.md`, dice si ya lo tienes y cómo enseñarlo en el vídeo de 5 minutos.
+Guía vigente a 2026-11-16. Este documento no añade requisitos: resume lo que puntúa según `docs/enunciado/ENUNCIADO.md` §13 y `docs/enunciado/README-paquete.md`, dice dónde está cada evidencia y cómo enseñarla en el vídeo de 5 minutos. Las cifras que cambian con el tiempo llevan su fecha: el productor sigue ingiriendo, así que al grabar las de la base serán mayores.
 
 ---
 
@@ -11,7 +11,7 @@ Son **5 criterios**, heredados del ejercicio de supermercados de la sesión 8. C
 | Criterio | Notable (7–8) | **Sobresaliente (9–10)** | Qué lo demuestra en este proyecto |
 |---|---|---|---|
 | **Extracción** | Carga + exploración | **Carga + análisis de tipos** | Histórico 2025, feed en vivo y catálogo de países; tipos, unidades, límites y automatización |
-| **Calidad** | 4+ dimensiones | **Análisis completo + acciones** | Apartado en memoria o notebook con consultas, resultados antes/después y decisiones |
+| **Calidad** | 4+ dimensiones | **Análisis completo + acciones** | Apartado en memoria con consultas, resultados antes/después y decisiones |
 | **Modelado** | Modelo correcto | **Modelo optimizado** | Modelo conceptual/lógico/físico, grano, claves, revisiones, idempotencia, índices medidos |
 | **Análisis** | 3+ análisis | **Análisis + insights** | Ventanas por hora, distribuciones, comparación histórica equivalente, ≥3 conclusiones con cifras |
 | **Reflexión** | Buena reflexión | **Excelente + propuestas** | Complejidad, mediciones con 3 tamaños, costes, 100 M de registros, limitaciones y mejoras |
@@ -22,122 +22,111 @@ Reglas que el enunciado repite y que conviene tener presentes en el vídeo:
 - El mapa entregado no sustituye las evidencias. El mapa es solo una parte del resultado.
 - **No son obligatorios, ni puntúan:** generador automático de informe de calidad, panel de calidad en la web, ROI, 24/7, Spark/Flink/Kubernetes, machine learning.
 - Nada de lenguaje de predicción ni de riesgo en las conclusiones.
-- **Cambio de evaluación que consta en tu checklist** (rev. 8, 13-nov): no hay defensa oral. Se entrega **README + vídeo de 5 min**. El vídeo debe explicar cómo se cumple cada criterio, y el README debe llevar la tabla rúbrica→evidencia (M10), un recorrido de un evento y una decisión técnica propia.
+- No hay defensa oral (rev. 8 del checklist, 13-nov). Se entrega **README + vídeo de 5 min**. El vídeo debe explicar cómo se cumple cada criterio, y el README lleva la tabla rúbrica→evidencia (M10), un recorrido de un evento y una decisión técnica propia.
 - Entrega: **19 de noviembre de 2026**, trabajo individual.
 
 Además hay un bloque de requisitos de «aceptación» (las 11 pruebas del enunciado §11) y de despliegue (§9). No son criterios de la rúbrica, pero son la prueba de que el sistema funciona. Sirven como evidencia dentro de Modelado y Extracción.
 
 ---
 
-## 2. ¿La cumples hoy? Veredicto honesto
+## 2. Estado de cumplimiento a 2026-11-16
 
-**Resumen:** el sistema (código, datos y mediciones) está construido y funciona. **Lo que falta es, sobre todo, escrito y demostrable**: el análisis de calidad por dimensiones, las conclusiones, las secciones de la memoria, el README final con la tabla rúbrica→evidencia, los datos de costes, el túnel/Netlify en vivo y el propio vídeo.
+El sistema (código, datos y mediciones) está construido y los documentos finales están escritos: memoria §1 a §10, README con la tabla M10, el recorrido y la decisión propia. Lo que queda es grabar el vídeo y poner su enlace.
 
-| Criterio | Nivel que puedes defender hoy | Por qué | Qué falta para el 9–10 |
-|---|---|---|---|
-| **Extracción** | **Sobresaliente, casi cerrado** | Productor cada 60 s con reintentos y backoff, filtro `type=earthquake` con motivo de exclusión (54 exclusiones en la base), originales guardados, histórico 2025 por meses (18 302 únicos, conciliado con el `count` anual de USGS), manifiesto con consultas y SHA-256, catálogo de 177 países. | Pasar a la memoria el diccionario de datos completo (§2 está a medias), el registro de procedencia (§3 vacío) y los apuntes de `docs/borradores/productor-live.md` (B2, B11, B12) e `historico-2025.md` (B18). |
-| **Calidad** | **Suficiente-Notable en código; Insuficiente en lo escrito** | Las reglas existen y funcionan (14 motivos de cuarentena, nulos sin rellenar, negativos válidos, `is_synthetic`, contadores de transformaciones). La memoria §4 documenta las **reglas**, pero **no contiene todavía el análisis**: porcentajes de completitud, duplicados, anomalías, actualidad, antes/después. Es lo que puntúa y no lo tienes escrito. | Redactar §4 con las 6 dimensiones (completitud, unicidad, validez, consistencia, actualidad, exactitud), cada una con su consulta, resultado, denominador y acción. **Es el hueco más importante.** |
-| **Modelado** | **Sobresaliente en el diseño** | Modelo conceptual, lógico y físico en `docs/memoria.md` §5, con equivalencia de nombres. Hecho actual + historial de versiones, país por punto-en-polígono, upsert idempotente, offset tras el commit, esquemas `live`/`replay` aislados. Pruebas 2, 3, 4, 6, 8 y 11 ejecutadas con evidencia. | Que la memoria cite los resultados de las mediciones de índices (`docs/evidencias/mediciones/indices.md`) para justificar los índices («modelo optimizado»). Cerrar las pruebas 1, 5 y 7 con capturas. |
-| **Análisis** | **Funcional, sin redactar** | El panel y la API ya calculan lo exigido: recuentos por hora UTC y país (incluido «Sin país asignado»), distribuciones, comparación 24 h M≥4 frente a la media diaria de 2025, filtros coherentes, tabla. Pero la memoria §6 está vacía: **no hay ninguna conclusión escrita** y la rúbrica pide ≥3 con cifras. | Escribir ≥3 conclusiones con periodo, filtros, denominador y captura con los filtros visibles. |
-| **Reflexión** | **Sobresaliente en el material; falta pasarlo a la memoria** | Mediciones con 3 tamaños, comparaciones lista/diccionario y sin/con índice, razonamiento a 10⁸ filas, 8 propuestas de escalado ligadas a cifras, costes completos (hardware, electricidad, almacenamiento, transferencia, mantenimiento, dominio y desarrollo) con origen medido/supuesto y naturaleza efectivo/imputado, y limitaciones declaradas (`docs/evidencias/mediciones/`; auditoría sin bloqueantes en `docs/evidencias/subagentes/verificador-auditoria-mediciones-costes.md`). | La memoria §7 ya lo resume; queda la cuota de Netlify sin verificar y repetir desde un clon limpio (SC-007). |
-
-### Hallazgos reales que debes conocer antes de grabar
-
-Medidos en la base el 13-nov:
-
-| Dato | Valor | Qué implica para el vídeo |
+| Criterio | Estado | Dónde está |
 |---|---|---|
-| Eventos actuales en `live` | 18 809 (2025-01-01 a 2026-11-13), 0 sintéticos | Hay datos reales de sobra para el mapa y el análisis. |
-| Versiones guardadas | 18 909 (100 más que eventos) | Evidencia viva de que las **revisiones** se guardan sin duplicar eventos. |
-| Sin país asignado | 14 429 (≈ 77 %) | Es plausible (la mayoría de los sismos ocurren en el mar y la costa del catálogo está simplificada), pero debes **explicarlo con cifra**: no es un error. Es una buena conclusión y una limitación honesta. |
-| Magnitud nula en `live` | **0** | La prueba 5 (magnitud nula → ND) **no se puede enseñar con datos reales**. Usa el caso controlado de replay o el mock sintético etiquetado. |
-| Cuarentena en `live` | **0** | La prueba 6 (coordenadas inválidas) se enseña con la evidencia ya guardada (`docs/evidencias/consumidor-idempotente/prueba6_cuarentena.out`) o ejecutándola en vivo con el script de verificación. No con datos reales. |
-| Replay | 22 eventos en `replay.current_event` | Hay una reproducción ya cargada y aislada. |
-| Túnel y Netlify | **No verificados por ti** (pruebas 9 y 10, H1, H3, H4 sin marcar) | Hay que hacerlo en vivo antes de grabar. Hay plantillas en `docs/evidencias/despliegue-tunel/prueba-09_*.md` y `prueba-10_*.md`. |
+| **Extracción** | Cumple. Productor cada 60 s con reintentos y espera progresiva, filtro `type=earthquake` con motivo de exclusión (95 exclusiones `non_earthquake_type` el 2026-11-16), originales guardados, histórico 2025 por meses (18 302 únicos, conciliado con el recuento anual de USGS), manifiesto con consultas y sha256, catálogo de 177 países. Diccionario de datos con los campos del feed y del modelo; B2, B18 y procedencia con URLs, filtros, registros y fechas. | Memoria §2, §2.1 y §3; `data/historical/manifest.json`; `docs/evidencias/productor-live/ciclo1.log` |
+| **Calidad** | Cumple. Reglas y cuarentena (14 motivos) en §4.1 a §4.3; análisis de las 6 dimensiones sobre datos reales de `live` con consulta, denominador y decisión en §4.4 (cifras del 2026-11-15). Como en datos reales no hay nada que limpiar (0 duplicados, 0 fuera de rango, 0 reales en cuarentena), el «antes y después» se enseña con evidencia de las reglas aplicadas a casos controlados. | Memoria §4; [`docs/evidencias/revision-final/calidad-live.md`](evidencias/revision-final/calidad-live.md); `docs/evidencias/consumidor-idempotente/bloque3_prueba6_cuarentena.out` |
+| **Modelado** | Cumple. Modelo conceptual, lógico y físico, con equivalencia de nombres; hecho actual + historial de versiones; país por punto en polígono; escritura idempotente; offset tras el commit; esquemas `live` y `replay` aislados; índices justificados con medición (`ix_current_event_country_time` justificado en los 6 casos de Q2; el de magnitud, no concluyente). | Memoria §5 y §7.2; `sql/001_schema.sql`; [`docs/evidencias/mediciones/indices.md`](evidencias/mediciones/indices.md) |
+| **Análisis** | Cumple. API y panel calculan por hora UTC y país (con «Sin país asignado»), distribuciones, comparación 24 h M≥4 frente a la media diaria de 2025 y filtros coherentes. Tres conclusiones con periodo, filtros, denominador y consulta en la memoria §6. No hay captura nueva del panel con esos filtros: se mostrarán en el vídeo. | Memoria §6; [`docs/evidencias/revision-final/conclusiones-analisis.md`](evidencias/revision-final/conclusiones-analisis.md) |
+| **Reflexión** | Cumple. Mediciones con 3 tamaños, lista frente a diccionario y sin/con índice, razonamiento a 10⁸ filas, 8 propuestas de escalado, costes con origen (medido, supuesto o estimado) y naturaleza (efectivo o imputado). Netlify: plan gratuito, según indica el alumno. | Memoria §7 y §10; `docs/evidencias/mediciones/` |
+
+### Cifras de la base que conviene saber antes de grabar
+
+| Dato | Valor y fecha | Qué implica para el vídeo |
+|---|---|---|
+| Eventos actuales reales en `live` | 19 208 el 2026-11-15 (18 302 del histórico y 906 del feed); 19 385 el 2026-11-16 (1 083 del feed). 0 sintéticos | Hay datos de sobra. Di la fecha de la cifra que enseñes. |
+| Versiones guardadas | 19 509 el 2026-11-15, con 149 eventos con más de una versión | Evidencia viva de que las revisiones se guardan sin duplicar eventos. |
+| Sin país asignado | 75,50 % de los eventos de `live` el 2026-11-15 (24,50 % con país); 78,4 % en el histórico de 2025 (14 350 de 18 302) | Explícalo con cifra: la mayoría de los sismos ocurren en el mar y el catálogo es de 110 m. No es un error; es una conclusión y una limitación. |
+| Magnitud nula en `live` | 0 | La prueba 5 no se puede enseñar con datos reales: usa la captura del mock sintético etiquetado (`docs/evidencias/pruebas/capturas/05_magnitud_nula_nd.png`). |
+| Cuarentena real en `live` | 0 | La prueba 6 se enseña con la evidencia guardada (`docs/evidencias/consumidor-idempotente/bloque3_prueba6_cuarentena.out`), no con datos reales. |
+| Consultas al feed | 1 762, todas con HTTP 200, del 2026-11-12 16:38 UTC al 2026-11-16 18:10 UTC | Prueba de que el productor lleva días funcionando sin fallos. |
+| Replay | 22 eventos en `replay.current_event`, 24 versiones, 0 en cuarentena (2026-11-12) | Reproducción cargada y aislada; `live` tuvo la misma huella antes y después. |
+| Comparación 24 h frente a 2025 | La API marca `recent_incomplete: true` (16 eventos recientes frente a 50,14 por día el 2026-11-16) | No la uses como conclusión; si la enseñas, di que el periodo reciente puede estar incompleto. |
 
 ---
 
-## 3. Lista de lo que falta (ordenada por impacto en la nota)
-
-Para que el vídeo tenga algo sólido que enseñar. Cada punto indica el criterio que sostiene.
-
-1. **Análisis de calidad por dimensiones** (Calidad). Son 6 consultas SQL sobre `live.*` y `quarantine`, con denominador y acción. Puntúa mucho y es lo que más falta. Reglas de redacción en el checklist (§D): indicar el conjunto y el denominador, no sumar incidencias solapadas, no inventar errores en datos reales.
-2. **≥3 conclusiones con cifras** (Análisis). Candidatas con datos que ya tienes: porcentaje sin país y su explicación; comparación de las últimas 24 h con M≥4 frente a la media diaria de 2025 (con días a cero en el denominador); distribución de profundidad y de magnitud; recuentos por país.
-3. **Costes** (Reflexión). **Hecho** (`costes.md`, `equipo.md`, `transferencia.md`). Queda sin verificar el límite de Netlify.
-4. **Memoria §1, §3, §6, §7, §8, §9, §10** vacías o a medias. Basta con trasladar los borradores de `docs/borradores/` y las tablas de `docs/evidencias/mediciones/`.
-5. **Pruebas de aceptación 1, 5, 7, 9 y 10** con evidencia propia (checklist §I). Las 2, 3, 4, 6, 8 y 11 ya tienen evidencia.
-6. **README final** con la tabla rúbrica→evidencia (M10) y el recorrido de un evento y la decisión propia. El README actual es un diario de features, no el documento final.
-7. **Túnel y Netlify en vivo** (H1, H3, H4). Sin esto, no puedes enseñar el panel desde otro dispositivo.
-8. Housekeeping: reconstruir la imagen `tests` (un error de recogida en `tests/common/test_api_config.py` por imagen antigua) y decidir qué hacer con los 15 archivos de evidencia sin seguir en `git status`.
-
----
-
-## 4. Guía para el vídeo de 5 minutos
+## 3. Guía para el vídeo de 5 minutos
 
 Idea central: **un criterio de la rúbrica por bloque, y en cada bloque, «lo que dice el enunciado → lo que hice → la prueba en pantalla»**. El evaluador busca los 5 criterios; no le interesa el tour del código.
 
-### 4.1 Preparación (antes de pulsar «grabar»)
+### 3.1 Preparación (antes de pulsar «grabar»)
 
-1. `docker compose up --build -d` y `docker compose ps`: los cinco servicios en *healthy*.
-2. Túnel Cloudflare abierto y `curl https://TU-DOMINIO/api/salud` respondiendo. Panel de Netlify abierto en otra pestaña y, si puedes, en el móvil.
-3. Terminal con `psql` abierta: `docker compose exec postgres psql -U observatory_admin -d observatory`.
-4. Pestañas listas: `docs/memoria.md` (modelo y calidad), `docs/evidencias/mediciones/tablas.md`, `indices.md` y `costes.md`.
-5. Hacer un ensayo completo con el cronómetro. El límite son 5 minutos. Guarda un plan B (capturas) por si el túnel falla.
+Limitación que hay que tener presente: **el panel público solo funciona con el PC del alumno y `cloudflared` encendidos**. Sin ellos, el panel de Netlify no recibe datos.
 
-### 4.2 Guion con tiempos
+1. `docker compose up --build -d` y `docker compose ps`: los cinco servicios en *healthy*. Que no exista `compose.override.yaml`.
+2. El PC no debe suspenderse (ajustes de energía) y `nslookup observatorio.ssamuelfernandez.net` debe resolver.
+3. `cloudflared` encendido siguiendo «Túnel público y panel» del README y `curl https://observatorio-api.ssamuelfernandez.net/api/salud` respondiendo 200. Panel de Netlify abierto en una pestaña **visible**. No mostrar nunca el token del túnel ni el `.env`.
+4. Terminal con `psql` abierta: `docker compose exec postgres psql -U <POSTGRES_USER> -d <POSTGRES_DB>` (los valores están en tu `.env`; no los enseñes en pantalla).
+5. Pestañas listas: `docs/memoria.md` (§4.4, §5, §6), `docs/evidencias/mediciones/tablas.md`, `docs/evidencias/mediciones/indices.md` y `docs/evidencias/mediciones/costes.md`, y el README con la tabla M10.
+6. Ensayo completo con cronómetro. Plan B si el túnel falla: las capturas de `docs/evidencias/despliegue-tunel/2026-11-12_panel-publico.png` y `docs/evidencias/pruebas/capturas/`.
 
-| Min | Bloque | Qué decir (idea) | Qué enseñar en pantalla | Criterio |
+### 3.2 Guion con tiempos (5:00 exactos)
+
+| Minuto | Bloque | Qué decir (idea) | Qué enseñar en pantalla | Criterio |
 |---|---|---|---|---|
-| 0:00–0:20 | Qué es | «Pregunta: ¿dónde hay actividad sísmica y cómo se compara con un periodo histórico equivalente?». Flujo: USGS → productor → Kafka → consumidor → PostgreSQL → API → túnel → panel. | Diagrama del flujo o `docker compose ps` con los 5 servicios healthy. | Contexto |
-| 0:20–1:10 | **Extracción** | Tres fuentes: feed de 24 h cada 60 s, histórico 2025 por meses (M≥4) y catálogo de países. Qué hace el productor: compara `id` + `updated` con el estado persistente, espera el ack de Kafka, reintenta con espera progresiva y registra el motivo de exclusión de lo que no es terremoto. Tipos y unidades: coordenadas lon/lat/profundidad km, tiempos en ms Unix UTC. | Log del productor (`docker compose logs producer --tail 5`). `data/historical/manifest.json` (consultas, fechas, 18 302 únicos y conciliación con USGS). Tabla de tipos del diccionario de datos. | Extracción |
-| 1:10–2:10 | **Calidad** | «Seis dimensiones, no una». Muestra 2–3 con su consulta y su porcentaje, y di la **acción** tomada. Resalta las decisiones: no relleno nulos con 0, una magnitud o profundidad negativa no es un error, lo inválido va a cuarentena con motivo y original. | Memoria §4: la tabla de dimensiones y una fila de `quarantine` con su motivo (`SELECT reason, count(*) FROM live.quarantine GROUP BY 1`, o la evidencia guardada de la prueba 6). | Calidad |
-| 2:10–3:10 | **Modelado** | Grano y claves: `current_event` (1 fila por `event_id`), `event_version` (único `(event_id, updated)`). Qué pasa con un duplicado y con una versión vieja tardía. Cómo se integra el país (punto en polígono, `ADM0_A3`, «Sin país asignado» conservado). Un índice con su medición antes/después. | Diagrama del modelo (memoria §5). Demostración corta de las pruebas 2 y 4: reenviar la misma versión no cambia el recuento; una versión antigua no pisa a la nueva (evidencia en `docs/evidencias/consumidor-idempotente/`). `indices.md` con el «sin/con índice». | Modelado |
-| 3:10–4:10 | **Análisis** | Abre el panel real (URL de Netlify). Aplica un filtro y enseña que **mapa, gráficos y tabla cambian a la vez**. Lee **una** conclusión con cifra, periodo y filtros: la comparación de las últimas 24 h M≥4 frente a la media diaria de 2025, o el porcentaje sin país. Enseña un evento nulo como ND. | Panel: mapa/globo con leyenda, filtro por país y magnitud, gráfico por hora UTC, comparación histórica, tabla. Estado del sistema (última ingesta). Opcional y breve: **replay etiquetado «REPRODUCCIÓN»**, para enseñar que va por Kafka y está aislado. | Análisis |
-| 4:10–4:50 | **Reflexión** | Complejidad (diccionario O(1) frente a recorrido O(n), integración geográfica, agregación por ventanas), mediciones con tres tamaños, qué ocurriría con 100 M de filas (índices, particionado, más particiones en Kafka), costes y que «gratis» no es coste cero. Una limitación honesta. | `tablas.md` (tamaños y tiempos), `escalado.md`, `costes.md` con tus cifras ya rellenas. | Reflexión |
-| 4:50–5:00 | Cierre | Recorrido de un evento (un `id` de USGS, de principio a fin) y **una decisión técnica propia** con su motivo. Dónde está la tabla rúbrica→evidencia en el README. | README (tabla M10). | Cierre |
+| 0:00–0:20 | Qué es | «Pregunta: ¿qué actividad sísmica hay ahora y cómo se compara con 2025?». Flujo: USGS → productor → Kafka → consumidor → PostgreSQL → API → túnel → panel. Aviso: el panel público requiere mi PC y `cloudflared` encendidos. | Diagrama de la memoria §1 o `docker compose ps` con los cinco servicios healthy | Contexto |
+| 0:20–1:05 | **Extracción** | Tres fuentes: feed de 24 h cada 60 s, histórico 2025 por meses (M≥4) y catálogo de países. El productor compara `id` y `updated` con el estado guardado, reintenta con espera progresiva y registra el motivo de exclusión de lo que no es terremoto. Tipos y unidades: lon/lat/profundidad en km, tiempos en ms Unix UTC. | `docker compose logs producer --tail 5`; `data/historical/manifest.json` (18 302 únicos, coincide con USGS); tabla del diccionario (memoria §2) | Extracción |
+| 1:05–1:55 | **Calidad** | «Seis dimensiones, no una». Enseña 2 o 3 con consulta y porcentaje, y la **acción** tomada. Decisiones: no relleno nulos con 0, una magnitud o profundidad negativa no es un error, lo inválido va a cuarentena con motivo y original. «En datos reales no hay nada que limpiar; lo muestro con casos controlados». | Memoria §4.4 (tabla de dimensiones) y `docs/evidencias/consumidor-idempotente/bloque3_prueba6_cuarentena.out` (6 inválidos → 6 filas con motivo) | Calidad |
+| 1:55–2:40 | **Modelado** | Grano y claves: `current_event` (1 fila por `event_id`) y `event_version` (único `(event_id, updated_ms)`). Duplicado y versión vieja tardía no cambian nada. País por punto en polígono; «Sin país asignado» se conserva. Un índice con su medición sin/con. | Diagrama del modelo (memoria §5); pruebas 2 y 4 en `docs/evidencias/consumidor-idempotente/bloque3_prueba2_reenvio.out` y `docs/evidencias/consumidor-idempotente/bloque3_prueba3_4_versiones.out`; `docs/evidencias/mediciones/indices.md` | Modelado |
+| 2:40–3:35 | **Análisis** (filtros y conclusión) | Abre el panel público. Aplica un filtro y enseña que mapa, gráficos y tabla cambian a la vez. Lee **una** conclusión con cifra, periodo y filtros: el 78,4 % de los eventos de 2025 queda sin país (14 350 de 18 302), o julio y agosto concentran el 26,8 % por la secuencia de Kamchatka. Enseña un evento con ND como mock sintético etiquetado. | Panel público: mapa, filtro por país y magnitud, gráfico por hora UTC, tabla; memoria §6 | Análisis |
+| 3:35–4:10 | **Análisis** (pruebas 9 y 10 en vivo) | «El panel avisa cuando falla la conexión y se recupera solo». Cierra `cloudflared`, espera el aviso «Datos antiguos» con la hora de la última lectura, reábrelo y espera a que desaparezca. | Ver el procedimiento de 3.3. Se graba aparte y se acortan las esperas en el montaje, con el reloj a la vista | Análisis (aceptación) |
+| 4:10–4:40 | **Reflexión** | Complejidad: diccionario O(1) frente a lista O(n), integración geográfica con árbol, agregación por ventanas; mediciones con 3 tamaños; qué pasaría con 10⁸ filas (particionado, lotes, más particiones en Kafka); costes con lo medido frente a lo supuesto («gratis» no es coste cero). Limitación honesta: sin país 75,5 %, panel dependiente de mi PC. | `docs/evidencias/mediciones/tablas.md`, `docs/evidencias/mediciones/escalado.md` y `docs/evidencias/mediciones/costes.md`; memoria §7 y §10 | Reflexión |
+| 4:40–5:00 | Cierre | Recorrido de `us6000pms8` (M 4,4 cerca de Calama; evento real de 2025 reproducido por replay: productor → Kafka partición 0 offset 18 → consumidor → `replay.current_event` → API → panel). Decisión propia: el replay aislado de `live` en **tres capas** (topic, esquema y comprobación de `mode`), con `live` idéntico antes y después (211 / 211 / 0, misma huella `md5`). Señala la tabla M10 del README. | README: «Recorrido de un evento», «Decisión propia» y la tabla M10 | Cierre |
 
-Si te pasas de tiempo, **recorta Extracción y el cierre**; deja Calidad, Modelado y Análisis, que son los que tienen más hueco hasta el 9–10.
+Si te pasas de tiempo, recorta Extracción y el cierre; deja Calidad, Modelado y Análisis.
 
-### 4.3 Qué mostrar para cada una de las 11 pruebas (si las incluyes en el README o el vídeo)
+### 3.3 Pruebas 9 y 10 en vivo: pasos
 
-| # | Prueba | Cómo enseñarla | Evidencia que ya existe |
+Con el panel público abierto en una pestaña **visible** (con la pestaña oculta el refresco puede detenerse):
+
+1. Espera a ver datos reales y anota la hora de la última lectura que indica el panel.
+2. Cierra `cloudflared` (Ctrl+C) **sin recargar** el panel y anota la hora.
+3. Espera al siguiente refresco: hasta 60 s (`refreshSeconds`) más 15 s (`timeoutMs`), unos 75 s. No recargues ni cambies de pestaña. Debe aparecer «Datos antiguos» con la última lectura conservada y los datos anteriores visibles.
+4. Vuelve a lanzar `cloudflared`, comprueba `curl https://observatorio-api.ssamuelfernandez.net/api/salud` con 200 y, **sin recargar**, espera otros ~75 s: el aviso desaparece y la hora de lectura se actualiza.
+
+Cada espera dura más de lo que cabe en el guion: graba aparte y acorta las esperas al montar, dejando el reloj a la vista. Fichas completas: [`docs/evidencias/pruebas/09-cierre-tunel.md`](evidencias/pruebas/09-cierre-tunel.md) y [`docs/evidencias/pruebas/10-reapertura-tunel.md`](evidencias/pruebas/10-reapertura-tunel.md). Hoy solo hay una captura parcial (`docs/evidencias/pruebas/capturas/09_cierre_tunel_sin_respuesta.png`: «SIN RESPUESTA DE LA API», sin lectura previa); no muestra «Datos antiguos».
+
+### 3.4 Qué mostrar para cada una de las 11 pruebas (si las incluyes)
+
+| # | Prueba | Cómo enseñarla | Evidencia que existe |
 |---|---|---|---|
-| 1 | Evento nuevo | Un `id` del feed en vivo: `SELECT * FROM live.current_event WHERE event_id = '…'`, luego `GET /api/eventos` y el panel | `docs/evidencias/productor-live/prueba1_evento_nuevo.out` (hasta PostgreSQL). **Falta la captura de API, mapa y análisis.** |
-| 2 | Reenviar la misma versión | Recuento antes y después | `consumidor-idempotente/prueba2_reenvio.out` |
-| 3 | Versión posterior | Cambian los datos actuales y las agregaciones | `consumidor-idempotente/prueba3_4_versiones.out` |
-| 4 | Versión antigua tardía | No sustituye a la más reciente | Ídem |
-| 5 | Magnitud nula | ND en el panel. **No hay nulos en datos reales**, usa el caso controlado de replay o el mock sintético etiquetado | `consumidor-idempotente/geografia_prueba5.out`. **Falta la captura del panel con ND.** |
-| 6 | Coordenadas inválidas | Fila en cuarentena con motivo; ningún punto inventado | `consumidor-idempotente/prueba6_cuarentena.out` |
-| 7 | Evento marítimo | «Sin país asignado» sigue en el análisis (hay 14 429 reales) | `geografia_prueba7.out`. **Falta la captura.** |
-| 8 | Reiniciar consumidor | `docker compose restart consumer` y el recuento no cambia | `prueba8_reinicio.out` |
-| 9 | Cerrar el túnel | Cierra `cloudflared` y espera al siguiente refresco: el panel avisa y conserva la última lectura | **Pendiente: plantilla `despliegue-tunel/prueba-09_cierre-tunel.md`** |
-| 10 | Reabrir el túnel | Se recupera solo | **Pendiente: plantilla `prueba-10_reapertura-tunel.md`** |
-| 11 | Reproducción histórica | Lanza el replay; banner «REPRODUCCIÓN»; datos aislados de `live` | `docs/evidencias/replay/` |
+| 1 | Evento nuevo | Un `id` del feed en vivo: `SELECT * FROM live.current_event WHERE event_id = '…'`, luego `GET /api/eventos` y el panel | `docs/evidencias/productor-live/prueba1_evento_nuevo.out`; captura `docs/evidencias/pruebas/capturas/01_evento_nuevo.png` (evento real `ci41362543`) |
+| 2 | Reenviar la misma versión | Recuento antes y después | `docs/evidencias/consumidor-idempotente/bloque3_prueba2_reenvio.out` |
+| 3 | Versión posterior | Cambian los datos actuales y las agregaciones | `docs/evidencias/consumidor-idempotente/bloque3_prueba3_4_versiones.out`; captura `docs/evidencias/pruebas/capturas/03_version_posterior.png` (`uw714139501`) |
+| 4 | Versión antigua tardía | No sustituye a la más reciente | Ídem la 3 |
+| 5 | Magnitud nula | ND en el panel; no hay nulos reales, se usa el mock sintético etiquetado | `docs/evidencias/geografia-pais/geografia_prueba5.out`; captura `docs/evidencias/pruebas/capturas/05_magnitud_nula_nd.png` |
+| 6 | Coordenadas inválidas | Fila en cuarentena con motivo; ningún punto inventado | `docs/evidencias/consumidor-idempotente/bloque3_prueba6_cuarentena.out` |
+| 7 | Evento marítimo | «Sin país asignado» sigue en el análisis | `docs/evidencias/geografia-pais/geografia_prueba7.out`; captura real `docs/evidencias/pruebas/capturas/07_evento_maritimo.png` (30 eventos sin país) |
+| 8 | Reiniciar consumidor | `docker compose restart consumer` y el recuento no cambia | `docs/evidencias/consumidor-idempotente/bloque4_prueba8_corte_simulado.out` y `docs/evidencias/consumidor-idempotente/prueba8_reinicio.out` |
+| 9 | Cerrar el túnel | Pasos de 3.3 | Captura parcial `docs/evidencias/pruebas/capturas/09_cierre_tunel_sin_respuesta.png`; demostración en el vídeo |
+| 10 | Reabrir el túnel | Pasos de 3.3 | Sin captura; demostración en el vídeo |
+| 11 | Reproducción histórica | Lanza el replay; banner «REPRODUCCIÓN»; datos aislados de `live` | `docs/evidencias/replay/README.md`, `docs/evidencias/replay/T056_reproduccion.png`, `docs/evidencias/replay/T056_en_vivo.png` |
 
-Las pruebas 9 y 10 se hacen **mejor en el propio vídeo**: son visuales y tu plantilla ya dice que su evidencia irá en el vídeo. Ocupan unos 20 segundos si las ensayas.
-
-### 4.4 Errores que te quitarían nota
+### 3.5 Errores que te quitarían nota
 
 - Enseñar solo el mapa. El enunciado dice explícitamente que no basta.
 - Decir «0 duplicados» sin enseñar la consulta ni el denominador.
-- Presentar el 77 % sin país como un fallo, o llamar «error» a los nulos o a las magnitudes negativas.
+- Presentar el 75,5 % (o el 78,4 %) sin país como un fallo, o llamar «error» a los nulos o a las magnitudes negativas.
 - Dar una conclusión sin periodo, filtros ni denominador, o con lenguaje de predicción o de riesgo.
-- Comparar el recuento reciente con el histórico sin los mismos filtros (M≥4 y mismo ámbito), o dividir solo entre los días con eventos.
+- Comparar el recuento reciente con el histórico sin los mismos filtros (M≥4 y mismo ámbito), o dividir solo entre los días con eventos. Y recordar que la comparación reciente sale marcada como posiblemente incompleta.
 - Mezclar replay y datos reales. Si lo enseñas, el banner «REPRODUCCIÓN» debe verse.
 - Presentar datos sintéticos o del mock como si fueran reales. Deben ir etiquetados.
 - Enseñar costes sin distinguir lo **medido** de lo **supuesto**.
-- Mostrar el authtoken o token del túnel, o credenciales del `.env`, en pantalla.
+- Mostrar el token del túnel o las credenciales del `.env` en pantalla.
 
 ---
 
-## 5. Orden de trabajo recomendado hasta el 19 de noviembre
+## 4. Lo que queda
 
-1. **Calidad** (consultas + redacción en la memoria §4). Es el mayor impacto.
-2. **Análisis**: 3 conclusiones y sus capturas con los filtros visibles.
-3. ~~Costes: rellenar `costes.md` y `equipo.md`~~ (hecho; resumen en la memoria §7).
-4. Memoria: trasladar los borradores a §1, §3, §6, §7, §8, §9 y §10.
-5. Túnel + Netlify en vivo, pruebas 9 y 10 y capturas de 1, 5 y 7.
-6. README final con la tabla rúbrica→evidencia, el recorrido de un evento y la decisión propia.
-7. Ensayo con cronómetro y grabación (el roadmap reserva el 17–18 de noviembre).
-
-Según `CLAUDE.md`, cada una de estas piezas es una feature (`pruebas-aceptacion` 014, `readme-video` 017) que necesita spec, plan y tareas revisados antes de implementarse. Los puntos 1, 2 y 4 son texto y consultas; los puntos 3, 5 y 6 requieren tus datos y tu equipo.
+Solo lo que depende del alumno: grabar el vídeo (con las pruebas 9 y 10 y la demo H4 en vivo, según 3.3) y poner su enlace en el marcador `PENDIENTE: enlace de YouTube` del README. Las demás decisiones (captura H3 aceptada, pruebas 9 y 10 por vídeo, clon limpio no repetido) están registradas en «Pendientes del alumno» y «Limitaciones conocidas» del README.
