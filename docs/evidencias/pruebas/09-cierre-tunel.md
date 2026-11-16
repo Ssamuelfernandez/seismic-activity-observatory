@@ -46,7 +46,7 @@ Plantilla a rellenar:
 
 Cómo repetir: los pasos de la sección 2, con el túnel real (`cloudflared`). No hay comando automático.
 
-**Estado: Pendiente del alumno.** Pasa a «Observada» solo cuando el alumno rellene horas y capturas. Hasta entonces no se afirma que esté comprobada en el túnel real.
+**Estado: Parcial; aceptada por el alumno (2026-11-16).** Se aceptan como suficientes la captura existente (túnel cerrado: «SIN RESPUESTA DE LA API», sin presentarlo como 0 eventos) y la demostración en vivo en el vídeo. La secuencia completa (datos visibles, cierre, aviso «Datos antiguos» con la hora de la última lectura) no está observada ni capturada todavía: se mostrará en el vídeo.
 
 ## Captura recibida (2026-11-15, parcial)
 

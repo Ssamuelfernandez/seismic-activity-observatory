@@ -58,6 +58,6 @@ Pasos P1 a P9 de `specs/010-despliegue-tunel/tasks.md`:
 
 Archivo: [`H3_cloudflared_tunel.png`](H3_cloudflared_tunel.png). Muestra el túnel `observatorio-api` en el panel de Cloudflare: estado «Buen estado», 1 réplica activa y 1 ruta (`observatorio-api.ssamuelfernandez.net`, «Aplicación publicada»), versión `2026.11.0`, tiempo de actividad 3 horas, sin token a la vista. La IP pública del servidor de origen se tapó (recuadro gris) antes de guardarla en el repositorio.
 
-**Parcial:** la captura no muestra el destino interno de la ruta (`http://localhost:8000` como único destino), que está en la pestaña «Rutas». Para cerrar H3 falta esa captura (token tapado).
+**Qué no se ve:** esta captura **no es la pestaña «Rutas»**, así que no muestra el destino interno de la ruta (`http://localhost:8000` como único destino) ni la configuración del túnel; solo prueba que el túnel existe, está sano y publica ese nombre. **Decisión del alumno (2026-11-16):** se acepta esta captura para H3 y no se pide otra; el destino único `http://localhost:8000` no queda demostrado por imagen y se apoya en la revisión de exposición (`T067_puertos_secretos.txt`) y en que la API solo publica el puerto 8000 en `127.0.0.1`.
 
 ![H3: túnel observatorio-api](H3_cloudflared_tunel.png)

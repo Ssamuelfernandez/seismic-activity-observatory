@@ -42,7 +42,7 @@ En el siguiente refresco desaparece el aviso «Datos antiguos» y la hora de la 
 
 Cómo repetir: los pasos de la sección 2, a continuación de la ficha [`09-cierre-tunel.md`](09-cierre-tunel.md). No hay comando automático.
 
-**Estado: Pendiente del alumno.** Hasta que el alumno rellene horas y capturas, no se afirma que esté comprobada en el túnel real.
+**Estado: Parcial; aceptada por el alumno (2026-11-16).** No hay captura de la reapertura: solo la revisión de código (el refresco sigue activo tras el error). Se acepta la demostración en vivo en el vídeo como evidencia; no está observada todavía.
 
 ## Estado a 2026-11-15
 

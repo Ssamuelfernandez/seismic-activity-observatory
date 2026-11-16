@@ -52,6 +52,6 @@ cuota gratuita ≠ coste cero: superar el límite puede generar un cobro.
 
 | Servicio | Plan y límite | Fecha de consulta | Consecuencia de superarlo |
 |---|---|---|---|
-| hosting estático (Netlify) | Plan gratuito. | 2026-11-13 | Se paraliza el servicio si la tasa es alta |
+| hosting estático (Netlify) | Plan gratuito, según indica el alumno (no comprobado en el panel de Netlify). | 2026-11-13 | Se paraliza el servicio si la tasa es alta |
 | túnel (Cloudflare Tunnel) | Gratuito. Límites no documentados en las fuentes consultadas | 2026-11-13 | No consta en las fuentes consultadas |
 | dominio | 22 EUR/año (pago real), compartido con otros usos; imputado entero a este proyecto | 2026-11-13 | Si no se renueva, el túnel con dominio propio deja de funcionar |

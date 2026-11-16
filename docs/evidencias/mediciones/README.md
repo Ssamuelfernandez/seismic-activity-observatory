@@ -26,7 +26,7 @@ Datos de `bench` SINTÉTICO (semilla 20251113, esquema temporal eliminado al ter
 | SC-002 | Cumplido | `tablas.md` (mediana, IQR, N real, unidad, memoria); `equipo.md` leído de la máquina; modelo del anfitrión y potencia (100 W, SUPUESTO) aportados por el alumno; límites de CPU y memoria de los contenedores leídos con `docker inspect` |
 | SC-003 | Cumplido | `aislamiento.md` (violaciones: ninguna); `T087_corrida.txt`; `T093_comprobaciones.txt` (`to_regnamespace('bench')` NULL, 0 filas de bench, 18302) |
 | SC-004 | Cumplido | `tablas.md` y documentos con etiqueta SINTÉTICO; `T092_cifras_y_enlace.txt`; prueba de la semilla real (archivos verificados por sha256, eventos únicos) en `T076_seed_sin_docker.txt` |
-| SC-005 | Cumplido | `costes.md` (hardware, electricidad, almacenamiento, transferencia, mantenimiento, dominio y desarrollo, con fórmula, origen y naturaleza efectivo/imputado; tabla resumen mensual); queda por verificar en el panel de Netlify el límite que aplica a la cuenta y su consecuencia |
+| SC-005 | Cumplido | `costes.md` (hardware, electricidad, almacenamiento, transferencia, mantenimiento, dominio y desarrollo, con fórmula, origen y naturaleza efectivo/imputado; tabla resumen mensual); la cuota de Netlify es plan gratuito, según indica el alumno (no comprobada en el panel de Netlify)|
 | SC-006 | Cumplido | `escalado.md` (6 puntos de razonamiento, 8 propuestas con id); `T088-T090_comprobaciones.txt` |
 | SC-007 | Parcial | `T087_corrida.txt` y `procedimiento.md`; falta repetir desde un clon limpio, y las suites: ver abajo |
 
