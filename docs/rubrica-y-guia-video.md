@@ -1,5 +1,7 @@
 # Rúbrica del proyecto, estado de cumplimiento y guía del vídeo
 
+> Guía de planificación previa. El vídeo entregado dura 9:04 y no incluye la demostración en vivo de las pruebas 9 y 10.
+
 Guía vigente a 2026-11-16. Este documento no añade requisitos: resume lo que puntúa según `docs/enunciado/ENUNCIADO.md` §13 y `docs/enunciado/README-paquete.md`, dice dónde está cada evidencia y cómo enseñarla en el vídeo de 5 minutos. Las cifras que cambian con el tiempo llevan su fecha: el productor sigue ingiriendo, así que al grabar las de la base serán mayores.
 
 ---

@@ -185,7 +185,7 @@ El frontend no viene hecho: hay que crear el proyecto React (Vite + TypeScript +
 | H2 | **[OBL]** Procedimiento breve de activación para la demo y la grabación del vídeo (Compose → API → túnel → comprobación de `/api/salud` pública → panel → replay) | En README | Guía 3.2 | [x] |
 | H3 | **[OBL]** Túnel HTTPS (Cloudflare Tunnel con nombre; ngrok u otro servicio equivalente según el enunciado) que expone solo `http://localhost:8000`; el token o authtoken del túnel queda fuera de Git y del frontend | — | Enunc. §9 | ☐ |
 | H4 | **[OBL]** Equipo, contenedores y túnel **encendidos** durante la demo | — | Enunc. §9 | ☐ |
-| H5 | **[OBL]** Vídeo de 5 min explicando cómo se cumple cada criterio de la rúbrica (+ recorrido de un evento y decisión propia en el README) | Vídeo grabado y enlazado en el README; recorrido de un evento USGS → panel y una decisión técnica propia justificada, por escrito en el README (apoyo: `CODEMAP.md`) | Cambio de evaluación (sin defensa oral) | ☐ |
+| H5 | **[OBL]** Vídeo de 5 min explicando cómo se cumple cada criterio de la rúbrica (+ recorrido de un evento y decisión propia en el README) | Vídeo grabado y enlazado en el README; recorrido de un evento USGS → panel y una decisión técnica propia justificada, por escrito en el README (apoyo: `CODEMAP.md`) | Cambio de evaluación (sin defensa oral) | ☑ |
 
 ### I. Pruebas de aceptación (las 11 del enunciado — ejecutarlas, no solo programarlas)
 

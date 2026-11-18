@@ -1,6 +1,6 @@
 # Prueba 9: cierre del túnel
 
-**Estado: pendiente de la demostración del alumno (no verificada). La evidencia irá en `docs/evidencias/pruebas/` y en readme-video.** Cubre prueba 9, G9 (prueba real), SC-006. No hay capturas en esta carpeta: las capturas de `README.md` desde la misma red del servidor no sustituyen esta prueba.
+**Estado: parcial. La evidencia es la captura del panel con el túnel cerrado y la revisión de código, en `docs/evidencias/pruebas/`; no se grabó demostración en vivo.** Cubre prueba 9, G9 (prueba real), SC-006. No hay capturas en esta carpeta: las capturas de `README.md` desde la misma red del servidor no sustituyen esta prueba.
 
 ## Pasos
 
@@ -16,6 +16,6 @@ El panel muestra el aviso de fallo de conexión y conserva e identifica la últi
 
 ## Registro
 
-Horas de cierre y de recuperación: se ven en el vídeo.
+Horas de cierre y de recuperación: no registradas (no se grabó demostración en vivo).
 
-**Evidencia:** vídeo en `readme-video` (pendiente).
+**Evidencia:** la captura de la prueba 9 y la revisión de código, en [`../pruebas/09-cierre-tunel.md`](../pruebas/09-cierre-tunel.md).

@@ -19,7 +19,7 @@ En el siguiente refresco desaparece el aviso «Datos antiguos» y la hora de la 
 
 ## 4. Observado
 
-**Pendiente de la demostración del alumno.** No se ha ejecutado.
+**No observada en el túnel real.** No se ha ejecutado.
 
 | Dato | Valor |
 |---|---|
@@ -42,7 +42,7 @@ En el siguiente refresco desaparece el aviso «Datos antiguos» y la hora de la 
 
 Cómo repetir: los pasos de la sección 2, a continuación de la ficha [`09-cierre-tunel.md`](09-cierre-tunel.md). No hay comando automático.
 
-**Estado: Parcial; aceptada por el alumno (2026-11-16).** No hay captura de la reapertura: solo la revisión de código (el refresco sigue activo tras el error). Se acepta la demostración en vivo en el vídeo como evidencia; no está observada todavía.
+**Estado: Parcial; aceptada por el alumno (2026-11-16).** No hay captura de la reapertura: solo la revisión de código (el refresco sigue activo tras el error). Se acepta la revisión de código de esta ficha como evidencia; la reapertura no está observada y no se grabó una demostración en vivo.
 
 ## Estado a 2026-11-15
 

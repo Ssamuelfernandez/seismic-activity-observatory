@@ -46,7 +46,7 @@ Plantilla a rellenar:
 
 Cómo repetir: los pasos de la sección 2, con el túnel real (`cloudflared`). No hay comando automático.
 
-**Estado: Parcial; aceptada por el alumno (2026-11-16).** Se aceptan como suficientes la captura existente (túnel cerrado: «SIN RESPUESTA DE LA API», sin presentarlo como 0 eventos) y la demostración en vivo en el vídeo. La secuencia completa (datos visibles, cierre, aviso «Datos antiguos» con la hora de la última lectura) no está observada ni capturada todavía: se mostrará en el vídeo.
+**Estado: Parcial; aceptada por el alumno (2026-11-16).** Se aceptan como suficientes la captura existente (túnel cerrado: «SIN RESPUESTA DE LA API», sin presentarlo como 0 eventos) y la revisión de código de esta ficha. La secuencia completa (datos visibles, cierre, aviso «Datos antiguos» con la hora de la última lectura) no está observada ni capturada, y no se grabó una demostración en vivo.
 
 ## Captura recibida (2026-11-15, parcial)
 
