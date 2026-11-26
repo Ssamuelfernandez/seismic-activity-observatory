@@ -1,0 +1,32 @@
+$ docker compose exec -T jupyter jupyter nbconvert --to markdown --execute work/00_prueba_conexion.ipynb --stdout
+[NbConvertApp] Converting notebook work/00_prueba_conexion.ipynb to markdown
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+# Prueba de conexión
+
+Conecta con PostgreSQL por el nombre de servicio, con el rol de solo lectura `observatory_jupyter`, y cuenta las filas de `live.current_event`. Los datos de conexión llegan como variables de entorno del contenedor (ver `docs/jupyter.md`).
+
+
+```python
+import os
+
+from sqlalchemy import URL, create_engine, text
+
+url = URL.create(
+    "postgresql+psycopg",
+    username=os.environ["DB_USER"],
+    password=os.environ["DB_PASSWORD"],
+    host=os.environ["DB_HOST"],  # nombre del servicio: postgres
+    port=int(os.environ["DB_PORT"]),
+    database=os.environ["DB_NAME"],
+)
+engine = create_engine(url)
+
+with engine.connect() as connection:
+    row_count = connection.execute(text("SELECT count(*) FROM live.current_event")).scalar_one()
+
+print(f"Filas en live.current_event: {row_count}")
+```
+
+    Filas en live.current_event: 18479
+
+exit=0

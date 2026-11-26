@@ -1,0 +1,17 @@
+$ docker compose --profile jupyter ps
+SERVICE    STATE     STATUS                    PORTS
+jupyter    running   Up 53 seconds (healthy)   127.0.0.1:8888->8888/tcp
+postgres   running   Up 59 seconds (healthy)   5432/tcp
+
+$ docker compose --profile jupyter port jupyter 8888
+127.0.0.1:8888
+
+$ netstat -ano   (sockets en escucha del puerto 8888)
+  TCP    127.0.0.1:8888         0.0.0.0:0              LISTENING       21912
+
+Acceso desde el anfitrión (token leído de .env, no se muestra):
+  127.0.0.1 sin token: 403
+  127.0.0.1 con token: 200
+  IP no local n.º 1 del equipo: sin conexión (URLError)
+  IP no local n.º 2 del equipo: sin conexión (URLError)
+  IP no local n.º 3 del equipo: sin conexión (URLError)

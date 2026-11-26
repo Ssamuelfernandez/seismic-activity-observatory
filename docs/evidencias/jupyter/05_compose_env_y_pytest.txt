@@ -1,0 +1,26 @@
+$ docker compose config --services
+postgres
+api
+kafka
+consumer
+producer
+
+$ docker compose --profile '*' config --services
+postgres
+api
+kafka
+consumer
+jupyter
+producer
+tests
+
+$ python scripts/check_env_example.py
+PASS  .env.example coincide: 25 variables, 21 leídas por el código, sin secretos reales.
+exit=0
+
+$ .venv/Scripts/python.exe -m pytest -m "not integration" -q -p no:cacheprovider
+# uv run no encontró Python 3.12.16 en el anfitrión; se usó el .venv del proyecto (Python 3.12.15).
+# Las pruebas de integración no se ejecutaron: ningún cambio toca el código ni los SQL que usan.
+........................................................................ [ 95%]
+........................................                                 [100%]
+832 passed, 232 deselected in 10.26s

@@ -1,0 +1,21 @@
+Desde el contenedor jupyter, con el rol observatory_jupyter (autocommit: cada sentencia es su propia transacción).
+
+-- Lectura
+OK        SELECT count(*) FROM live.current_event -> (18479,)
+OK        SELECT count(*) FROM replay.current_event -> (0,)
+OK        SELECT count(*) FROM public.country -> (177,)
+DENEGADO  SELECT count(*) FROM ingest.raw_response -> permission denied for table raw_response
+DENEGADO  SELECT count(*) FROM ingest.ingest_state -> permission denied for table ingest_state
+
+-- Escritura con la configuración por defecto del rol
+DENEGADO  DELETE FROM live.current_event WHERE false -> cannot execute DELETE in a read-only transaction
+DENEGADO  UPDATE public.country SET name_es = name_es WHERE false -> cannot execute UPDATE in a read-only transaction
+DENEGADO  INSERT INTO ingest.ingest_run (run_at, url) SELECT now(), '' WHERE false -> cannot execute INSERT in a read-only transaction
+DENEGADO  CREATE TABLE public.jupyter_probe (x int) -> cannot execute CREATE TABLE in a read-only transaction
+
+-- Escritura tras desactivar el solo lectura en la sesión (solo quedan los permisos)
+OK        SET default_transaction_read_only = off -> SET
+DENEGADO  DELETE FROM live.current_event WHERE false -> permission denied for table current_event
+DENEGADO  UPDATE public.country SET name_es = name_es WHERE false -> permission denied for table country
+DENEGADO  INSERT INTO ingest.ingest_run (run_at, url) SELECT now(), '' WHERE false -> permission denied for table ingest_run
+DENEGADO  CREATE TABLE public.jupyter_probe (x int) -> permission denied for schema public
