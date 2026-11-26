@@ -18,6 +18,10 @@ dist/
 # Datos regenerables (incluye las respuestas de explore_usgs.py)
 data/raw/
 
+# Cuadernos Jupyter: exportaciones y bases locales
+data/export/
+notebooks/**/*.db
+
 # Volúmenes de bases de datos
 pgdata/
 postgres-data/
